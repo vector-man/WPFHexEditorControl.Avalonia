@@ -735,7 +735,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <param name="selectionStop"></param>
         /// <param name="copyChange">Set tu true if you want onclude change in your copy. Set to false to copy directly from source</param>
         /// <param name="selectionStart"></param>
-        private byte[] GetCopyData(long selectionStart, long selectionStop, bool copyChange)
+        public byte[] GetCopyData(long selectionStart, long selectionStop, bool copyChange)
         {
             //Validation
             if (!CanCopy(selectionStart, selectionStop)) return new byte[0];

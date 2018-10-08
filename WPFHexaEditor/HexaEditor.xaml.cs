@@ -1850,6 +1850,9 @@ namespace WpfHexaEditor
                 var previousTable = TypeOfCharacterTable;
                 TypeOfCharacterTable = CharacterTableType.Ascii;
 
+                //TEMPS : CUSTOMBACKGROUNDBLOCK
+                //_cbbList = new ExeFile().GetCustomBackgroundBlock(_provider);
+
                 RefreshView(true);
 
                 //Replace previous character table
@@ -3970,7 +3973,6 @@ namespace WpfHexaEditor
         /// TEST - EXE custom background block test 
         /// http://www.delorie.com/djgpp/doc/exe/
         /// </summary>
-        //private List<CustomBackgroundBlock> _cbbList = new ExeFile().GetCustomBackgroundBlock();
         private List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
 
         internal CustomBackgroundBlock GetCustomBackgroundBlock(long bytePositionInFile) =>
