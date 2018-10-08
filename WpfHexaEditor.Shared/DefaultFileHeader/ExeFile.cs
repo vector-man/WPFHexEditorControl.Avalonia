@@ -31,18 +31,29 @@ namespace WpfHexaEditor.DefaultFileHeader
                 new CustomBackgroundBlock("0x1A", 2, Brushes.DarkSeaGreen, CBB_EXEFile_OverlayNumberString),
             };
 
+        /// <summary>
+        /// Detect if is a PE file and create the backgroung based on file data
+        /// </summary>
+        /// TODO : complete with other various custombackground based on file
         public List<CustomBackgroundBlock> GetCustomBackgroundBlock(ByteProvider provider)
         {
-            var list = GetCustomBackgroundBlock();
+            if (ByteProvider.CheckIsOpen(provider))
+            {
+                //Added only if is a PE file...
+                if (ByteConverters.ByteToHex(provider.GetCopyData(0, 1, true)) == "4D 5A")
+                {
+                    //Load default
+                    var list = GetCustomBackgroundBlock();
 
-            //ADD various custom background block from loaded file... 
-            if (!ByteProvider.CheckIsOpen(provider)) return list;
+                    //Add CBB : This program cannot be run in DOS mode
+                    list.Add(new CustomBackgroundBlock("0x4E", 38, Brushes.PaleVioletRed, CBB_EXEFile_NotDOSProgramString));
 
-            //added only if is a PE file...
-            if (ByteConverters.ByteToHex(provider.GetCopyData(0, 1, true)) == "4D 5A")
-                list.Add(new CustomBackgroundBlock("0x4E", 38, Brushes.PaleVioletRed, CBB_EXEFile_OverlayNumberString));
+                    return list;
+                }
+            }
 
-            return list;
+            return new List<CustomBackgroundBlock>();
+
         }
     }
 }

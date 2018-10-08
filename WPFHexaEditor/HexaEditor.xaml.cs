@@ -1850,8 +1850,11 @@ namespace WpfHexaEditor
                 var previousTable = TypeOfCharacterTable;
                 TypeOfCharacterTable = CharacterTableType.Ascii;
 
-                //TEMPS : CUSTOMBACKGROUNDBLOCK
-                //_cbbList = new ExeFile().GetCustomBackgroundBlock(_provider);
+                //TEMPS : CUSTOMBACKGROUNDBLOCK (CBB) /////////
+                //TODO: Add autodetect file type and create external CBB...
+                 if (UseCustomBackGroudBlock)
+                     _cbbList = new ExeFile().GetCustomBackgroundBlock(_provider);
+                ///////////////////////////////////////////////
 
                 RefreshView(true);
 
@@ -3970,9 +3973,26 @@ namespace WpfHexaEditor
         #region TEST // CustomBackgroundBlock implementation
 
         /// <summary>
-        /// TEST - EXE custom background block test 
-        /// http://www.delorie.com/djgpp/doc/exe/
+        /// Use CustomBackgroundBlock in the control
+        /// ONLY DETECT EXE FILE FOR NOW... NOT POSSIBLE TO CREATE OWN CBB (WILL BE POSSIBLE SOON)
         /// </summary>
+        public bool UseCustomBackGroudBlock
+        {
+            get => (bool)GetValue(UseCustomBackGroudBlockProperty);
+            set => SetValue(UseCustomBackGroudBlockProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for UseCustomBackGroudBlock.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty UseCustomBackGroudBlockProperty =
+            DependencyProperty.Register(nameof(UseCustomBackGroudBlock), typeof(bool), typeof(HexEditor),
+                new FrameworkPropertyMetadata(false, Control_UseCustomBackGroudBlockPropertyChanged));
+
+        private static void Control_UseCustomBackGroudBlockPropertyChanged(DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            if (d is HexEditor ctrl && e.NewValue != e.OldValue) ctrl.RefreshView();
+        }
+
         private List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
 
         internal CustomBackgroundBlock GetCustomBackgroundBlock(long bytePositionInFile) =>

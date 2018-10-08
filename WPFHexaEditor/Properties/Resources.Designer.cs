@@ -180,6 +180,15 @@ namespace WpfHexaEditor.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à This program cannot be run in DOS mode....
+        /// </summary>
+        public static string CBB_EXEFile_NotDOSProgramString {
+            get {
+                return ResourceManager.GetString("CBB_EXEFile_NotDOSProgramString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Number of blocks in the file that are part of the EXE file. 
         ///If [02-03] is non-zero, only that much of the last block is used..
         /// </summary>

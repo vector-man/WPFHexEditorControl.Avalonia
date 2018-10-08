@@ -158,6 +158,9 @@ If this value is zero, that means the entire last block is used</value>
     <value>Maximum number of paragraphs of additional memory. 
 Normally, the OS reserves all the remaining conventional memory for your program, but you can limit it with this field.</value>
   </data>
+  <data name="CBB_EXEFile_NotDOSProgramString" xml:space="preserve">
+    <value>This program cannot be run in DOS mode...</value>
+  </data>
   <data name="CBB_EXEFile_NumberOfBlockInFileBlockString" xml:space="preserve">
     <value>Number of blocks in the file that are part of the EXE file. 
 If [02-03] is non-zero, only that much of the last block is used.</value>

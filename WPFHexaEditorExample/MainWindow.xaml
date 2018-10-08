@@ -247,7 +247,8 @@
                 DataStringVisual="Hexadecimal"
                 DefaultCopyToClipboardMode="HexaString"
                 ForegroundSecondColor="Blue"
-                OffSetStringVisual="Hexadecimal" />
+                OffSetStringVisual="Hexadecimal" 
+                UseCustomBackGroudBlock="True"/>
         </DockPanel>
     </Grid>
 </Window>
