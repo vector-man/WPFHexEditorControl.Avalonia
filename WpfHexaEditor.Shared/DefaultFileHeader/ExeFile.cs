@@ -8,6 +8,7 @@ namespace WpfHexaEditor.DefaultFileHeader
     /// <summary>
     /// IMPLEMENTATON NOT COMPLETED
     /// Window executable file custom background block.
+    /// Will be implemented in XML file...
     /// </summary>
     /// TODO : Localize string
     public class ExeFile

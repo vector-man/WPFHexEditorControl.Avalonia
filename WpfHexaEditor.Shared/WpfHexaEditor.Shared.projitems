@@ -50,4 +50,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)HexByte.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StringByte.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)DefaultFileHeader\Exefile.xcbb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
