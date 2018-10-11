@@ -3,12 +3,13 @@ using System.Windows.Media;
 using WpfHexaEditor.Core.Bytes;
 using static WpfHexaEditor.Properties.Resources;
 
-namespace WpfHexaEditor.DefaultFileHeader
+namespace WpfHexaEditor.xcbb
 {
     /// <summary>
-    /// IMPLEMENTATON NOT COMPLETED
+    /// IMPLEMENTATON NOT COMPLETED - FOR TESTING CONCEPT ONLY
     /// Window executable file custom background block.
-    /// Will be implemented in XML file...
+    /// Will be implemented in XML file (XCBB)...
+    /// Will de deleted soon in futher commit
     /// </summary>
     /// TODO : Localize string
     public class ExeFile

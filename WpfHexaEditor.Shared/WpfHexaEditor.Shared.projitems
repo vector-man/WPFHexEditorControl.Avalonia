@@ -12,7 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)BaseByte.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CellStepsLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CustomBackgroundBlock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DefaultFileHeader\ExeFile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)xcbb\ExeFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OperatableToolTip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StringDataLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HexDataLayer.cs" />
@@ -49,13 +49,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)FontControlBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HexByte.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StringByte.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)xcbb\XcbbReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)xcbb\Exefile.xcbb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)xcbb\" />
   </ItemGroup>
 </Project>

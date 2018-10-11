@@ -20,7 +20,7 @@ using WpfHexaEditor.Core.CharacterTable;
 using WpfHexaEditor.Core.Interfaces;
 using WpfHexaEditor.Dialog;
 using WpfHexaEditor.Core.MethodExtention;
-using WpfHexaEditor.DefaultFileHeader;
+using WpfHexaEditor.xcbb;
 using static WpfHexaEditor.Core.Bytes.ByteConverters;
 using Path = System.IO.Path;
 
@@ -1850,11 +1850,11 @@ namespace WpfHexaEditor
                 var previousTable = TypeOfCharacterTable;
                 TypeOfCharacterTable = CharacterTableType.Ascii;
 
-                //TEMPS : CUSTOMBACKGROUNDBLOCK (CBB) /////////
-                //TODO: Add autodetect file type and create external CBB...
-                 if (UseCustomBackGroudBlock)
-                     _cbbList = new ExeFile().GetCustomBackgroundBlock(_provider);
-                ///////////////////////////////////////////////
+                ////TEMPS : CUSTOMBACKGROUNDBLOCK (CBB) /////////
+                ////TODO: Add autodetect file type and create external CBB...
+                // if (UseCustomBackGroudBlock)
+                //     _cbbList = new ExeFile().GetCustomBackgroundBlock(_provider);
+                /////////////////////////////////////////////////
 
                 RefreshView(true);
 
