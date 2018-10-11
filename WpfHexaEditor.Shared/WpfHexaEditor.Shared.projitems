@@ -51,8 +51,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)StringByte.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)DefaultFileHeader\Exefile.xcbb">
+    <None Include="$(MSBuildThisFileDirectory)xcbb\Exefile.xcbb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)xcbb\" />
   </ItemGroup>
 </Project>
