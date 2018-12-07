@@ -20,7 +20,7 @@ using WpfHexaEditor.Core.CharacterTable;
 using WpfHexaEditor.Core.Interfaces;
 using WpfHexaEditor.Dialog;
 using WpfHexaEditor.Core.MethodExtention;
-using WpfHexaEditor.DefaultFileHeader;
+using WpfHexaEditor.xcbb;
 using static WpfHexaEditor.Core.Bytes.ByteConverters;
 using Path = System.IO.Path;
 
@@ -181,7 +181,7 @@ namespace WpfHexaEditor
             InitializeCaret();
             RefreshView(true);
 
-            StatusBarGrid.DataContext = this;
+            DataContext = this;
         }
 
         #endregion Contructor
@@ -1704,9 +1704,10 @@ namespace WpfHexaEditor
         {
             //Refresh stream
             if (!ByteProvider.CheckIsOpen(_provider)) return;
-            
+
+            var stream = new MemoryStream(_provider.Stream.ToArray());
             CloseProvider();
-            OpenStream(this.Stream);
+            OpenStream(stream);
 
             ChangesSubmited?.Invoke(this, new EventArgs());
         }
@@ -1714,7 +1715,6 @@ namespace WpfHexaEditor
         /// <summary>
         /// Set or Get the file with the control will show hex
         /// </summary>
-        [Obsolete("This property will be removed in next version,Please use new 'Stream' Property")]
         public string FileName
         {
             get => (string) GetValue(FileNameProperty);
@@ -1722,7 +1722,6 @@ namespace WpfHexaEditor
         }
 
         // Using a DependencyProperty as the backing store for FileName.  This enables animation, styling, binding, etc...
-        [Obsolete("This property will be removed in next version,Please use new 'Stream' Property")]
         public static readonly DependencyProperty FileNameProperty =
             DependencyProperty.Register(nameof(FileName), typeof(string), typeof(HexEditor),
                 new FrameworkPropertyMetadata(string.Empty,
@@ -1737,15 +1736,15 @@ namespace WpfHexaEditor
         /// <summary>
         /// Set the MemoryStream are used by ByteProvider
         /// </summary>
-        public Stream Stream
+        public MemoryStream Stream
         {
-            get => (Stream) GetValue(StreamProperty);
+            get => (MemoryStream) GetValue(StreamProperty);
             set => SetValue(StreamProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for Stream.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty StreamProperty =
-            DependencyProperty.Register(nameof(Stream), typeof(Stream), typeof(HexEditor),
+            DependencyProperty.Register(nameof(Stream), typeof(MemoryStream), typeof(HexEditor),
                 new FrameworkPropertyMetadata(null,
                     Stream_PropertyChanged));
 
@@ -1754,7 +1753,7 @@ namespace WpfHexaEditor
             if (!(d is HexEditor ctrl)) return;
 
             ctrl.CloseProvider();
-            ctrl.OpenStream((Stream) e.NewValue);
+            ctrl.OpenStream((MemoryStream) e.NewValue);
         }
 
         /// <summary>
@@ -1814,43 +1813,73 @@ namespace WpfHexaEditor
         /// <param name="filename"></param>
         private void OpenFile(string filename)
         {
-            if (string.IsNullOrEmpty(filename))
+            if (string.IsNullOrEmpty(FileName))
             {
                 CloseProvider();
                 return;
             }
 
-            
-            if (File.Exists(filename)) {
+            if (File.Exists(filename))
+            {
                 CloseProvider();
 
-                var readOnlyMode = false;
+                _provider = new ByteProvider(filename);
 
-                try {
-                    Stream = File.Open(filename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
-                    OpenStream(Stream);
-                }
-                catch {
-                    if (MessageBox.Show("The file is locked. Do you want to open it in read-only mode?", string.Empty,
-                            MessageBoxButton.YesNo) == MessageBoxResult.Yes) {
-                        Stream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-
-                        readOnlyMode = true;
-                    }
+                if (_provider.IsEmpty)
+                {
+                    CloseProvider();
+                    return;
                 }
 
-                if (readOnlyMode)
-                    ReadOnlyMode = true;
+                _provider.ReadOnlyChanged += Provider_ReadOnlyChanged;
+                _provider.DataCopiedToClipboard += Provider_DataCopied;
+                _provider.ChangesSubmited += Provider_ChangesSubmited;
+                _provider.Undone += Provider_Undone;
+                _provider.LongProcessChanged += Provider_LongProcessProgressChanged;
+                _provider.LongProcessStarted += Provider_LongProcessProgressStarted;
+                _provider.LongProcessCompleted += Provider_LongProcessProgressCompleted;
+                _provider.LongProcessCanceled += Provider_LongProcessProgressCompleted;
+                _provider.FillWithByteCompleted += Provider_FillWithByteCompleted;
+                _provider.ReplaceByteCompleted += Provider_ReplaceByteCompleted;
+                _provider.BytesAppendCompleted += Provider_BytesAppendCompleted;
+
+                UpdateScrollBar();
+                UpdateHeader();
+
+                //Load file with ASCII character table;
+                var previousTable = TypeOfCharacterTable;
+                TypeOfCharacterTable = CharacterTableType.Ascii;
+
+                ////TEMPS : CUSTOMBACKGROUNDBLOCK (CBB) /////////
+                ////TODO: Add autodetect file type and create external CBB...
+                // if (UseCustomBackGroudBlock)
+                //     _cbbList = new ExeFile().GetCustomBackgroundBlock(_provider);
+                /////////////////////////////////////////////////
+
+                RefreshView(true);
+
+                //Replace previous character table
+                TypeOfCharacterTable = previousTable;
+
+                UnSelectAll();
+
+                UpdateTblBookMark();
+                UpdateSelectionColor(FirstColor.HexByteData);
+
+                //Update count of byte on file open
+                UpdateByteCount();
+
+                //Debug
+                Debug.Print("FILE OPENED");
             }
-            else {
+            else
                 throw new FileNotFoundException();
-            }
         }
 
         /// <summary>
         /// Open file name
         /// </summary>
-        private void OpenStream(Stream stream)
+        private void OpenStream(MemoryStream stream)
         {
             if (!stream.CanRead) return;
 
@@ -3944,10 +3973,26 @@ namespace WpfHexaEditor
         #region TEST // CustomBackgroundBlock implementation
 
         /// <summary>
-        /// TEST - EXE custom background block test 
-        /// http://www.delorie.com/djgpp/doc/exe/
+        /// Use CustomBackgroundBlock in the control
+        /// ONLY DETECT EXE FILE FOR NOW... NOT POSSIBLE TO CREATE OWN CBB (WILL BE POSSIBLE SOON)
         /// </summary>
-        //private List<CustomBackgroundBlock> _cbbList = new ExeFile().GetCustomBackgroundBlock();
+        public bool UseCustomBackGroudBlock
+        {
+            get => (bool)GetValue(UseCustomBackGroudBlockProperty);
+            set => SetValue(UseCustomBackGroudBlockProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for UseCustomBackGroudBlock.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty UseCustomBackGroudBlockProperty =
+            DependencyProperty.Register(nameof(UseCustomBackGroudBlock), typeof(bool), typeof(HexEditor),
+                new FrameworkPropertyMetadata(false, Control_UseCustomBackGroudBlockPropertyChanged));
+
+        private static void Control_UseCustomBackGroudBlockPropertyChanged(DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            if (d is HexEditor ctrl && e.NewValue != e.OldValue) ctrl.RefreshView();
+        }
+
         private List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
 
         internal CustomBackgroundBlock GetCustomBackgroundBlock(long bytePositionInFile) =>

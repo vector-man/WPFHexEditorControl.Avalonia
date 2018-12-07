@@ -1,9 +1,19 @@
-﻿using System;
+﻿//////////////////////////////////////////////
+// Apache 2.0  - 2018
+// Author : Derek Tremblay (derektremblay666@gmail.com)
+//////////////////////////////////////////////
+
+using System;
 using System.Windows.Media;
 using WpfHexaEditor.Core.Bytes;
 
 namespace WpfHexaEditor
 {
+    /// <summary>
+    /// IMPLEMENTATION NON COMPLETED
+    /// Used to create block of custom colors background 
+    /// </summary>
+    /// TODO : Add programated positon..
     public class CustomBackgroundBlock
     {
         private long _length;
