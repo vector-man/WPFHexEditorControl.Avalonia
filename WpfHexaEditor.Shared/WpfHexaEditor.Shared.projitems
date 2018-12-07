@@ -11,9 +11,15 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BaseByte.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CellStepsLayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\BrushBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\BytesToCharEncodings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\HexBrushPosition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IBrushBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IBytesToCharConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IHexBrushPosition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CustomBackgroundBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ToolTipExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)xcbb\ExeFile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)OperatableToolTip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StringDataLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HexDataLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BookMark.cs" />

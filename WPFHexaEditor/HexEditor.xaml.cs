@@ -1705,7 +1705,11 @@ namespace WpfHexaEditor
             //Refresh stream
             if (!ByteProvider.CheckIsOpen(_provider)) return;
 
-            var stream = new MemoryStream(_provider.Stream.ToArray());
+            var stream = new MemoryStream();
+
+            _provider.Position = 0;
+            _provider.Stream.CopyTo(stream);
+
             CloseProvider();
             OpenStream(stream);
 

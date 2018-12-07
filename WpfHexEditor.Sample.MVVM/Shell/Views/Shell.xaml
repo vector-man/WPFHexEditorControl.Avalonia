@@ -286,7 +286,7 @@
                                  ItemTemplate="{StaticResource DataToolTipTemplate}" 
                                  ContextMenu="{StaticResource DataLayerContextMenu}"/>
             </hex:DrawedHexEditor.StringDataToolTip>
-            <UserControl.ContextMenu>
+            <ContentControl.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="{DynamicResource SetAsStartPosition}" Command="{Binding SetAsStartCommand}"/>
                     <MenuItem Header="{DynamicResource SetAsEndPosition}" Command="{Binding SetAsEndCommand}"/>
@@ -295,7 +295,7 @@
                         <MenuItem Header="{DynamicResource Encoding_UTF8}" Command="{Binding UTF8Command}"/>
                     </MenuItem>
                 </ContextMenu>
-            </UserControl.ContextMenu>
+            </ContentControl.ContextMenu>
         </hex:DrawedHexEditor>
         <StatusBar Height="27" Grid.Row="2">
                 <StatusBarItem Width="90" Padding="0">
