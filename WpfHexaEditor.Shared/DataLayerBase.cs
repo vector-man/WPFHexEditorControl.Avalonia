@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -16,7 +17,6 @@ namespace WpfHexaEditor
 {
     public abstract class DataLayerBase : FontControlBase, IDataLayer, ICellsLayer
     {
-
         public event EventHandler<(int cellIndex, MouseButtonEventArgs e)> MouseLeftDownOnCell;
         public event EventHandler<(int cellIndex, MouseButtonEventArgs e)> MouseLeftUpOnCell;
         public event EventHandler<(int cellIndex, MouseEventArgs e)> MouseMoveOnCell;
@@ -51,8 +51,6 @@ namespace WpfHexaEditor
         
         public long DataOffsetInOriginalStream { get; set; }
         
-        private void RefreshRender(object sender, NotifyCollectionChangedEventArgs e) =>
-            InvalidateVisual();
 
         public IEnumerable<IBrushBlock> ForegroundBlocks
         {
@@ -109,27 +107,14 @@ namespace WpfHexaEditor
 
         public Thickness CellPadding { get; set; } = new Thickness(2);
         public Thickness CellMargin { get; set; } = new Thickness(2);
+#if DEBUG
+        private readonly Stopwatch _watch = new Stopwatch();
+#endif
 
         public int AvailableRowsCount =>
-            (int) (ActualHeight / (CellSize.Height + CellMargin.Top + CellMargin.Bottom));
+            (int) (ActualHeight / (GetCellSize().Height + CellMargin.Top + CellMargin.Bottom));
 
-        public abstract Size CellSize { get; }
-
-        private (int index, Brush background)[] _drawedRects;
-
-        private (int index, Brush background)[] DrawedRects
-        {
-            get
-            {
-                if (Data == null)
-                    return null;
-
-                if (_drawedRects == null || _drawedRects.Length < Data.Length)
-                    _drawedRects = new(int index, Brush background)[Data.Length];
-
-                return _drawedRects;
-            }
-        }
+        public abstract Size GetCellSize();
         
 
         public Brush Background
@@ -160,66 +145,99 @@ namespace WpfHexaEditor
                 new FrameworkPropertyMetadata(Brushes.Transparent, FrameworkPropertyMetadataOptions.AffectsRender));
 
 
-        protected virtual void DrawBackgrounds(DrawingContext drawingContext)
+        protected  void DrawBackground(DrawingContext drawingContext)
         {
             if (BackgroundBlocks == null)
                 return;
 
-            if (DrawedRects == null)
-                return;
-
+            
             if (Data == null)
                 return;
-
-            for (var i = 0; i < Data.Length; i++)
-                DrawedRects[i].background = Brushes.Transparent;
-
-            foreach (var block in BackgroundBlocks)
-                for (var i = 0; i < block.Length; i++)
-                {
-                    DrawedRects[block.StartOffset + i].background = block.Brush;
-                }
-
+            
             drawingContext.DrawRectangle(Background, null, new Rect
             {
                 Width = ActualWidth,
                 Height = ActualHeight
             });
 
+            var drawRect = new Rect();
+            Brush backgroundBrush = null;
+            var cellSize = GetCellSize();
+
             for (var i = 0; i < Data.Length; i++)
             {
+                backgroundBrush = null;
+
+                foreach (var block in BackgroundBlocks) {
+                    if(block.StartOffset <= i && block.StartOffset + block.Length > i) {
+                        backgroundBrush = block.Brush;
+                    }
+                }
+
+                if(backgroundBrush == null) {
+                    continue;
+                }
+                
                 var col = i % BytePerLine;
                 var row = i / BytePerLine;
-                if (Equals(DrawedRects[i].background, Background))
-                    continue;
+                
+                drawRect.X = col * (CellMargin.Right + CellMargin.Left + cellSize.Width) + CellMargin.Left;
+                drawRect.Y = row * (CellMargin.Top + CellMargin.Bottom + cellSize.Height) + CellMargin.Top;
+                drawRect.Height = cellSize.Height;
+                drawRect.Width = cellSize.Width;
 
                 drawingContext.DrawRectangle(
-                    DrawedRects[i].background,
+                    backgroundBrush,
                     null,
-                    new Rect
-                    {
-                        X = col * (CellMargin.Right + CellMargin.Left + CellSize.Width) + CellMargin.Left,
-                        Y = row * (CellMargin.Top + CellMargin.Bottom + CellSize.Height) + CellMargin.Top,
-                        Height = CellSize.Height,
-                        Width = CellSize.Width
-                    }
+                    drawRect
                 );
             }
 
+            DrawBackgroundOverride(drawingContext);
+        }
+        
+        protected virtual void DrawBackgroundOverride(DrawingContext drawingContext) {
+
         }
 
-        protected abstract void DrawText(DrawingContext drawingContext);
+        protected void DrawText(DrawingContext drawingContext) {
+            DrawTextOverride(drawingContext);
+        }
+
+        protected virtual void DrawTextOverride(DrawingContext drawingContext) {
+
+        }
         
+        
+
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-            DrawBackgrounds(drawingContext);
+#if DEBUG
+            _watch.Restart();
+#endif
+
+            DrawBackground(drawingContext);
+
+#if DEBUG
+            _watch.Stop();
+            Debug.WriteLine($"Render Time for layer Background:{_watch.ElapsedMilliseconds}");
+#endif
+            
+#if DEBUG
+            _watch.Restart();
+#endif
             DrawText(drawingContext);
+#if DEBUG
+            _watch.Stop();
+            Debug.WriteLine($"Render Time for layer Text:{_watch.ElapsedMilliseconds}");
+#endif
+            
         }
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            availableSize.Width = (CellSize.Width + CellMargin.Left + CellMargin.Right) * BytePerLine;
+            availableSize.Width = (GetCellSize().Width + CellMargin.Left + CellMargin.Right) * BytePerLine;
             
             if (double.IsInfinity(availableSize.Height))
                 availableSize.Height = 0;
@@ -232,8 +250,8 @@ namespace WpfHexaEditor
             if (Data == null)
                 return null;
 
-            var col = (int) (location.X / (CellMargin.Left + CellMargin.Right + CellSize.Width));
-            var row = (int) (location.Y / (CellMargin.Top + CellMargin.Bottom + CellSize.Height));
+            var col = (int) (location.X / (CellMargin.Left + CellMargin.Right + GetCellSize().Width));
+            var row = (int) (location.Y / (CellMargin.Top + CellMargin.Bottom + GetCellSize().Height));
 
             if (row * BytePerLine + col < Data.Length)
                 return row * BytePerLine + col;
@@ -320,8 +338,8 @@ namespace WpfHexaEditor
             var col = index % BytePerLine;
             var row = index / BytePerLine;
 
-            return new Point((CellSize.Width + CellMargin.Left + CellMargin.Right) * col,
-                            (CellSize.Height + CellMargin.Top + CellMargin.Bottom) * row);
+            return new Point((GetCellSize().Width + CellMargin.Left + CellMargin.Right) * col,
+                            (GetCellSize().Height + CellMargin.Top + CellMargin.Bottom) * row);
         }
     }
 

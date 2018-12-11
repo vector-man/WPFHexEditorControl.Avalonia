@@ -44,8 +44,7 @@ namespace WpfHexaEditor
         //Cuz xaml designer's didn't support valuetuple,events subscribing will be executed in code-behind.
         private void InitilizeEvents()
         {
-            SizeChanged += delegate { UpdateContent(); };
-
+            this.SizeChanged += delegate { UpdateContent(); };
             void initialCellsLayer(ICellsLayer layer)
             {
                 layer.MouseLeftDownOnCell += DataLayer_MouseLeftDownOnCell;
@@ -59,7 +58,7 @@ namespace WpfHexaEditor
             
             InitializeTooltipEvents();
         }
-
+        
         /// <summary>
         /// To reduce the memory consuming,avoid recreating the same binding objects;
         /// </summary>
@@ -152,7 +151,7 @@ namespace WpfHexaEditor
         private long MaxLine => Stream.Length / BytePerLine;
 
 #if DEBUG
-        private readonly Stopwatch watch = new Stopwatch();
+        private readonly Stopwatch _watch = new Stopwatch();
 #endif
         
 
@@ -495,12 +494,12 @@ namespace WpfHexaEditor
         private static void PositionProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             if (!(d is DrawedHexEditor ctrl)) return;
 #if DEBUG
-            ctrl.watch.Restart();
+            ctrl._watch.Restart();
 #endif
             ctrl.UpdateContent();
 #if DEBUG
-            ctrl.watch.Stop();
-            Debug.Print($"REFRESH TIME: {ctrl.watch.ElapsedMilliseconds} ms");
+            ctrl._watch.Stop();
+            Debug.Print($"REFRESH TIME: {ctrl._watch.ElapsedMilliseconds} ms");
 #endif
             
         }
@@ -744,6 +743,16 @@ namespace WpfHexaEditor
         private readonly List<IBrushBlock> _dataBackgroundBlocks =
             new List<IBrushBlock>();
 
+        /// <summary>
+        /// Brush block for Selection;
+        /// </summary>
+        private readonly BrushBlock _selectionBrushBlock = new BrushBlock();
+
+        /// <summary>
+        /// Brush block for focus state;
+        /// </summary>
+        private readonly BrushBlock _focusBrushBlock = new BrushBlock();
+
         public IEnumerable<IBrushBlock> CustomBackgroundBlocks {
             get => (IEnumerable<IBrushBlock>)GetValue(
                 CustomBackgroundBlocksProperty);
@@ -760,7 +769,6 @@ namespace WpfHexaEditor
             //ClearBackgroundBlocks;
             HexDataLayer.BackgroundBlocks = null;
             StringDataLayer.BackgroundBlocks = null;
-
             _dataBackgroundBlocks.Clear();
 
             AddCustomBackgroundBlocks();
@@ -782,7 +790,7 @@ namespace WpfHexaEditor
             if (Stream == null)
                 return;
 
-            //Check whether the backgroundblock is in sight;
+            //Check whether the backgroundblock is in the sight;
             if (!(brushBlock.StartOffset + brushBlock.Length >= Position && brushBlock.StartOffset < Position + MaxVisibleLength))
                 return;
             
@@ -792,12 +800,22 @@ namespace WpfHexaEditor
             _dataBackgroundBlocks.Add(new BrushBlock { StartOffset = maxIndex - Position, Length = minEnd - maxIndex, Brush = brushBlock.Brush });
         }
 
-        private void AddSelectionBackgroundBlocks() =>
-            AddBackgroundBlock(new BrushBlock { StartOffset = SelectionStart, Length = SelectionLength, Brush = SelectionBrush });
+        private void AddSelectionBackgroundBlocks() {
+            _selectionBrushBlock.StartOffset = SelectionStart;
+            _selectionBrushBlock.Length = SelectionLength;
+            _selectionBrushBlock.Brush = SelectionBrush;
+
+            AddBackgroundBlock(_selectionBrushBlock);
+        }
+            
 
         private void AddFocusPositionBackgroundBlock() {
-            if (FocusPosition >= 0)
-                AddBackgroundBlock(new BrushBlock { StartOffset = FocusPosition, Length = 1, Brush = FocusBrush });
+            if (FocusPosition >= 0) {
+                _focusBrushBlock.StartOffset = FocusPosition;
+                _focusBrushBlock.Length = 1;
+                _focusBrushBlock.Brush = FocusBrush;
+                AddBackgroundBlock(_focusBrushBlock);
+            }
         }
         
     }
@@ -1034,7 +1052,7 @@ namespace WpfHexaEditor
             long rowIndexWithLine = lastVisbleRowIndexWithLine;
 
             var lineCount = (lastVisbleRowIndexWithLine - firstVisibleRowIndexWithLine + 1) / rowPerblock;
-            var lineHeight = HexDataLayer.CellSize.Height + HexDataLayer.CellMargin.Top + HexDataLayer.CellMargin.Bottom;
+            var lineHeight = HexDataLayer.GetCellSize().Height + HexDataLayer.CellMargin.Top + HexDataLayer.CellMargin.Bottom;
            
 
             //If line count is larger than the count of cached seperators,fill the rest;

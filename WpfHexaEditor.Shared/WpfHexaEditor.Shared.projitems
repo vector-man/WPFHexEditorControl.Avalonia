@@ -16,8 +16,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\HexBrushPosition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IBrushBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IBytesToCharConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\ICellsLayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IFontControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IHexBrushPosition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CustomBackgroundBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DefaultFileHeader\ExeFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ToolTipExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)xcbb\ExeFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StringDataLayer.cs" />
@@ -41,7 +44,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IByteControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IByteModified.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IDataLayer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IFileEditable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\KeyValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\MethodExtention\ApplicationExtention.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\MethodExtention\ByteArrayExtention.cs" />

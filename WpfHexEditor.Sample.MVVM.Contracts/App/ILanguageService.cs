@@ -5,41 +5,48 @@ using WpfHexEditor.Sample.MVVM.Contracts.Common;
 
 namespace WpfHexEditor.Sample.MVVM.Contracts.App
 {
-    //语言提供者;
+    /// <summary>
+    /// LanguageProvider;
+    /// </summary>
     public class LanguageProvider {
         public LanguageProvider(string languageName, string lanType) {
             this.LanguageName = languageName;
             Type = lanType;
         }
         /// <summary>
-        /// 语言名称(比如简体中文);
+        /// The type name of  the language (i.e. English United States,Simplified Chinese - 简体中文,);
         /// </summary>
         public string LanguageName { get; }
+
         /// <summary>
-        /// 类型;比如(zh_CN,en_US)
+        /// Type Name(i.e. en_US for English United States,zh_CN for Simplified Chinese);
         /// </summary>
         public string Type { get; }
     }
 
     /// <summary>
-    /// 语言服务契约;
+    /// Language service contract;
     /// </summary>
     public interface ILanguageService {
-        //找寻资源字符串;
+        /// <summary>
+        /// Find the language string with key name;
+        /// </summary>
+        /// <param name="keyName"></param>
+        /// <returns></returns>
         string FindResourceString(string keyName);
 
         /// <summary>
-        /// 当前语言类型;
+        /// The current language provider;
         /// </summary>
         LanguageProvider CurrentProvider { get; set; }
 
         /// <summary>
-        /// 所有语言;
+        /// All the language providers;
         /// </summary>
         IEnumerable<LanguageProvider> AllProviders { get; }
 
         /// <summary>
-        /// 初始化;
+        /// Initialize,this method will be invoked in the begining time of the App;
         /// </summary>
         void Initialize();
     }

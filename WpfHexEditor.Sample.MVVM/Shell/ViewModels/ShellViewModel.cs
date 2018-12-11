@@ -26,7 +26,15 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
     public partial class ShellViewModel : BindableBase {
         public ShellViewModel() {
             InitializeToolTips();
+#if DEBUG
+            //try {
+            //    Stream = File.OpenRead("E://HBMS400M.img");
+            //}
+            //catch(Exception ex) {
 
+            //}
+            
+#endif
 
         }
 

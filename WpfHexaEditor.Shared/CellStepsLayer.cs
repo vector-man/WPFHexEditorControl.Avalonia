@@ -5,6 +5,7 @@
 //////////////////////////////////////////////
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,7 +32,7 @@ namespace WpfHexaEditor
         public Thickness CellPadding { get; set; } = new Thickness(2);
 
         //If datavisualtype is Hex,"ox" should be calculated.
-        public virtual Size CellSize => new Size(
+        public virtual Size GetCellSize() => new Size(
             ((DataVisualType == DataVisualType.Hexadecimal ? 2 : 0) + SavedBits) * 
             CharSize.Width + CellPadding.Left + CellPadding.Right,
             CharSize.Height + CellPadding.Top + CellPadding.Bottom);
@@ -91,76 +92,70 @@ namespace WpfHexaEditor
         public static readonly DependencyProperty StepLengthProperty =
             DependencyProperty.Register(nameof(StepLength), typeof(int), typeof(CellStepsLayer),
                 new PropertyMetadata(1));
+#if DEBUG
+        private readonly Stopwatch _watch = new Stopwatch();
+#endif
 
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-
-            void DrawOneStep(long offSet, Point startPoint)
-            {
-                var str = string.Empty;
-                switch (DataVisualType)
-                {
-                    case DataVisualType.Hexadecimal:
-                        str = $"0x{ByteConverters.LongToHex(offSet, SavedBits)}";
-                        break;
-                    case DataVisualType.Decimal:
-                        str = ByteConverters.LongToString(offSet, SavedBits);
-                        break;
-                }
-#if NET451
-                var text = new FormattedText(str, CultureInfo.CurrentCulture, 
-                    FlowDirection.LeftToRight, TypeFace, FontSize, Foreground);
+#if DEBUG
+            _watch.Restart();
 #endif
-#if NET47
-                var text = new FormattedText(str, CultureInfo.CurrentCulture,
-                    FlowDirection.LeftToRight, TypeFace, FontSize, Foreground, PixelPerDip);
-#endif
-                drawingContext.DrawText(text, startPoint);
-            }
+            Func<int, Point> getOffsetLocation = null;
 
-            void DrawSteps(Func<int, Point> getOffsetLocation)
-            {
-                for (var i = 0; i < StepsCount; i++)
-                    DrawOneStep(
-                        i * StepLength + StartStepIndex,
-                        getOffsetLocation(i)
-                    );
-            }
+            var cellSize = GetCellSize();
 
             if (Orientation == Orientation.Horizontal)
             {
-                DrawSteps(step =>
-                    new Point
-                    (
-                        (CellMargin.Left + CellMargin.Right + CellSize.Width) * step + CellMargin.Left + CellPadding.Left,
-                        CellMargin.Top + CellPadding.Top
-                    )
+                getOffsetLocation = step => new Point(
+                    (CellMargin.Left + CellMargin.Right + cellSize.Width) * step + CellMargin.Left + CellPadding.Left,
+                    CellMargin.Top + CellPadding.Top
                 );
-
             }
             else
             {
-#if DEBUG
-                //double lastY = 0;
-#endif
-                DrawSteps(step => new Point(
+                getOffsetLocation = step => new Point(
                     CellMargin.Left + CellPadding.Left,
-                    (CellMargin.Top + CellMargin.Bottom + CellSize.Height) * step + CellMargin.Top + CellPadding.Top));
-
-                {
-
+                    (CellMargin.Top + CellMargin.Bottom + cellSize.Height) * step + CellMargin.Top + CellPadding.Top
+                );    
+            }
+            
+            DrawSteps(drawingContext, getOffsetLocation);
 
 #if DEBUG
-                    //if(lastY != pot.Y) {
-                    //    lastY = pot.Y;
-                    //    System.Diagnostics.Debug.WriteLine(lastY);
-                    //}
+            _watch.Stop();
+            Debug.WriteLine($"Render Time for cellSteps Text:{_watch.ElapsedMilliseconds}");
 #endif
-                    //return pot;
-                }
+        }
 
+        private void DrawSteps(DrawingContext drawingContext, Func<int, Point> getOffsetLocation) {
+            var fontSize = FontSize;
+            var foreground = Foreground;
+
+            for (var i = 0; i < StepsCount; i++) {
+                DrawOneStep(
+                    drawingContext,
+                    i * StepLength + StartStepIndex,
+                    getOffsetLocation(i),
+                    fontSize,
+                    foreground
+                );
             }
+        }
+
+        private void DrawOneStep(DrawingContext drawingContext,long offSet, Point startPoint,double fontSize,Brush foreground) {
+            string text = null;
+            switch (DataVisualType) {
+                case DataVisualType.Hexadecimal:
+                    text = $"0x{ByteConverters.LongToHex(offSet, SavedBits)}";
+                    break;
+                case DataVisualType.Decimal:
+                    text = ByteConverters.LongToString(offSet, SavedBits);
+                    break;
+            }
+
+            DrawString(drawingContext, text, fontSize, foreground, ref startPoint);
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -169,14 +164,14 @@ namespace WpfHexaEditor
             
             if (Orientation == Orientation.Horizontal)
             {
-                availableSize.Height = CellMargin.Top + CellMargin.Bottom + CellSize.Height;
+                availableSize.Height = CellMargin.Top + CellMargin.Bottom + GetCellSize().Height;
 
                 if (double.IsInfinity(availableSize.Width))
                     availableSize.Width = 0;
             }
             else
             {
-                availableSize.Width = CellMargin.Left + CellMargin.Right + CellSize.Width;
+                availableSize.Width = CellMargin.Left + CellMargin.Right + GetCellSize().Width;
 
                 if (double.IsInfinity(availableSize.Height))
                     availableSize.Height = 0;
@@ -192,20 +187,20 @@ namespace WpfHexaEditor
 
             if (Orientation == Orientation.Horizontal)
             {
-                if (!(location.Y > 0 && location.Y < CellMargin.Bottom + CellMargin.Top + CellSize.Height))
+                if (!(location.Y > 0 && location.Y < CellMargin.Bottom + CellMargin.Top + GetCellSize().Height))
                     return null;
 
-                var col = (int) (location.X / (CellSize.Width + CellMargin.Left + CellMargin.Right));
+                var col = (int) (location.X / (GetCellSize().Width + CellMargin.Left + CellMargin.Right));
                 if (col >= StepsCount)
                     return null;
 
                 return col;
             }
 
-            if (!(location.X > 0 && location.X < CellMargin.Left + CellMargin.Right + CellSize.Width))
+            if (!(location.X > 0 && location.X < CellMargin.Left + CellMargin.Right + GetCellSize().Width))
                 return null;
 
-            var row = (int) (location.Y / (CellSize.Width + CellMargin.Top + CellMargin.Bottom));
+            var row = (int) (location.Y / (GetCellSize().Width + CellMargin.Top + CellMargin.Bottom));
             if (row >= StepsCount)
                 return null;
 

@@ -235,9 +235,8 @@
             </MenuItem>
             
                 <MenuItem Header="Test" >
-                    <MenuItem Header="TestBackground" Command="{Binding TestCommand}"/>
-                    <MenuItem Header="TestGC" Click="MenuItem_Click" />
-                </MenuItem>
+                <MenuItem Header="TestBackground" Command="{Binding TestCommand}"/>
+            </MenuItem>
             </Menu>
         <hex:DrawedHexEditor AllowDrop="True" Grid.Row="1" x:Name="hexEdit"
                 CellMargin="0,1" 

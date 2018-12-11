@@ -8,7 +8,7 @@ namespace WpfHexaEditor.Core.Interfaces
     /// <summary>
     /// This interface indicates brushinfo for HexBrush;
     /// </summary>
-    interface IHexBrushPosition
+    public interface IHexBrushPosition
     {
         /// <summary>
         /// Position relative to the data of the datalayer;

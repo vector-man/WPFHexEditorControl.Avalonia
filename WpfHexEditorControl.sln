@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AlphaStage", "AlphaStage", 
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "WpfHexEditor.Sample.MVVM.Contracts", "WpfHexEditor.Sample.MVVM.Contracts\WpfHexEditor.Sample.MVVM.Contracts.shproj", "{DAD85044-539A-427A-8624-C5C54830726C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfHexaEditor.DemoUI", "WpfHexaEditor.DemoUI\WpfHexaEditor.DemoUI.csproj", "{2B60A12E-0E9A-49FB-BDAA-738E1F1BDF8B}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		WpfHexaEditor.Shared\WpfHexaEditor.Shared.projitems*{0e5330e9-a789-4271-96d4-e8a34d8156c5}*SharedItemsImports = 4
@@ -83,6 +85,10 @@ Global
 		{004B0EDC-CEFD-4745-B51C-E99B53A41165}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{004B0EDC-CEFD-4745-B51C-E99B53A41165}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{004B0EDC-CEFD-4745-B51C-E99B53A41165}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B60A12E-0E9A-49FB-BDAA-738E1F1BDF8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B60A12E-0E9A-49FB-BDAA-738E1F1BDF8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B60A12E-0E9A-49FB-BDAA-738E1F1BDF8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B60A12E-0E9A-49FB-BDAA-738E1F1BDF8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,6 +106,7 @@ Global
 		{004B0EDC-CEFD-4745-B51C-E99B53A41165} = {9D7389B3-BCF2-4F37-B3D9-256981687120}
 		{DE643380-39D7-46A7-8C4C-97626D7BF7DF} = {E7C58EBD-5476-4A12-83EB-235DE68AF079}
 		{DAD85044-539A-427A-8624-C5C54830726C} = {DE643380-39D7-46A7-8C4C-97626D7BF7DF}
+		{2B60A12E-0E9A-49FB-BDAA-738E1F1BDF8B} = {9D7389B3-BCF2-4F37-B3D9-256981687120}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5B382CAE-4846-466E-A3D3-0842043B4012}
