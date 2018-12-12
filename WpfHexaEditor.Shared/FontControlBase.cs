@@ -73,7 +73,7 @@ namespace WpfHexaEditor
         {
             if (!(d is FontControlBase dataLB))
                 return;
-
+             
             dataLB.OnFontFamilyChanged((FontFamily) e.OldValue, (FontFamily) e.NewValue);
         }
 
@@ -222,7 +222,7 @@ namespace WpfHexaEditor
 #if NET47
             var glyphRun = new GlyphRun(GlyphTypeface, 0, false, fontSize,(float) PixelPerDip, glyphIndexes, offsetPosition, advancedWidths, null, null, null, null, null, null);
 #endif
-
+            
             return glyphRun;
         }
 

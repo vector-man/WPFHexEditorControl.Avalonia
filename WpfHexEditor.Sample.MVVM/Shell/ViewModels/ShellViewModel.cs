@@ -27,13 +27,13 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
         public ShellViewModel() {
             InitializeToolTips();
 #if DEBUG
-            //try {
-            //    Stream = File.OpenRead("E://HBMS400M.img");
-            //}
-            //catch(Exception ex) {
+            try {
+                Stream = File.OpenRead("E://HBMS400M.img");
+            }
+            catch (Exception ex) {
 
-            //}
-            
+            }
+
 #endif
 
         }
