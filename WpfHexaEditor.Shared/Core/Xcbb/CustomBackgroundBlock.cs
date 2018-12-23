@@ -7,7 +7,7 @@ using System;
 using System.Windows.Media;
 using WpfHexaEditor.Core.Bytes;
 
-namespace WpfHexaEditor
+namespace WpfHexaEditor.Core.Xcbb
 {
     /// <summary>
     /// IMPLEMENTATION NON COMPLETED

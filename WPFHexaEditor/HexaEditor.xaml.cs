@@ -18,9 +18,9 @@ using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.CharacterTable;
 using WpfHexaEditor.Core.Interfaces;
-using WpfHexaEditor.Dialog;
 using WpfHexaEditor.Core.MethodExtention;
-using WpfHexaEditor.xcbb;
+using WpfHexaEditor.Core.Xcbb;
+using WpfHexaEditor.Dialog;
 using static WpfHexaEditor.Core.Bytes.ByteConverters;
 using Path = System.IO.Path;
 
