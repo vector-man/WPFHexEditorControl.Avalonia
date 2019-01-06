@@ -64,7 +64,7 @@ namespace WpfHexaEditor
         public static readonly DependencyProperty FontFamilyProperty =
             DependencyProperty.Register(nameof(FontFamily), typeof(FontFamily), typeof(FontControlBase),
                 new FrameworkPropertyMetadata(
-                    new FontFamily("Microsoft YaHei"),
+                    new FontFamily("Arial"),
                     FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure,
                     FontFamily_PropertyChanged
                 ));
@@ -151,25 +151,24 @@ namespace WpfHexaEditor
         {
             get {
                 if (_charSize == null) {
-                    //Cuz "D" may have the "widest" size,we got the char width when the char is 'D';
-                    //var width = GlyphTypeface.AdvanceWidths[WidestChar - 29];
-                    //var height = GlyphTypeface.AdvanceHeights[WidestChar - 29];
-                    //_charSize = new Size(width, height);
-                    //return _charSize.Value;
+                    //var glyphIndex = GlyphTypeface.CharacterToGlyphMap[WidestChar];
+                    //_charSize = new Size(
+                    //    GlyphTypeface.AdvanceWidths[glyphIndex] * FontSize,
+                    //    GlyphTypeface.AdvanceHeights[glyphIndex] * FontSize
+                    //);
 
-                    var typeface = new Typeface(FontFamily, new FontStyle(), new FontWeight(), new FontStretch());
 #if NET451
-                var measureText = new FormattedText(
-                    WidestChar.ToString(), CultureInfo.CurrentCulture,
-                    FlowDirection.LeftToRight, typeface, FontSize, Brushes.Black
-                );
+                    var measureText = new FormattedText(
+                        WidestChar.ToString(), CultureInfo.CurrentCulture,
+                        FlowDirection.LeftToRight, TypeFace, FontSize, Brushes.Black
+                    );
 #endif
 #if NET47
-                var measureText = new FormattedText(
-                    WidestChar.ToString(), CultureInfo.CurrentCulture,
-                    FlowDirection.LeftToRight, typeface, FontSize, Brushes.Black,
-                    VisualTreeHelper.GetDpi(this).PixelsPerDip
-                );
+                    var measureText = new FormattedText(
+                        WidestChar.ToString(), CultureInfo.CurrentCulture,
+                        FlowDirection.LeftToRight, TypeFace, FontSize, Brushes.Black,
+                        VisualTreeHelper.GetDpi(this).PixelsPerDip
+                    );
 #endif
                     _charSize = new Size(measureText.Width, measureText.Height);
                 }
@@ -228,13 +227,14 @@ namespace WpfHexaEditor
 
         protected void DrawString(DrawingContext drawingContext, string text, double fontSize, Brush foreground, ref Point textPoint) {
             var glyphRun = CreateGlyphRun(text, fontSize, ref textPoint);
-
+            
             if (glyphRun != null)  {
                 drawingContext.DrawGlyphRun(foreground, glyphRun);
             }
             else {
                 var formattedText = GetFormattedText(text, fontSize, foreground);
                 drawingContext.DrawText(formattedText, textPoint);
+                return;
             }
         }
 

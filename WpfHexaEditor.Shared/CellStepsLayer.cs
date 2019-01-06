@@ -254,7 +254,7 @@ namespace WpfHexaEditor
                 MouseRightDownOnCell?.Invoke(this, (index.Value, e));
         }
 
-        public Point? GetCellLocation(int index) => 
+        public Point? GetCellPosition(int index) => 
             throw new NotImplementedException();
     }
 

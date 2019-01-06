@@ -80,7 +80,7 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
         }
 
 
-        public ObservableCollection<WpfHexaEditor.Core.BrushBlock> CustomBackgroundBlocks { get; set; } = new ObservableCollection<WpfHexaEditor.Core.BrushBlock>();
+        public ObservableCollection<BrushBlock> CustomBackgroundBlocks { get; set; } = new ObservableCollection<WpfHexaEditor.Core.BrushBlock>();
         
 
         private DelegateCommand _loadedCommand;
@@ -101,35 +101,41 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
         public DelegateCommand TestCommand => _testCommand ??
             (_testCommand = new DelegateCommand(
                 () => {
-                   if(CustomBackgroundBlocks.Count != 0) {
-                        var rand = new Random();
-                        var brush = new SolidColorBrush(Color.FromRgb((byte)rand.Next(byte.MaxValue), (byte)rand.Next(byte.MaxValue), (byte)rand.Next(byte.MaxValue)));
-                        foreach (var block in CustomBackgroundBlocks) {
-                            block.Brush = brush;
-                        }
-                        UpdateBackgroundRequest.Raise(new Notification());
-                        return;
-                    }
-#if DEBUG
-                   if(Stream == null) {
-                        return;
-                   }
-                   for (int i = 0; i < 200; i++) {
-                        var block = CustomBackgroundFactory.CreateNew();
-                        block.StartOffset = 24 + i;
-                        block.Length = 1;
-                        block.Brush = Brushes.Chocolate;
-                        CustomBackgroundBlocks.Add(block);
-                        UpdateBackgroundRequest.Raise(new Notification());
-                    }
-
-                   
-                    //CustomBackgroundBlocks = customBacks;
-#endif
+                    TestEncoding();
                 }
             ));
 
-        
+        private void TestEncoding() {
+            BytesToCharEncoding = BytesToCharEncodings.UTF8;
+        }
+        private void TestCustomBackgroundBlocks() {
+            if (CustomBackgroundBlocks.Count != 0) {
+                var rand = new Random();
+                var brush = new SolidColorBrush(Color.FromRgb((byte)rand.Next(byte.MaxValue), (byte)rand.Next(byte.MaxValue), (byte)rand.Next(byte.MaxValue)));
+                foreach (var block in CustomBackgroundBlocks) {
+                    block.Brush = brush;
+                }
+                UpdateBackgroundRequest.Raise(new Notification());
+                return;
+            }
+
+#if DEBUG
+            if (Stream == null) {
+                return;
+            }
+            for (int i = 0; i < 200; i++) {
+                var block = CustomBackgroundFactory.CreateNew();
+                block.StartOffset = 24 + i;
+                block.Length = 1;
+                block.Brush = Brushes.Chocolate;
+                CustomBackgroundBlocks.Add(block);
+                UpdateBackgroundRequest.Raise(new Notification());
+            }
+#endif
+        }
+
+
+
         private Stream _stream;
         public Stream Stream {
             get => _stream;

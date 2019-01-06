@@ -271,7 +271,7 @@
                 </ContextMenu>
 
             </hex:DrawedHexEditor.Resources>
-            <hex:DrawedHexEditor.HexDataToolTip>
+            <!--<hex:DrawedHexEditor.HexDataToolTip>
                 <ListBox ItemsSource="{Binding DataToolTips}" FontSize="14" BorderThickness="1"
                                  BorderBrush="Black"
                                  ContextMenu="{StaticResource DataLayerContextMenu}"
@@ -284,7 +284,7 @@
                                  FontSize="14" SelectedItem="{Binding SelectedToolTipItem}"
                                  ItemTemplate="{StaticResource DataToolTipTemplate}" 
                                  ContextMenu="{StaticResource DataLayerContextMenu}"/>
-            </hex:DrawedHexEditor.StringDataToolTip>
+            </hex:DrawedHexEditor.StringDataToolTip>-->
             <ContentControl.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="{DynamicResource SetAsStartPosition}" Command="{Binding SetAsStartCommand}"/>

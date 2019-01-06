@@ -231,7 +231,7 @@
             <control:HexEditor
                 x:Name="HexEdit"
                 Width="Auto"  
-                Height="Auto"
+                Height="Auto" 
                 Margin="2"
                 AllowByteCount="False"
                 AllowDrop="True"

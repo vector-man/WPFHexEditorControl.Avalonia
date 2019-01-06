@@ -107,9 +107,25 @@ namespace WpfHexaEditor.Core.Bytes
         public static char[] ByteToHexCharArray(byte val)
         {
             var hexbyteArray = new char[2];
-            hexbyteArray[0] = ByteToHexChar(val >> 4);
-            hexbyteArray[1] = ByteToHexChar(val - ((val >> 4) << 4));
+            ByteToHexCharArray(val, hexbyteArray);
             return hexbyteArray;
+        }
+
+        /// <summary>
+        /// Fill the <paramref name="charArr"/> with hex char;
+        /// </summary>
+        /// <param name="val"></param>
+        /// <param name="charArr">The length of this value should be 2.</param>
+        public static void ByteToHexCharArray(byte val,char[] charArr) {
+            if(charArr == null) {
+                throw new ArgumentNullException(nameof(charArr));
+            }
+            if(charArr.Length != 2) {
+                throw new ArgumentException($"The length of {charArr} should be 2.");
+            }
+
+            charArr[0] = ByteToHexChar(val >> 4);
+            charArr[1] = ByteToHexChar(val - ((val >> 4) << 4));
         }
 
         //Convert a byte to Hex char,i.e,10 = 'A'

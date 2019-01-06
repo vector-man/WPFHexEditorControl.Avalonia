@@ -14,11 +14,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\BrushBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BytesToCharEncodings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\HexBrushPosition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IEditTransaction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IBrushBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IBytesToCharConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\ICellsLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IFontControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IHexBrushPosition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Transactions\CanRedoChangedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Transactions\CanUndoChangedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Transactions\StandardEditTransaction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CustomBackgroundBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DefaultFileHeader\ExeFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ToolTipExtension.cs" />

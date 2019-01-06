@@ -15,6 +15,6 @@ namespace WpfHexaEditor.Core.Interfaces {
         event EventHandler<(int cellIndex, MouseEventArgs e)> MouseMoveOnCell;
         event EventHandler<(int cellIndex, MouseButtonEventArgs e)> MouseRightDownOnCell;
 
-        Point? GetCellLocation(int index);
+        Point? GetCellPosition(int index);
     }
 }

@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Interfaces;
 
 namespace WpfHexaEditor
@@ -123,7 +124,18 @@ namespace WpfHexaEditor
             set => SetValue(BackgroundProperty, value);
         }
 
-        
+
+        /// <summary>
+        /// Get cell position with column and row;
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <param name="cellSize"></param>
+        /// <param name="textPosition"></param>
+        protected void GetCellPosition(int row, int col, ref Size cellSize, ref Point textPosition) {
+            textPosition.X = (CellMargin.Right + CellMargin.Left + cellSize.Width) * col + CellPadding.Left + CellMargin.Left;
+            textPosition.Y = (CellMargin.Top + CellMargin.Bottom + cellSize.Height) * row + CellPadding.Top + CellMargin.Top;
+        }
 
         protected IEnumerable<byte> GetBytesFromData(int offset,int length) {
             if (Data == null)
@@ -145,7 +157,7 @@ namespace WpfHexaEditor
                 new FrameworkPropertyMetadata(Brushes.Transparent, FrameworkPropertyMetadataOptions.AffectsRender));
 
 
-        protected  void DrawBackground(DrawingContext drawingContext)
+        protected virtual void DrawBackground(DrawingContext drawingContext)
         {
             if (BackgroundBlocks == null)
                 return;
@@ -192,22 +204,14 @@ namespace WpfHexaEditor
                     drawRect
                 );
             }
-
-            DrawBackgroundOverride(drawingContext);
+            
         }
         
-        protected virtual void DrawBackgroundOverride(DrawingContext drawingContext) {
 
+        protected virtual void DrawText(DrawingContext drawingContext) {
+            
         }
-
-        protected void DrawText(DrawingContext drawingContext) {
-            DrawTextOverride(drawingContext);
-        }
-
-        protected virtual void DrawTextOverride(DrawingContext drawingContext) {
-
-        }
-        
+  
         
 
         protected override void OnRender(DrawingContext drawingContext)
@@ -327,7 +331,7 @@ namespace WpfHexaEditor
         private void InitializeMouseState() => 
             lastMouseMoveIndex = null;
 
-        public Point? GetCellLocation(int index)
+        public Point? GetCellPosition(int index)
         {
             if (Data == null)
                 return null;
@@ -341,6 +345,8 @@ namespace WpfHexaEditor
             return new Point((GetCellSize().Width + CellMargin.Left + CellMargin.Right) * col,
                             (GetCellSize().Height + CellMargin.Top + CellMargin.Bottom) * row);
         }
+
+        
     }
 
 }

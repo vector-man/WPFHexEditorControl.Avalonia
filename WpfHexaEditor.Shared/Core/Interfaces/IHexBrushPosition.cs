@@ -13,7 +13,7 @@ namespace WpfHexaEditor.Core.Interfaces
         /// <summary>
         /// Position relative to the data of the datalayer;
         /// </summary>
-        long Position { get; }
+        int Position { get; }
         /// <summary>
         /// The first char Foreground or Background etc.
         /// </summary>

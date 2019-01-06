@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.Interfaces;
+using WpfHexaEditor.Core.Transactions;
 
 namespace WpfHexaEditor
 {
@@ -200,6 +201,7 @@ namespace WpfHexaEditor
             _lastMouseDownPosition = clickPosition;
 
             FocusPosition = _lastMouseDownPosition.Value;
+            this.Focus();
         }
 
         private void DataLayer_MouseRightDownOnCell(object sender, (int cellIndex, MouseButtonEventArgs e) arg) => 
@@ -995,6 +997,8 @@ namespace WpfHexaEditor
         public static readonly DependencyProperty FocusForegroundProperty =
             DependencyProperty.Register(nameof(FocusForeground), typeof(Brush), typeof(DrawedHexEditor),
                 new PropertyMetadata(Brushes.White));
+
+
     }
 
     /// <summary>
@@ -1053,8 +1057,7 @@ namespace WpfHexaEditor
 
             var lineCount = (lastVisbleRowIndexWithLine - firstVisibleRowIndexWithLine + 1) / rowPerblock;
             var lineHeight = HexDataLayer.GetCellSize().Height + HexDataLayer.CellMargin.Top + HexDataLayer.CellMargin.Bottom;
-           
-
+          
             //If line count is larger than the count of cached seperators,fill the rest;
             while (BlockLinesContainer.Children.Count < lineCount) {
                 var seperator = new Rectangle {
@@ -1144,7 +1147,7 @@ namespace WpfHexaEditor
     }
 
     /// <summary>
-    /// String encoding part.
+    /// String encoding parts.
     /// </summary>
     public partial class DrawedHexEditor {
         public IBytesToCharEncoding BytesToCharEncoding {
@@ -1188,7 +1191,7 @@ namespace WpfHexaEditor
             if (_contextMenuShowing)
                 return;
 
-            var popPoint = dataLayer.GetCellLocation(index);
+            var popPoint = dataLayer.GetCellPosition(index);
             if (popPoint == null)
                 return;
 
@@ -1274,6 +1277,44 @@ namespace WpfHexaEditor
         public static readonly DependencyProperty HoverPositionProperty =
             DependencyProperty.Register(nameof(HoverPosition), typeof(long), typeof(DrawedHexEditor),
                 new FrameworkPropertyMetadata(-1L, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+    }
+
+    /// <summary>
+    /// Undo/Redo parts.
+    /// </summary>
+    public partial class DrawedHexEditor {
+        private readonly Stack<IEditTransaction> _undoTransactions = new Stack<IEditTransaction>();
+        private readonly Stack<IEditTransaction> _redoTransactions = new Stack<IEditTransaction>();
+
+        public bool CanUndo => _undoTransactions.Count != 0;
+        public bool CanRedo => _redoTransactions.Count != 0;
+
+        public event EventHandler<CanRedoChangedEventArgs> CanUndoChanged;
+        public event EventHandler<CanUndoChangedEventArgs> CanRedoChanged;
+            
+        public void Undo() {
+            if (!CanUndo) {
+                return;
+            }
+
+            CanUndoChanged?.Invoke(this, new CanRedoChangedEventArgs(CanUndo));
+        }
+
+        public void Redo() {
+            if (!CanRedo) {
+                return;
+            }
+
+            CanRedoChanged?.Invoke(this, new CanUndoChangedEventArgs(CanRedo));
+        }
+
+        private void CommitTransaction(IEditTransaction editTransaction) {
+            if(editTransaction == null) {
+                throw new ArgumentNullException(nameof(editTransaction));
+            }
+
+
+        }
     }
 
 #if DEBUG

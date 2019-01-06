@@ -20,7 +20,7 @@ namespace WpfHexEditor.Sample.MVVM {
                 new BootStrapper().Run();
             }
             catch(Exception ex) {
-
+                throw;
             }
             
         }

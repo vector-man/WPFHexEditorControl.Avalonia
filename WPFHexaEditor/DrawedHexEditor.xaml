@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:WpfHexaEditor"
              xmlns:cvts="clr-namespace:WpfHexaEditor.Core.Converters"
              mc:Ignorable="d" MouseWheel="Control_MouseWheel"
-             Focusable="True" x:Name="hexEditor"
+             Focusable="True" 
              d:DesignHeight="300" >
     <Grid
         x:Name="BaseGrid"
