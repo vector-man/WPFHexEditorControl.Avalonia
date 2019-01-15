@@ -250,6 +250,7 @@
                 SelectionStart="{Binding SelectionStart}"
                 SelectionLength="{Binding SelectionLength}"
                 BytesToCharEncoding="{Binding BytesToCharEncoding}"
+                             SelectionForeground="{x:Null}"
                 Margin="2,2,2.4,2.2" >
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Drop">

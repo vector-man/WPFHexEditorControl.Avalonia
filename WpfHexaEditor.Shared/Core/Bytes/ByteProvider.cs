@@ -85,7 +85,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Get the type of stream are opened in byteprovider.
         /// </summary>
-        [Obsolete("The ByteProviderStreamType is lowly extensible in sight of variety of stream source,and will be removed in next release.")]
+        //[Obsolete("The ByteProviderStreamType is lowly extensible in purpose of variety of stream source,and will be removed in next release.")]
         public ByteProviderStreamType StreamType { get; internal set; } = ByteProviderStreamType.Nothing;
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Set or Get the file with the control will show hex
         /// </summary>                               
-        [Obsolete("The FileName will be removed in next release.")]
+        //[Obsolete("The FileName will be removed in next release.")]
         public string FileName
         {
             get => _fileName;

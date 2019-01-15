@@ -20,6 +20,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using WpfHexaEditor.Core.Interfaces;
 using WpfHexaEditor.Core;
+using System.Diagnostics;
 
 namespace WpfHexEditor.Sample.MVVM.ViewModels {
     [Export]
@@ -31,7 +32,8 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
                 Stream = File.OpenRead("E://HBMS400M.img");
             }
             catch (Exception ex) {
-
+                Debug.WriteLine(ex.Message);
+                throw;
             }
 
 #endif

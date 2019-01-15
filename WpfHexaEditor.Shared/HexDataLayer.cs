@@ -34,8 +34,26 @@ namespace WpfHexaEditor {
             foreach (var textline in renderLines) {
                 DrawRenderLine(drawingContext,textline);
             }
-            
+
+            var hexForegroundPositions = HexForegroundPositions;
+
+            if(hexForegroundPositions == null) {
+                return;
+            }
+
+            var textPosition = new Point();
+            foreach (var hexForegroundPosition in hexForegroundPositions) {
+                if (hexForegroundPosition.Position < 0 || hexForegroundPosition.Position >= Data.Length) {
+                    continue;
+                }
+
+                this.GetCellContentPosition(hexForegroundPosition.Position,ref textPosition);
+
+
+            }
         }
+
+        
 
         protected override void DrawBackground(DrawingContext drawingContext) {
             base.DrawBackground(drawingContext);
@@ -48,33 +66,33 @@ namespace WpfHexaEditor {
 
             var hexBackgroundPositions = HexBackgroundPositions;
 
-#if DEBUG
-            //var slBrush = new SolidColorBrush(Colors.Red);
-            //var animation = new ColorAnimationUsingKeyFrames {
-            //    Duration = TimeSpan.FromSeconds(0.5),
-            //    AutoReverse = true,
-            //    RepeatBehavior = RepeatBehavior.Forever
-            //};
+#if DEBUG && FALSE
+            var slBrush = new SolidColorBrush(Colors.Red);
+            var animation = new ColorAnimationUsingKeyFrames {
+                Duration = TimeSpan.FromSeconds(0.5),
+                AutoReverse = true,
+                RepeatBehavior = RepeatBehavior.Forever
+            };
 
-            //animation.KeyFrames.Add(new DiscreteColorKeyFrame(Colors.Red));
-            //animation.KeyFrames.Add(
-            //    new DiscreteColorKeyFrame(
-            //        Colors.Transparent,
-            //        KeyTime.FromTimeSpan(TimeSpan.FromSeconds(0.25)
-            //    )
-            //));
+            animation.KeyFrames.Add(new DiscreteColorKeyFrame(Colors.Red));
+            animation.KeyFrames.Add(
+                new DiscreteColorKeyFrame(
+                    Colors.Transparent,
+                    KeyTime.FromTimeSpan(TimeSpan.FromSeconds(0.25)
+                )
+            ));
 
-            //slBrush.BeginAnimation(
-            //    SolidColorBrush.ColorProperty,
-            //    animation
-            //);
+            slBrush.BeginAnimation(
+                SolidColorBrush.ColorProperty,
+                animation
+            );
 
-            //hexBackgroundPositions = new IHexBrushPosition[] {
-            //    new HexBrushPosition{
-            //        FirstCharBrush = slBrush,
-            //        Position = 12
-            //    }
-            //};
+            hexBackgroundPositions = new IHexBrushPosition[] {
+                new HexBrushPosition{
+                    FirstCharBrush = slBrush,
+                    Position = 12
+                }
+            };
 #endif
 
 
@@ -85,35 +103,31 @@ namespace WpfHexaEditor {
 
             var drawRect = new Rect(new Size(CharSize.Width + CellPadding.Left, CharSize.Height + CellPadding.Top + CellPadding.Bottom));
             var cellSize = GetCellSize();
+            var blockPosition = new Point();
 
             foreach (var hexBackgroundPosition in hexBackgroundPositions) {
-                if (hexBackgroundPosition.Position < 0 || hexBackgroundPosition.Position > Data.Length - 1) {
+                if (hexBackgroundPosition.Position < 0 || hexBackgroundPosition.Position >= Data.Length) {
                     continue;
                 }
-
-
-                var col = hexBackgroundPosition.Position % BytePerLine;
-                var row = hexBackgroundPosition.Position / BytePerLine;
-
-                var x = col * (CellMargin.Right + CellMargin.Left + cellSize.Width) + CellPadding.Left + CellMargin.Left;
-                var y = row * (CellMargin.Top + CellMargin.Bottom + cellSize.Height) + CellMargin.Top;
-
-                drawRect.Y = y;
-
+                
+                GetCellPosition(hexBackgroundPosition.Position,ref blockPosition);
+                
+                drawRect.Y = blockPosition.Y;
+                
                 if (hexBackgroundPosition.FirstCharBrush != null) {
-                    drawRect.X = x;
+                    drawRect.X = blockPosition.X;
                     drawingContext.DrawRectangle(hexBackgroundPosition.FirstCharBrush, null, drawRect);
                 }
 
                 if (hexBackgroundPosition.SecondCharBrush != null) {
-                    drawRect.X = x + drawRect.Width;
+                    drawRect.X = blockPosition.X + drawRect.Width;
                     drawingContext.DrawRectangle(hexBackgroundPosition.SecondCharBrush, null, drawRect);
                 }
             }
 
 
         }
-
+        
         private IEnumerable<HexTextRenderLine> GetRenderLines() {
             if (Data == null)
                 yield break;
@@ -129,7 +143,6 @@ namespace WpfHexaEditor {
             HexTextRenderLine lastRenderLine = null;
 
             for (var index = 0; index < Data.Length; index++) {
-                var thisCol = index % BytePerLine;
                 var thisRow = index / BytePerLine;
                 var thisForeground = foreground;
 
@@ -144,7 +157,7 @@ namespace WpfHexaEditor {
                 if (thisRow != row || byteList.Count == 0 ||
                     lastRenderLine == null || lastRenderLine.Foreground != thisForeground) {
 
-                    GetCellPosition(thisRow, thisCol, ref cellSize, ref textPosition);
+                    this.GetCellContentPosition(index, ref textPosition);
 
                     if (lastRenderLine != null) {
                         lastRenderLine.Data = byteList.ToArray();

@@ -104,7 +104,7 @@ namespace WpfHexaEditor.Core
     /// <summary>
     /// Type are opened in byteprovider
     /// </summary>
-    [Obsolete("The ByteProviderStreamType is low extensible for variety of stream source,and will be removed in next release.")]
+    ///[Obsolete("The ByteProviderStreamType is low extensible for variety of stream source,and will be removed in next release.")]
     public enum ByteProviderStreamType
     {
         File,
@@ -177,4 +177,16 @@ namespace WpfHexaEditor.Core
         Decimal         //Not editable
         //Binary        //Editable
     }
+
+    public enum FocusedPanel {
+        Hex,
+        String
+    }
+
+    public enum HexFocusedChar {
+        First,
+        Second
+    }
+
+
 }

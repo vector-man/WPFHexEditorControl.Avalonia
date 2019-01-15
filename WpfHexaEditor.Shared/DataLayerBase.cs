@@ -123,20 +123,7 @@ namespace WpfHexaEditor
             get => (Brush) GetValue(BackgroundProperty);
             set => SetValue(BackgroundProperty, value);
         }
-
-
-        /// <summary>
-        /// Get cell position with column and row;
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        /// <param name="cellSize"></param>
-        /// <param name="textPosition"></param>
-        protected void GetCellPosition(int row, int col, ref Size cellSize, ref Point textPosition) {
-            textPosition.X = (CellMargin.Right + CellMargin.Left + cellSize.Width) * col + CellPadding.Left + CellMargin.Left;
-            textPosition.Y = (CellMargin.Top + CellMargin.Bottom + cellSize.Height) * row + CellPadding.Top + CellMargin.Top;
-        }
-
+        
         protected IEnumerable<byte> GetBytesFromData(int offset,int length) {
             if (Data == null)
                 yield break;
@@ -331,10 +318,10 @@ namespace WpfHexaEditor
         private void InitializeMouseState() => 
             lastMouseMoveIndex = null;
 
-        public Point? GetCellPosition(int index)
+        public bool GetCellPosition(int index,ref Point position)
         {
             if (Data == null)
-                return null;
+                return false;
 
             if (index > Data.Length)
                 throw new IndexOutOfRangeException($"{nameof(index)} is larger than elements.");
@@ -342,8 +329,10 @@ namespace WpfHexaEditor
             var col = index % BytePerLine;
             var row = index / BytePerLine;
 
-            return new Point((GetCellSize().Width + CellMargin.Left + CellMargin.Right) * col,
-                            (GetCellSize().Height + CellMargin.Top + CellMargin.Bottom) * row);
+            position.X = (GetCellSize().Width + CellMargin.Left + CellMargin.Right) * col;
+            position.Y = (GetCellSize().Height + CellMargin.Top + CellMargin.Bottom) * row;
+
+            return true;
         }
 
         

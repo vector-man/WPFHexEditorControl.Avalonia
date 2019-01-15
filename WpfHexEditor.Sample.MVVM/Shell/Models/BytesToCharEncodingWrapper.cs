@@ -16,6 +16,6 @@ namespace WpfHexEditor.Sample.MVVM.Shell.Models
         private IBytesToCharEncoding _bytesToCharEncoding;
         public int BytePerChar => _bytesToCharEncoding.BytePerChar;
 
-        public char Convert(byte[] bytesToConvert) => _bytesToCharEncoding.Convert(bytesToConvert);
+        public char ConvertToChar(byte[] bytesToConvert) => _bytesToCharEncoding.Convert(bytesToConvert);
     }
 }

@@ -131,11 +131,11 @@ namespace WpfHexaEditor {
 
                 Buffer.BlockCopy(data, btIndex + firstVisibleBtIndex, _drawCharBuffer, 0, bytesToCharEncoding.BytePerChar);
                 
-                var ch = bytesToCharEncoding.Convert(_drawCharBuffer);
+                var ch = bytesToCharEncoding.ConvertToChar(_drawCharBuffer);
 
                 if (thisRow != row || lastRenderLine == null || lastRenderLine.Foreground != thisForeground) {
 
-                    GetCellPosition(thisRow, thisCol, ref cellSize, ref textPosition);
+                    this.GetCellContentPosition(btIndex, ref textPosition);
 
                     if (lastRenderLine != null) {
                         lastRenderLine.Data = charList.ToArray();

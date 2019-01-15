@@ -8,8 +8,8 @@ namespace WpfHexaEditor.Core
 {
     class ASCIIBytesToCharEncoding : GenericStaticInstance<ASCIIBytesToCharEncoding>,IBytesToCharEncoding {
         public int BytePerChar => 1;
-
-        public char Convert(byte[] bytesToConvert) {
+        
+        public char ConvertToChar(byte[] bytesToConvert) {
             if(bytesToConvert == null)
                 throw new ArgumentNullException(nameof(bytesToConvert));
 
@@ -22,8 +22,8 @@ namespace WpfHexaEditor.Core
 
     class UTF8BytesToCharEncoding : GenericStaticInstance<UTF8BytesToCharEncoding>, IBytesToCharEncoding {
         public int BytePerChar => 3;
-
-        public char Convert(byte[] bytesToConvert) {
+        
+        public char ConvertToChar(byte[] bytesToConvert) {
             if(bytesToConvert == null) {
                 throw new ArgumentNullException(nameof(bytesToConvert));
             }

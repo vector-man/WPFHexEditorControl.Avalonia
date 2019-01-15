@@ -859,13 +859,23 @@ namespace WpfHexaEditor
         }
 
         private void AddFocusForegroundBlock() {
+            if(FocusBrush == null) {
+                return;
+            }
+
             if (FocusPosition >= 0)
                 AddForegroundBlock(new BrushBlock { StartOffset = FocusPosition, Length = 1, Brush = FocusForeground });
         }
 
 
-        private void AddSelectionForegroundBlocks() =>
+        private void AddSelectionForegroundBlocks() {
+            if(SelectionForeground == null) {
+                return;
+            }
+
             AddForegroundBlock(new BrushBlock { StartOffset = SelectionStart, Length = SelectionLength, Brush = SelectionForeground });
+        }
+            
 
         private void AddForegroundBlock(IBrushBlock brushBlock) {
             if (Stream == null)
@@ -999,6 +1009,28 @@ namespace WpfHexaEditor
                 new PropertyMetadata(Brushes.White));
 
 
+
+        public FocusedPanel FocusedPanel {
+            get { return (FocusedPanel)GetValue(FocusedPanelProperty); }
+            set { SetValue(FocusedPanelProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for FocusedPanel.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty FocusedPanelProperty =
+            DependencyProperty.Register(nameof(FocusedPanel), typeof(FocusedPanel), typeof(DrawedHexEditor), new PropertyMetadata(FocusedPanel.Hex));
+
+
+
+        public HexFocusedChar HexFocusedChar {
+            get { return (HexFocusedChar)GetValue(HexFocusedCharProperty); }
+            set { SetValue(HexFocusedCharProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for HexFocusedChar.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty HexFocusedCharProperty =
+            DependencyProperty.Register(nameof(HexFocusedChar), typeof(HexFocusedChar), typeof(DrawedHexEditor), new PropertyMetadata(HexFocusedChar.First));
+
+
     }
 
     /// <summary>
@@ -1125,9 +1157,9 @@ namespace WpfHexaEditor
         private Binding _spVisibilityBinding;
         private Binding _spLineBrushBinding;
         private Binding _spWidthBinding;
-        private Binding SpVisibilityBinding => _spVisibilityBinding??GetBindingToSelf(nameof(Visibility));
-        private Binding SpLineBrushBinding => _spLineBrushBinding ?? GetBindingToSelf(nameof(SeperatorLineBrush));
-        private Binding SpWidthBinding => _spWidthBinding ?? GetBindingToSelf(nameof(SeperatorLineWidth));
+        private Binding SpVisibilityBinding => _spVisibilityBinding ?? (_spVisibilityBinding = GetBindingToSelf(nameof(Visibility)));
+        private Binding SpLineBrushBinding => _spLineBrushBinding ?? (_spLineBrushBinding = GetBindingToSelf(nameof(SeperatorLineBrush)));
+        private Binding SpWidthBinding => _spWidthBinding ?? (_spWidthBinding = GetBindingToSelf(nameof(SeperatorLineWidth)));
 
         private void SetSeperatorBinding(Rectangle seperator, Orientation orientation) {
             seperator.SetBinding(VisibilityProperty, SpVisibilityBinding);
@@ -1140,8 +1172,8 @@ namespace WpfHexaEditor
             }
         }
         private void SetSeperatorBindings(IEnumerable<(Rectangle seperator, Orientation orientation)> seperatorTuples) {
-            foreach (var item in seperatorTuples) {
-                SetSeperatorBinding(item.seperator, item.orientation);
+            foreach (var (seperator, orientation) in seperatorTuples) {
+                SetSeperatorBinding(seperator, orientation);
             }
         }
     }
