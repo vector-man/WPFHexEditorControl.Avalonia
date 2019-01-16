@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:layers="clr-namespace:WpfHexaEditor.Layers"
              xmlns:local="clr-namespace:WpfHexaEditor"
              xmlns:cvts="clr-namespace:WpfHexaEditor.Core.Converters"
              mc:Ignorable="d" MouseWheel="Control_MouseWheel"
@@ -27,31 +28,31 @@
         <!--#endregion-->
 
         <!--#region Data/Infos StackPanel-->
-        <local:CellStepsLayer   Orientation="Vertical"
-            Grid.Row="1" FontSize="{Binding }"
-            Margin="2,0,2,0" SavedBits="8"
+        <layers:CellStepsLayer  Orientation="Vertical"
+            Grid.Row="1" 
+            SavedBits="8"
             x:Name="LinesOffsetInfoLayer"
             />
-        
-        <local:HexDataLayer 
+
+        <layers:HexDataLayer 
             x:Name="HexDataLayer"
             Grid.Row="1" 
             Grid.Column="1"
-            Margin="5,0" local:ToolTipExtension.AutoShow="False"  >
-        </local:HexDataLayer>
-        <local:CellStepsLayer x:Name="ColumnsOffsetInfoLayer"
+            local:ToolTipExtension.AutoShow="False"  >
+        </layers:HexDataLayer>
+        <layers:CellStepsLayer x:Name="ColumnsOffsetInfoLayer"
             Orientation="Horizontal"
             Grid.Row="0" 
             Grid.Column="1"
-            Margin="5,2" />
-        <local:StringDataLayer
+            CellMargin="0,5" />
+        <layers:StringDataLayer
             x:Name="StringDataLayer"
             Grid.Row="1"
             Grid.Column="2"
             Margin="5,0,5,0"
             local:ToolTipExtension.AutoShow="False"
             >
-        </local:StringDataLayer>
+        </layers:StringDataLayer>
         
       
         <!--#region Scrollbar, marker, and move rectangle-->

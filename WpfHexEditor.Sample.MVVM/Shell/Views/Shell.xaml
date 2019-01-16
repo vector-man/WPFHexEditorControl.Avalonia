@@ -239,8 +239,6 @@
             </MenuItem>
             </Menu>
         <hex:DrawedHexEditor AllowDrop="True" Grid.Row="1" x:Name="hexEdit"
-                CellMargin="0,1" 
-                CellPadding="2"
                 CustomBackgroundBlocks="{Binding CustomBackgroundBlocks}"
                 FocusPosition="{Binding FocusPosition}"
                 HoverPosition="{Binding HoverPosition}"
@@ -249,9 +247,7 @@
                 Stream="{Binding Stream}"
                 SelectionStart="{Binding SelectionStart}"
                 SelectionLength="{Binding SelectionLength}"
-                BytesToCharEncoding="{Binding BytesToCharEncoding}"
-                             SelectionForeground="{x:Null}"
-                Margin="2,2,2.4,2.2" >
+                BytesToCharEncoding="{Binding BytesToCharEncoding}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Drop">
                     <prism:InvokeCommandAction Command="{Binding DropCommand}" TriggerParameterPath="Data"/>

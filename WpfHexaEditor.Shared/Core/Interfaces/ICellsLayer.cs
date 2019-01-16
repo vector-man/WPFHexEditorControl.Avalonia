@@ -42,25 +42,5 @@ namespace WpfHexaEditor.Core.Interfaces {
             return null;
         }
 
-        /// <summary>
-        /// Get cell position with data index;
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        /// <param name="cellSize"></param>
-        /// <param name="contentPosition"></param>
-        public static bool GetCellContentPosition(this ICellsLayer cellsLayer,int index, ref Point contentPosition) {
-            if (cellsLayer == null) {
-                throw new ArgumentNullException(nameof(cellsLayer));
-            }
-            
-            if(cellsLayer.GetCellPosition(index, ref contentPosition)) {
-                contentPosition.X += cellsLayer.CellPadding.Left + cellsLayer.CellMargin.Left;
-                contentPosition.Y += cellsLayer.CellPadding.Top + cellsLayer.CellMargin.Top;
-                return true;
-            }
-
-            return false;
-        }
     }
 }

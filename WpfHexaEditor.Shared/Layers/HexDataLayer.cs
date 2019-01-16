@@ -13,10 +13,11 @@ using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.Interfaces;
 
-namespace WpfHexaEditor {
+namespace WpfHexaEditor.Layers {
     public class HexDataLayer : DataLayerBase
     {
         private readonly char[] _cachedHexCharArr = new char[2];
+        private Point _cachedCellPosition = new Point();
 
         public override Size GetCellSize() => 
             new Size(2 * CharSize.Width + CellPadding.Left + CellPadding.Right,
@@ -26,37 +27,27 @@ namespace WpfHexaEditor {
         protected override void DrawText(DrawingContext drawingContext) {
             base.DrawText(drawingContext);
 
+            DrawRenderLines(drawingContext);
+        }
+
+        private void DrawRenderLines(DrawingContext drawingContext) {
             var renderLines = GetRenderLines();
-            if(renderLines == null) {
+            if (renderLines == null) {
                 return;
             }
 
             foreach (var textline in renderLines) {
-                DrawRenderLine(drawingContext,textline);
-            }
-
-            var hexForegroundPositions = HexForegroundPositions;
-
-            if(hexForegroundPositions == null) {
-                return;
-            }
-
-            var textPosition = new Point();
-            foreach (var hexForegroundPosition in hexForegroundPositions) {
-                if (hexForegroundPosition.Position < 0 || hexForegroundPosition.Position >= Data.Length) {
-                    continue;
-                }
-
-                this.GetCellContentPosition(hexForegroundPosition.Position,ref textPosition);
-
-
+                DrawRenderLine(drawingContext, textline);
             }
         }
-
         
-
         protected override void DrawBackground(DrawingContext drawingContext) {
             base.DrawBackground(drawingContext);
+
+            DrawHexBackgroundPositions(drawingContext);
+        }
+
+        private void DrawHexBackgroundPositions(DrawingContext drawingContext) {
 
             if (Data == null) {
                 return;
@@ -66,33 +57,15 @@ namespace WpfHexaEditor {
 
             var hexBackgroundPositions = HexBackgroundPositions;
 
-#if DEBUG && FALSE
-            var slBrush = new SolidColorBrush(Colors.Red);
-            var animation = new ColorAnimationUsingKeyFrames {
-                Duration = TimeSpan.FromSeconds(0.5),
-                AutoReverse = true,
-                RepeatBehavior = RepeatBehavior.Forever
-            };
+#if DEBUG 
 
-            animation.KeyFrames.Add(new DiscreteColorKeyFrame(Colors.Red));
-            animation.KeyFrames.Add(
-                new DiscreteColorKeyFrame(
-                    Colors.Transparent,
-                    KeyTime.FromTimeSpan(TimeSpan.FromSeconds(0.25)
-                )
-            ));
-
-            slBrush.BeginAnimation(
-                SolidColorBrush.ColorProperty,
-                animation
-            );
-
-            hexBackgroundPositions = new IHexBrushPosition[] {
-                new HexBrushPosition{
-                    FirstCharBrush = slBrush,
-                    Position = 12
-                }
-            };
+            //hexBackgroundPositions = new IHexBrushPosition[] {
+            //     new HexBrushPosition{
+            //        FirstCharBrush = Brushes.Red,
+            //        SecondCharBrush = Brushes.Purple,
+            //        Position = 0
+            //    }
+            //};
 #endif
 
 
@@ -109,11 +82,11 @@ namespace WpfHexaEditor {
                 if (hexBackgroundPosition.Position < 0 || hexBackgroundPosition.Position >= Data.Length) {
                     continue;
                 }
-                
-                GetCellPosition(hexBackgroundPosition.Position,ref blockPosition);
-                
+
+                GetCellPosition(hexBackgroundPosition.Position, ref blockPosition);
+
                 drawRect.Y = blockPosition.Y;
-                
+
                 if (hexBackgroundPosition.FirstCharBrush != null) {
                     drawRect.X = blockPosition.X;
                     drawingContext.DrawRectangle(hexBackgroundPosition.FirstCharBrush, null, drawRect);
@@ -125,14 +98,12 @@ namespace WpfHexaEditor {
                 }
             }
 
-
         }
-        
+
         private IEnumerable<HexTextRenderLine> GetRenderLines() {
             if (Data == null)
                 yield break;
             
-            var textPosition = new Point();
             var cellSize = GetCellSize();
             var fontSize = FontSize;
             var foreground = Foreground;
@@ -157,7 +128,7 @@ namespace WpfHexaEditor {
                 if (thisRow != row || byteList.Count == 0 ||
                     lastRenderLine == null || lastRenderLine.Foreground != thisForeground) {
 
-                    this.GetCellContentPosition(index, ref textPosition);
+                    this.GetCellPosition(index, ref _cachedCellPosition);
 
                     if (lastRenderLine != null) {
                         lastRenderLine.Data = byteList.ToArray();
@@ -167,7 +138,7 @@ namespace WpfHexaEditor {
                     byteList.Clear();
                     lastRenderLine = new HexTextRenderLine {
                         Foreground = thisForeground,
-                        StartPosition = textPosition
+                        CellStartPosition = _cachedCellPosition
                     };
                 }
 
@@ -194,42 +165,35 @@ namespace WpfHexaEditor {
 
             var fontSize = FontSize;
 
-            var startPosition = bufferRenderLine.StartPosition;
-            startPosition.Y += GlyphTypeface.AdvanceHeights[0] * fontSize;
-            bufferRenderLine.StartPosition = startPosition;
-
-            var chArr = _cachedHexCharArr;
-            var glyphIndexes = new ushort[bufferRenderLine.Data.Length * 2];
-            var advanceWidths = new double[bufferRenderLine.Data.Length * 2];
+            var textStartCellPosition = bufferRenderLine.CellStartPosition;
+            textStartCellPosition.Y += GlyphTypeface.AdvanceHeights[0] * fontSize + CellMargin.Top + CellPadding.Top;
             
+            var glyphIndexes = new ushort[bufferRenderLine.Data.Length * 4];
+            var advanceWidths = new double[bufferRenderLine.Data.Length * 4];
+
             for (int i = 0; i < bufferRenderLine.Data.Length; i++) {
-                ByteConverters.ByteToHexCharArray(bufferRenderLine.Data[i], chArr);
+                ByteConverters.ByteToHexCharArray(bufferRenderLine.Data[i], _cachedHexCharArr);
 
-                glyphIndexes[2 * i] = GlyphTypeface.CharacterToGlyphMap[chArr[0]];
-                glyphIndexes[2 * i + 1] = GlyphTypeface.CharacterToGlyphMap[chArr[1]];
+                GlyphTypeface.CharacterToGlyphMap.TryGetValue(' ',out glyphIndexes[4 * i]);
+                GlyphTypeface.CharacterToGlyphMap.TryGetValue(_cachedHexCharArr[0], out glyphIndexes[4 * i + 1]);
+                GlyphTypeface.CharacterToGlyphMap.TryGetValue(_cachedHexCharArr[1], out glyphIndexes[4 * i + 2]);
+                GlyphTypeface.CharacterToGlyphMap.TryGetValue(' ',out glyphIndexes[4 * i + 3]);
 
-                advanceWidths[2 * i] = GlyphTypeface.AdvanceWidths[glyphIndexes[2 * i]] * fontSize;
-                advanceWidths[2 * i + 1] = GlyphTypeface.AdvanceWidths[glyphIndexes[2 * i + 1]] * fontSize + CellPadding.Left + CellPadding.Right + CellMargin.Right + CellMargin.Left;
+                advanceWidths[4 * i] = CellMargin.Left + CellPadding.Left;
+                advanceWidths[4 * i + 1] = CharSize.Width;
+                advanceWidths[4 * i + 2] = CharSize.Width;
+                advanceWidths[4 * i + 3] = CellPadding.Right + CellMargin.Right;
             }
 
 #if NET47
-            var glyph = new GlyphRun(GlyphTypeface, 0, false, fontSize, (float)PixelPerDip, glyphIndexes, bufferRenderLine.StartPosition, advanceWidths, null, null, null, null, null, null);
+            var glyph = new GlyphRun(GlyphTypeface, 0, false, fontSize, (float)PixelPerDip, glyphIndexes, textStartCellPosition, advanceWidths, null, null, null, null, null, null);
 #endif
 
 #if NET451
-            var glyph = new GlyphRun(GlyphTypeface, 0, false, fontSize, glyphIndexes, bufferRenderLine.StartPosition, advanceWidths, null, null, null, null, null, null);
+            var glyph = new GlyphRun(GlyphTypeface, 0, false, fontSize, glyphIndexes, textStartCellPosition, advanceWidths, null, null, null, null, null, null);
 #endif
             drawingContext.DrawGlyphRun(bufferRenderLine.Foreground, glyph);
         }
-        
-        public IEnumerable<IHexBrushPosition> HexForegroundPositions {
-            get => (IEnumerable < IHexBrushPosition > )GetValue(HexForegroundPositionsProperty);
-            set => SetValue(HexForegroundPositionsProperty, value); 
-        }
-
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty HexForegroundPositionsProperty =
-            DependencyProperty.Register(nameof(HexForegroundPositions), typeof(IEnumerable<IHexBrushPosition>), typeof(HexDataLayer), new PropertyMetadata(null));
         
         public IEnumerable<IHexBrushPosition> HexBackgroundPositions {
             get => (IEnumerable<IHexBrushPosition>)GetValue(HexBackgroundPositionsProperty); 
@@ -246,7 +210,7 @@ namespace WpfHexaEditor {
         class HexTextRenderLine {
             public byte[] Data { get; set; }
             public Brush Foreground { get; set; }
-            public Point StartPosition { get; set; }
+            public Point CellStartPosition { get; set; }
         }
     }
 

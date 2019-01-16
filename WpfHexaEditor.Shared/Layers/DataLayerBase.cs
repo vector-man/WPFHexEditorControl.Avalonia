@@ -14,8 +14,7 @@ using System.Windows.Media;
 using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Interfaces;
 
-namespace WpfHexaEditor
-{
+namespace WpfHexaEditor.Layers {
     public abstract class DataLayerBase : FontControlBase, IDataLayer, ICellsLayer
     {
         public event EventHandler<(int cellIndex, MouseButtonEventArgs e)> MouseLeftDownOnCell;
@@ -106,8 +105,8 @@ namespace WpfHexaEditor
             ctrl.InvalidateMeasure();
         }
 
-        public Thickness CellPadding { get; set; } = new Thickness(2);
-        public Thickness CellMargin { get; set; } = new Thickness(2);
+        public Thickness CellPadding { get; set; } = new Thickness(0);
+        public Thickness CellMargin { get; set; } = new Thickness(0);
 #if DEBUG
         private readonly Stopwatch _watch = new Stopwatch();
 #endif
@@ -199,8 +198,6 @@ namespace WpfHexaEditor
             
         }
   
-        
-
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);

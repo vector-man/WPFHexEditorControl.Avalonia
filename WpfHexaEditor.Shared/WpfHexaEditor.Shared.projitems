@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BaseByte.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CellStepsLayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Layers\CellStepsLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BrushBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BytesToCharEncodings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\HexBrushPosition.cs" />
@@ -27,8 +27,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)DefaultFileHeader\ExeFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ToolTipExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)xcbb\ExeFile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)StringDataLayer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)HexDataLayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Layers\StringDataLayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Layers\HexDataLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BookMark.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteConverters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteModified.cs" />
@@ -56,7 +56,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\MethodExtention\TrackExtention.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Native\NativeMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\SerializerHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataLayerBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Layers\DataLayerBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FastTextLine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FontControlBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HexByte.cs" />
@@ -67,5 +67,9 @@
     <None Include="$(MSBuildThisFileDirectory)xcbb\Exefile.xcbb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Layers\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Events\" />
   </ItemGroup>
 </Project>

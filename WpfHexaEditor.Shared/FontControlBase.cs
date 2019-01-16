@@ -97,7 +97,7 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for DefaultForeground.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ForegroundProperty =
             DependencyProperty.Register(nameof(Foreground), typeof(Brush),
-                typeof(DataLayerBase),
+                typeof(FontControlBase),
                 new FrameworkPropertyMetadata(
                     Brushes.Black,
                     FrameworkPropertyMetadataOptions.AffectsRender
@@ -151,26 +151,11 @@ namespace WpfHexaEditor
         {
             get {
                 if (_charSize == null) {
-                    //var glyphIndex = GlyphTypeface.CharacterToGlyphMap[WidestChar];
-                    //_charSize = new Size(
-                    //    GlyphTypeface.AdvanceWidths[glyphIndex] * FontSize,
-                    //    GlyphTypeface.AdvanceHeights[glyphIndex] * FontSize
-                    //);
-
-#if NET451
-                    var measureText = new FormattedText(
-                        WidestChar.ToString(), CultureInfo.CurrentCulture,
-                        FlowDirection.LeftToRight, TypeFace, FontSize, Brushes.Black
+                    var glyphIndex = GlyphTypeface.CharacterToGlyphMap[WidestChar];
+                    _charSize = new Size(
+                        GlyphTypeface.AdvanceWidths[glyphIndex] * FontSize,
+                        GlyphTypeface.AdvanceHeights[glyphIndex] * FontSize
                     );
-#endif
-#if NET47
-                    var measureText = new FormattedText(
-                        WidestChar.ToString(), CultureInfo.CurrentCulture,
-                        FlowDirection.LeftToRight, TypeFace, FontSize, Brushes.Black,
-                        VisualTreeHelper.GetDpi(this).PixelsPerDip
-                    );
-#endif
-                    _charSize = new Size(measureText.Width, measureText.Height);
                 }
 
                 return _charSize.Value;
@@ -188,55 +173,6 @@ namespace WpfHexaEditor
             }
         }
 
-        protected GlyphRun CreateGlyphRun(string text,double fontSize,ref Point position) {
-            if (GlyphTypeface == null) {
-                return null;
-            }
-
-            var glyphIndexes = new ushort[text.Length];
-            var advancedWidths = new double[text.Length];
-            
-            var glyphWidth = 0D;
-
-            var glyphHeight = GlyphTypeface.AdvanceHeights[0] * fontSize;
-
-            for (int i = 0; i < text.Length; i++) {
-                var glyphIndex = (ushort)(text[i] - 29);
-                glyphIndexes[i] = glyphIndex;
-
-                if (GlyphTypeface.AdvanceWidths.Count > glyphIndex) {
-                    glyphWidth = GlyphTypeface.AdvanceWidths[glyphIndex] * fontSize;
-                }
-                else {
-                    glyphWidth = GlyphTypeface.AdvanceWidths[0] * fontSize;
-                }
-                
-                advancedWidths[i] = glyphWidth;
-            }
-
-            var offsetPosition = new Point(position.X , position.Y + glyphHeight);
-#if NET451
-            var glyphRun = new GlyphRun(GlyphTypeface, 0, false , fontSize, glyphIndexes, offsetPosition, advancedWidths, null, null, null, null, null, null);
-#endif
-#if NET47
-            var glyphRun = new GlyphRun(GlyphTypeface, 0, false, fontSize,(float) PixelPerDip, glyphIndexes, offsetPosition, advancedWidths, null, null, null, null, null, null);
-#endif
-            
-            return glyphRun;
-        }
-
-        protected void DrawString(DrawingContext drawingContext, string text, double fontSize, Brush foreground, ref Point textPoint) {
-            var glyphRun = CreateGlyphRun(text, fontSize, ref textPoint);
-            
-            if (glyphRun != null)  {
-                drawingContext.DrawGlyphRun(foreground, glyphRun);
-            }
-            else {
-                var formattedText = GetFormattedText(text, fontSize, foreground);
-                drawingContext.DrawText(formattedText, textPoint);
-                return;
-            }
-        }
 
         protected FormattedText GetFormattedText(string text, double fontSize, Brush foreground) {
 #if NET451

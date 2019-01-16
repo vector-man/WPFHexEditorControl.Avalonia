@@ -7,6 +7,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -15,8 +16,7 @@ using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.Interfaces;
 
-namespace WpfHexaEditor
-{
+namespace WpfHexaEditor.Layers {
     /// <summary>
     /// To show Stream Offsets(left of HexEditor) and Column Index(top of HexEditor);
     /// </summary>
@@ -28,8 +28,8 @@ namespace WpfHexaEditor
         public event EventHandler<(int cellIndex, MouseEventArgs e)> MouseMoveOnCell;
         public event EventHandler<(int cellIndex, MouseButtonEventArgs e)> MouseRightDownOnCell;
 
-        public Thickness CellMargin { get; set; } = new Thickness(2);
-        public Thickness CellPadding { get; set; } = new Thickness(2);
+        public Thickness CellMargin { get; set; } = new Thickness(0);
+        public Thickness CellPadding { get; set; } = new Thickness(0);
 
         //If datavisualtype is Hex,"ox" should be calculated.
         public virtual Size GetCellSize() => new Size(
@@ -156,6 +156,56 @@ namespace WpfHexaEditor
             }
 
             DrawString(drawingContext, text, fontSize, foreground, ref startPoint);
+        }
+
+        private void DrawString(DrawingContext drawingContext, string text, double fontSize, Brush foreground, ref Point textPoint) {
+            var glyphRun = CreateGlyphRun(text, fontSize, ref textPoint);
+
+            if (glyphRun != null) {
+                drawingContext.DrawGlyphRun(foreground, glyphRun);
+            }
+            else {
+                var formattedText = GetFormattedText(text, fontSize, foreground);
+                drawingContext.DrawText(formattedText, textPoint);
+                return;
+            }
+
+            
+        }
+
+        private GlyphRun CreateGlyphRun(string text, double fontSize, ref Point position) {
+            if (GlyphTypeface == null) {
+                return null;
+            }
+
+            var glyphIndexes = new ushort[text.Length];
+            var advancedWidths = new double[text.Length];
+
+            var glyphWidth = 0D;
+
+            var glyphHeight = GlyphTypeface.AdvanceHeights[0] * fontSize;
+
+            for (int i = 0; i < text.Length; i++) {
+                GlyphTypeface.CharacterToGlyphMap.TryGetValue(text[i], out var glyphIndex);
+
+                glyphIndexes[i] = glyphIndex;
+
+                //GlyphTypeface.AdvanceWidths.TryGetValue(glyphIndex, out glyphWidth);
+                //glyphWidth *= fontSize;
+                glyphWidth = CharSize.Width;
+
+                advancedWidths[i] = glyphWidth;
+            }
+
+            var offsetPosition = new Point(position.X, position.Y + glyphHeight);
+#if NET451
+            var glyphRun = new GlyphRun(GlyphTypeface, 0, false , fontSize, glyphIndexes, offsetPosition, advancedWidths, null, null, null, null, null, null);
+#endif
+#if NET47
+            var glyphRun = new GlyphRun(GlyphTypeface, 0, false, fontSize, (float)PixelPerDip, glyphIndexes, offsetPosition, advancedWidths, null, null, null, null, null, null);
+#endif
+
+            return glyphRun;
         }
 
         protected override Size MeasureOverride(Size availableSize)

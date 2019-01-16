@@ -19,6 +19,7 @@ using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.Interfaces;
 using WpfHexaEditor.Core.Transactions;
+using WpfHexaEditor.Layers;
 
 namespace WpfHexaEditor
 {
@@ -32,14 +33,19 @@ namespace WpfHexaEditor
         public DrawedHexEditor()
         {
             InitializeComponent();
-
-            FontSize = 16;
             
-            FontFamily = new FontFamily("Courier New");
-            DataVisualType = DataVisualType.Decimal;
-
             InitilizeEvents();
             InitializeBindings();
+            UpdateCellPaddings();
+            UpdateCellMargins();
+
+            FontSize = 16;
+
+            //FontFamily = new FontFamily("Arial New");
+            //FontFamily = new FontFamily("Microsoft YaHei");
+            //FontFamily = new FontFamily("Courier New");
+            FontFamily = new FontFamily("Lucida Bright");
+            DataVisualType = DataVisualType.Decimal;
         }
         
         //Cuz xaml designer's didn't support valuetuple,events subscribing will be executed in code-behind.
@@ -506,49 +512,6 @@ namespace WpfHexaEditor
             
         }
         
-        public Thickness CellMargin
-        {
-            get => (Thickness) GetValue(CellMarginProperty);
-            set => SetValue(CellMarginProperty, value);
-        }
-
-        // Using a DependencyProperty as the backing store for CellMargion.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty CellMarginProperty =
-            DependencyProperty.Register(nameof(CellMargin), typeof(Thickness), typeof(DrawedHexEditor),
-                new PropertyMetadata(new Thickness(0), CellMargionProperty_Changed));
-
-        private static void CellMargionProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (!(d is DrawedHexEditor ctrl)) return;
-
-            var newVal = (Thickness) e.NewValue;
-            ctrl.HexDataLayer.CellMargin = newVal;
-            ctrl.StringDataLayer.CellMargin = newVal;
-            ctrl.LinesOffsetInfoLayer.CellMargin = new Thickness(0, newVal.Top, 0, newVal.Bottom);
-            ctrl.ColumnsOffsetInfoLayer.CellMargin = new Thickness(newVal.Left, 0, newVal.Right, 0);
-        }
-
-        public Thickness CellPadding
-        {
-            get => (Thickness) GetValue(CellPaddingProperty);
-            set => SetValue(CellPaddingProperty, value);
-        }
-
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty CellPaddingProperty =
-            DependencyProperty.Register(nameof(CellPadding), typeof(Thickness), typeof(DrawedHexEditor),
-                new PropertyMetadata(new Thickness(0), CellPaddingProperty_Changed));
-
-        private static void CellPaddingProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (!(d is DrawedHexEditor ctrl)) return;
-
-            var newVal = (Thickness) e.NewValue;
-            ctrl.HexDataLayer.CellPadding = newVal;
-            ctrl.StringDataLayer.CellPadding = newVal;
-            ctrl.LinesOffsetInfoLayer.CellPadding = new Thickness(0, newVal.Top, 0, newVal.Bottom);
-            ctrl.ColumnsOffsetInfoLayer.CellPadding = new Thickness(newVal.Left, 0, newVal.Right, 0);
-        }
 
         /**/
         
@@ -737,9 +700,63 @@ namespace WpfHexaEditor
 
         #endregion
     }
-    
+
     /// <summary>
-    /// BackgroundBlocks Part;
+    /// Part of Margin and Padding;
+    /// </summary>
+    public partial class DrawedHexEditor {
+
+        public Thickness CellMargin {
+            get => (Thickness)GetValue(CellMarginProperty);
+            set => SetValue(CellMarginProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for CellMargion.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty CellMarginProperty =
+            DependencyProperty.Register(nameof(CellMargin), typeof(Thickness), typeof(DrawedHexEditor),
+                new PropertyMetadata(new Thickness(0,1,0,1), CellMargionProperty_Changed));
+
+        private static void CellMargionProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+            if (!(d is DrawedHexEditor ctrl)) return;
+
+            ctrl.UpdateCellMargins();
+        }
+
+        private void UpdateCellMargins() {
+            var cellMargin = CellMargin;
+            HexDataLayer.CellMargin = cellMargin;
+            StringDataLayer.CellMargin = cellMargin;
+            LinesOffsetInfoLayer.CellMargin = new Thickness(8, cellMargin.Top, 8, cellMargin.Bottom);
+            ColumnsOffsetInfoLayer.CellMargin = new Thickness(cellMargin.Left, 0, cellMargin.Right, 0);
+        }
+
+        public Thickness CellPadding {
+            get => (Thickness)GetValue(CellPaddingProperty);
+            set => SetValue(CellPaddingProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty CellPaddingProperty =
+            DependencyProperty.Register(nameof(CellPadding), typeof(Thickness), typeof(DrawedHexEditor),
+                new PropertyMetadata(new Thickness(4), CellPaddingProperty_Changed));
+
+        private static void CellPaddingProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+            if (!(d is DrawedHexEditor ctrl)) return;
+
+            ctrl.UpdateCellPaddings();
+        }
+
+        private void UpdateCellPaddings() {
+            var cellPadding = CellPadding;
+            HexDataLayer.CellPadding = cellPadding;
+            StringDataLayer.CellPadding = cellPadding;
+            LinesOffsetInfoLayer.CellPadding = new Thickness(0, cellPadding.Top, 0, cellPadding.Bottom);
+            ColumnsOffsetInfoLayer.CellPadding = new Thickness(cellPadding.Left, 0, cellPadding.Right, 0);
+        }
+    }
+
+    /// <summary>
+        /// BackgroundBlocks Part;
     /// </summary>
     public partial class DrawedHexEditor {
         private readonly List<IBrushBlock> _dataBackgroundBlocks =
