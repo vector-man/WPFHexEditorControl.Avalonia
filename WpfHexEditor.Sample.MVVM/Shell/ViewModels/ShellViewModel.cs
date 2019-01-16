@@ -33,7 +33,7 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
             }
             catch (Exception ex) {
                 Debug.WriteLine(ex.Message);
-                throw;
+                //throw;
             }
 
 #endif
