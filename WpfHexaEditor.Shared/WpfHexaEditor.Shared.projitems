@@ -10,13 +10,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BaseByte.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\CellEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\MouseButtonOnCellEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\MouseOnCellEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Layers\CellStepsLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BrushBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BytesToCharEncodings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\HexBrushPosition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IBytesToCharEncoding.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IEditTransaction.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IBrushBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IStreamBrushBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\ICellsLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IFontControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IHexBrushPosition.cs" />

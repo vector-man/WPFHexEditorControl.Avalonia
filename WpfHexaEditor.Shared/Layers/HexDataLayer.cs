@@ -40,7 +40,67 @@ namespace WpfHexaEditor.Layers {
                 DrawRenderLine(drawingContext, textline);
             }
         }
-        
+
+
+        private IEnumerable<HexTextRenderLine> GetRenderLines() {
+            if (Data == null)
+                yield break;
+
+            var cellSize = GetCellSize();
+            var fontSize = FontSize;
+            var foreground = Foreground;
+
+
+            var row = -1;
+            var byteList = new List<byte>();
+            HexTextRenderLine lastRenderLine = default;
+            var lineReturned = false;
+
+            for (var index = 0; index < Data.Length; index++) {
+                var thisRow = index / BytePerLine;
+                var thisForeground = foreground;
+
+                if (ForegroundBlocks != null) {
+                    foreach (var brushBlock in ForegroundBlocks) {
+                        if (brushBlock.StartOffset <= index && brushBlock.StartOffset + brushBlock.Length - 1 >= index)
+                            thisForeground = brushBlock.Brush;
+                    }
+                }
+
+                ///We will add new <see cref="HexTextRenderLine"/> to the buffer<see cref="textLineList"/>;
+                if (thisRow != row || !lineReturned || lastRenderLine.Foreground != thisForeground) {
+
+                    this.GetCellPosition(index, ref _cachedCellPosition);
+
+                    if (lineReturned) {
+                        lastRenderLine.Data = byteList.ToArray();
+                        yield return lastRenderLine;
+                    }
+
+                    byteList.Clear();
+
+                    lastRenderLine.Foreground = thisForeground;
+                    lastRenderLine.CellStartPosition = _cachedCellPosition;
+                    
+                    lineReturned = true;
+                }
+
+                byteList.Add(Data[index]);
+
+                row = thisRow;
+            }
+
+
+            if (lineReturned) {
+                lastRenderLine.Data = byteList.ToArray();
+                yield return lastRenderLine;
+            }
+        }
+
+        private void DrawHexForegroundPositions() {
+
+        }
+
         protected override void DrawBackground(DrawingContext drawingContext) {
             base.DrawBackground(drawingContext);
 
@@ -83,6 +143,7 @@ namespace WpfHexaEditor.Layers {
                     continue;
                 }
 
+                
                 GetCellPosition(hexBackgroundPosition.Position, ref blockPosition);
 
                 drawRect.Y = blockPosition.Y;
@@ -99,65 +160,8 @@ namespace WpfHexaEditor.Layers {
             }
 
         }
-
-        private IEnumerable<HexTextRenderLine> GetRenderLines() {
-            if (Data == null)
-                yield break;
-            
-            var cellSize = GetCellSize();
-            var fontSize = FontSize;
-            var foreground = Foreground;
-
-
-            var row = -1;
-            var byteList = new List<byte>();
-            HexTextRenderLine lastRenderLine = null;
-
-            for (var index = 0; index < Data.Length; index++) {
-                var thisRow = index / BytePerLine;
-                var thisForeground = foreground;
-
-                if (ForegroundBlocks != null) {
-                    foreach (var brushBlock in ForegroundBlocks) {
-                        if (brushBlock.StartOffset <= index && brushBlock.StartOffset + brushBlock.Length - 1 >= index)
-                            thisForeground = brushBlock.Brush;
-                    }
-                }
-                
-                ///We will add new <see cref="HexTextRenderLine"/> to the buffer<see cref="textLineList"/>;
-                if (thisRow != row || byteList.Count == 0 ||
-                    lastRenderLine == null || lastRenderLine.Foreground != thisForeground) {
-
-                    this.GetCellPosition(index, ref _cachedCellPosition);
-
-                    if (lastRenderLine != null) {
-                        lastRenderLine.Data = byteList.ToArray();
-                        yield return lastRenderLine;
-                    }
-
-                    byteList.Clear();
-                    lastRenderLine = new HexTextRenderLine {
-                        Foreground = thisForeground,
-                        CellStartPosition = _cachedCellPosition
-                    };
-                }
-
-                byteList.Add(Data[index]);
-                
-                row = thisRow;
-            }
-         
-
-            if (lastRenderLine != null) {
-                lastRenderLine.Data = byteList.ToArray();
-                yield return lastRenderLine;
-            }
-        }
         
         private void DrawRenderLine(DrawingContext drawingContext, HexTextRenderLine bufferRenderLine) {
-            if (bufferRenderLine == null) {
-                throw new ArgumentNullException(nameof(bufferRenderLine));
-            }
 
             if (bufferRenderLine.Data == null) {
                 return;
@@ -207,7 +211,7 @@ namespace WpfHexaEditor.Layers {
         /// <summary>
         /// HexTextRenderLine class;
         /// </summary>
-        class HexTextRenderLine {
+        struct HexTextRenderLine {
             public byte[] Data { get; set; }
             public Brush Foreground { get; set; }
             public Point CellStartPosition { get; set; }

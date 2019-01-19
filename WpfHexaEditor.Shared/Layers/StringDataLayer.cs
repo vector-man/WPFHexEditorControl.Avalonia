@@ -59,10 +59,12 @@ namespace WpfHexaEditor.Layers {
 
             var textPosition = new Point();
             var cellSize = GetCellSize();
-            var firstVisibleBtIndex = (int)(bytesToCharEncoding.BytePerChar - DataOffsetInOriginalStream % bytesToCharEncoding.BytePerChar) % bytesToCharEncoding.BytePerChar;
+            var firstVisibleBtIndex = (int)(bytesToCharEncoding.BytePerChar - PositionStartToShow % bytesToCharEncoding.BytePerChar) % bytesToCharEncoding.BytePerChar;
             var charCount = (data.Length - firstVisibleBtIndex) / bytesToCharEncoding.BytePerChar;
             var row = -1;
-            StringTextRenderLine lastRenderLine = null;
+            StringTextRenderLine lastRenderLine = default;
+            var lineReturned = false;
+
             var charList = new List<char>();
 
             if (_drawCharBuffer == null || _drawCharBuffer.Length != bytesToCharEncoding.BytePerChar) {
@@ -87,10 +89,11 @@ namespace WpfHexaEditor.Layers {
                 
                 var ch = bytesToCharEncoding.ConvertToChar(_drawCharBuffer);
 
-                if (thisRow != row || lastRenderLine == null || lastRenderLine.Foreground != thisForeground) {
+                if (thisRow != row || !lineReturned || lastRenderLine.Foreground != thisForeground) {
 
                     this.GetCellPosition(btIndex, ref textPosition);
-                    if (lastRenderLine != null) {
+
+                    if (lineReturned) {
                         lastRenderLine.Data = charList.ToArray();
                         yield return lastRenderLine;
                     }
@@ -101,13 +104,15 @@ namespace WpfHexaEditor.Layers {
                         StartPosition = textPosition
                     };
 
-                    row = thisRow;
+                    lineReturned = true;
                 }
 
                 charList.Add(ch);
+                
+                row = thisRow;
             }
 
-            if (lastRenderLine != null) {
+            if (lineReturned) {
                 lastRenderLine.Data = charList.ToArray();
                 yield return lastRenderLine;
             }
@@ -115,10 +120,6 @@ namespace WpfHexaEditor.Layers {
         }
 
         private void DrawRenderLine(DrawingContext drawingContext, StringTextRenderLine bufferRenderLine) {
-            if (bufferRenderLine == null) {
-                throw new ArgumentNullException(nameof(bufferRenderLine));
-            }
-
             if (bufferRenderLine.Data == null) {
                 return;
             }
@@ -161,7 +162,7 @@ namespace WpfHexaEditor.Layers {
         public static readonly DependencyProperty BytesToCharEncodingProperty =
             DependencyProperty.Register(nameof(BytesToCharEncoding), typeof(IBytesToCharEncoding), typeof(StringDataLayer), new FrameworkPropertyMetadata(BytesToCharEncodings.ASCII, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        class StringTextRenderLine {
+        struct StringTextRenderLine {
             public char[] Data { get; set; }
             public Brush Foreground { get; set; }
             public Point StartPosition { get; set; }

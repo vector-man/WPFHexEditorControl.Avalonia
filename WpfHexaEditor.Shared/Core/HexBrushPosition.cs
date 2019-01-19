@@ -7,7 +7,10 @@ using WpfHexaEditor.Core.Interfaces;
 namespace WpfHexaEditor.Core
 {
     class HexBrushPosition : IHexBrushPosition {
-        public int Position { get; set; }
+        public HexBrushPosition() {
+
+        }
+        public long Position { get; set; }
 
         public Brush FirstCharBrush { get; set; }
 

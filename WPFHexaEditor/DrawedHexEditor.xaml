@@ -5,8 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:layers="clr-namespace:WpfHexaEditor.Layers"
              xmlns:local="clr-namespace:WpfHexaEditor"
-             xmlns:cvts="clr-namespace:WpfHexaEditor.Core.Converters"
-             mc:Ignorable="d" MouseWheel="Control_MouseWheel"
+                mc:Ignorable="d" MouseWheel="Control_MouseWheel"
              Focusable="True" 
              d:DesignHeight="300" >
     <Grid

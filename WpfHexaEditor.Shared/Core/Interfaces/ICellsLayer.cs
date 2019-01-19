@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using WpfHexaEditor.Events;
 
 namespace WpfHexaEditor.Core.Interfaces {
     public interface ICellsLayer {
@@ -10,18 +11,17 @@ namespace WpfHexaEditor.Core.Interfaces {
         Thickness CellPadding { get; set; }
         Size GetCellSize();
 
-        event EventHandler<(int cellIndex, MouseButtonEventArgs e)> MouseLeftDownOnCell;
-        event EventHandler<(int cellIndex, MouseButtonEventArgs e)> MouseLeftUpOnCell;
-        event EventHandler<(int cellIndex, MouseEventArgs e)> MouseMoveOnCell;
-        event EventHandler<(int cellIndex, MouseButtonEventArgs e)> MouseRightDownOnCell;
+        event EventHandler<MouseButtonOnCellEventArgs> MouseDownOnCell;
+        event EventHandler<MouseButtonOnCellEventArgs> MouseUpOnCell;
+        event EventHandler<MouseOnCellEventArgs> MouseMoveOnCell;
 
         /// <summary>
-        /// Get the cell location of view for a cell whose index of Data is <paramref name="index"/>;
+        /// Get the cell location of view for a cell whose index of Data is <paramref name="cellIndex"/>;
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="cellIndex"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        bool GetCellPosition(int index,ref Point position);
+        bool GetCellPosition(long cellIndex,ref Point position);
     }
 
     /// <summary>

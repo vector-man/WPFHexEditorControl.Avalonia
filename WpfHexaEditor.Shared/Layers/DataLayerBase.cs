@@ -13,15 +13,16 @@ using System.Windows.Input;
 using System.Windows.Media;
 using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Interfaces;
+using WpfHexaEditor.Events;
 
 namespace WpfHexaEditor.Layers {
     public abstract class DataLayerBase : FontControlBase, IDataLayer, ICellsLayer
     {
-        public event EventHandler<(int cellIndex, MouseButtonEventArgs e)> MouseLeftDownOnCell;
-        public event EventHandler<(int cellIndex, MouseButtonEventArgs e)> MouseLeftUpOnCell;
-        public event EventHandler<(int cellIndex, MouseEventArgs e)> MouseMoveOnCell;
-        public event EventHandler<(int cellIndex, MouseButtonEventArgs e)> MouseRightDownOnCell;
-        
+
+        public event EventHandler<MouseButtonOnCellEventArgs> MouseDownOnCell;
+        public event EventHandler<MouseButtonOnCellEventArgs> MouseUpOnCell;
+        public event EventHandler<MouseOnCellEventArgs> MouseMoveOnCell;
+
         public byte[] Data
         {
             get => (byte[]) GetValue(DataProperty);
@@ -48,8 +49,6 @@ namespace WpfHexaEditor.Layers {
 
             ctrl.InitializeMouseState();
         }
-        
-        public long DataOffsetInOriginalStream { get; set; }
         
 
         public IEnumerable<IBrushBlock> ForegroundBlocks
@@ -122,7 +121,9 @@ namespace WpfHexaEditor.Layers {
             get => (Brush) GetValue(BackgroundProperty);
             set => SetValue(BackgroundProperty, value);
         }
-        
+
+        public int PositionStartToShow { get; set; }
+
         protected IEnumerable<byte> GetBytesFromData(int offset,int length) {
             if (Data == null)
                 yield break;
@@ -151,14 +152,15 @@ namespace WpfHexaEditor.Layers {
             
             if (Data == null)
                 return;
-            
-            drawingContext.DrawRectangle(Background, null, new Rect
-            {
+
+            var drawRect = new Rect {
                 Width = ActualWidth,
                 Height = ActualHeight
-            });
+            };
 
-            var drawRect = new Rect();
+            drawingContext.DrawRectangle(Background, null, drawRect);
+
+            
             Brush backgroundBrush = null;
             var cellSize = GetCellSize();
 
@@ -267,7 +269,7 @@ namespace WpfHexaEditor.Layers {
 
             var index = GetIndexFromMouse(e);
             if (index != null)
-                MouseLeftDownOnCell?.Invoke(this, (index.Value, e));
+                MouseDownOnCell?.Invoke(this,new MouseButtonOnCellEventArgs(index.Value, e));
         }
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
@@ -278,7 +280,7 @@ namespace WpfHexaEditor.Layers {
 
             var index = GetIndexFromMouse(e);
             if (index != null)
-                MouseLeftUpOnCell?.Invoke(this, (index.Value, e));
+                MouseUpOnCell?.Invoke(this,new MouseButtonOnCellEventArgs(index.Value, e));
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -294,7 +296,7 @@ namespace WpfHexaEditor.Layers {
                     return;
 
                 lastMouseMoveIndex = index;
-                MouseMoveOnCell?.Invoke(this, (index.Value, e));
+                MouseMoveOnCell?.Invoke(this,new MouseOnCellEventArgs(index.Value, e));
             }
         }
 
@@ -306,7 +308,7 @@ namespace WpfHexaEditor.Layers {
 
             var index = GetIndexFromMouse(e);
             if (index != null)
-                MouseRightDownOnCell?.Invoke(this, (index.Value, e));
+                MouseDownOnCell?.Invoke(this,new MouseButtonOnCellEventArgs(index.Value, e));
         }
 
         private int? lastMouseMoveIndex;
@@ -315,7 +317,7 @@ namespace WpfHexaEditor.Layers {
         private void InitializeMouseState() => 
             lastMouseMoveIndex = null;
 
-        public bool GetCellPosition(int index,ref Point position)
+        public bool GetCellPosition(long index,ref Point position)
         {
             if (Data == null)
                 return false;

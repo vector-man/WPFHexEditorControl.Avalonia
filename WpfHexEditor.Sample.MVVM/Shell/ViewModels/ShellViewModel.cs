@@ -18,7 +18,6 @@ using WpfHexEditor.Sample.MVVM.Contracts.Hex;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using WpfHexaEditor.Core.Interfaces;
 using WpfHexaEditor.Core;
 using System.Diagnostics;
 

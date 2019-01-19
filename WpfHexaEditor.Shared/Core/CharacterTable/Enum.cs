@@ -6,7 +6,7 @@
 namespace WpfHexaEditor.Core.CharacterTable
 {
     /// <summary>
-    /// Type de DTE qui sera utilisé dans les classe de DTE
+    /// Type de DTE qui sera utilis?dans les classe de DTE
     /// </summary>
     public enum DteType
     {

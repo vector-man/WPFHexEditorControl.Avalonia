@@ -19,6 +19,7 @@ using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.Interfaces;
 using WpfHexaEditor.Core.Transactions;
+using WpfHexaEditor.Events;
 using WpfHexaEditor.Layers;
 
 namespace WpfHexaEditor
@@ -41,10 +42,10 @@ namespace WpfHexaEditor
 
             FontSize = 16;
 
-            //FontFamily = new FontFamily("Arial New");
+            FontFamily = new FontFamily("Arial");
             //FontFamily = new FontFamily("Microsoft YaHei");
             //FontFamily = new FontFamily("Courier New");
-            FontFamily = new FontFamily("Lucida Bright");
+            //FontFamily = new FontFamily("Lucida Bright");
             DataVisualType = DataVisualType.Decimal;
         }
         
@@ -54,10 +55,10 @@ namespace WpfHexaEditor
             this.SizeChanged += delegate { UpdateContent(); };
             void initialCellsLayer(ICellsLayer layer)
             {
-                layer.MouseLeftDownOnCell += DataLayer_MouseLeftDownOnCell;
-                layer.MouseLeftUpOnCell += DataLayer_MouseLeftUpOnCell;
+                layer.MouseDownOnCell += DataLayer_MouseLeftDownOnCell;
+                layer.MouseUpOnCell += DataLayer_MouseLeftUpOnCell;
                 layer.MouseMoveOnCell += DataLayer_MouseMoveOnCell;
-                layer.MouseRightDownOnCell += DataLayer_MouseRightDownOnCell;
+                layer.MouseDownOnCell += DataLayer_MouseRightDownOnCell;
             }
 
             initialCellsLayer(HexDataLayer);
@@ -111,13 +112,7 @@ namespace WpfHexaEditor
         /// To save the time when Scolling i do not building them every time when scolling.
         /// </summary>
         private byte[] _viewBuffer;
-
-        private byte[] _viewBuffer2;
-
-        //To avoid resigning buffer everytime and notify the UI to rerender,
-        //we're gonna switch from one to another while refreshing.
-        private byte[] _realViewBuffer;
-
+        
         //To avoid wrong mousemove event;
         private bool _contextMenuShowing;
 
@@ -160,12 +155,17 @@ namespace WpfHexaEditor
 #if DEBUG
         private readonly Stopwatch _watch = new Stopwatch();
 #endif
-        
 
-        //To avoid endless looping of ScrollBar_ValueChanged and Position_PropertyChanged.
+
+        /// <summary>
+        /// In order to avoid endless looping of ScrollBar_ValueChanged and Position_PropertyChanged.
+        /// We created this field for signaling;
+        /// </summary>
         private bool _scrollBarValueUpdating;
 
-        //Remember the position in which the mouse last clicked.
+        /// <summary>
+        /// Remember the position in which the mouse last clicked.
+        /// </summary>
         private long? _lastMouseDownPosition;
 
         #region EventSubscriber handlers;
@@ -181,14 +181,21 @@ namespace WpfHexaEditor
                 VerticalScrollBar.Value += e.Delta / 120 * -(int) MouseWheelSpeed;
         }
 
-        private void DataLayer_MouseLeftDownOnCell(object sender, (int cellIndex, MouseButtonEventArgs e) arg)
+        private void DataLayer_MouseLeftDownOnCell(object sender, MouseButtonOnCellEventArgs arg)
         {
-            if (arg.cellIndex >= MaxVisibleLength)
+            if(arg.NativeEventArgs.ChangedButton != MouseButton.Left) {
+                return;
+            }
+
+            HandleMouseLeftDownCore(arg);
+        }
+
+        private void HandleMouseLeftDownCore(MouseButtonOnCellEventArgs arg) {
+            if (arg.CellIndex >= MaxVisibleLength)
                 return;
 
-            var clickPosition = Position / BytePerLine * BytePerLine + arg.cellIndex;
-            if (Keyboard.Modifiers == ModifierKeys.Shift)
-            {
+            var clickPosition = Position / BytePerLine * BytePerLine + arg.CellIndex;
+            if (Keyboard.Modifiers == ModifierKeys.Shift) {
                 long oldStart = -1;
 
                 if (SelectionStart != -1)
@@ -197,8 +204,7 @@ namespace WpfHexaEditor
                 if (FocusPosition != -1)
                     oldStart = FocusPosition;
 
-                if (oldStart != -1)
-                {
+                if (oldStart != -1) {
                     SelectionStart = Math.Min(oldStart, clickPosition);
                     SelectionLength = Math.Abs(oldStart - clickPosition) + 1;
                 }
@@ -210,12 +216,19 @@ namespace WpfHexaEditor
             this.Focus();
         }
 
-        private void DataLayer_MouseRightDownOnCell(object sender, (int cellIndex, MouseButtonEventArgs e) arg) => 
-            DataLayer_MouseLeftDownOnCell(sender, arg);
+        private void DataLayer_MouseRightDownOnCell(object sender, MouseButtonOnCellEventArgs arg) {
+            if(arg.NativeEventArgs.ChangedButton != MouseButton.Right) {
+                return;
+            }
 
-        private void DataLayer_MouseMoveOnCell(object sender, (int cellIndex, MouseEventArgs e) arg)
+
+            HandleMouseLeftDownCore(arg);
+        } 
+        
+
+        private void DataLayer_MouseMoveOnCell(object sender, MouseOnCellEventArgs arg)
         {
-            if (arg.e.LeftButton != MouseButtonState.Pressed)
+            if (arg.NativeEventArgs.LeftButton != MouseButtonState.Pressed)
                 return;
 
             if (_contextMenuShowing)
@@ -229,7 +242,7 @@ namespace WpfHexaEditor
             if (_lastMouseDownPosition == null)
                 return;
 
-            var cellPosition = Position / BytePerLine * BytePerLine + arg.cellIndex;
+            var cellPosition = Position / BytePerLine * BytePerLine + arg.CellIndex;
             if (_lastMouseDownPosition.Value == cellPosition)
                 return;
 
@@ -238,7 +251,7 @@ namespace WpfHexaEditor
             SelectionLength = length;
         }
 
-        private void DataLayer_MouseLeftUpOnCell(object sender, (int cellIndex, MouseButtonEventArgs e) arg) => 
+        private void DataLayer_MouseLeftUpOnCell(object sender, MouseButtonOnCellEventArgs arg) => 
             _lastMouseDownPosition = null;
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -522,46 +535,47 @@ namespace WpfHexaEditor
         {
             UpdateOffsetLinesContent();
             UpdateScrollBarContent();
-            UpdateBackgroundBlocks();
-            UpdateForegroundBlocks();
+            UpdateForegroundsAndBackgrounds();
             UpdateDataContent();
-
             UpdateBlockLines();
         }
 
 
 
         #region  These methods will be invoked every time scrolling the content(scroll or position changed)(Refreshview calling);
-
+        
         ///<see cref="UpdateContent"/>
         /// <summary>
         /// Update the hex and string layer you current view;
         /// </summary>
-        private void UpdateDataContent()
-        {
-            if (!(Stream?.CanRead ?? false))
-            {
+        private void UpdateDataContent() {
+            if (!(Stream?.CanRead ?? false)) {
                 HexDataLayer.Data = null;
                 StringDataLayer.Data = null;
                 return;
             }
 
+            HexDataLayer.Data = null;
+            StringDataLayer.Data = null;
+            
             Stream.Position = Position / BytePerLine * BytePerLine;
-            HexDataLayer.DataOffsetInOriginalStream = Position / BytePerLine * BytePerLine;
-            StringDataLayer.DataOffsetInOriginalStream = Position / BytePerLine * BytePerLine;
+            HexDataLayer.PositionStartToShow = (int)(Position / BytePerLine * BytePerLine);
+            StringDataLayer.PositionStartToShow = (int)(Position / BytePerLine * BytePerLine);
 
+            UpdateViewBuffer();
+
+            HexDataLayer.Data = _viewBuffer;
+            StringDataLayer.Data = _viewBuffer;
+        }
+
+        /// <summary>
+        /// Update <see cref="_viewBuffer"/>;
+        /// </summary>
+        private void UpdateViewBuffer() {
             if (_viewBuffer == null || _viewBuffer.Length != MaxVisibleLength)
                 _viewBuffer = new byte[MaxVisibleLength];
 
-            if (_viewBuffer2 == null || _viewBuffer2.Length != MaxVisibleLength)
-                _viewBuffer2 = new byte[MaxVisibleLength];
-
-            _realViewBuffer = _realViewBuffer == _viewBuffer ? _viewBuffer2 : _viewBuffer;
-
-            Stream.Read(_realViewBuffer, 0, MaxVisibleLength);
-
-            HexDataLayer.Data = _realViewBuffer;
-            StringDataLayer.Data = _realViewBuffer;
+            Stream.Read(_viewBuffer, 0 , MaxVisibleLength);
         }
 
         private void UpdateOffsetLinesContent()
@@ -646,7 +660,7 @@ namespace WpfHexaEditor
         }
 
         public static readonly DependencyProperty BytePerLineProperty =
-            DependencyProperty.Register("BytePerLine", typeof(int), typeof(DrawedHexEditor),
+            DependencyProperty.Register(nameof(BytePerLine), typeof(int), typeof(DrawedHexEditor),
                 new PropertyMetadata(16, BytePerLine_PropertyChanged));
 
         private static void BytePerLine_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -702,7 +716,7 @@ namespace WpfHexaEditor
     }
 
     /// <summary>
-    /// Part of Margin and Padding;
+    /// Margin and Padding Part;
     /// </summary>
     public partial class DrawedHexEditor {
 
@@ -722,12 +736,15 @@ namespace WpfHexaEditor
             ctrl.UpdateCellMargins();
         }
 
+        private const double LinesOffsetInfoLayerHMargin = 8;
+        private const double ColumnsOffsetInfoLayerVMarging = 4;
+
         private void UpdateCellMargins() {
             var cellMargin = CellMargin;
             HexDataLayer.CellMargin = cellMargin;
             StringDataLayer.CellMargin = cellMargin;
-            LinesOffsetInfoLayer.CellMargin = new Thickness(8, cellMargin.Top, 8, cellMargin.Bottom);
-            ColumnsOffsetInfoLayer.CellMargin = new Thickness(cellMargin.Left, 0, cellMargin.Right, 0);
+            LinesOffsetInfoLayer.CellMargin = new Thickness(LinesOffsetInfoLayerHMargin, cellMargin.Top, LinesOffsetInfoLayerHMargin, cellMargin.Bottom);
+            ColumnsOffsetInfoLayer.CellMargin = new Thickness(cellMargin.Left, ColumnsOffsetInfoLayerVMarging, cellMargin.Right, ColumnsOffsetInfoLayerVMarging);
         }
 
         public Thickness CellPadding {
@@ -755,23 +772,135 @@ namespace WpfHexaEditor
         }
     }
 
+
     /// <summary>
-        /// BackgroundBlocks Part;
+    /// <see cref="IBrushBlock"/> and <see cref="IHexBrushPosition"/> Part;
     /// </summary>
     public partial class DrawedHexEditor {
-        private readonly List<IBrushBlock> _dataBackgroundBlocks =
-            new List<IBrushBlock>();
+        /// <summary>
+        /// We create this dictionary to store the relationship between two brushBlocks,
+        /// key of which stores the position and length that relative to Stream,
+        /// while the value of which stores the position and length that relative to <see cref="Position"/> in visible range;
+        /// To-DO:avoid reproducing the brushblock every time when refreshing the view.
+        /// </summary>
+        private readonly Dictionary<IBrushBlock, IBrushBlock> _cachedBrushBlockDict = new Dictionary<IBrushBlock, IBrushBlock>();
 
         /// <summary>
-        /// Brush block for Selection;
+        /// We create this dictionary to store the relationship between two HexBrushPosition,
+        /// key of which stores the position and length that relative to Stream,
+        /// while the value of which stores the position and length that relative to <see cref="Position"/> in visible range;
+        /// To-DO:avoid reproducing the <see cref="IHexBrushPosition"/> every time when refreshing the view.
         /// </summary>
-        private readonly BrushBlock _selectionBrushBlock = new BrushBlock();
+        private readonly Dictionary<IHexBrushPosition, IHexBrushPosition> _cachedHexBrushPositionDict = new Dictionary<IHexBrushPosition, IHexBrushPosition>();
 
         /// <summary>
-        /// Brush block for focus state;
+        /// Create or Get the <see cref="IBrushBlock"/>(value) that related to <paramref name="brushBlockKey"/>(key);
         /// </summary>
-        private readonly BrushBlock _focusBrushBlock = new BrushBlock();
+        /// <param name="brushBlockKey"></param>
+        /// <returns></returns>
+        private IBrushBlock CreateOrGetBrushBlockValue(IBrushBlock brushBlockKey) {
+            IBrushBlock brushBlockValue = null;
+            if (_cachedBrushBlockDict.TryGetValue(brushBlockKey, out var exsitingBrushBlockValue)) {
+                brushBlockValue = exsitingBrushBlockValue;
+            }
+            else {
+                brushBlockValue = new BrushBlock();
+                _cachedBrushBlockDict.Add(brushBlockKey, brushBlockValue);
+            }
 
+            if (brushBlockValue.Brush != brushBlockKey.Brush) {
+                brushBlockValue.Brush = brushBlockKey.Brush;
+            }
+
+            return brushBlockValue;
+        }
+
+        /// <summary>
+        /// Create or Get the <see cref="IHexBrushPosition"/> that related to <paramref name="hexBrushPositionKey"/>;
+        /// </summary>
+        /// <param name="hexBrushPositionKey"></param>
+        /// <returns></returns>
+        private IHexBrushPosition CreateOrGetHexBrushPosition(IHexBrushPosition hexBrushPositionKey) {
+            IHexBrushPosition hexBrushPositionValue = null;
+            if(_cachedHexBrushPositionDict.TryGetValue(hexBrushPositionKey,out var exsitingHexBrushPositionValue)) {
+                hexBrushPositionValue = exsitingHexBrushPositionValue;
+            }
+            else {
+                hexBrushPositionValue = new HexBrushPosition();
+                _cachedHexBrushPositionDict.Add(hexBrushPositionKey, hexBrushPositionValue);
+            }
+
+            if(hexBrushPositionValue.FirstCharBrush != hexBrushPositionKey.FirstCharBrush) {
+                hexBrushPositionValue.FirstCharBrush = hexBrushPositionKey.FirstCharBrush;
+            }
+
+            if(hexBrushPositionValue.SecondCharBrush != hexBrushPositionKey.SecondCharBrush) {
+                hexBrushPositionValue.SecondCharBrush = hexBrushPositionKey.SecondCharBrush;
+            }
+
+            return hexBrushPositionValue;
+        }
+
+        private void AddBrushBlockCore(IBrushBlock brushBlock, IList<IBrushBlock> brushBlocks) {
+            if (Stream == null)
+                return;
+
+            //Check whether the backgroundblock is visible;
+            if (!(brushBlock.StartOffset + brushBlock.Length >= Position && brushBlock.StartOffset < Position + MaxVisibleLength))
+                return;
+
+            var maxIndex = Math.Max(brushBlock.StartOffset, Position);
+            var minEnd = Math.Min(brushBlock.StartOffset + brushBlock.Length, Position + MaxVisibleLength);
+
+            var brushBlockValue = CreateOrGetBrushBlockValue(brushBlock);
+            
+            brushBlockValue.StartOffset = maxIndex - Position;
+            brushBlockValue.Length = minEnd - maxIndex;
+
+            brushBlocks.Add(brushBlockValue);
+        }
+        
+        private void AddHexBrushPositionCore(IHexBrushPosition hexBrushPosition,IList<IHexBrushPosition> hexBrushPositions) {
+            if (Stream == null)
+                return;
+
+            ///Check whether the <param name="hexBrushPosition"/> is visible;
+            if (hexBrushPosition.Position < Position || hexBrushPosition.Position >= Position + MaxVisibleLength)
+                return;
+
+            var hexBrushPositionValue = CreateOrGetHexBrushPosition(hexBrushPosition);
+
+            hexBrushPositionValue.Position = hexBrushPosition.Position - Position;
+
+            hexBrushPositions.Add(hexBrushPositionValue);
+        }
+
+        private void UpdateForegroundsAndBackgrounds() {
+            UpdateBackgroundBlocks();
+            UpdateForegroundBlocks();
+            UpdateHexBackgroundPositions();
+        }
+    }
+
+    /// <summary>
+    /// BackgroundBlocks Part;
+    /// </summary>
+    public partial class DrawedHexEditor {
+        private readonly List<IBrushBlock> _stringBackgroundBlocks = new List<IBrushBlock>();
+
+        private readonly List<IBrushBlock> _hexBackgroundBlocks = new List<IBrushBlock>();
+
+        private readonly List<IHexBrushPosition> _hexBackgroundPositions = new List<IHexBrushPosition>();
+
+        /// <summary>
+        /// We create this dictionary to store the relationship between two backgroundBlocks,
+        /// key of which stores the position and length that relative to Stream,
+        /// while the value of which stores the position and length that relative to <see cref="Position"/> in visible range;
+        /// To-DO:avoid reproducing the brushblock every time when refreshing the view.
+        /// </summary>
+        private readonly Dictionary<IBrushBlock, IBrushBlock> _cachedBackgroundBlockDict = new Dictionary<IBrushBlock, IBrushBlock>();
+
+        
         public IEnumerable<IBrushBlock> CustomBackgroundBlocks {
             get => (IEnumerable<IBrushBlock>)GetValue(
                 CustomBackgroundBlocksProperty);
@@ -782,69 +911,96 @@ namespace WpfHexaEditor
         public static readonly DependencyProperty CustomBackgroundBlocksProperty =
             DependencyProperty.Register(nameof(CustomBackgroundBlocks),
                 typeof(IEnumerable<IBrushBlock>),
-                typeof(DrawedHexEditor));
-        
+                typeof(DrawedHexEditor),
+                new PropertyMetadata(null, CustomBackgroundBlocksProperty_Changed));
+
+        private static void CustomBackgroundBlocksProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+            
+        }
+
+        private void SetupCustomBackgroundBlocks(IEnumerable<IBrushBlock> backgroundBlocks) {
+
+        }
+
+
         public void UpdateBackgroundBlocks() {
             //ClearBackgroundBlocks;
             HexDataLayer.BackgroundBlocks = null;
             StringDataLayer.BackgroundBlocks = null;
-            _dataBackgroundBlocks.Clear();
 
-            AddCustomBackgroundBlocks();
-            AddSelectionBackgroundBlocks();
-            AddFocusPositionBackgroundBlock();
+            _stringBackgroundBlocks.Clear();
+            _hexBackgroundBlocks.Clear();
 
-            HexDataLayer.BackgroundBlocks = _dataBackgroundBlocks;
-            StringDataLayer.BackgroundBlocks = _dataBackgroundBlocks;
+            foreach (var action in GetUpdateBackgroundActions()) {
+                action();
+            }
+
+            StringDataLayer.BackgroundBlocks = _stringBackgroundBlocks;
+            HexDataLayer.BackgroundBlocks = _hexBackgroundBlocks;
         }
 
-        private void AddCustomBackgroundBlocks() {
+
+        public void UpdateHexBackgroundPositions() {
+            HexDataLayer.HexBackgroundPositions = null;
+
+            _hexBackgroundPositions.Clear();
+
+            foreach (var action in GetUpdateHexBackgroundPositionsActions()) {
+                action();
+            }
+
+            HexDataLayer.HexBackgroundPositions = _hexBackgroundPositions;
+        }
+
+        private IEnumerable<Action> GetUpdateBackgroundActions() {
+            yield return UpdateCustomBackgroundBlocks;
+            yield return UpdateSelectionBackgroundBlocks;
+            yield return UpdateFocusPositionBackgroundBlock;
+        }
+
+        private IEnumerable<Action> GetUpdateHexBackgroundPositionsActions() {
+            yield return UpdateFocusHexBackgroundPosition;
+        }
+
+        private void UpdateCustomBackgroundBlocks() {
             if (CustomBackgroundBlocks == null) return;
 
             foreach (var block in CustomBackgroundBlocks)
                 AddBackgroundBlock(block);
         }
 
+        /// <summary>
+        /// Add <paramref name="brushBlock"/> to <see cref="_stringBackgroundBlocks"/> and <see cref="_hexBackgroundBlocks"/>;
+        /// </summary>
+        /// <param name="brushBlock"></param>
         private void AddBackgroundBlock(IBrushBlock brushBlock) {
-            if (Stream == null)
-                return;
-
-            //Check whether the backgroundblock is in the sight;
-            if (!(brushBlock.StartOffset + brushBlock.Length >= Position && brushBlock.StartOffset < Position + MaxVisibleLength))
-                return;
-            
-            var maxIndex = Math.Max(brushBlock.StartOffset, Position);
-            var minEnd = Math.Min(brushBlock.StartOffset + brushBlock.Length, Position + MaxVisibleLength);
-
-            _dataBackgroundBlocks.Add(new BrushBlock { StartOffset = maxIndex - Position, Length = minEnd - maxIndex, Brush = brushBlock.Brush });
-        }
-
-        private void AddSelectionBackgroundBlocks() {
-            _selectionBrushBlock.StartOffset = SelectionStart;
-            _selectionBrushBlock.Length = SelectionLength;
-            _selectionBrushBlock.Brush = SelectionBrush;
-
-            AddBackgroundBlock(_selectionBrushBlock);
-        }
-            
-
-        private void AddFocusPositionBackgroundBlock() {
-            if (FocusPosition >= 0) {
-                _focusBrushBlock.StartOffset = FocusPosition;
-                _focusBrushBlock.Length = 1;
-                _focusBrushBlock.Brush = FocusBrush;
-                AddBackgroundBlock(_focusBrushBlock);
-            }
+            AddHexBackgroundBlock(brushBlock);
+            AddStringBackgroundBlock(brushBlock);
         }
         
-    }
+        private void AddHexBackgroundBlock(IBrushBlock brushBlock) {
+            AddBrushBlockCore(brushBlock, _hexBackgroundBlocks);
+        }
 
+        private void AddStringBackgroundBlock(IBrushBlock brushBlock) {
+            AddBrushBlockCore(brushBlock, _stringBackgroundBlocks);
+        }
+        
+        private void AddHexBrushPosition(IHexBrushPosition hexBrushPosition) {
+            AddHexBrushPositionCore(hexBrushPosition, _hexBackgroundPositions);
+        }
+    }
+    
     /// <summary>
-    /// ForegroundBlockParts;
+    /// ForegroundBlock Part;
     /// </summary>
     public partial class DrawedHexEditor {
-        private readonly List<IBrushBlock> _dataForegroundBlocks =
-            new List<IBrushBlock>();
+        private readonly List<IBrushBlock> _stringForegroundBlocks = new List<IBrushBlock>();
+
+        private readonly List<IBrushBlock> _hexForegroundBlocks = new List<IBrushBlock>();
+
+        private readonly List<IHexBrushPosition> _hexForegroundPositions = new List<IHexBrushPosition>();
+        
         public IEnumerable<IBrushBlock> CustomForegroundBlocks {
             get { return (IEnumerable<IBrushBlock>)GetValue(CustomForegroundBlocksProperty); }
             set { SetValue(CustomForegroundBlocksProperty, value); }
@@ -857,62 +1013,69 @@ namespace WpfHexaEditor
         private void UpdateForegroundBlocks() {
             HexDataLayer.ForegroundBlocks = null;
             StringDataLayer.ForegroundBlocks = null;
+
+            _hexForegroundBlocks.Clear();
+            _stringForegroundBlocks.Clear();
             
-            _dataForegroundBlocks.Clear();
-
-            AddCustomForegroundBlocks();
-            AddSelectionForegroundBlocks();
-            AddFocusForegroundBlock();
-
-            HexDataLayer.ForegroundBlocks = _dataForegroundBlocks;
-            StringDataLayer.ForegroundBlocks = _dataForegroundBlocks;
+            foreach (var action in GetUpdateForegroundBlockActions()) {
+                action();
+            }
+            
+            HexDataLayer.ForegroundBlocks = _hexForegroundBlocks;
+            StringDataLayer.ForegroundBlocks = _stringForegroundBlocks;
         }
-
-        private void AddCustomForegroundBlocks() {
+        
+        private void UpdateCustomForegroundBlocks() {
             if (CustomForegroundBlocks == null) return;
 
             foreach (var block in CustomForegroundBlocks)
                 AddForegroundBlock(block);
         }
 
-        private void AddFocusForegroundBlock() {
-            if(FocusBrush == null) {
-                return;
-            }
 
-            if (FocusPosition >= 0)
-                AddForegroundBlock(new BrushBlock { StartOffset = FocusPosition, Length = 1, Brush = FocusForeground });
+        private IEnumerable<Action> GetUpdateForegroundBlockActions() {
+            yield return UpdateCustomForegroundBlocks;
+            yield return UpdateSelectionForegroundBlocks;
+            yield return UpdateFocusForegroundBlock;
         }
 
+      
 
-        private void AddSelectionForegroundBlocks() {
-            if(SelectionForeground == null) {
-                return;
-            }
-
-            AddForegroundBlock(new BrushBlock { StartOffset = SelectionStart, Length = SelectionLength, Brush = SelectionForeground });
-        }
-            
-
+        /// <summary>
+        /// Add <paramref name="brushBlock"/> to <see cref="_stringBackgroundBlocks"/> and <see cref="_hexBackgroundBlocks"/>;
+        /// </summary>
+        /// <param name="brushBlock"></param>
         private void AddForegroundBlock(IBrushBlock brushBlock) {
-            if (Stream == null)
-                return;
-
-            //Check whether the backgroundblock is in visible;
-            if (!(brushBlock.StartOffset + brushBlock.Length >= Position && brushBlock.StartOffset < Position + MaxVisibleLength))
-                return;
-
-            var maxIndex = Math.Max(brushBlock.StartOffset, Position);
-            var minEnd = Math.Min(brushBlock.StartOffset + brushBlock.Length, Position + MaxVisibleLength);
-
-            _dataForegroundBlocks.Add(new BrushBlock { StartOffset = maxIndex - Position, Length = minEnd - maxIndex, Brush = brushBlock.Brush });
+            AddHexForegroundBlock(brushBlock);
+            AddStringForegroundBlock(brushBlock);
         }
+
+        private void AddHexForegroundBlock(IBrushBlock brushBlock) {
+            AddBrushBlockCore(brushBlock, _hexForegroundBlocks);
+        }
+
+        private void AddStringForegroundBlock(IBrushBlock brushBlock) {
+            AddBrushBlockCore(brushBlock, _stringForegroundBlocks);
+        }
+
+        
     }
+
 
     /// <summary>
     /// Selection Part;
     /// </summary>
     public partial class DrawedHexEditor {
+
+        /// <summary>
+        /// Background block for Selection;
+        /// </summary>
+        private readonly IBrushBlock _selectionBackgroundBlock = new BrushBlock();
+
+        /// <summary>
+        /// Foreground block for Selection;
+        /// </summary>
+        private readonly IBrushBlock _selectionForegroundBlock = new BrushBlock();
 
         public long SelectionStart {
             get => (long)GetValue(SelectionStartProperty);
@@ -929,8 +1092,8 @@ namespace WpfHexaEditor
             if (!(d is DrawedHexEditor ctrl))
                 return;
 
-            ctrl.UpdateBackgroundBlocks();
-            ctrl.UpdateForegroundBlocks();
+
+            ctrl.UpdateForegroundsAndBackgrounds();
         }
 
         public long SelectionLength {
@@ -949,18 +1112,17 @@ namespace WpfHexaEditor
             if (!(d is DrawedHexEditor ctrl))
                 return;
 
-            ctrl.UpdateBackgroundBlocks();
-            ctrl.UpdateForegroundBlocks();
+            ctrl.UpdateForegroundsAndBackgrounds();
         }
 
-        public Brush SelectionBrush {
-            get => (Brush)GetValue(SelectionBrushProperty);
-            set => SetValue(SelectionBrushProperty, value);
+        public Brush SelectionBackground {
+            get => (Brush)GetValue(SelectionBackgroundProperty);
+            set => SetValue(SelectionBackgroundProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for SelectionBrush.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SelectionBrushProperty =
-            DependencyProperty.Register(nameof(SelectionBrush), typeof(Brush), typeof(DrawedHexEditor),
+        public static readonly DependencyProperty SelectionBackgroundProperty =
+            DependencyProperty.Register(nameof(SelectionBackground), typeof(Brush), typeof(DrawedHexEditor),
                 new PropertyMetadata(new SolidColorBrush(Color.FromRgb(0xe0, 0xe0, 0xff))));
 
 
@@ -976,12 +1138,44 @@ namespace WpfHexaEditor
                 new PropertyMetadata(Brushes.Azure));
 
 
+        private void UpdateSelectionBackgroundBlocks() {
+            if(SelectionBackground == null) {
+                return;
+            }
+
+            _selectionBackgroundBlock.StartOffset = SelectionStart;
+            _selectionBackgroundBlock.Length = SelectionLength;
+            _selectionBackgroundBlock.Brush = SelectionBackground;
+
+            AddBackgroundBlock(_selectionBackgroundBlock);
+        }
+        
+        private void UpdateSelectionForegroundBlocks() {
+            if (SelectionForeground == null) {
+                return;
+            }
+
+            _selectionForegroundBlock.StartOffset = SelectionStart;
+            _selectionForegroundBlock.Length = SelectionLength;
+            _selectionForegroundBlock.Brush = SelectionForeground;
+            
+            AddForegroundBlock(_selectionForegroundBlock);
+        }
     }
 
     /// <summary>
     /// Focus Part;
     /// </summary>
     public partial class DrawedHexEditor {
+
+        /// <summary>
+        /// Brush block for focus state;
+        /// </summary>
+        private readonly IBrushBlock _stringFocusBackgroundBlock = new BrushBlock { Length = 1 };
+        private readonly IHexBrushPosition _hexFocusBrushPosition = new HexBrushPosition();
+
+        private readonly IBrushBlock _focusForegroundBlock = new BrushBlock { Length = 1 };
+
         public long FocusPosition {
             get => (long)GetValue(FocusPositionProperty);
             set => SetValue(FocusPositionProperty, value);
@@ -997,22 +1191,21 @@ namespace WpfHexaEditor
             if (!(d is DrawedHexEditor ctrl))
                 return;
 
-            ctrl.UpdateBackgroundBlocks();
-            ctrl.UpdateForegroundBlocks();
+            ctrl.UpdateForegroundsAndBackgrounds();
 
             if ((long)e.NewValue == -1) return;
 
             ctrl.Focusable = true;
         }
 
-        public Brush FocusBrush {
-            get => (Brush)GetValue(FocusBrushProperty);
-            set => SetValue(FocusBrushProperty, value);
+        public Brush FocusBackground {
+            get => (Brush)GetValue(FocusBackgroundProperty);
+            set => SetValue(FocusBackgroundProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for FocusBrush.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty FocusBrushProperty =
-            DependencyProperty.Register(nameof(FocusBrush), typeof(Brush), typeof(DrawedHexEditor),
+        public static readonly DependencyProperty FocusBackgroundProperty =
+            DependencyProperty.Register(nameof(FocusBackground), typeof(Brush), typeof(DrawedHexEditor),
                 new PropertyMetadata(Brushes.Blue));
 
         public Brush FocusForeground {
@@ -1027,14 +1220,36 @@ namespace WpfHexaEditor
 
 
 
-        public FocusedPanel FocusedPanel {
-            get { return (FocusedPanel)GetValue(FocusedPanelProperty); }
-            set { SetValue(FocusedPanelProperty, value); }
+        public Brush FocusBackgroundNonActive {
+            get { return (Brush)GetValue(FocusBackgroundNonActiveProperty); }
+            set { SetValue(FocusBackgroundNonActiveProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for FocusBackgroundNonActive.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty FocusBackgroundNonActiveProperty =
+            DependencyProperty.Register(nameof(FocusBackgroundNonActive), typeof(Brush), typeof(DrawedHexEditor), new PropertyMetadata(Brushes.Gray));
+
+
+
+        public Brush FocusForegroundNonActive {
+            get { return (Brush)GetValue(FocusForegroundNonActiveProperty); }
+            set { SetValue(FocusForegroundNonActiveProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for FocusForegroundNonActive.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty FocusForegroundNonActiveProperty =
+            DependencyProperty.Register(nameof(FocusForegroundNonActive), typeof(Brush), typeof(DrawedHexEditor), new PropertyMetadata(Brushes.Yellow));
+
+
+
+        public ActivedPanel ActivedPanel {
+            get { return (ActivedPanel)GetValue(ActivedPanelProperty); }
+            set { SetValue(ActivedPanelProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for FocusedPanel.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty FocusedPanelProperty =
-            DependencyProperty.Register(nameof(FocusedPanel), typeof(FocusedPanel), typeof(DrawedHexEditor), new PropertyMetadata(FocusedPanel.Hex));
+        public static readonly DependencyProperty ActivedPanelProperty =
+            DependencyProperty.Register(nameof(ActivedPanel), typeof(ActivedPanel), typeof(DrawedHexEditor), new PropertyMetadata(ActivedPanel.Hex));
 
 
 
@@ -1046,6 +1261,65 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for HexFocusedChar.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty HexFocusedCharProperty =
             DependencyProperty.Register(nameof(HexFocusedChar), typeof(HexFocusedChar), typeof(DrawedHexEditor), new PropertyMetadata(HexFocusedChar.First));
+
+        
+        private void UpdateFocusPositionBackgroundBlock() {
+            if(FocusPosition < 0 ) {
+                return;
+            }
+
+            ///We add <see cref="_stringFocusBackgroundBlock"/> to <see cref="_stringBackgroundBlocks"/> only when
+            ///<see cref="ActivedPanel"/> is <see cref="ActivedPanel.String"/>;
+            ///Otherwise we will deal with it in <see cref="UpdateFocusHexBackgroundPosition"/>;
+            if (ActivedPanel != ActivedPanel.String) {
+                return;
+            }
+            
+            _stringFocusBackgroundBlock.StartOffset = FocusPosition;
+            _stringFocusBackgroundBlock.Brush = FocusBackground;
+            AddStringBackgroundBlock(_stringFocusBackgroundBlock);
+        }
+
+        private void UpdateFocusHexBackgroundPosition() {
+            if (FocusPosition < 0) {
+                return;
+            }
+
+            ///We add <see cref="_hexFocusBrushPosition"/> to <see cref="_hexBackgroundPositions"/> only when 
+            ///<see cref="ActivedPanel"/> is <see cref="ActivedPanel.Hex"/>;
+            if (ActivedPanel != ActivedPanel.Hex) {
+                return;
+            }
+
+            _hexFocusBrushPosition.Position = FocusPosition;
+
+            if(HexFocusedChar == HexFocusedChar.First) {
+                _hexFocusBrushPosition.FirstCharBrush = FocusBackground;
+                _hexFocusBrushPosition.SecondCharBrush = null;
+            }
+            else {
+                _hexFocusBrushPosition.FirstCharBrush = null;
+                _hexFocusBrushPosition.SecondCharBrush = FocusBackground;
+            }
+            
+            AddHexBrushPosition(_hexFocusBrushPosition);
+        }
+       
+
+        private void UpdateFocusForegroundBlock() {
+            if (FocusBackground == null) {
+                return;
+            }
+
+            if (FocusPosition >= 0) {
+                _focusForegroundBlock.StartOffset = FocusPosition;
+                if(_focusForegroundBlock.Brush != FocusForeground) {
+                    _focusForegroundBlock.Brush = FocusForeground;
+                }
+                AddForegroundBlock(_focusForegroundBlock);
+            }
+        }
+
 
 
     }
@@ -1232,8 +1506,8 @@ namespace WpfHexaEditor
 
         private long _mouseOverLevel;
 
-        private void Datalayer_MouseMoveOnCell(object sender, (int cellIndex, MouseEventArgs e) arg) {
-            var index = arg.cellIndex;
+        private void Datalayer_MouseMoveOnCell(object sender, MouseOnCellEventArgs arg) {
+            var index = arg.CellIndex;
             if (!(sender is DataLayerBase dataLayer))
                 return;
 
@@ -1248,7 +1522,7 @@ namespace WpfHexaEditor
             if (Mouse.LeftButton == MouseButtonState.Pressed)
                 return;
 
-            HoverPosition = Position / BytePerLine * BytePerLine + arg.cellIndex;
+            HoverPosition = Position / BytePerLine * BytePerLine + arg.CellIndex;
 
             if (ToolTipExtension.GetOperatableToolTip(dataLayer) == null)
                 return;

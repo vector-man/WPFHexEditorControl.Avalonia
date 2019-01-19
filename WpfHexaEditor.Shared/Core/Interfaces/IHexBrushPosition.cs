@@ -13,14 +13,14 @@ namespace WpfHexaEditor.Core.Interfaces
         /// <summary>
         /// Position relative to the data of the datalayer;
         /// </summary>
-        int Position { get; }
+        long Position { get; set; }
         /// <summary>
         /// The first char Foreground or Background etc.
         /// </summary>
-        Brush FirstCharBrush { get; }
+        Brush FirstCharBrush { get; set; }
         /// <summary>
         /// The second char Foreground or Background etc.
         /// </summary>
-        Brush SecondCharBrush { get; }
+        Brush SecondCharBrush { get; set; }
     }
 }

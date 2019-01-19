@@ -178,7 +178,7 @@ namespace WpfHexaEditor.Core
         //Binary        //Editable
     }
 
-    public enum FocusedPanel {
+    public enum ActivedPanel {
         Hex,
         String
     }

@@ -20,6 +20,7 @@ namespace WpfHexaEditor.Core.Interfaces
 
         int BytePerLine { get; set; }
         int AvailableRowsCount { get; }
-        long DataOffsetInOriginalStream { get; set; }
+
+        int PositionStartToShow { get; }
     }
 }
