@@ -260,7 +260,7 @@ namespace WpfHexaEditor.Layers {
         private int? GetIndexFromMouse(MouseEventArgs e) => 
             e == null ? null : GetIndexFromLocation(e.GetPosition(this));
 
-        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
             if (e.Handled)
@@ -271,7 +271,7 @@ namespace WpfHexaEditor.Layers {
                 MouseDownOnCell?.Invoke(this,new MouseButtonOnCellEventArgs(index.Value, e));
         }
 
-        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        protected override void OnMouseUp(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonUp(e);
             if (e.Handled)
@@ -293,18 +293,8 @@ namespace WpfHexaEditor.Layers {
                 MouseMoveOnCell?.Invoke(this,new MouseOnCellEventArgs(index.Value, e));
         }
         
-        protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
-        {
-            base.OnMouseRightButtonDown(e);
-            if (e.Handled)
-                return;
 
-            var index = GetIndexFromMouse(e);
-            if (index != null)
-                MouseDownOnCell?.Invoke(this, new MouseButtonOnCellEventArgs(index.Value,e));
-        }
-
-        public bool GetCellPosition(long index,ref Point position) => 
+        public Point? GetCellPosition(long index) => 
             throw new NotImplementedException();
     }
 

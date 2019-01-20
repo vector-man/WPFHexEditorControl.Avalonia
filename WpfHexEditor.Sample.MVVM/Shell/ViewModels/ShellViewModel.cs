@@ -28,7 +28,7 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
             InitializeToolTips();
 #if DEBUG
             try {
-                Stream = File.OpenRead("E://HBMS400M.img");
+                Stream = File.Open("E://HBMS400M.img", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
             }
             catch (Exception ex) {
                 Debug.WriteLine(ex.Message);
@@ -80,6 +80,9 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
             set => SetProperty(ref _position, value);
         }
 
+        public InteractionRequest<Notification> SaveChangesRequest { get; } = new InteractionRequest<Notification>();
+        public InteractionRequest<Notification> UndoRequest { get; } = new InteractionRequest<Notification>();
+        public InteractionRequest<Notification> RedoRequest { get; } = new InteractionRequest<Notification>();
 
         public ObservableCollection<BrushBlock> CustomBackgroundBlocks { get; set; } = new ObservableCollection<WpfHexaEditor.Core.BrushBlock>();
         
@@ -173,13 +176,19 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
             }
         }
 
-        private DelegateCommand _submitChangesCommand;
-        public DelegateCommand SubmitChangesCommand => _submitChangesCommand ??
-            (_submitChangesCommand = new DelegateCommand(
+        
+
+        private DelegateCommand _saveChangesCommand;
+        public DelegateCommand SaveChangesCommand => _saveChangesCommand ??
+            (_saveChangesCommand = new DelegateCommand(
                 () => {
+                    SaveChangesRequest.Raise(new Notification());
                     //FileEditor?.SubmitChanges();
                 }
             ));
+
+
+   
 
         private DelegateCommand _saveAsCommand;
         public DelegateCommand SaveAsCommand => _saveAsCommand ??
@@ -222,13 +231,22 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
                 }
             ));
 
+        
         private DelegateCommand _undoCommand;
         public DelegateCommand UndoCommand => _undoCommand ?? (_undoCommand = new DelegateCommand(
             () => {
-                //FileEditor?.Undo();
+                UndoRequest.Raise(new Notification());
             }
         ));
 
+
+        private DelegateCommand _redoCommand;
+        public DelegateCommand RedoCommand => _redoCommand ??
+            (_redoCommand = new DelegateCommand(
+                () => {
+                    RedoRequest.Raise(new Notification());
+                }
+            ));
 
         #endregion
 

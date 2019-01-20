@@ -1,10 +1,7 @@
 ﻿<Window x:Class="WpfHexEditor.Sample.MVVM.Views.Shell"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:local="clr-namespace:WpfHexEditor.Sample.MVVM"
         xmlns:properties="clr-namespace:WpfHexEditor.Sample.MVVM.Properties"
         xmlns:hexcore="clr-namespace:WpfHexaEditor.Core;assembly=WPFHexaEditor"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
@@ -13,7 +10,13 @@
         xmlns:cvts="clr-namespace:WpfHexaEditor.Core.Converters;assembly=WPFHexaEditor"
         x:Name="Window" prism:ViewModelLocator.AutoWireViewModel="True"
         Title="WpfHexEditor-DrawedHexEditor" Height="350" Width="525">
+    
     <!--xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"-->
+    <Window.InputBindings>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveChangesCommand}"/>
+        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}"/>
+        <KeyBinding Key="Y" Modifiers="Ctrl" Command="{Binding RedoCommand}"/>
+    </Window.InputBindings>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="ContentRendered">
             <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
@@ -252,8 +255,23 @@
                 <i:EventTrigger EventName="Drop">
                     <prism:InvokeCommandAction Command="{Binding DropCommand}" TriggerParameterPath="Data"/>
                 </i:EventTrigger>
+                <i:EventTrigger EventName="CanUndoChanged">
+                    <prism:InvokeCommandAction Command="{Binding CanUndoChangedCommand}" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="CanRedoChanged">
+                    <prism:InvokeCommandAction Command="{Binding CanRedoChangedCommand}"/>
+                </i:EventTrigger>
                 <prism:InteractionRequestTrigger SourceObject="{Binding UpdateBackgroundRequest}">
                     <ei:CallMethodAction MethodName="UpdateBackgroundBlocks"/>
+                </prism:InteractionRequestTrigger>
+                <prism:InteractionRequestTrigger SourceObject="{Binding UndoRequest}">
+                    <ei:CallMethodAction MethodName="Undo"/>
+                </prism:InteractionRequestTrigger>
+                <prism:InteractionRequestTrigger SourceObject="{Binding RedoRequest}">
+                    <ei:CallMethodAction MethodName="Redo"/>
+                </prism:InteractionRequestTrigger>
+                <prism:InteractionRequestTrigger SourceObject="{Binding SaveChangesRequest}">
+                    <ei:CallMethodAction MethodName="SaveChanges"/>
                 </prism:InteractionRequestTrigger>
             </i:Interaction.Triggers>
 

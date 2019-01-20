@@ -178,12 +178,12 @@ namespace WpfHexaEditor.Core
         //Binary        //Editable
     }
 
-    public enum ActivedPanel {
+    public enum LayerPanel {
         Hex,
         String
     }
 
-    public enum HexFocusedChar {
+    public enum HexChar {
         First,
         Second
     }

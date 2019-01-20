@@ -16,31 +16,31 @@ namespace WpfHexaEditor.Core.Interfaces {
         event EventHandler<MouseOnCellEventArgs> MouseMoveOnCell;
 
         /// <summary>
-        /// Get the cell location of view for a cell whose index of Data is <paramref name="cellIndex"/>;
+        /// Get the location for a cell whose index of Data is <paramref name="cellIndex"/> from view,margins and paddings are included;
         /// </summary>
         /// <param name="cellIndex"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        bool GetCellPosition(long cellIndex,ref Point position);
+        Point? GetCellPosition(long cellIndex);
     }
 
-    /// <summary>
-    /// CellsLayerExtensions;
-    /// </summary>
-    public static class CellsLayerExtensions {
-        public static Point? GetCellPosition(this ICellsLayer cellsLayer,int index) {
-            if(cellsLayer == null) {
-                throw new ArgumentNullException(nameof(cellsLayer));
-            }
+    ///// <summary>
+    ///// CellsLayerExtensions;
+    ///// </summary>
+    //public static class CellsLayerExtensions {
+    //    public static Point? GetCellPosition(this ICellsLayer cellsLayer,int index) {
+    //        if(cellsLayer == null) {
+    //            throw new ArgumentNullException(nameof(cellsLayer));
+    //        }
 
-            var position = new Point();
+    //        var position = new Point();
 
-            if(cellsLayer.GetCellPosition(index,ref position)) {
-                return position;
-            }
+    //        if(cellsLayer.GetCellPosition(index,ref position)) {
+    //            return position;
+    //        }
 
-            return null;
-        }
+    //        return null;
+    //    }
 
-    }
+    //}
 }

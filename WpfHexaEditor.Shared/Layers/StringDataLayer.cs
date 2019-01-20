@@ -56,8 +56,7 @@ namespace WpfHexaEditor.Layers {
             var foreground = Foreground;
             var foregroundBlocks = ForegroundBlocks;
             var fontSize = FontSize;
-
-            var textPosition = new Point();
+            
             var cellSize = GetCellSize();
             var firstVisibleBtIndex = (int)(bytesToCharEncoding.BytePerChar - PositionStartToShow % bytesToCharEncoding.BytePerChar) % bytesToCharEncoding.BytePerChar;
             var charCount = (data.Length - firstVisibleBtIndex) / bytesToCharEncoding.BytePerChar;
@@ -91,7 +90,10 @@ namespace WpfHexaEditor.Layers {
 
                 if (thisRow != row || !lineReturned || lastRenderLine.Foreground != thisForeground) {
 
-                    this.GetCellPosition(btIndex, ref textPosition);
+                    var textPosition = this.GetCellPosition(btIndex);
+                    if(textPosition == null) {
+                        continue;
+                    }
 
                     if (lineReturned) {
                         lastRenderLine.Data = charList.ToArray();
@@ -101,7 +103,7 @@ namespace WpfHexaEditor.Layers {
                     charList.Clear();
                     lastRenderLine = new StringTextRenderLine {
                         Foreground = thisForeground,
-                        StartPosition = textPosition
+                        StartPosition = textPosition.Value
                     };
 
                     lineReturned = true;

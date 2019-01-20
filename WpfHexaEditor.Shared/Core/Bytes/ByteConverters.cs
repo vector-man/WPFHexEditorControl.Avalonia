@@ -245,7 +245,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Check if is an hexa string
         /// </summary>
-        public static (bool success, long value) IsHexaValue(string hexastring) => HexLiteralToLong(hexastring);
+        public static (bool success, long value) IsHexValue(string hexastring) => HexLiteralToLong(hexastring);
 
         /// <summary>
         /// Check if is an hexa byte string

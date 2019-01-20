@@ -235,7 +235,7 @@ namespace WpfHexaEditor.Layers {
             return availableSize;
         }
 
-        private int? GetIndexFromLocation(Point location)
+        protected int? GetCellIndexByPosition(Point location)
         {
             if (Data == null)
                 return null;
@@ -254,12 +254,11 @@ namespace WpfHexaEditor.Layers {
             if (e == null)
                 throw new ArgumentNullException(nameof(e));
 
-            return GetIndexFromLocation(e.GetPosition(this));
+            return GetCellIndexByPosition(e.GetPosition(this));
         }
 
-        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
-        {
-            base.OnMouseLeftButtonDown(e);
+        protected override void OnMouseDown(MouseButtonEventArgs e) {
+            base.OnMouseDown(e);
 
             if (e.Handled)
                 return;
@@ -269,20 +268,20 @@ namespace WpfHexaEditor.Layers {
 
             var index = GetIndexFromMouse(e);
             if (index != null)
-                MouseDownOnCell?.Invoke(this,new MouseButtonOnCellEventArgs(index.Value, e));
+                MouseDownOnCell?.Invoke(this, new MouseButtonOnCellEventArgs(index.Value, e));
+
         }
 
-        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
-        {
-            base.OnMouseLeftButtonUp(e);
+        protected override void OnMouseUp(MouseButtonEventArgs e) {
+            base.OnMouseUp(e);
             if (e.Handled)
                 return;
 
             var index = GetIndexFromMouse(e);
             if (index != null)
-                MouseUpOnCell?.Invoke(this,new MouseButtonOnCellEventArgs(index.Value, e));
+                MouseUpOnCell?.Invoke(this, new MouseButtonOnCellEventArgs(index.Value, e));
         }
-
+        
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
@@ -299,39 +298,29 @@ namespace WpfHexaEditor.Layers {
                 MouseMoveOnCell?.Invoke(this,new MouseOnCellEventArgs(index.Value, e));
             }
         }
-
-        protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
-        {
-            base.OnMouseRightButtonDown(e);
-            if (e.Handled)
-                return;
-
-            var index = GetIndexFromMouse(e);
-            if (index != null)
-                MouseDownOnCell?.Invoke(this,new MouseButtonOnCellEventArgs(index.Value, e));
-        }
-
+        
         private int? lastMouseMoveIndex;
 
 
         private void InitializeMouseState() => 
             lastMouseMoveIndex = null;
 
-        public bool GetCellPosition(long index,ref Point position)
+        public Point? GetCellPosition(long index)
         {
             if (Data == null)
-                return false;
+                return null;
 
             if (index > Data.Length)
                 throw new IndexOutOfRangeException($"{nameof(index)} is larger than elements.");
 
+            var position = new Point();
             var col = index % BytePerLine;
             var row = index / BytePerLine;
 
             position.X = (GetCellSize().Width + CellMargin.Left + CellMargin.Right) * col;
             position.Y = (GetCellSize().Height + CellMargin.Top + CellMargin.Bottom) * row;
 
-            return true;
+            return position;
         }
 
         

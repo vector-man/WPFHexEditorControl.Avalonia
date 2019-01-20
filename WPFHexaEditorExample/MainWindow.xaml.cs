@@ -148,7 +148,7 @@ namespace WPFHexaEditorExample
 
         private void PositionHexText_TextChanged(object sender, TextChangedEventArgs e)
         {
-            GoPositionHexaButton.IsEnabled = ByteConverters.IsHexaValue(PositionHexText.Text).success;
+            GoPositionHexaButton.IsEnabled = ByteConverters.IsHexValue(PositionHexText.Text).success;
         }
 
         private void PositionText_TextChanged(object sender, TextChangedEventArgs e)

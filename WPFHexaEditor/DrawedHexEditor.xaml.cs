@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,14 +28,12 @@ namespace WpfHexaEditor
     /// <summary>
     /// Interaction logic for DrawedHexEditor.xaml
     /// </summary>
-    public partial class DrawedHexEditor
-    {
+    public partial class DrawedHexEditor {
         #region DevBranch
 
-        public DrawedHexEditor()
-        {
+        public DrawedHexEditor() {
             InitializeComponent();
-            
+
             InitilizeEvents();
             InitializeBindings();
             UpdateCellPaddings();
@@ -42,31 +41,44 @@ namespace WpfHexaEditor
 
             FontSize = 16;
 
-            FontFamily = new FontFamily("Arial");
+            //FontFamily = new FontFamily("Arial");
             //FontFamily = new FontFamily("Microsoft YaHei");
-            //FontFamily = new FontFamily("Courier New");
+            FontFamily = new FontFamily("Courier New");
             //FontFamily = new FontFamily("Lucida Bright");
             DataVisualType = DataVisualType.Decimal;
         }
-        
+
         //Cuz xaml designer's didn't support valuetuple,events subscribing will be executed in code-behind.
-        private void InitilizeEvents()
-        {
+        private void InitilizeEvents() {
             this.SizeChanged += delegate { UpdateContent(); };
-            void initialCellsLayer(ICellsLayer layer)
-            {
-                layer.MouseDownOnCell += DataLayer_MouseLeftDownOnCell;
+            void initialCellsLayer(ICellsLayer layer) {
                 layer.MouseUpOnCell += DataLayer_MouseLeftUpOnCell;
                 layer.MouseMoveOnCell += DataLayer_MouseMoveOnCell;
-                layer.MouseDownOnCell += DataLayer_MouseRightDownOnCell;
             }
 
             initialCellsLayer(HexDataLayer);
             initialCellsLayer(StringDataLayer);
-            
+
             InitializeTooltipEvents();
+            InitializeDataLayers();
         }
-        
+
+        private void InitializeDataLayers() {
+            HexDataLayer.HexMouseDownOnCell += HexDataLayer_HexMouseDownOnCell;
+            StringDataLayer.MouseDownOnCell += StringDataLayer_MouseDownOnCell;
+        }
+
+        private void StringDataLayer_MouseDownOnCell(object sender, MouseButtonOnCellEventArgs e) {
+            ActivedPanel = LayerPanel.String;
+            HandleMouseDownOnCellEventArgsCore(e);
+        }
+
+        private void HexDataLayer_HexMouseDownOnCell(object sender, HexMouseButtonOnCellEventArgs e) {
+            HexFocusedChar = e.HexChar;
+            ActivedPanel = LayerPanel.Hex;
+            HandleMouseDownOnCellEventArgsCore(e);
+        }
+
         /// <summary>
         /// To reduce the memory consuming,avoid recreating the same binding objects;
         /// </summary>
@@ -89,7 +101,7 @@ namespace WpfHexaEditor
             var fontFamilyBinding = GetBindingToSelf(nameof(FontFamily));
             var fontWeightBinding = GetBindingToSelf(nameof(FontWeight));
 
-            void SetFontControlBindings(IEnumerable< FontControlBase> fontControls) {
+            void SetFontControlBindings(IEnumerable<FontControlBase> fontControls) {
                 foreach (var fontCtrl in fontControls) {
                     fontCtrl.SetBinding(FontControlBase.FontSizeProperty, fontSizeBinding);
                     fontCtrl.SetBinding(FontControlBase.FontFamilyProperty, fontFamilyBinding);
@@ -107,35 +119,27 @@ namespace WpfHexaEditor
             SetFontControlBindings(GetFontControls());
         }
 
-        /// <summary>
-        /// Save the view byte buffer as a field. 
-        /// To save the time when Scolling i do not building them every time when scolling.
-        /// </summary>
-        private byte[] _viewBuffer;
-        
+
+
         //To avoid wrong mousemove event;
         private bool _contextMenuShowing;
 
-        private int MaxVisibleLength
-        {
-            get
-            {
+        private int MaxVisibleLength {
+            get {
                 if (Stream == null)
                     return 0;
 
-                return (int) Math.Min(HexDataLayer.AvailableRowsCount * BytePerLine,
+                return (int)Math.Min(HexDataLayer.AvailableRowsCount * BytePerLine,
                     Stream.Length - Position / BytePerLine * BytePerLine);
             }
         }
 
-        protected override void OnContextMenuOpening(ContextMenuEventArgs e)
-        {
+        protected override void OnContextMenuOpening(ContextMenuEventArgs e) {
             base.OnContextMenuOpening(e);
             _contextMenuShowing = true;
         }
 
-        protected override void OnContextMenuClosing(ContextMenuEventArgs e)
-        {
+        protected override void OnContextMenuClosing(ContextMenuEventArgs e) {
             base.OnContextMenuClosing(e);
             _contextMenuShowing = false;
 #if DEBUG
@@ -170,27 +174,22 @@ namespace WpfHexaEditor
 
         #region EventSubscriber handlers;
 
-        private void Control_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
+        private void Control_MouseWheel(object sender, MouseWheelEventArgs e) {
             if (Stream == null) return;
 
             if (e.Delta > 0) //UP
-                VerticalScrollBar.Value -= e.Delta / 120 * (int) MouseWheelSpeed;
+                VerticalScrollBar.Value -= e.Delta / 120 * (int)MouseWheelSpeed;
 
             if (e.Delta < 0) //Down
-                VerticalScrollBar.Value += e.Delta / 120 * -(int) MouseWheelSpeed;
+                VerticalScrollBar.Value += e.Delta / 120 * -(int)MouseWheelSpeed;
         }
 
-        private void DataLayer_MouseLeftDownOnCell(object sender, MouseButtonOnCellEventArgs arg)
-        {
-            if(arg.NativeEventArgs.ChangedButton != MouseButton.Left) {
+        private void HandleMouseDownOnCellEventArgsCore(MouseButtonOnCellEventArgs arg) {
+            if (arg.NativeEventArgs.ChangedButton != MouseButton.Left &&
+                arg.NativeEventArgs.ChangedButton != MouseButton.Right) {
                 return;
             }
 
-            HandleMouseLeftDownCore(arg);
-        }
-
-        private void HandleMouseLeftDownCore(MouseButtonOnCellEventArgs arg) {
             if (arg.CellIndex >= MaxVisibleLength)
                 return;
 
@@ -212,22 +211,20 @@ namespace WpfHexaEditor
 
             _lastMouseDownPosition = clickPosition;
 
-            FocusPosition = _lastMouseDownPosition.Value;
+            ///Cuz <see cref="UpdateForegroundsAndBackgrounds"/> will be invoked after <see cref="FocusPosition"/> changed.
+            ///Or we should invoke <see cref="UpdateForegroundsAndBackgrounds"/> manually.
+            if (FocusPosition != clickPosition) {
+                FocusPosition = clickPosition;
+            }
+            else {
+                UpdateForegroundsAndBackgrounds();
+            }
+
             this.Focus();
         }
 
-        private void DataLayer_MouseRightDownOnCell(object sender, MouseButtonOnCellEventArgs arg) {
-            if(arg.NativeEventArgs.ChangedButton != MouseButton.Right) {
-                return;
-            }
 
-
-            HandleMouseLeftDownCore(arg);
-        } 
-        
-
-        private void DataLayer_MouseMoveOnCell(object sender, MouseOnCellEventArgs arg)
-        {
+        private void DataLayer_MouseMoveOnCell(object sender, MouseOnCellEventArgs arg) {
             if (arg.NativeEventArgs.LeftButton != MouseButtonState.Pressed)
                 return;
 
@@ -251,184 +248,61 @@ namespace WpfHexaEditor
             SelectionLength = length;
         }
 
-        private void DataLayer_MouseLeftUpOnCell(object sender, MouseButtonOnCellEventArgs arg) => 
+        private void DataLayer_MouseLeftUpOnCell(object sender, MouseButtonOnCellEventArgs arg) =>
             _lastMouseDownPosition = null;
 
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            if (Stream == null)
-                return;
-
-            if (FocusPosition == -1)
-                return;
-
-            if (KeyValidator.IsArrowKey(e.Key))
-            {
-                OnArrowKeyDown(e);
-                e.Handled = true;
-            }
-
+        protected override void OnKeyDown(KeyEventArgs e) {
+            base.OnKeyDown(e);
+            foreach (var action in GetKeyDownEventHandlers()) {
+                action(e);
+            }   
         }
 
-        //Deal with operation while arrow key is pressed.
-        private void OnArrowKeyDown(KeyEventArgs e)
-        {
-            if (e == null)
-                throw new ArgumentNullException(nameof(e));
-
-            if (!KeyValidator.IsArrowKey(e.Key))
-                throw new ArgumentException($"The key '{e.Key}' is not a arrow key.");
-
-            if (Stream == null)
-                return;
-
-            if (FocusPosition == -1)
-                return;
-
-            //Update Selection if shift key is pressed;
-            if (Keyboard.Modifiers == ModifierKeys.Shift)
-            {
-                long vectorEnd = -1;
-                switch (e.Key)
-                {
-                    case Key.Left:
-                        if (FocusPosition > 0)
-                        {
-                            vectorEnd = FocusPosition - 1;
-                        }
-
-                        break;
-                    case Key.Up:
-                        if (FocusPosition >= BytePerLine)
-                        {
-                            vectorEnd = FocusPosition - BytePerLine;
-                        }
-
-                        break;
-                    case Key.Right:
-                        if (FocusPosition + 1 < Stream.Length)
-                        {
-                            vectorEnd = FocusPosition + 1;
-                        }
-
-                        break;
-                    case Key.Down:
-                        if (FocusPosition + BytePerLine < Stream.Length)
-                        {
-                            vectorEnd = FocusPosition + BytePerLine;
-                        }
-
-                        break;
-                }
-
-                if (vectorEnd != -1)
-                {
-                    //BackWard;
-                    if (vectorEnd < FocusPosition)
-                    {
-                        if (FocusPosition == SelectionStart)
-                        {
-                            SelectionLength += SelectionStart - vectorEnd;
-                            SelectionStart = vectorEnd;
-                        }
-                        else if (FocusPosition == SelectionStart + SelectionLength - 1 && 
-                                 SelectionLength >= FocusPosition - vectorEnd + 1)
-                        {
-                            SelectionLength -= FocusPosition - vectorEnd;
-                        }
-                        else
-                        {
-                            SelectionStart = vectorEnd;
-                            SelectionLength = FocusPosition - vectorEnd + 1;
-                        }
-                    }
-                    //Forward;
-                    else if (vectorEnd > FocusPosition)
-                    {
-                        if (FocusPosition == SelectionStart + SelectionLength - 1)
-                        {
-                            SelectionLength += vectorEnd - FocusPosition;
-                        }
-                        else if (FocusPosition == SelectionStart && 
-                                 SelectionLength >= vectorEnd - FocusPosition + 1)
-                        {
-                            SelectionLength -= vectorEnd - SelectionStart;
-                            SelectionStart = vectorEnd;
-                        }
-                        else
-                        {
-                            SelectionStart = FocusPosition;
-                            SelectionLength = vectorEnd - FocusPosition + 1;
-                        }
-                    }
-                }
-
-            }
-
-            //Updte FocusSelection;
-            switch (e.Key)
-            {
-                case Key.Left:
-                    if (FocusPosition > 0)
-                        FocusPosition--;
-
-                    break;
-                case Key.Up:
-                    if (FocusPosition >= BytePerLine)
-                        FocusPosition -= BytePerLine;
-
-                    break;
-                case Key.Right:
-                    if (FocusPosition + 1 < Stream.Length)
-                        FocusPosition++;
-
-                    break;
-                case Key.Down:
-                    if (FocusPosition + BytePerLine < Stream.Length)
-                        FocusPosition += BytePerLine;
-
-                    break;
-                default:
-                    return;
-            }
-
-            //Update scrolling(if needed);
-            var firstVisiblePosition = Position / BytePerLine * BytePerLine;
-            var lastVisiblePosition = firstVisiblePosition + MaxVisibleLength - 1;
-            if (FocusPosition < firstVisiblePosition)
-            {
-                Position -= BytePerLine;
-            }
-            else if (FocusPosition > lastVisiblePosition)
-            {
-                Position += BytePerLine;
-            }
-
+        private IEnumerable<Action<KeyEventArgs>> GetKeyDownEventHandlers() {
+            yield return KeyDownOnSelection;
+            yield return KeyDownOnFocus;
         }
 
+
+        protected override void OnTextInput(TextCompositionEventArgs e) {
+            base.OnTextInput(e);
+            foreach (var action in GetTextInputEventHandlers()) {
+                action(e);
+            }
+        }
+
+        private IEnumerable<Action<TextCompositionEventArgs>> GetTextInputEventHandlers() {
+            yield return TextInputOnHex;
+            yield return TextInputOnString;
+        }
+
+
+
+       
         #endregion
 
 
         /// <summary>
         /// This method won't be while scrolling,but only when stream is opened or closed,byteperline changed(UpdateInfo);
         /// </summary>
-        private void UpdateInfoes()
-        {
+        private void UpdateInfoes() {
+            ClearStates();
+
             UpdateScrollBarInfo();
             UpdateColumnHeaderInfo();
             UpdateOffsetLinesInfo();
 
-            //Position PropertyChangedCallBack will update the content;
-            Position = 0;
 
-            //Restore/Update Focus Position;
-            if (FocusPosition >= (Stream?.Length ?? 0))
-                FocusPosition = -1;
+        }
 
-            //RestoreSelection;
-            SelectionStart = -1;
-            SelectionLength = 0;
-            
+        private void ClearStates() {
+            ClearPositionState();
+
+            ClearFocusState();
+
+            ClearSelectionState();
+
+            ClearCaretState();
         }
 
         #region These methods won't be invoked everytime scrolling.but only when stream is opened or closed,byteperline changed(UpdateInfo).
@@ -436,8 +310,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Update vertical scrollbar with file info
         /// </summary>
-        private void UpdateScrollBarInfo()
-        {
+        private void UpdateScrollBarInfo() {
             VerticalScrollBar.Visibility = Visibility.Collapsed;
 
             if (Stream == null) return;
@@ -451,32 +324,29 @@ namespace WpfHexaEditor
         /// <summary>
         /// Update the position info panel at top of the control
         /// </summary>
-        private void UpdateColumnHeaderInfo()
-        {
+        private void UpdateColumnHeaderInfo() {
             ColumnsOffsetInfoLayer.StartStepIndex = 0;
             ColumnsOffsetInfoLayer.StepsCount = BytePerLine;
         }
 
         /// <summary>
-        /// Update the position info panel at left of the control,see this won't change the content of the OffsetLines;
+        /// Update the position info panel at left of the control,notice this won't change the content of the OffsetLines;
         /// </summary>
-        private void UpdateOffsetLinesInfo()
-        {
+        private void UpdateOffsetLinesInfo() {
             if (Stream == null)
                 return;
 
             LinesOffsetInfoLayer.DataVisualType = DataVisualType;
             LinesOffsetInfoLayer.StepLength = BytePerLine;
-            
+
             LinesOffsetInfoLayer.SavedBits = DataVisualType == DataVisualType.Hexadecimal
                 ? ByteConverters.GetHexBits(Stream.Length)
                 : ByteConverters.GetDecimalBits(Stream.Length);
         }
 
         //This will affect how a linesinfo and columnsinfo index change.
-        public DataVisualType DataVisualType
-        {
-            get => (DataVisualType) GetValue(DataVisualTypeProperty);
+        public DataVisualType DataVisualType {
+            get => (DataVisualType)GetValue(DataVisualTypeProperty);
             set => SetValue(DataVisualTypeProperty, value);
         }
 
@@ -486,24 +356,21 @@ namespace WpfHexaEditor
                 typeof(DataVisualType), typeof(DrawedHexEditor),
                 new PropertyMetadata(DataVisualType.Hexadecimal, DataVisualTypeProperty_Changed));
 
-        private static void DataVisualTypeProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (!(d is DrawedHexEditor ctrl))
-            {
+        private static void DataVisualTypeProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+            if (!(d is DrawedHexEditor ctrl)) {
                 return;
             }
 
-            ctrl.LinesOffsetInfoLayer.DataVisualType = (DataVisualType) e.NewValue;
-            ctrl.ColumnsOffsetInfoLayer.DataVisualType = (DataVisualType) e.NewValue;
+            ctrl.LinesOffsetInfoLayer.DataVisualType = (DataVisualType)e.NewValue;
+            ctrl.ColumnsOffsetInfoLayer.DataVisualType = (DataVisualType)e.NewValue;
             ctrl.UpdateContent();
         }
 
         #endregion
 
 
-        public long Position
-        {
-            get => (long) GetValue(PositionProperty); 
+        public long Position {
+            get => (long)GetValue(PositionProperty);
             set => SetValue(PositionProperty, value);
         }
 
@@ -522,17 +389,19 @@ namespace WpfHexaEditor
             ctrl._watch.Stop();
             Debug.Print($"REFRESH TIME: {ctrl._watch.ElapsedMilliseconds} ms");
 #endif
-            
-        }
-        
 
+        }
+
+        private void ClearPositionState() {
+            //Position PropertyChangedCallBack will update the content;
+            Position = 0;
+        }
         /**/
-        
+
         /// <summary>
         /// Refresh currentview of hexeditor
         /// </summary>
-        public void UpdateContent()
-        {
+        public void UpdateContent() {
             UpdateOffsetLinesContent();
             UpdateScrollBarContent();
             UpdateForegroundsAndBackgrounds();
@@ -543,7 +412,7 @@ namespace WpfHexaEditor
 
 
         #region  These methods will be invoked every time scrolling the content(scroll or position changed)(Refreshview calling);
-        
+
         ///<see cref="UpdateContent"/>
         /// <summary>
         /// Update the hex and string layer you current view;
@@ -557,25 +426,25 @@ namespace WpfHexaEditor
 
             HexDataLayer.Data = null;
             StringDataLayer.Data = null;
-            
+
             Stream.Position = Position / BytePerLine * BytePerLine;
             HexDataLayer.PositionStartToShow = (int)(Position / BytePerLine * BytePerLine);
             StringDataLayer.PositionStartToShow = (int)(Position / BytePerLine * BytePerLine);
 
-            UpdateViewBuffer();
+            if (_viewBuffer == null || _viewBuffer.Length != MaxVisibleLength)
+                _viewBuffer = new byte[MaxVisibleLength];
 
+            foreach (var action in GetUpdateViewBufferActions()) {
+                action();
+            }
+            
             HexDataLayer.Data = _viewBuffer;
             StringDataLayer.Data = _viewBuffer;
         }
 
-        /// <summary>
-        /// Update <see cref="_viewBuffer"/>;
-        /// </summary>
-        private void UpdateViewBuffer() {
-            if (_viewBuffer == null || _viewBuffer.Length != MaxVisibleLength)
-                _viewBuffer = new byte[MaxVisibleLength];
-
-            Stream.Read(_viewBuffer, 0 , MaxVisibleLength);
+        private IEnumerable<Action> GetUpdateViewBufferActions() {
+            yield return UpdateViewBufferFromStream;
+            yield return UpdateViewBufferFromCaret;
         }
 
         private void UpdateOffsetLinesContent()
@@ -586,7 +455,7 @@ namespace WpfHexaEditor
                 LinesOffsetInfoLayer.StepsCount = 0;
                 return;
             }
-
+            
             LinesOffsetInfoLayer.StartStepIndex = Position / BytePerLine * BytePerLine;
             LinesOffsetInfoLayer.StepsCount =
                 Math.Min(HexDataLayer.AvailableRowsCount,
@@ -646,6 +515,19 @@ namespace WpfHexaEditor
 
         #endregion
 
+        
+    }
+
+    /// <summary>
+    /// Stream and Data Part;
+    /// </summary>
+    public partial class DrawedHexEditor {
+        /// <summary>
+        /// Save the view byte buffer as a field. 
+        /// To save the time when Scolling i do not building them every time when scolling.
+        /// </summary>
+        private byte[] _viewBuffer;
+
         #region DependencyPorperties
 
         #region BytePerLine property/methods
@@ -653,9 +535,8 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get or set the number of byte are show in control
         /// </summary>
-        public int BytePerLine
-        {
-            get => (int) GetValue(BytePerLineProperty);
+        public int BytePerLine {
+            get => (int)GetValue(BytePerLineProperty);
             set => SetValue(BytePerLineProperty, value);
         }
 
@@ -663,11 +544,10 @@ namespace WpfHexaEditor
             DependencyProperty.Register(nameof(BytePerLine), typeof(int), typeof(DrawedHexEditor),
                 new PropertyMetadata(16, BytePerLine_PropertyChanged));
 
-        private static void BytePerLine_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
+        private static void BytePerLine_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             if (!(d is DrawedHexEditor ctrl) || e.NewValue == e.OldValue) return;
-            ctrl.HexDataLayer.BytePerLine = (int) e.NewValue;
-            ctrl.StringDataLayer.BytePerLine = (int) e.NewValue;
+            ctrl.HexDataLayer.BytePerLine = (int)e.NewValue;
+            ctrl.StringDataLayer.BytePerLine = (int)e.NewValue;
 
             ctrl.UpdateInfoes();
             ctrl.UpdateContent();
@@ -675,11 +555,10 @@ namespace WpfHexaEditor
 
         #endregion
 
-        
 
-        public MouseWheelSpeed MouseWheelSpeed
-        {
-            get => (MouseWheelSpeed) GetValue(MouseWheelSpeedProperty);
+
+        public MouseWheelSpeed MouseWheelSpeed {
+            get => (MouseWheelSpeed)GetValue(MouseWheelSpeedProperty);
             set => SetValue(MouseWheelSpeedProperty, value);
         }
 
@@ -692,9 +571,8 @@ namespace WpfHexaEditor
         /// <summary>
         /// Set the Stream are used by ByteProvider
         /// </summary>
-        public Stream Stream
-        {
-            get => (Stream) GetValue(StreamProperty);
+        public Stream Stream {
+            get => (Stream)GetValue(StreamProperty);
             set => SetValue(StreamProperty, value);
         }
 
@@ -704,8 +582,7 @@ namespace WpfHexaEditor
                 new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits,
                     Stream_PropertyChanged));
 
-        private static void Stream_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
+        private static void Stream_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             if (!(d is DrawedHexEditor ctrl)) return;
             //These methods won't be invoked everytime scrolling.but only when stream is opened or closed.
             ctrl.UpdateInfoes();
@@ -713,6 +590,15 @@ namespace WpfHexaEditor
         }
 
         #endregion
+
+        /// <summary>
+        /// Update <see cref="_viewBuffer"/>;
+        /// </summary>
+        private void UpdateViewBufferFromStream() {
+           
+
+            Stream.Read(_viewBuffer, 0, MaxVisibleLength);
+        }
     }
 
     /// <summary>
@@ -849,6 +735,7 @@ namespace WpfHexaEditor
             if (!(brushBlock.StartOffset + brushBlock.Length >= Position && brushBlock.StartOffset < Position + MaxVisibleLength))
                 return;
 
+
             var maxIndex = Math.Max(brushBlock.StartOffset, Position);
             var minEnd = Math.Min(brushBlock.StartOffset + brushBlock.Length, Position + MaxVisibleLength);
 
@@ -879,6 +766,7 @@ namespace WpfHexaEditor
             UpdateBackgroundBlocks();
             UpdateForegroundBlocks();
             UpdateHexBackgroundPositions();
+            UpdateHexForegroundPositions();
         }
     }
 
@@ -891,7 +779,7 @@ namespace WpfHexaEditor
         private readonly List<IBrushBlock> _hexBackgroundBlocks = new List<IBrushBlock>();
 
         private readonly List<IHexBrushPosition> _hexBackgroundPositions = new List<IHexBrushPosition>();
-
+        
         /// <summary>
         /// We create this dictionary to store the relationship between two backgroundBlocks,
         /// key of which stores the position and length that relative to Stream,
@@ -923,7 +811,7 @@ namespace WpfHexaEditor
         }
 
 
-        public void UpdateBackgroundBlocks() {
+        private void UpdateBackgroundBlocks() {
             //ClearBackgroundBlocks;
             HexDataLayer.BackgroundBlocks = null;
             StringDataLayer.BackgroundBlocks = null;
@@ -940,26 +828,42 @@ namespace WpfHexaEditor
         }
 
 
-        public void UpdateHexBackgroundPositions() {
+        private void UpdateHexBackgroundPositions() {
             HexDataLayer.HexBackgroundPositions = null;
 
             _hexBackgroundPositions.Clear();
 
-            foreach (var action in GetUpdateHexBackgroundPositionsActions()) {
+            foreach (var action in GetUpdateHexBackgroundPositionActions()) {
                 action();
             }
 
             HexDataLayer.HexBackgroundPositions = _hexBackgroundPositions;
         }
 
+        private void UpdateHexForegroundPositions() {
+            HexDataLayer.HexForegroundPositions = null;
+
+            _hexForegroundPositions.Clear();
+
+            foreach (var action in GetUpdateHexForegroundPositionActions()) {
+                action();
+            }
+
+            HexDataLayer.HexForegroundPositions = _hexForegroundPositions;
+        }
+
         private IEnumerable<Action> GetUpdateBackgroundActions() {
             yield return UpdateCustomBackgroundBlocks;
             yield return UpdateSelectionBackgroundBlocks;
-            yield return UpdateFocusPositionBackgroundBlock;
+            yield return UpdateFocusBackgroundBlock;
         }
 
-        private IEnumerable<Action> GetUpdateHexBackgroundPositionsActions() {
+        private IEnumerable<Action> GetUpdateHexBackgroundPositionActions() {
             yield return UpdateFocusHexBackgroundPosition;
+        }
+
+        private IEnumerable<Action> GetUpdateHexForegroundPositionActions() {
+            yield return UpdateFocusHexForegroundPosition;
         }
 
         private void UpdateCustomBackgroundBlocks() {
@@ -986,8 +890,12 @@ namespace WpfHexaEditor
             AddBrushBlockCore(brushBlock, _stringBackgroundBlocks);
         }
         
-        private void AddHexBrushPosition(IHexBrushPosition hexBrushPosition) {
-            AddHexBrushPositionCore(hexBrushPosition, _hexBackgroundPositions);
+        private void AddHexBackgroundPosition(IHexBrushPosition hexBackgroundPosition) {
+            AddHexBrushPositionCore(hexBackgroundPosition, _hexBackgroundPositions);
+        }
+
+        private void AddHexForegroundPosition(IHexBrushPosition hexForegroundPosition) {
+            AddHexBrushPositionCore(hexForegroundPosition, _hexForegroundPositions);
         }
     }
     
@@ -1000,7 +908,7 @@ namespace WpfHexaEditor
         private readonly List<IBrushBlock> _hexForegroundBlocks = new List<IBrushBlock>();
 
         private readonly List<IHexBrushPosition> _hexForegroundPositions = new List<IHexBrushPosition>();
-        
+
         public IEnumerable<IBrushBlock> CustomForegroundBlocks {
             get { return (IEnumerable<IBrushBlock>)GetValue(CustomForegroundBlocksProperty); }
             set { SetValue(CustomForegroundBlocksProperty, value); }
@@ -1025,6 +933,13 @@ namespace WpfHexaEditor
             StringDataLayer.ForegroundBlocks = _stringForegroundBlocks;
         }
         
+        private IEnumerable<Action> GetUpdateForegroundBlockActions() {
+            yield return UpdateCustomForegroundBlocks;
+            yield return UpdateSelectionForegroundBlocks;
+            yield return UpdateCaretForegroundBlocks;
+            yield return UpdateFocusForegroundBlock;
+        }
+
         private void UpdateCustomForegroundBlocks() {
             if (CustomForegroundBlocks == null) return;
 
@@ -1032,14 +947,6 @@ namespace WpfHexaEditor
                 AddForegroundBlock(block);
         }
 
-
-        private IEnumerable<Action> GetUpdateForegroundBlockActions() {
-            yield return UpdateCustomForegroundBlocks;
-            yield return UpdateSelectionForegroundBlocks;
-            yield return UpdateFocusForegroundBlock;
-        }
-
-      
 
         /// <summary>
         /// Add <paramref name="brushBlock"/> to <see cref="_stringBackgroundBlocks"/> and <see cref="_hexBackgroundBlocks"/>;
@@ -1161,6 +1068,80 @@ namespace WpfHexaEditor
             
             AddForegroundBlock(_selectionForegroundBlock);
         }
+
+        private void ClearSelectionState() {
+
+            //RestoreSelection;
+            SelectionStart = -1;
+            SelectionLength = 0;
+        }
+
+        private void KeyDownOnSelection(KeyEventArgs args) {
+            //Update Selection if shift key is pressed;
+            if (Keyboard.Modifiers == ModifierKeys.Shift) {
+                long vectorEnd = -1;
+                switch (args.Key) {
+                    case Key.Left:
+                        if (FocusPosition > 0) {
+                            vectorEnd = FocusPosition - 1;
+                        }
+
+                        break;
+                    case Key.Up:
+                        if (FocusPosition >= BytePerLine) {
+                            vectorEnd = FocusPosition - BytePerLine;
+                        }
+
+                        break;
+                    case Key.Right:
+                        if (FocusPosition + 1 < Stream.Length) {
+                            vectorEnd = FocusPosition + 1;
+                        }
+
+                        break;
+                    case Key.Down:
+                        if (FocusPosition + BytePerLine < Stream.Length) {
+                            vectorEnd = FocusPosition + BytePerLine;
+                        }
+
+                        break;
+                }
+
+                if (vectorEnd != -1) {
+                    //BackWard;
+                    if (vectorEnd < FocusPosition) {
+                        if (FocusPosition == SelectionStart) {
+                            SelectionLength += SelectionStart - vectorEnd;
+                            SelectionStart = vectorEnd;
+                        }
+                        else if (FocusPosition == SelectionStart + SelectionLength - 1 &&
+                                 SelectionLength >= FocusPosition - vectorEnd + 1) {
+                            SelectionLength -= FocusPosition - vectorEnd;
+                        }
+                        else {
+                            SelectionStart = vectorEnd;
+                            SelectionLength = FocusPosition - vectorEnd + 1;
+                        }
+                    }
+                    //Forward;
+                    else if (vectorEnd > FocusPosition) {
+                        if (FocusPosition == SelectionStart + SelectionLength - 1) {
+                            SelectionLength += vectorEnd - FocusPosition;
+                        }
+                        else if (FocusPosition == SelectionStart &&
+                                 SelectionLength >= vectorEnd - FocusPosition + 1) {
+                            SelectionLength -= vectorEnd - SelectionStart;
+                            SelectionStart = vectorEnd;
+                        }
+                        else {
+                            SelectionStart = FocusPosition;
+                            SelectionLength = vectorEnd - FocusPosition + 1;
+                        }
+                    }
+                }
+
+            }
+        }
     }
 
     /// <summary>
@@ -1172,10 +1153,11 @@ namespace WpfHexaEditor
         /// Brush block for focus state;
         /// </summary>
         private readonly IBrushBlock _stringFocusBackgroundBlock = new BrushBlock { Length = 1 };
-        private readonly IHexBrushPosition _hexFocusBrushPosition = new HexBrushPosition();
-
-        private readonly IBrushBlock _focusForegroundBlock = new BrushBlock { Length = 1 };
-
+        private readonly IBrushBlock _stringFocusForegroundBlock = new BrushBlock { Length = 1 };
+        
+        private readonly IHexBrushPosition _hexFocusBackgroundPosition = new HexBrushPosition();
+        private readonly IHexBrushPosition _hexFocusForegroundPosition = new HexBrushPosition();
+        
         public long FocusPosition {
             get => (long)GetValue(FocusPositionProperty);
             set => SetValue(FocusPositionProperty, value);
@@ -1217,9 +1199,7 @@ namespace WpfHexaEditor
         public static readonly DependencyProperty FocusForegroundProperty =
             DependencyProperty.Register(nameof(FocusForeground), typeof(Brush), typeof(DrawedHexEditor),
                 new PropertyMetadata(Brushes.White));
-
-
-
+        
         public Brush FocusBackgroundNonActive {
             get { return (Brush)GetValue(FocusBackgroundNonActiveProperty); }
             set { SetValue(FocusBackgroundNonActiveProperty, value); }
@@ -1228,9 +1208,7 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for FocusBackgroundNonActive.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty FocusBackgroundNonActiveProperty =
             DependencyProperty.Register(nameof(FocusBackgroundNonActive), typeof(Brush), typeof(DrawedHexEditor), new PropertyMetadata(Brushes.Gray));
-
-
-
+        
         public Brush FocusForegroundNonActive {
             get { return (Brush)GetValue(FocusForegroundNonActiveProperty); }
             set { SetValue(FocusForegroundNonActiveProperty, value); }
@@ -1238,90 +1216,221 @@ namespace WpfHexaEditor
 
         // Using a DependencyProperty as the backing store for FocusForegroundNonActive.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty FocusForegroundNonActiveProperty =
-            DependencyProperty.Register(nameof(FocusForegroundNonActive), typeof(Brush), typeof(DrawedHexEditor), new PropertyMetadata(Brushes.Yellow));
+            DependencyProperty.Register(nameof(FocusForegroundNonActive), typeof(Brush), typeof(DrawedHexEditor), new PropertyMetadata(Brushes.White));
 
 
 
-        public ActivedPanel ActivedPanel {
-            get { return (ActivedPanel)GetValue(ActivedPanelProperty); }
+        public LayerPanel ActivedPanel {
+            get { return (LayerPanel)GetValue(ActivedPanelProperty); }
             set { SetValue(ActivedPanelProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for FocusedPanel.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ActivedPanelProperty =
-            DependencyProperty.Register(nameof(ActivedPanel), typeof(ActivedPanel), typeof(DrawedHexEditor), new PropertyMetadata(ActivedPanel.Hex));
+            DependencyProperty.Register(nameof(ActivedPanel), typeof(LayerPanel), typeof(DrawedHexEditor), new PropertyMetadata(LayerPanel.Hex));
 
 
 
-        public HexFocusedChar HexFocusedChar {
-            get { return (HexFocusedChar)GetValue(HexFocusedCharProperty); }
+        public HexChar HexFocusedChar {
+            get { return (HexChar)GetValue(HexFocusedCharProperty); }
             set { SetValue(HexFocusedCharProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for HexFocusedChar.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty HexFocusedCharProperty =
-            DependencyProperty.Register(nameof(HexFocusedChar), typeof(HexFocusedChar), typeof(DrawedHexEditor), new PropertyMetadata(HexFocusedChar.First));
+            DependencyProperty.Register(nameof(HexFocusedChar), typeof(HexChar), typeof(DrawedHexEditor), new PropertyMetadata(HexChar.First,HexCharProperty_Changed));
 
-        
-        private void UpdateFocusPositionBackgroundBlock() {
+        private static void HexCharProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+            if(!(d is DrawedHexEditor ctrl)) {
+                return;
+            }
+
+            ctrl.UpdateForegroundsAndBackgrounds();
+        }
+
+        private void UpdateFocusBackgroundBlock() {
             if(FocusPosition < 0 ) {
                 return;
             }
 
-            ///We add <see cref="_stringFocusBackgroundBlock"/> to <see cref="_stringBackgroundBlocks"/> only when
-            ///<see cref="ActivedPanel"/> is <see cref="ActivedPanel.String"/>;
-            ///Otherwise we will deal with it in <see cref="UpdateFocusHexBackgroundPosition"/>;
-            if (ActivedPanel != ActivedPanel.String) {
+            var stringFocusBackground = ActivedPanel == LayerPanel.String ? FocusBackground : FocusBackgroundNonActive;
+            if(stringFocusBackground == null) {
+                return;
+            }
+
+            _stringFocusBackgroundBlock.StartOffset = FocusPosition;
+            _stringFocusBackgroundBlock.Brush = stringFocusBackground;
+            AddStringBackgroundBlock(_stringFocusBackgroundBlock);
+        }
+        
+
+        private void UpdateFocusForegroundBlock() {
+            if (FocusBackground == null) {
                 return;
             }
             
-            _stringFocusBackgroundBlock.StartOffset = FocusPosition;
-            _stringFocusBackgroundBlock.Brush = FocusBackground;
-            AddStringBackgroundBlock(_stringFocusBackgroundBlock);
+            var stringFocusForeground = ActivedPanel == LayerPanel.String ? FocusForeground : FocusForegroundNonActive;
+            if(stringFocusForeground == null) {
+                return;
+            }
+
+
+            if (FocusPosition >= 0) {
+                _stringFocusForegroundBlock.StartOffset = FocusPosition;
+                _stringFocusForegroundBlock.Brush = stringFocusForeground;
+
+                AddStringForegroundBlock(_stringFocusForegroundBlock);
+            }
         }
+
 
         private void UpdateFocusHexBackgroundPosition() {
             if (FocusPosition < 0) {
                 return;
             }
 
-            ///We add <see cref="_hexFocusBrushPosition"/> to <see cref="_hexBackgroundPositions"/> only when 
-            ///<see cref="ActivedPanel"/> is <see cref="ActivedPanel.Hex"/>;
-            if (ActivedPanel != ActivedPanel.Hex) {
+            var hexFocusBackground = ActivedPanel == LayerPanel.Hex ? FocusBackground : FocusBackgroundNonActive;
+            if(hexFocusBackground == null) {
                 return;
             }
 
-            _hexFocusBrushPosition.Position = FocusPosition;
+            _hexFocusBackgroundPosition.Position = FocusPosition;
 
-            if(HexFocusedChar == HexFocusedChar.First) {
-                _hexFocusBrushPosition.FirstCharBrush = FocusBackground;
-                _hexFocusBrushPosition.SecondCharBrush = null;
+            if (HexFocusedChar == HexChar.First) {
+                _hexFocusBackgroundPosition.FirstCharBrush = hexFocusBackground;
+                _hexFocusBackgroundPosition.SecondCharBrush = null;
             }
             else {
-                _hexFocusBrushPosition.FirstCharBrush = null;
-                _hexFocusBrushPosition.SecondCharBrush = FocusBackground;
+                _hexFocusBackgroundPosition.FirstCharBrush = null;
+                _hexFocusBackgroundPosition.SecondCharBrush = hexFocusBackground;
+            }
+
+            AddHexBackgroundPosition(_hexFocusBackgroundPosition);
+        }
+
+        private void UpdateFocusHexForegroundPosition() {
+            if (FocusPosition < 0) {
+                return;
             }
             
-            AddHexBrushPosition(_hexFocusBrushPosition);
-        }
-       
-
-        private void UpdateFocusForegroundBlock() {
-            if (FocusBackground == null) {
+            var hexFocusForeground = ActivedPanel == LayerPanel.Hex ? FocusForeground : FocusForegroundNonActive;
+            if(hexFocusForeground == null) {
                 return;
             }
 
-            if (FocusPosition >= 0) {
-                _focusForegroundBlock.StartOffset = FocusPosition;
-                if(_focusForegroundBlock.Brush != FocusForeground) {
-                    _focusForegroundBlock.Brush = FocusForeground;
+            _hexFocusForegroundPosition.Position = FocusPosition;
+            if(HexFocusedChar == HexChar.First) {
+                _hexFocusForegroundPosition.FirstCharBrush = hexFocusForeground;
+                _hexFocusForegroundPosition.SecondCharBrush = null;
+            }
+            else {
+                _hexFocusForegroundPosition.FirstCharBrush = null;
+                _hexFocusForegroundPosition.SecondCharBrush = hexFocusForeground;
+            }
+
+            AddHexForegroundPosition(_hexFocusForegroundPosition);
+        }
+
+        private void ClearFocusState() {
+            //Restore/Update Focus Position;
+            if (FocusPosition >= (Stream?.Length ?? 0))
+                FocusPosition = -1;
+        }
+        
+        private void KeyDownOnFocus(KeyEventArgs e) {
+            if (!KeyValidator.IsArrowKey(e.Key)) {
+                return;
+            }
+
+            if(Stream == null) {
+                return;
+            }
+
+            e.Handled = true;
+            if (FocusPosition == -1)
+                return;
+
+            if (ActivedPanel == LayerPanel.Hex) {
+                if(e.Key == Key.Left && FocusPosition == 0 && HexFocusedChar == HexChar.First) {
+                    return;
                 }
-                AddForegroundBlock(_focusForegroundBlock);
+
+                if(e.Key == Key.Right && FocusPosition == Stream.Length - 1 && HexFocusedChar == HexChar.Second) {
+                    return;
+                }
+
+                if (e.Key == Key.Right || e.Key == Key.Left) {
+                    HexFocusedChar = HexFocusedChar == HexChar.First ? HexChar.Second : HexChar.First;
+                }
+
+                if (HexFocusedChar == HexChar.Second && e.Key == Key.Right) {
+                    return;
+                }
+                else if (HexFocusedChar == HexChar.First && e.Key == Key.Left) {
+                    return;
+                }
+            }
+
+            var previewFocusPosition = GetPreviewFocusPosition(e.Key);
+            if (previewFocusPosition == null) {
+                return;
+            }
+
+            
+            SetFocusPositionAndScroll(previewFocusPosition.Value);
+        }
+
+        /// <summary>
+        /// Set <see cref="FocusPosition"/> to <paramref name="focusPosition"/>,and change <see cref="Position"/> if neccessary.
+        /// </summary>
+        /// <param name="focusPosition"></param>
+        private void SetFocusPositionAndScroll(long focusPosition) {
+            if(focusPosition > Stream.Length - 1) {
+                return;
+            }
+
+            FocusPosition = focusPosition;
+            //Update scrolling Position(if neccessary.);
+            var firstVisiblePosition = Position / BytePerLine * BytePerLine;
+            var lastVisiblePosition = firstVisiblePosition + MaxVisibleLength - 1;
+            if (FocusPosition < firstVisiblePosition) {
+                Position -= BytePerLine;
+            }
+            else if (FocusPosition > lastVisiblePosition) {
+                Position += BytePerLine;
             }
         }
 
 
 
+        private long? GetPreviewFocusPosition(Key arrowKey) {
+            switch (arrowKey) {
+                case Key.Left:
+                    if (FocusPosition > 0)
+                        return FocusPosition - 1;
+
+                    break;
+                case Key.Up:
+                    if (FocusPosition >= BytePerLine)
+                        return FocusPosition - BytePerLine;
+
+                    break;
+                case Key.Right:
+                    if (FocusPosition + 1 < Stream.Length)
+                        return FocusPosition + 1;
+
+                    break;
+                case Key.Down:
+                    if (FocusPosition + BytePerLine < Stream.Length)
+                        return FocusPosition + BytePerLine;
+
+                    break;
+                default:
+                    return null;
+            }
+
+            return null;
+        }
     }
 
     /// <summary>
@@ -1470,7 +1579,7 @@ namespace WpfHexaEditor
     }
 
     /// <summary>
-    /// String encoding parts.
+    /// String encoding part.
     /// </summary>
     public partial class DrawedHexEditor {
         public IBytesToCharEncoding BytesToCharEncoding {
@@ -1496,7 +1605,7 @@ namespace WpfHexaEditor
     }
 
     /// <summary>
-    /// Hex/String ToolTip parts.
+    /// Hex/String ToolTip part.
     /// </summary>
     public partial class DrawedHexEditor {
         private void InitializeTooltipEvents() {
@@ -1603,24 +1712,353 @@ namespace WpfHexaEditor
     }
 
     /// <summary>
-    /// Undo/Redo parts.
+    /// Caret Part;
     /// </summary>
     public partial class DrawedHexEditor {
-        private readonly Stack<IEditTransaction> _undoTransactions = new Stack<IEditTransaction>();
-        private readonly Stack<IEditTransaction> _redoTransactions = new Stack<IEditTransaction>();
+        private readonly Stack<ByteCaretCell> _undoByteCarets = new Stack<ByteCaretCell>();
+        private readonly Stack<ByteCaretCell> _redoByteCarets = new Stack<ByteCaretCell>();
+        
+        private readonly Dictionary<ByteCaret, IBrushBlock> _caretForegroundDict = new Dictionary<ByteCaret, IBrushBlock>();
+        class ByteCaretCell {
+            /// <summary>
+            /// Create a <see cref="ByteCaretCell"/>;
+            /// </summary>
+            /// <param name="byteCarets">The bytecaret array,which should own more than one element.</param>
+            public ByteCaretCell(ByteCaret[] byteCarets) {
+                if(byteCarets == null || byteCarets.Length == 0) {
+                    throw new ArgumentException($"{nameof(byteCarets)} should not be null or empty.");
+                }
 
-        public bool CanUndo => _undoTransactions.Count != 0;
-        public bool CanRedo => _redoTransactions.Count != 0;
+                ByteCarets = byteCarets;
+            }
+
+            public ByteCaret[] ByteCarets { get; }
+
+            public bool IsCommited { get; set; }
+        }
+
+
+        public bool CanUndo => _undoByteCarets.Count != 0;
+        public bool CanRedo => _redoByteCarets.Count != 0;
 
         public event EventHandler<CanRedoChangedEventArgs> CanUndoChanged;
         public event EventHandler<CanUndoChangedEventArgs> CanRedoChanged;
+
+        public Brush CaretForeground {
+            get { return (Brush)GetValue(CaretForegroundProperty); }
+            set { SetValue(CaretForegroundProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for CaretForeground.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty CaretForegroundProperty =
+            DependencyProperty.Register(nameof(CaretForeground), typeof(Brush), typeof(DrawedHexEditor), new PropertyMetadata(Brushes.Blue));
+
+
+
+        public bool IsReadOnly {
+            get { return (bool)GetValue(IsReadOnlyProperty); }
+            set { SetValue(IsReadOnlyProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsReadOnly.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsReadOnlyProperty =
+            DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(DrawedHexEditor), new PropertyMetadata(false));
+
+
+
+        private void TextInputOnHex(TextCompositionEventArgs e) {
+            if (!CheckCanWrite()) {
+                return;
+            }
+
+            if (ActivedPanel != LayerPanel.Hex) {
+                return;
+            }
+
+            if(_viewBuffer == null || _viewBuffer.Length == 0) {
+                return;
+            }
+
+            e.Handled = true;
+            if(e.Text == null || e.Text.Length != 1) {
+                return;
+            }
+
+            var (success, hexByte) = ByteConverters.HexToUniqueByte(e.Text);
+            if (!success) {
+                return;
+            }
+
+            //Get the byte that is presented in the FocusedPosition;
+            var focusedBytePresented = GetPresentedByte(FocusPosition);
+            if(focusedBytePresented == null) {
+                focusedBytePresented = _viewBuffer[0];
+                FocusPosition = Position;
+            }
+
+            var originByte = focusedBytePresented.Value;
+            var modifiedByte = (byte)0;
+
+            if (HexFocusedChar == HexChar.First) {
+                modifiedByte = (byte)((hexByte << 4 & 0x0000_00F0) | (originByte & 0x0000_000F));
+            }
+            else {
+                modifiedByte = (byte)((originByte & 0x0000_00F0) | (hexByte & 0x0000_000F));
+            }
+
+            if(modifiedByte != originByte) {
+                var newCaret = CreateByteCaret(originByte, modifiedByte, FocusPosition);
+                AddByteCaretToUndoBuffer(newCaret);
+            }
             
+            if(HexFocusedChar == HexChar.First) {
+                HexFocusedChar = HexChar.Second;
+            }
+            else {
+                if (FocusPosition < Stream.Length - 1) {
+                    SetFocusPositionAndScroll(FocusPosition + 1);
+                    HexFocusedChar = HexChar.First;
+                }
+            }
+
+            UpdateContent();
+        }
+
+        private void TextInputOnString(TextCompositionEventArgs e) {
+            if (!CheckCanWrite()) {
+                return;
+            }
+            
+            if (ActivedPanel != LayerPanel.String) {
+                return;
+            }
+
+            if (_viewBuffer == null || _viewBuffer.Length == 0) {
+                return;
+            }
+
+            e.Handled = true;
+
+            if (string.IsNullOrEmpty(e.Text)) {
+                return;
+            }
+
+            var offset = 0;
+            foreach (var ch in e.Text) {
+                if (FocusPosition + offset >= Stream.Length - 1) {
+                    break;
+                }
+                
+                //If the char is ascii byte,"replace" the byte in focusedposition;
+                if(ch < byte.MaxValue / 2) {
+                    //Get the byte that is presented in the FocusedPosition + index;
+                    var originByte = GetPresentedByte(FocusPosition + offset);
+                    var modifiedByte = (byte)ch;
+                    if(originByte == null) {
+                        break;
+                    }
+
+                    if(originByte != modifiedByte) {
+                        var newCaret = CreateByteCaret(originByte.Value, modifiedByte, FocusPosition + offset);
+                        AddByteCaretToUndoBuffer(newCaret);
+                    }
+                    
+                    offset++;
+                }
+                else {
+                    if(FocusPosition + offset + 2 >= Stream.Length - 1) {
+                        break;
+                    }
+
+                    //Get the byte that is presented in the FocusedPosition + index;
+                    var originByte0 = GetPresentedByte(FocusPosition + offset);
+                    var originByte1 = GetPresentedByte(FocusPosition + offset + 1);
+                    if(originByte0 == null || originByte1 == null) {
+                        break;
+                    }
+
+                    var modifiedByte0 = (byte)(ch & 0x0000_00FF);
+                    var modifiedByte1 = (byte)((ch & 0x0000_FF00) >> 8);
+
+                    var newCaret0 = CreateByteCaret(originByte0.Value, modifiedByte0, FocusPosition + offset);
+                    var newCaret1 = CreateByteCaret(originByte1.Value, modifiedByte1, FocusPosition + offset + 1);
+
+                    
+                    AddByteCaretToUndoBuffer(newCaret0, newCaret1);
+                    offset += 2;
+                }
+            }
+
+            UpdateContent();
+            SetFocusPositionAndScroll(FocusPosition + offset);
+        }
+
+        private bool CheckCanWrite() {
+            if(IsReadOnly || Stream == null || !Stream.CanWrite) {
+                return false;
+            }
+
+            return true;
+        }
+
+        
+
+        private void AddByteCaretToUndoBuffer(params (byte originByte,byte modifiedByte,long bytePosition)[] caretParams) {
+            if(caretParams == null || caretParams.Length == 0) {
+                throw new ArgumentException($"{nameof(caretParams)} can't be null or empty.");
+            }
+
+            var count = caretParams.Length;
+            var carets = new ByteCaret[count];
+            
+            foreach (var (originByte, modifiedByte, bytePosition) in caretParams) {
+                var caret = CreateByteCaret(originByte, modifiedByte, bytePosition);
+            }
+        }
+
+        private ByteCaret CreateByteCaret(byte originByte, byte modifiedByte, long bytePosition) {
+            var newCaret = new ByteCaret(originByte, modifiedByte, bytePosition) {
+                ActivedPanel = ActivedPanel,
+                Position = Position,
+                FocusedChar = HexFocusedChar
+            };
+
+            return newCaret;
+        }
+
+        /// <summary>
+        /// Add the <paramref name="byteCaret"/>To <see cref="_undoByteCarets"/>,and clear <see cref="_redoByteCarets"/>;
+        /// </summary>
+        /// <param name="byteCaret"></param>
+        private void AddByteCaretToUndoBuffer(params ByteCaret[] byteCarets) {
+            if(byteCarets == null) {
+                throw new ArgumentException($"The {nameof(byteCarets)} can't be null or empty.");
+            }
+
+            _undoByteCarets.Push(new ByteCaretCell(byteCarets));
+            _redoByteCarets.Clear();
+        }
+
+        private byte? GetPresentedByte(long bytePosition) {
+            if(bytePosition < Position) {
+                return null;
+            }
+
+            if (_viewBuffer == null || _viewBuffer.Length < bytePosition - Position) {
+                return null;
+            }
+
+            return _viewBuffer[bytePosition - Position];
+        }
+        
+        private void UpdateCaretForegroundBlocks() {
+            foreach (var caretCells in _undoByteCarets.Where(p => !p.IsCommited)) {
+                foreach (var caret in caretCells.ByteCarets) {
+                    AddForegroundBlock(CreateOrGetForegroundBlockByCaret(caret));
+                }
+            }
+
+            foreach (var caretCells in _redoByteCarets.Where(p => p.IsCommited)) {
+                foreach (var caret in caretCells.ByteCarets) {
+                    AddForegroundBlock(CreateOrGetForegroundBlockByCaret(caret));
+                }
+            }
+        }
+
+        private void ClearCaretState() {
+            _undoByteCarets.Clear();
+            _redoByteCarets.Clear();
+            _caretForegroundDict.Clear();
+            RaiseCanUndoRedoChanged();
+        }
+
+        private IBrushBlock CreateOrGetForegroundBlockByCaret(ByteCaret byteCaret) {
+            IBrushBlock brushBlockValue = null;
+            if(_caretForegroundDict.TryGetValue(byteCaret,out var exisitingBrushBlock)) {
+                brushBlockValue = exisitingBrushBlock;
+            }
+            else {
+                brushBlockValue = new BrushBlock();
+            }
+
+            brushBlockValue.Brush = CaretForeground;
+            brushBlockValue.Length = 1;
+            brushBlockValue.StartOffset = byteCaret.BytePosition;
+
+            return brushBlockValue;
+        }
+
+        private void UpdateViewBufferFromCaret() {
+            var undoByteCarets = _undoByteCarets;
+#if DEBUG
+            //var list = new List<ByteCaret>(
+            //    new ByteCaret[] {
+            //        new ByteCaret(0, 255, 0)
+            //    }
+            //);
+
+            //undoByteCarets = new Stack<List<ByteCaret>>();
+            //undoByteCarets.Push(list);
+#endif
+            foreach (var caretCell in undoByteCarets.Reverse()) {
+                foreach (var caret in caretCell.ByteCarets) {
+                    var caretOffset = caret.BytePosition - Position;
+                    if (caretOffset < 0 || caretOffset >= _viewBuffer.Length) {
+                        return;
+                    }
+
+                    _viewBuffer[caretOffset] = caret.ModifiedByte;
+                }
+            }
+
+
+        }
+        
+        /// <summary>
+        /// Save changes,this 
+        /// </summary>
+        public void SaveChanges() {
+            foreach (var caretCell in _undoByteCarets.Where(p => !p.IsCommited)) {
+                foreach (var caret in caretCell.ByteCarets) {
+                    Stream.Position = caret.BytePosition;
+                    Stream.WriteByte(caret.ModifiedByte);
+                }
+
+                caretCell.IsCommited = true;
+            }
+
+            foreach (var caretCell in _redoByteCarets.Where(p => p.IsCommited)) {
+                foreach (var caret in caretCell.ByteCarets) {
+                    Stream.Position = caret.BytePosition;
+                    Stream.WriteByte(caret.OriginByte);
+                }
+
+                caretCell.IsCommited = false;
+            }
+
+            UpdateContent();
+        }
+
+        #region Undo/Redo Part;
         public void Undo() {
             if (!CanUndo) {
                 return;
             }
 
-            CanUndoChanged?.Invoke(this, new CanRedoChangedEventArgs(CanUndo));
+            var caretCell = _undoByteCarets.Pop();
+            _redoByteCarets.Push(caretCell);
+
+            var lastByteCaret = caretCell.ByteCarets.First();
+            SetFocusPositionAndScroll(lastByteCaret.BytePosition);
+            ActivedPanel = lastByteCaret.ActivedPanel;
+
+            if(lastByteCaret.ActivedPanel == LayerPanel.Hex) {
+                HexFocusedChar = lastByteCaret.FocusedChar;
+            }
+
+            UpdateContent();
+
+            RaiseCanUndoRedoChanged();
         }
 
         public void Redo() {
@@ -1628,18 +2066,30 @@ namespace WpfHexaEditor
                 return;
             }
 
-            CanRedoChanged?.Invoke(this, new CanUndoChangedEventArgs(CanRedo));
-        }
+            var caretCell = _redoByteCarets.Pop();
+            _undoByteCarets.Push(caretCell);
 
-        private void CommitTransaction(IEditTransaction editTransaction) {
-            if(editTransaction == null) {
-                throw new ArgumentNullException(nameof(editTransaction));
+            var lastByteCaret = caretCell.ByteCarets.First();
+            SetFocusPositionAndScroll(lastByteCaret.BytePosition);
+            ActivedPanel = lastByteCaret.ActivedPanel;
+
+            if (lastByteCaret.ActivedPanel == LayerPanel.Hex) {
+                HexFocusedChar = lastByteCaret.FocusedChar;
             }
 
+            UpdateContent();
 
+            RaiseCanUndoRedoChanged();
         }
-    }
 
+        private void RaiseCanUndoRedoChanged() {
+            CanUndoChanged?.Invoke(this, new CanRedoChangedEventArgs(CanUndo));
+            CanRedoChanged?.Invoke(this, new CanUndoChangedEventArgs(CanRedo));
+        }
+        #endregion
+    }
+    
+    
 #if DEBUG
     public partial class DrawedHexEditor {
         ~DrawedHexEditor() {
