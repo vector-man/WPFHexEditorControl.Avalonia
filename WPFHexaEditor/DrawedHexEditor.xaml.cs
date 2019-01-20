@@ -41,9 +41,9 @@ namespace WpfHexaEditor
 
             FontSize = 16;
 
-            //FontFamily = new FontFamily("Arial");
+            FontFamily = new FontFamily("Arial");
             //FontFamily = new FontFamily("Microsoft YaHei");
-            FontFamily = new FontFamily("Courier New");
+            //FontFamily = new FontFamily("Courier New");
             //FontFamily = new FontFamily("Lucida Bright");
             DataVisualType = DataVisualType.Decimal;
         }
