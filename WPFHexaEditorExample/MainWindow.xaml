@@ -228,7 +228,7 @@
                     ToolTip="ByteShiftLeft test" />
             </Menu>
             <TabControl>
-                <TabItem Header="TabItem">
+                <TabItem Header="[File name]">
                     <Grid Background="#FFE5E5E5">
                         <control:HexEditor
                             x:Name="HexEdit"
@@ -251,9 +251,6 @@
                             OffSetStringVisual="Hexadecimal" 
                             UseCustomBackGroudBlock="True"/>
                     </Grid>
-                </TabItem>
-                <TabItem Header="TabItem">
-                    <Grid Background="#FFE5E5E5"/>
                 </TabItem>
             </TabControl>
         </DockPanel>

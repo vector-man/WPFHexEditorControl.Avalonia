@@ -41,21 +41,27 @@ namespace WpfHexaEditor.Core
         #region Constructor
         public Caret()
         {
-            _pen.Freeze();
-            _brush.Opacity = .5;
-            IsHitTestVisible = false;
-            InitializeTimer();
-            Hide();
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                _pen.Freeze();
+                _brush.Opacity = .5;
+                IsHitTestVisible = false;
+                InitializeTimer();
+                Hide();
+            }
         }
 
         public Caret(Brush brush)
         {
-            _pen.Brush = brush;
-            _pen.Freeze();
-            _brush.Opacity = .5;
-            IsHitTestVisible = false;
-            InitializeTimer();
-            Hide();
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                _pen.Brush = brush;
+                _pen.Freeze();
+                _brush.Opacity = .5;
+                IsHitTestVisible = false;
+                InitializeTimer();
+                Hide();
+            }
         }
         #endregion
 
