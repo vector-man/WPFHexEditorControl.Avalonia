@@ -228,7 +228,7 @@
                     ToolTip="ByteShiftLeft test" />
             </Menu>
             <TabControl>
-                <TabItem Header="[File name]">
+                <TabItem Header="[File name...]">
                     <Grid Background="#FFE5E5E5">
                         <control:HexEditor
                             x:Name="HexEdit"

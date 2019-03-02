@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -1202,6 +1203,8 @@ namespace WpfHexaEditor
                     VerticalScrollBar.Value += e.Delta / 120 * -(int) MouseWheelSpeed;
             }
         }
+        
+        private void Control_Unloaded(object sender, RoutedEventArgs e) => CloseProvider();
 
         private void Control_MoveRight(object sender, EventArgs e)
         {
@@ -3765,10 +3768,13 @@ namespace WpfHexaEditor
         /// </summary>
         private void InitializeCaret()
         {
-            BaseGrid.Children.Add(_caret);
-            _caret.CaretHeight = FontSize;
-            _caret.BlinkPeriod = 600;
-            _caret.Hide();
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                BaseGrid.Children.Add(_caret);
+                _caret.CaretHeight = FontSize;
+                _caret.BlinkPeriod = 600;
+                _caret.Hide();
+            }
         }
 
         internal void MoveCaret(Point point) => _caret.MoveCaret(point);
@@ -3992,6 +3998,7 @@ namespace WpfHexaEditor
         {
             if (d is HexEditor ctrl && e.NewValue != e.OldValue) ctrl.RefreshView();
         }
+
 
         private List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
 

@@ -19,6 +19,7 @@
     Focusable="True"
     FontSize="11"
     MouseWheel="Control_MouseWheel"
+    Unloaded="Control_Unloaded"
     mc:Ignorable="d">
 
     <!--#region Ressources-->
