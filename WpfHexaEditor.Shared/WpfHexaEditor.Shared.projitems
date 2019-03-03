@@ -11,6 +11,10 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BaseByte.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteCaret.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\CustomBackgroundBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\ExeFile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbExpressionParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbFileParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\CellEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\HexMouseButtonOnCellEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\MouseButtonOnCellEventArgs.cs" />
@@ -28,10 +32,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Transactions\CanRedoChangedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Transactions\CanUndoChangedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Transactions\StandardEditTransaction.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CustomBackgroundBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DefaultFileHeader\ExeFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ToolTipExtension.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)xcbb\ExeFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Layers\StringDataLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Layers\HexDataLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BookMark.cs" />
@@ -66,12 +68,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)FontControlBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HexByte.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StringByte.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)xcbb\XcbbReader.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)xcbb\Exefile.xcbb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="$(MSBuildThisFileDirectory)Core\Xcbb\Exefile.xcbb" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Layers\" />

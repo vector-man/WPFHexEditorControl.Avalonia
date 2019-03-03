@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Media;
+using WpfHexaEditor.Core.Xcbb;
 
 namespace WpfHexaEditor.DefaultFileHeader
 {
