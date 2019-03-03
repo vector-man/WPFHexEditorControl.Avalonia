@@ -3,7 +3,7 @@ using System.Windows.Media;
 using WpfHexaEditor.Core.Bytes;
 using static WpfHexaEditor.Properties.Resources;
 
-namespace WpfHexaEditor.xcbb
+namespace WpfHexaEditor.Core.Xcbb
 {
     /// <summary>
     /// IMPLEMENTATON NOT COMPLETED - FOR TESTING CONCEPT ONLY

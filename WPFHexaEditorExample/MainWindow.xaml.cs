@@ -59,20 +59,11 @@ namespace WPFHexaEditorExample
             Application.Current.MainWindow.Cursor = null;
         }
 
-        private void CloseFileMenu_Click(object sender, RoutedEventArgs e)
-        {
-            HexEdit.CloseProvider();
-        }
+        private void CloseFileMenu_Click(object sender, RoutedEventArgs e) => HexEdit.CloseProvider();
 
-        private void SetReadOnlyMenu_Click(object sender, RoutedEventArgs e)
-        {
-            UpdateSetting(SettingEnum.ReadOnly);
-        }
+        private void SetReadOnlyMenu_Click(object sender, RoutedEventArgs e) => UpdateSetting(SettingEnum.ReadOnly);
 
-        private void ShowHeaderMenu_Click(object sender, RoutedEventArgs e)
-        {
-            UpdateSetting(SettingEnum.HeaderVisibility);
-        }
+        private void ShowHeaderMenu_Click(object sender, RoutedEventArgs e) => UpdateSetting(SettingEnum.HeaderVisibility);
 
         private void UpdateSetting(SettingEnum setting)
         {
@@ -101,28 +92,17 @@ namespace WPFHexaEditorExample
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Settings.Default.Save();
+            HexEdit.CloseProvider();
+            Settings.Default.Save();            
         }
 
-        private void ExitMenu_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+        private void ExitMenu_Click(object sender, RoutedEventArgs e) => Close();
 
-        private void CopyHexaMenu_Click(object sender, RoutedEventArgs e)
-        {
-            HexEdit.CopyToClipboard(CopyPasteMode.HexaString);
-        }
+        private void CopyHexaMenu_Click(object sender, RoutedEventArgs e) => HexEdit.CopyToClipboard(CopyPasteMode.HexaString);
 
-        private void CopyStringMenu_Click(object sender, RoutedEventArgs e)
-        {
-            HexEdit.CopyToClipboard();
-        }
+        private void CopyStringMenu_Click(object sender, RoutedEventArgs e) => HexEdit.CopyToClipboard();
 
-        private void DeleteSelectionMenu_Click(object sender, RoutedEventArgs e)
-        {
-            HexEdit.DeleteSelection();
-        }
+        private void DeleteSelectionMenu_Click(object sender, RoutedEventArgs e) => HexEdit.DeleteSelection();
 
         private void GOPosition_Click(object sender, RoutedEventArgs e)
         {
@@ -156,20 +136,11 @@ namespace WPFHexaEditorExample
             GoPositionButton.IsEnabled = long.TryParse(PositionText.Text, out var _);
         }
 
-        private void UndoMenu_Click(object sender, RoutedEventArgs e)
-        {
-            HexEdit.Undo();
-        }
+        private void UndoMenu_Click(object sender, RoutedEventArgs e) => HexEdit.Undo();
 
-        private void SetBookMarkButton_Click(object sender, RoutedEventArgs e)
-        {
-            HexEdit.SetBookMark();
-        }
+        private void SetBookMarkButton_Click(object sender, RoutedEventArgs e) => HexEdit.SetBookMark();
 
-        private void DeleteBookmark_Click(object sender, RoutedEventArgs e)
-        {
-            HexEdit.ClearScrollMarker(ScrollMarker.Bookmark);
-        }
+        private void DeleteBookmark_Click(object sender, RoutedEventArgs e) => HexEdit.ClearScrollMarker(ScrollMarker.Bookmark);
 
         private void FindText_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -183,15 +154,9 @@ namespace WPFHexaEditorExample
         {
         }
 
-        private void FindAllSelection_Click(object sender, RoutedEventArgs e)
-        {
-            HexEdit.FindAllSelection(true);
-        }
+        private void FindAllSelection_Click(object sender, RoutedEventArgs e) => HexEdit.FindAllSelection(true);
 
-        private void SelectAllButton_Click(object sender, RoutedEventArgs e)
-        {
-            HexEdit.SelectAll();
-        }
+        private void SelectAllButton_Click(object sender, RoutedEventArgs e) => HexEdit.SelectAll();
 
         private void FindNextButton_Click(object sender, RoutedEventArgs e)
         {
