@@ -1951,20 +1951,6 @@ namespace WpfHexaEditor
             return _viewBuffer[bytePosition - Position];
         }
         
-        private void UpdateCaretForegroundBlocks() {
-            foreach (var caretCells in _undoByteCarets.Where(p => !p.IsCommited)) {
-                foreach (var caret in caretCells.ByteCarets) {
-                    AddForegroundBlock(CreateOrGetForegroundBlockByCaret(caret));
-                }
-            }
-
-            foreach (var caretCells in _redoByteCarets.Where(p => p.IsCommited)) {
-                foreach (var caret in caretCells.ByteCarets) {
-                    AddForegroundBlock(CreateOrGetForegroundBlockByCaret(caret));
-                }
-            }
-        }
-
         private void ClearCaretState() {
             _undoByteCarets.Clear();
             _redoByteCarets.Clear();
@@ -1988,19 +1974,24 @@ namespace WpfHexaEditor
             return brushBlockValue;
         }
 
-        private void UpdateViewBufferFromCaret() {
-            var undoByteCarets = _undoByteCarets;
-#if DEBUG
-            //var list = new List<ByteCaret>(
-            //    new ByteCaret[] {
-            //        new ByteCaret(0, 255, 0)
-            //    }
-            //);
 
-            //undoByteCarets = new Stack<List<ByteCaret>>();
-            //undoByteCarets.Push(list);
-#endif
-            foreach (var caretCell in undoByteCarets.Reverse()) {
+        private void UpdateCaretForegroundBlocks() {
+            foreach (var caretCells in _undoByteCarets.Where(p => !p.IsCommited).Reverse()) {
+                foreach (var caret in caretCells.ByteCarets) {
+                    AddForegroundBlock(CreateOrGetForegroundBlockByCaret(caret));
+                }
+            }
+
+            foreach (var caretCells in _redoByteCarets.Where(p => p.IsCommited).Reverse()) {
+                foreach (var caret in caretCells.ByteCarets) {
+                    AddForegroundBlock(CreateOrGetForegroundBlockByCaret(caret));
+                }
+            }
+        }
+
+
+        private void UpdateViewBufferFromCaret() {
+            foreach (var caretCell in _undoByteCarets.Where(p => !p.IsCommited).Reverse()) {
                 foreach (var caret in caretCell.ByteCarets) {
                     var caretOffset = caret.BytePosition - Position;
                     if (caretOffset < 0 || caretOffset >= _viewBuffer.Length) {
@@ -2011,7 +2002,16 @@ namespace WpfHexaEditor
                 }
             }
 
+            foreach (var caretCell in _redoByteCarets.Where(p => p.IsCommited).Reverse()) {
+                foreach (var caret in caretCell.ByteCarets) {
+                    var caretOffset = caret.BytePosition - Position;
+                    if (caretOffset < 0 || caretOffset >= _viewBuffer.Length) {
+                        return;
+                    }
 
+                    _viewBuffer[caretOffset] = caret.OriginByte;
+                }
+            }
         }
         
         /// <summary>
@@ -2047,7 +2047,7 @@ namespace WpfHexaEditor
 
             var caretCell = _undoByteCarets.Pop();
             _redoByteCarets.Push(caretCell);
-
+            
             var lastByteCaret = caretCell.ByteCarets.First();
             SetFocusPositionAndScroll(lastByteCaret.BytePosition);
             ActivedPanel = lastByteCaret.ActivedPanel;
