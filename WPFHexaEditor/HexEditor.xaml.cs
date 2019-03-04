@@ -1203,8 +1203,11 @@ namespace WpfHexaEditor
                     VerticalScrollBar.Value += e.Delta / 120 * -(int) MouseWheelSpeed;
             }
         }
-        
-        private void Control_Unloaded(object sender, RoutedEventArgs e) => CloseProvider();
+
+        private void Control_Unloaded(object sender, RoutedEventArgs e)
+        {
+            //CloseProvider();
+        }
 
         private void Control_MoveRight(object sender, EventArgs e)
         {

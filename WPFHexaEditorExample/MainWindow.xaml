@@ -228,27 +228,33 @@
                     ToolTip="ByteShiftLeft test" />
             </Menu>
 
-            <control:HexEditor
-                x:Name="HexEdit"
-                Width="Auto"  
-                Height="Auto" 
-                Margin="2"
-                AllowByteCount="False"
-                AllowDrop="True"
-                AllowExtend="False"
-                AppendNeedConfirmation="True"
-                ApplicationName="Wpf Hexeditor control sample"
-                BorderThickness="1"
-                ByteGrouping="FourByte"
-                ByteShiftLeft="{Binding LongValue, ElementName=HbBsl, UpdateSourceTrigger=PropertyChanged}"
-                ByteSpacerPositioning="HexBytePanel"
-                ByteSpacerVisualStyle="Dash"
-                ByteSpacerWidthTickness="Normal"
-                DataStringVisual="Hexadecimal"
-                DefaultCopyToClipboardMode="HexaString"
-                ForegroundSecondColor="Blue"
-                OffSetStringVisual="Hexadecimal" 
-                UseCustomBackGroudBlock="True"/>
+            <TabControl >
+                <TabItem Header="TabItem" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top" Width="54">
+                        <control:HexEditor
+                            x:Name="HexEdit"
+                            Width="Auto"  
+                            Height="Auto" 
+                            AllowByteCount="False"
+                            AllowDrop="True"
+                            AllowExtend="False"
+                            AppendNeedConfirmation="True"
+                            ApplicationName="Wpf Hexeditor control sample"
+                            BorderThickness="1"
+                            ByteGrouping="FourByte"
+                            ByteShiftLeft="{Binding LongValue, ElementName=HbBsl, UpdateSourceTrigger=PropertyChanged}"
+                            ByteSpacerPositioning="HexBytePanel"
+                            ByteSpacerVisualStyle="Dash"
+                            ByteSpacerWidthTickness="Normal"
+                            DataStringVisual="Hexadecimal"
+                            DefaultCopyToClipboardMode="HexaString"
+                            ForegroundSecondColor="Blue"
+                            OffSetStringVisual="Hexadecimal" 
+                            UseCustomBackGroudBlock="True"/>
+                </TabItem>
+                <TabItem Header="TabItem" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="54">
+                    <Grid Background="#FFE5E5E5"/>
+                </TabItem>
+            </TabControl>
         </DockPanel>
     </Grid>
 </Window>
