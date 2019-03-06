@@ -169,6 +169,16 @@ namespace WpfHexaEditor
         /// </summary>
         public event EventHandler FillWithByteCompleted;
 
+        /// <summary>
+        /// Occurs when bytes as deleted in control
+        /// </summary>
+        public event EventHandler BytesDeleted;
+
+        /// <summary>
+        /// Occurs when byte as modified in control
+        /// </summary>
+        public event EventHandler BytesModified;
+
         #endregion Events
 
         #region Constructor
@@ -736,16 +746,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Stream or file are modified when IsModified are set to true.
         /// </summary>
-        public bool IsModified
-        {
-            get => (bool) GetValue(IsModifiedProperty);
-            internal set => SetValue(IsModifiedProperty, value);
-        }
-
-        // Using a DependencyProperty as the backing store for IsModified.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty IsModifiedProperty =
-            DependencyProperty.Register(nameof(IsModified), typeof(bool), typeof(HexEditor),
-                new PropertyMetadata(false));
+        public bool IsModified { get; set; } = false;
 
         private void Control_ByteModified(object sender, EventArgs e)
         {
@@ -754,6 +755,8 @@ namespace WpfHexaEditor
                 _provider.AddByteModified(ctrl.Byte, ctrl.BytePositionInFile);
                 SetScrollMarker(ctrl.BytePositionInFile, ScrollMarker.ByteModified);
                 UpdateByteModified();
+
+                BytesModified?.Invoke(this, new EventArgs());
             }
 
             UpdateStatusBar();
@@ -776,6 +779,10 @@ namespace WpfHexaEditor
             UpdateByteModified();
             UpdateSelection();
             UpdateStatusBar();
+
+            //Invoke BytesDeleted Event and send a tuple <long, byte[]> with original data
+            //var data = Tuple.Create(SelectionStart, _provider.GetCopyData(SelectionStart, SelectionStop, false));
+            BytesDeleted?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -1329,6 +1336,8 @@ namespace WpfHexaEditor
 
             SetScrollMarker(SelectionStart, ScrollMarker.ByteModified, Properties.Resources.PasteFromClipboardString);
             RefreshView();
+
+            BytesModified?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -1369,14 +1378,20 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get all bytes from file or stream opened
         /// </summary>
-        public byte[] GetAllBytes()
+        public byte[] GetAllBytes(bool copyChange)
         {
             if (!ByteProvider.CheckIsOpen(_provider)) return null;
 
             var cstream = new MemoryStream();
-            CopyToStream(cstream, 0, Length - 1, true);
+            CopyToStream(cstream, 0, Length - 1, copyChange);
             return cstream.ToArray();
         }
+
+        /// <summary>
+        /// Get all bytes from file or stream opened and copy change
+        /// </summary>
+        public byte[] GetAllBytes() => GetAllBytes(true);
+
 
         /// <summary>
         /// Return true if Copy method could be invoked.
@@ -1432,6 +1447,20 @@ namespace WpfHexaEditor
             if (!ByteProvider.CheckIsOpen(_provider)) return;
 
             _provider.CopyToStream(output, selectionStart, selectionStop, copyChange);
+        }
+
+        /// <summary>
+        /// Return a byte array with the copy of data defined by selection start/stop
+        /// </summary>
+        /// <param name="selectionStart"></param>
+        /// <param name="selectionStop"></param>
+        /// <param name="copyChange"></param>
+        public byte[] GetCopyData(long selectionStart, long selectionStop, bool copyChange)
+        {
+            if (!CanCopy()) return null;
+            if (!ByteProvider.CheckIsOpen(_provider)) return null;
+
+            return _provider.GetCopyData(selectionStart, selectionStop, copyChange);
         }
 
         /// <summary>
@@ -2541,7 +2570,7 @@ namespace WpfHexaEditor
                 ctrl.InternalChange = false;
             });
 
-            IsModified = _provider.UndoCount > 0;
+            IsModified = _provider.UndoCount > 0;                       
         }
 
         /// <summary>
