@@ -28,7 +28,11 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Menu >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="320"/>
+        </Grid.ColumnDefinitions>
+        <Menu Grid.ColumnSpan="2">
                 <MenuItem
                     Height="26"
                     Header="{DynamicResource FileMenuText}"
@@ -241,7 +245,8 @@
                 <MenuItem Header="TestBackground" Command="{Binding TestCommand}"/>
             </MenuItem>
             </Menu>
-        <hex:DrawedHexEditor AllowDrop="True" Grid.Row="1" x:Name="hexEdit"
+        
+        <hex:DrawedHexEditor AllowDrop="True" Grid.Row="1" x:Name="hexEdit" Margin="0,0,3,0"
                 CustomBackgroundBlocks="{Binding CustomBackgroundBlocks}"
                 FocusPosition="{Binding FocusPosition}"
                 HoverPosition="{Binding HoverPosition}"
@@ -262,7 +267,7 @@
                     <prism:InvokeCommandAction Command="{Binding CanRedoChangedCommand}"/>
                 </i:EventTrigger>
                 <prism:InteractionRequestTrigger SourceObject="{Binding UpdateBackgroundRequest}">
-                    <ei:CallMethodAction MethodName="UpdateBackgroundBlocks"/>
+                    <ei:CallMethodAction MethodName="UpdateBackgroundBlocks" TargetObject="{Binding ElementName=hexEdit}"/>
                 </prism:InteractionRequestTrigger>
                 <prism:InteractionRequestTrigger SourceObject="{Binding UndoRequest}">
                     <ei:CallMethodAction MethodName="Undo"/>
@@ -311,7 +316,23 @@
                 </ContextMenu>
             </ContentControl.ContextMenu>
         </hex:DrawedHexEditor>
-        <StatusBar Height="27" Grid.Row="2">
+        <GridSplitter Width="3" Grid.Row="1">
+            
+        </GridSplitter>
+        <DockPanel Grid.Column="1" Grid.Row="1" >
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <TextBlock Text="{DynamicResource Instruction_StreamParsedType}"/>
+                <TextBlock Text="{Binding ParsedType}"/>
+            </StackPanel>
+            <DataGrid  IsReadOnly="True" ItemsSource="{Binding Seagments}" AutoGenerateColumns="False" SelectedItem="{Binding SelectedSeagment}" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{DynamicResource Column_Property}" Binding="{Binding Description}" Width="*"/>
+                    <DataGridTextColumn Header="{DynamicResource Column_Value}" Binding="{Binding Value}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+        
+        <StatusBar Height="27" Grid.Row="2" Grid.ColumnSpan="2">
                 <StatusBarItem Width="90" Padding="0">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock

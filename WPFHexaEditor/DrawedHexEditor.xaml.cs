@@ -811,7 +811,7 @@ namespace WpfHexaEditor
         }
 
 
-        private void UpdateBackgroundBlocks() {
+        public void UpdateBackgroundBlocks() {
             //ClearBackgroundBlocks;
             HexDataLayer.BackgroundBlocks = null;
             StringDataLayer.BackgroundBlocks = null;

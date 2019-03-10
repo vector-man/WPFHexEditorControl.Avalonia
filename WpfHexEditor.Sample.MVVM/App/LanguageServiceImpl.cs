@@ -51,26 +51,18 @@ namespace WpfHexEditor.Sample.MVVM.App
         }
 
         private string ConfigFileName => $"{Environment.CurrentDirectory}/{Constants.LanguageConfigName}";
+
         /// <summary>
-        /// 初始化/读取配置文档;
+        /// Initialize read configuration;
         /// </summary>
         private void InitializeDocument() {
-            //因异常原因还原覆盖语言文件;
-            void ResetDoc() {
-
-            };
-
             if (File.Exists(ConfigFileName)) {
                 try {
                     _xDoc = XDocument.Load(ConfigFileName);
                 }
                 catch (Exception ex) {
                     LoggerService.WriteCallerLine(ex.Message);
-                    ResetDoc();
                 }
-            }
-            else {
-                ResetDoc();
             }
         }
 

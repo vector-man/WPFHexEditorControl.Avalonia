@@ -86,7 +86,6 @@
     <Compile Include="Hex\Constants.cs" />
     <Compile Include="Hex\CustomBackgroundBlock.cs" />
     <Compile Include="Hex\CustomBackgroundFactoryImpl.cs" />
-    <Compile Include="Shell\Constants.cs" />
     <Compile Include="Shell\Models\BytesToCharEncodingWrapper.cs" />
     <Compile Include="Shell\ViewModels\Shell2ViewModel.cs" />
     <Compile Include="Shell\Views\Shell2.xaml.cs">
