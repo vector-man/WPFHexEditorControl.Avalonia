@@ -97,6 +97,7 @@
     <Compile Include="Hex\Constants.cs" />
     <Compile Include="Hex\CustomBackgroundBlock.cs" />
     <Compile Include="Hex\CustomBackgroundFactoryImpl.cs" />
+    <Compile Include="Hex\ExeStreamToSeagmentParser.cs" />
     <Compile Include="Hex\FatStreamToSeagmentParser.cs" />
     <Compile Include="Hex\StreamToSeagmentsParserDemo.cs" />
     <Compile Include="Shell\Models\BytesToCharEncodingWrapper.cs" />

@@ -35,6 +35,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DiscUtils, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Discutils.0.11.0.2\lib\net40\DiscUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Common, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Discutils.0.11.0.2\lib\net40\DiscUtils.Common.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Expression.Interaction.3.0.40218.0\lib\net46\Microsoft.Expression.Interactions.dll</HintPath>
       <Private>True</Private>
@@ -81,16 +87,15 @@
     <Compile Include="BootStrapper.cs" />
     <Compile Include="App\DialogServiceImpl.cs" />
     <Compile Include="Common\PracticeServiceProviderAdapter.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Dummy.cs" />
     <Compile Include="Hex\BytesToCharEncodings.cs" />
     <Compile Include="Hex\Constants.cs" />
     <Compile Include="Hex\CustomBackgroundBlock.cs" />
     <Compile Include="Hex\CustomBackgroundFactoryImpl.cs" />
+    <Compile Include="Hex\FatStreamToSeagmentParser.cs" />
+    <Compile Include="Hex\StreamToSeagmentsParserDemo.cs" />
     <Compile Include="Shell\Models\BytesToCharEncodingWrapper.cs" />
-    <Compile Include="Shell\ViewModels\Shell2ViewModel.cs" />
-    <Compile Include="Shell\Views\Shell2.xaml.cs">
-      <DependentUpon>Shell2.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ToolTip\ToolTipDataItem.cs" />
     <Compile Include="ToolTip\ToolTipItemFactoryImpl.cs" />
     <Compile Include="ToolTip\ToolTipObjectItem.cs" />
@@ -121,10 +126,6 @@
       <DependentUpon>Shell.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Shell\Views\Shell2.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="ToolTip\Views\ToolTipDataItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

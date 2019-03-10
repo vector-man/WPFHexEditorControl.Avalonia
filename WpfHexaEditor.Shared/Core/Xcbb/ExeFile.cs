@@ -17,20 +17,20 @@ namespace WpfHexaEditor.Core.Xcbb
         public List<CustomBackgroundBlock> GetCustomBackgroundBlock() =>
             new List<CustomBackgroundBlock>
             {
-                new CustomBackgroundBlock(0, 2, Brushes.BlueViolet, CBB_EXEFile_MagicNumberString),
-                new CustomBackgroundBlock(2, 2, Brushes.Brown, CBB_EXEFile_BytesInLastBlockString),
-                new CustomBackgroundBlock(4, 2, Brushes.SeaGreen, CBB_EXEFile_NumberOfBlockInFileBlockString),
-                new CustomBackgroundBlock(6, 2, Brushes.CadetBlue, CBB_EXEFile_NumberOfRelocationEntriesString),
-                new CustomBackgroundBlock(8, 2, Brushes.DarkGoldenrod, CBB_EXEFile_NumberOfRelocationEntriesString),
-                new CustomBackgroundBlock("0x0A", 2, Brushes.Coral, CBB_EXEFile_NumberOfHeaderParagraphAdditionalMemoryString),
-                new CustomBackgroundBlock("0x0C", 2, Brushes.HotPink, CBB_EXEFile_MaxNumberOfHeaderParagraphAdditionalMemoryString),
-                new CustomBackgroundBlock("0x0E", 2, Brushes.Cyan, CBB_EXEFile_RelativeValueOfStackSegmentString),
-                new CustomBackgroundBlock("0x10", 2, Brushes.IndianRed, CBB_EXEFile_InitialValueOfSPRegisterString),
-                new CustomBackgroundBlock("0x12", 2, Brushes.LimeGreen, CBB_EXEFile_WordChecksumString),
+                new CustomBackgroundBlock(0, 2, Brushes.BlueViolet,         CBB_EXEFile_MagicNumberString),
+                new CustomBackgroundBlock(2, 2, Brushes.Brown,              CBB_EXEFile_BytesInLastBlockString),
+                new CustomBackgroundBlock(4, 2, Brushes.SeaGreen,           CBB_EXEFile_NumberOfBlockInFileBlockString),
+                new CustomBackgroundBlock(6, 2, Brushes.CadetBlue,          CBB_EXEFile_NumberOfRelocationEntriesString),
+                new CustomBackgroundBlock(8, 2, Brushes.DarkGoldenrod,      CBB_EXEFile_NumberOfRelocationEntriesString),
+                new CustomBackgroundBlock("0x0A", 2, Brushes.Coral,         CBB_EXEFile_NumberOfHeaderParagraphAdditionalMemoryString),
+                new CustomBackgroundBlock("0x0C", 2, Brushes.HotPink,       CBB_EXEFile_MaxNumberOfHeaderParagraphAdditionalMemoryString),
+                new CustomBackgroundBlock("0x0E", 2, Brushes.Cyan,          CBB_EXEFile_RelativeValueOfStackSegmentString),
+                new CustomBackgroundBlock("0x10", 2, Brushes.IndianRed,     CBB_EXEFile_InitialValueOfSPRegisterString),
+                new CustomBackgroundBlock("0x12", 2, Brushes.LimeGreen,     CBB_EXEFile_WordChecksumString),
                 new CustomBackgroundBlock("0x14", 2, Brushes.PaleTurquoise, CBB_EXEFile_InitialValueOfIPRegisterString),
-                new CustomBackgroundBlock("0x16", 2, Brushes.DarkOrange, CBB_EXEFile_InitialValueOfCSRegisterString),
-                new CustomBackgroundBlock("0x18", 2, Brushes.Chartreuse, CBB_EXEFile_OffsetOfTheFirstRelocationItemString),
-                new CustomBackgroundBlock("0x1A", 2, Brushes.DarkSeaGreen, CBB_EXEFile_OverlayNumberString),
+                new CustomBackgroundBlock("0x16", 2, Brushes.DarkOrange,    CBB_EXEFile_InitialValueOfCSRegisterString),
+                new CustomBackgroundBlock("0x18", 2, Brushes.Chartreuse,    CBB_EXEFile_OffsetOfTheFirstRelocationItemString),
+                new CustomBackgroundBlock("0x1A", 2, Brushes.DarkSeaGreen,  CBB_EXEFile_OverlayNumberString),
             };
 
         /// <summary>

@@ -79,4 +79,19 @@
   <sys:String x:Key="Column_Property">Property</sys:String>
   <sys:String x:Key="Column_Value">Value</sys:String>
   <sys:String x:Key="Instruction_StreamParsedType">ParsedType:</sys:String>
+  <sys:String x:Key="CBB_EXEFile_BytesInLastBlockString">The number of bytes in the last block of the program that are actually used. </sys:String>
+  <sys:String x:Key="CBB_EXEFile_InitialValueOfCSRegisterString">Initial value of the CS register, relative to the segment the program was loaded at.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_InitialValueOfIPRegisterString">Initial value of the IP register.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_InitialValueOfSPRegisterString">Initial value of the SP register.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_MagicNumberString">This is the 'magic number' of an EXE file.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_MaxNumberOfHeaderParagraphAdditionalMemoryString">Maximum number of paragraphs of additional memory. </sys:String>
+  <sys:String x:Key="CBB_EXEFile_NotDOSProgramString">This program cannot be run in DOS mode...</sys:String>
+  <sys:String x:Key="CBB_EXEFile_NumberOfBlockInFileBlockString">Number of blocks in the file that are part of the EXE file. </sys:String>
+  <sys:String x:Key="CBB_EXEFile_NumberOfHeaderParagraphAdditionalMemoryString">Number of paragraphs of additional memory that the program will need.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_NumberOfHeaderParagraphString">Number of paragraphs in the header. </sys:String>
+  <sys:String x:Key="CBB_EXEFile_NumberOfRelocationEntriesString">Number of relocation entries stored after the header. May be zero</sys:String>
+  <sys:String x:Key="CBB_EXEFile_OffsetOfTheFirstRelocationItemString">Offset of the first relocation item in the file.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_OverlayNumberString">Overlay number. Normally zero, meaning that it's the main program.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_RelativeValueOfStackSegmentString">Relative value of the stack segment. </sys:String>
+  <sys:String x:Key="CBB_EXEFile_WordChecksumString">Word checksum. </sys:String>
 </ResourceDictionary>
