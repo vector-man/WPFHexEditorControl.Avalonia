@@ -305,7 +305,7 @@ namespace WpfHexaEditor.Layers {
 
         // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty HexForegroundPositionsProperty =
-            DependencyProperty.Register(nameof(HexForegroundPositionsProperty), typeof(IEnumerable<IHexBrushPosition>), typeof(HexDataLayer), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
+            DependencyProperty.Register(nameof(HexForegroundPositions), typeof(IEnumerable<IHexBrushPosition>), typeof(HexDataLayer), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
         
         /// <summary>
         /// HexTextRenderLine class;
