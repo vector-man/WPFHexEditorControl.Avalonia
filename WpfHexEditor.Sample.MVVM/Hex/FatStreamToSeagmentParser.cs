@@ -96,7 +96,7 @@ namespace WpfHexEditor.Sample.MVVM.Hex {
                     seagments.Add(seagment);
                 }
                 catch(Exception ex) {
-
+                    LoggerService.WriteException(ex);
                 }
             }
 
