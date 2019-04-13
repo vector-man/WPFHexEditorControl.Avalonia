@@ -1,198 +1,97 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    <sys:String x:Key="FileMenuText">File</sys:String>
-    
-    <sys:String x:Key="AppendByteConfirmationString" >
-    You have reached the end of file. Do you want append one byte ? This operation cannot be canceled if you continue.
-  </sys:String>
-    <sys:String x:Key="SetAsStartPosition">Set as start</sys:String>
-    <sys:String x:Key="SetAsEndPosition">Set as end</sys:String>
-    <sys:String x:Key="BookmarksString" >
-    Bookmarks
-  </sys:String>
-    <sys:String x:Key="ByteActionString" >
-    Byte action
-  </sys:String>
-    <sys:String x:Key="ByteString" >
-    Byte
-  </sys:String>
-    <sys:String x:Key="CancelLongProcessString" >
-    Cancel long process
-  </sys:String>
-    <sys:String x:Key="CancelLongProcessToolTipString" >
-    Click to cancel long process.
-  </sys:String>
-    <sys:String x:Key="CancelString" >
-    Cancel
-  </sys:String>
-    <sys:String x:Key="ClearBookMarkString" >
-    Clear bookmark
-  </sys:String>
-    <sys:String x:Key="ClearString" >
-    Clear
-  </sys:String>
-    <sys:String x:Key="ClickToGoAtPositionString" >
-    Click to go to at position.
-  </sys:String>
-    <sys:String x:Key="CloseString" >
-    Close
-  </sys:String>
-    <sys:String x:Key="CopyAsASCIIString" >
-    Copy as ASCII
-  </sys:String>
-    <sys:String x:Key="CopyAsDecimalString" >
-    Copy as decimal
-  </sys:String>
-    <sys:String x:Key="CopyAsHexadecimalString" >
-    Copy as hexadecimal
-  </sys:String>
-    <sys:String x:Key="CopyAsTBLString" >
-    TBL string (character file loaded)
-  </sys:String>
-    <sys:String x:Key="CopySelectionAsString" >
-    Copy selection as ...
-  </sys:String>
-    <sys:String x:Key="CountOfString" >
-    Count of
-  </sys:String>
-    <sys:String x:Key="DefaultTBLString" >
-    Default TBL
-  </sys:String>
-    <sys:String x:Key="DeleteString" >
-    Delete
-  </sys:String>
-    <sys:String x:Key="DescriptionString" >
-    Description
-  </sys:String>
-    <sys:String x:Key="EndTagString" >
-    &lt;end&gt;
-  </sys:String>
-    <sys:String x:Key="EnterHexValueMsgString" >
-    Enter hexadecimal value ...
-  </sys:String>
-    <sys:String x:Key="FileDroppingConfirmationString" >
-    Do you want close the current file and open : 
-  </sys:String>
-    <sys:String x:Key="FillSelectionAloneString" >
-    Fill selection with byte
-  </sys:String>
-    <sys:String x:Key="FillSelectionString" >
-    Fill selection with byte...
-  </sys:String>
-    <sys:String x:Key="FindAllString" >
-    Find All
-  </sys:String>
-    <sys:String x:Key="FindAndReplaceString" >
-    Find and Replace
-  </sys:String>
-    <sys:String x:Key="FindByteString" >
-    Byte to search
-  </sys:String>
-    <sys:String x:Key="FindFirstString" >
-    Find First
-  </sys:String>
-    <sys:String x:Key="FindLastString" >
-    Find Last
-  </sys:String>
-    <sys:String x:Key="FindNextString" >
-    Find Next
-  </sys:String>
-    <sys:String x:Key="FindSelectionString" >
-    Find all occurence of selection
-  </sys:String>
-    <sys:String x:Key="FindString" >
-    Find
-  </sys:String>
-    <sys:String x:Key="FindWhatString" >
-    Find what:
-  </sys:String>
-    <sys:String x:Key="FirstByteString" >
-    First byte
-  </sys:String>
-    <sys:String x:Key="HexString" >
-    Hex
-  </sys:String>
-    <sys:String x:Key="KBTagString" >
-    Kb
-  </sys:String>
-    <sys:String x:Key="LengthString" >
-    Length
-  </sys:String>
-    <sys:String x:Key="LineStatusBarTagString" >
-    Ln
-  </sys:String>
-    <sys:String x:Key="LineTagString" >
-    &lt;ln&gt;
-  </sys:String>
-    <sys:String x:Key="LongString" >
-    Long
-  </sys:String>
-    <sys:String x:Key="MBTagString" >
-    Mb
-  </sys:String>
-    <sys:String x:Key="OkString" >
-    Ok
-  </sys:String>
-    <sys:String x:Key="PasteExtendByteConfirmationString" >
-    Paste operation reached the end of file. Do you want extend the file for complete operation ? This operation cannot be canceled if you continue.
-  </sys:String>
-    <sys:String x:Key="PasteFromClipboardString" >
-    Paste from clipboard
-  </sys:String>
-    <sys:String x:Key="PasteNotInsertString" >
-    Paste without inserting
-  </sys:String>
-    <sys:String x:Key="PositionString" >Position</sys:String>
-    <sys:String x:Key="ReplaceAllString" >Replace All</sys:String>
-    <sys:String x:Key="ReplaceByByteString" >Replace by byte</sys:String>
-    <sys:String x:Key="ReplaceNextString" >Replace Next</sys:String>
-    <sys:String x:Key="ReplaceSelectionString" >Replace byte in selection...</sys:String>
-    <sys:String x:Key="ReplaceString" >Replace</sys:String>
-    <sys:String x:Key="ReplaceWithByteString" >Replace with byte</sys:String>
-    <sys:String x:Key="ReplaceWithString" >Replace with:</sys:String>
-    <sys:String x:Key="SelectAllString" >Select all</sys:String>
-    <sys:String x:Key="SetBookMarkString" >Set bookmark</sys:String>
-    <sys:String x:Key="TBLString" >TBL</sys:String>
-    <sys:String x:Key="ThisStringAreNotHexString" >This string are not hex</sys:String>
-    <sys:String x:Key="UndoString" >
-    Undo
-  </sys:String>
-    <sys:String x:Key="ValueString" >
-    Value
-  </sys:String>
-    <sys:String x:Key="WritingErrorExeptionString" >
-        An error is occurs when writing.
-    </sys:String>
-    
-    <sys:String x:Key="CopyValue">
-        Copy Value
-    </sys:String>
-    <sys:String x:Key="CopyKey">
-        Copy Key
-    </sys:String>
-    <sys:String x:Key="CopyExpression">
-        Copy Expression
-    </sys:String>
-    
-    
-    <sys:String x:Key="OffsetTag">
-        Offset
-    </sys:String>
-    <sys:String x:Key="ValueTag">
-        Value
-    </sys:String>
-    <sys:String x:Key="Encodings" >
-        Encodings
-    </sys:String>
-    <sys:String x:Key="Encoding_ASCII" >
-        ASCII
-    </sys:String>
-    <sys:String x:Key="Encoding_UTF8" >
-        UTF8
-    </sys:String>
-    <sys:String x:Key="BytesToCharEncodingName_ASCII">ASCII</sys:String>
-    <sys:String x:Key="BytesToCharEncodingName_UTF8">UTF8</sys:String>
-    <sys:String x:Key="BytesToCharEncodingName_UTF16">UTF16</sys:String>
-    <sys:String x:Key="BytesToCharEncodingName_GBK">GBK(Simplified Chinese)</sys:String>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+  <sys:String x:Key="FileMenuText">File</sys:String>
+  <sys:String x:Key="AppendByteConfirmationString">You have reached the end of file. Do you want append one byte ? This operation cannot be canceled if you continue.</sys:String>
+  <sys:String x:Key="SetAsStartPosition">Set as start</sys:String>
+  <sys:String x:Key="SetAsEndPosition">Set as end</sys:String>
+  <sys:String x:Key="BookmarksString">Bookmarks</sys:String>
+  <sys:String x:Key="ByteActionString">Byte action</sys:String>
+  <sys:String x:Key="ByteString">Byte</sys:String>
+  <sys:String x:Key="CancelLongProcessString">Cancel long process</sys:String>
+  <sys:String x:Key="CancelLongProcessToolTipString">Click to cancel long process.</sys:String>
+  <sys:String x:Key="CancelString">Cancel</sys:String>
+  <sys:String x:Key="ClearBookMarkString">Clear bookmark</sys:String>
+  <sys:String x:Key="ClearString">Clear</sys:String>
+  <sys:String x:Key="ClickToGoAtPositionString">Click to go to at position.</sys:String>
+  <sys:String x:Key="CloseString">Close</sys:String>
+  <sys:String x:Key="CopyAsASCIIString">Copy as ASCII</sys:String>
+  <sys:String x:Key="CopyAsDecimalString">Copy as decimal\</sys:String>
+  <sys:String x:Key="CopyAsHexadecimalString">Copy as hexadecimal</sys:String>
+  <sys:String x:Key="CopyAsTBLString">TBL string (character file loaded)</sys:String>
+  <sys:String x:Key="CopySelectionAsString">Copy selection as ...</sys:String>
+  <sys:String x:Key="CountOfString">Count of</sys:String>
+  <sys:String x:Key="DefaultTBLString">Default TBL</sys:String>
+  <sys:String x:Key="DeleteString">Delete</sys:String>
+  <sys:String x:Key="DescriptionString">Description</sys:String>
+  <sys:String x:Key="EndTagString">&lt;end&gt;</sys:String>
+  <sys:String x:Key="EnterHexValueMsgString">Enter hexadecimal value ...</sys:String>
+  <sys:String x:Key="FileDroppingConfirmationString">Do you want close the current file and open : </sys:String>
+  <sys:String x:Key="FillSelectionAloneString">Fill selection with byte </sys:String>
+  <sys:String x:Key="FillSelectionString">Fill selection with byte... </sys:String>
+  <sys:String x:Key="FindAllString">Find All </sys:String>
+  <sys:String x:Key="FindAndReplaceString">Find and Replace</sys:String>
+  <sys:String x:Key="FindByteString">Byte to search</sys:String>
+  <sys:String x:Key="FindFirstString">Find First</sys:String>
+  <sys:String x:Key="FindLastString">Find Last</sys:String>
+  <sys:String x:Key="FindNextString">Find Next </sys:String>
+  <sys:String x:Key="FindSelectionString">Find all occurence of selection  </sys:String>
+  <sys:String x:Key="FindString">Find </sys:String>
+  <sys:String x:Key="FindWhatString">Find what: </sys:String>
+  <sys:String x:Key="FirstByteString">First byte </sys:String>
+  <sys:String x:Key="HexString">Hex </sys:String>
+  <sys:String x:Key="KBTagString">Kb</sys:String>
+  <sys:String x:Key="LengthString">Length </sys:String>
+  <sys:String x:Key="LineStatusBarTagString">Ln </sys:String>
+  <sys:String x:Key="LineTagString">&lt;ln&gt; </sys:String>
+  <sys:String x:Key="LongString">Long  </sys:String>
+  <sys:String x:Key="MBTagString">Mb </sys:String>
+  <sys:String x:Key="OkString">Ok </sys:String>
+  <sys:String x:Key="PasteExtendByteConfirmationString">Paste operation reached the end of file. Do you want extend the file for complete operation ? This operation cannot be canceled if you continue.  </sys:String>
+  <sys:String x:Key="PasteFromClipboardString">Paste from clipboard</sys:String>
+  <sys:String x:Key="PasteNotInsertString">Paste without inserting </sys:String>
+  <sys:String x:Key="PositionString">Position</sys:String>
+  <sys:String x:Key="ReplaceAllString">Replace All</sys:String>
+  <sys:String x:Key="ReplaceByByteString">Replace by byte</sys:String>
+  <sys:String x:Key="ReplaceNextString">Replace Next</sys:String>
+  <sys:String x:Key="ReplaceSelectionString">Replace byte in selection...</sys:String>
+  <sys:String x:Key="ReplaceString">Replace</sys:String>
+  <sys:String x:Key="ReplaceWithByteString">Replace with byte</sys:String>
+  <sys:String x:Key="ReplaceWithString">Replace with:</sys:String>
+  <sys:String x:Key="SelectAllString">Select all</sys:String>
+  <sys:String x:Key="SetBookMarkString">Set bookmark</sys:String>
+  <sys:String x:Key="TBLString">TBL</sys:String>
+  <sys:String x:Key="ThisStringAreNotHexString">This string are not hex</sys:String>
+  <sys:String x:Key="UndoString">Undo </sys:String>
+  <sys:String x:Key="ValueString">Value</sys:String>
+  <sys:String x:Key="WritingErrorExeptionString">An error is occurs when writing.</sys:String>
+  <sys:String x:Key="CopyValue">Copy Value</sys:String>
+  <sys:String x:Key="CopyKey">Copy Key</sys:String>
+  <sys:String x:Key="CopyExpression">Copy Expression</sys:String>
+  <sys:String x:Key="OffsetTag">Offset </sys:String>
+  <sys:String x:Key="ValueTag">Value  </sys:String>
+  <sys:String x:Key="Encodings">Encodings </sys:String>
+  <sys:String x:Key="Encoding_ASCII">ASCII </sys:String>
+  <sys:String x:Key="Encoding_UTF8">UTF8</sys:String>
+  <sys:String x:Key="BytesToCharEncodingName_ASCII">ASCII</sys:String>
+  <sys:String x:Key="BytesToCharEncodingName_UTF8">UTF8</sys:String>
+  <sys:String x:Key="BytesToCharEncodingName_UTF16">UTF16</sys:String>
+  <sys:String x:Key="BytesToCharEncodingName_GBK">GBK(Simplified Chinese)</sys:String>
+  <sys:String x:Key="Column_Property">Property</sys:String>
+  <sys:String x:Key="Column_Value">Value</sys:String>
+  <sys:String x:Key="Instruction_StreamParsedType">ParsedType:</sys:String>
+  <sys:String x:Key="CBB_EXEFile_BytesInLastBlockString">The number of bytes in the last block of the program that are actually used. </sys:String>
+  <sys:String x:Key="CBB_EXEFile_InitialValueOfCSRegisterString">Initial value of the CS register, relative to the segment the program was loaded at.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_InitialValueOfIPRegisterString">Initial value of the IP register.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_InitialValueOfSPRegisterString">Initial value of the SP register.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_MagicNumberString">This is the 'magic number' of an EXE file.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_MaxNumberOfHeaderParagraphAdditionalMemoryString">Maximum number of paragraphs of additional memory. </sys:String>
+  <sys:String x:Key="CBB_EXEFile_NotDOSProgramString">This program cannot be run in DOS mode...</sys:String>
+  <sys:String x:Key="CBB_EXEFile_NumberOfBlockInFileBlockString">Number of blocks in the file that are part of the EXE file. </sys:String>
+  <sys:String x:Key="CBB_EXEFile_NumberOfHeaderParagraphAdditionalMemoryString">Number of paragraphs of additional memory that the program will need.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_NumberOfHeaderParagraphString">Number of paragraphs in the header. </sys:String>
+  <sys:String x:Key="CBB_EXEFile_NumberOfRelocationEntriesString">Number of relocation entries stored after the header. May be zero</sys:String>
+  <sys:String x:Key="CBB_EXEFile_OffsetOfTheFirstRelocationItemString">Offset of the first relocation item in the file.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_OverlayNumberString">Overlay number. Normally zero, meaning that it's the main program.</sys:String>
+  <sys:String x:Key="CBB_EXEFile_RelativeValueOfStackSegmentString">Relative value of the stack segment. </sys:String>
+  <sys:String x:Key="CBB_EXEFile_WordChecksumString">Word checksum. </sys:String>
 </ResourceDictionary>

@@ -12,33 +12,59 @@ using System.Windows.Input;
 using WpfHexEditor.Sample.MVVM.Contracts.App;
 using WpfHexEditor.Sample.MVVM.Helpers;
 using WpfHexEditor.Sample.MVVM.Contracts.ToolTip;
-using WpfHexEditor.Sample.MVVM.Shell;
 using WpfHexEditor.Sample.MVVM.Contracts.Hex;
+using WpfHexaEditor.Core;
 
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using WpfHexaEditor.Core;
 using System.Diagnostics;
+using System.Linq;
+using static WpfHexEditor.Sample.MVVM.Constants;
+using WpfHexaEditor.Core.Interfaces;
 
 namespace WpfHexEditor.Sample.MVVM.ViewModels {
     [Export]
     public partial class ShellViewModel : BindableBase {
-        public ShellViewModel() {
+        [ImportingConstructor]
+        public ShellViewModel([ImportMany]IEnumerable<Lazy<IStreamToSeagmentsParser, IStreamToSeagmentsParserMetaData>> streamParsers) {
             InitializeToolTips();
+            _streamParsers = streamParsers.ToArray();
 #if DEBUG
             try {
-                Stream = File.Open("E://HBMS400M.img", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+                Stream = File.Open("E:\\anli\\FAT32.img", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
             }
             catch (Exception ex) {
                 Debug.WriteLine(ex.Message);
                 //throw;
             }
-
 #endif
 
         }
 
+        private readonly Lazy<IStreamToSeagmentsParser, IStreamToSeagmentsParserMetaData>[] _streamParsers;
+
+
+        public InteractionRequest<Notification> SaveChangesRequest { get; } = new InteractionRequest<Notification>();
+        public InteractionRequest<Notification> UndoRequest { get; } = new InteractionRequest<Notification>();
+        public InteractionRequest<Notification> RedoRequest { get; } = new InteractionRequest<Notification>();
+
+        public ObservableCollection<IBrushBlock> CustomBackgroundBlocks { get; set; } = new ObservableCollection<IBrushBlock>();
+
+        public InteractionRequest<Notification> ExitRequest { get; } = new InteractionRequest<Notification>();
+
+        public InteractionRequest<Notification> UpdateBackgroundRequest { get; } = new InteractionRequest<Notification>();
+
+        private readonly Dictionary<Seagment, BrushBlock> _seagmentBrushDict = new Dictionary<Seagment, BrushBlock>();
+
+        private Brush _originSelectedBlockBrush;
+
+        private static readonly Brush[] _seagmentBrushes = new Brush[] {
+            Brushes.Red,
+            Brushes.Pink
+        };
+
+        private static readonly Brush HighLightBrush = Brushes.Yellow;
 
         private long _selectionStart;
         public long SelectionStart {
@@ -80,12 +106,6 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
             set => SetProperty(ref _position, value);
         }
 
-        public InteractionRequest<Notification> SaveChangesRequest { get; } = new InteractionRequest<Notification>();
-        public InteractionRequest<Notification> UndoRequest { get; } = new InteractionRequest<Notification>();
-        public InteractionRequest<Notification> RedoRequest { get; } = new InteractionRequest<Notification>();
-
-        public ObservableCollection<BrushBlock> CustomBackgroundBlocks { get; set; } = new ObservableCollection<WpfHexaEditor.Core.BrushBlock>();
-        
 
         private DelegateCommand _loadedCommand;
         public DelegateCommand LoadedCommand => _loadedCommand ??
@@ -98,14 +118,14 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
                 }
             ));
 
-        public InteractionRequest<Notification> UpdateBackgroundRequest { get; set; } = new InteractionRequest<Notification>();
+        
 
 
         private DelegateCommand _testCommand;
         public DelegateCommand TestCommand => _testCommand ??
             (_testCommand = new DelegateCommand(
                 () => {
-                    TestEncoding();
+                    TestCustomBackgroundBlocks();
                 }
             ));
 
@@ -133,19 +153,68 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
                 block.Length = 1;
                 block.Brush = Brushes.Chocolate;
                 CustomBackgroundBlocks.Add(block);
-                UpdateBackgroundRequest.Raise(new Notification());
             }
 #endif
+            UpdateBackgroundRequest.Raise(new Notification());
         }
-
-
-
+        
         private Stream _stream;
         public Stream Stream {
             get => _stream;
-            set => SetProperty(ref _stream, value);
+            set {
+                var oldStream = _stream;
+
+                SetProperty(ref _stream, value);
+
+                UnSetupStream(oldStream);
+                SetupStream(_stream);
+            }
         }
 
+        private void UnSetupStream(Stream stream) {
+            if(stream == null) {
+                return;
+            }
+
+            CustomBackgroundBlocks.Clear();
+            Seagments.Clear();
+            SelectedSeagment = null;
+            _seagmentBrushDict.Clear();
+            UpdateBackgroundRequest.Raise(new Notification());
+        }
+
+
+        private void SetupStream(Stream stream) {
+            if(stream == null) {
+                return;
+            }
+
+            CustomBackgroundBlocks.Clear();
+            Seagments.Clear();
+            SelectedSeagment = null;
+            _seagmentBrushDict.Clear();
+
+            //Update seagments;
+            foreach (var parser in _streamParsers.OrderBy(p => p.Metadata.Order)) {
+                var parsedInfo = parser.Value.ParseStream(stream);
+                if(parsedInfo != null) {
+                    var seagments = parsedInfo.Seagments;
+                    for (int i = 0; i < seagments.Count; i++) {
+                        var backgrounBlock = CustomBackgroundFactory.CreateNew();
+                        backgrounBlock.Brush = _seagmentBrushes[i % 2];
+                        backgrounBlock.StartOffset = seagments[i].StartIndex;
+                        backgrounBlock.Length = seagments[i].Length;
+                        Seagments.Add(seagments[i]);
+                        CustomBackgroundBlocks.Add(backgrounBlock);
+                        _seagmentBrushDict.Add(seagments[i], backgrounBlock);
+                    }
+                    
+                    break;
+                }
+            }
+            
+            UpdateBackgroundRequest.Raise(new Notification());
+        }
 
         #region File_Menu
         private DelegateCommand _openFileCommand;
@@ -183,13 +252,8 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
             (_saveChangesCommand = new DelegateCommand(
                 () => {
                     SaveChangesRequest.Raise(new Notification());
-                    //FileEditor?.SubmitChanges();
                 }
             ));
-
-
-   
-
         private DelegateCommand _saveAsCommand;
         public DelegateCommand SaveAsCommand => _saveAsCommand ??
             (_saveAsCommand = new DelegateCommand(
@@ -217,7 +281,7 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
                     ExitRequest.Raise(new Notification());
                 }
             ));
-        public InteractionRequest<Notification> ExitRequest { get; } = new InteractionRequest<Notification>();
+        
 
         #endregion
 
@@ -341,7 +405,45 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
                     //arg.Data.GetData()
                 }
             ));
-        
+
+        public ObservableCollection<Seagment> Seagments { get; } = new ObservableCollection<Seagment>();
+
+
+        private Seagment _selectedSeagment;
+        public Seagment SelectedSeagment {
+            get => _selectedSeagment;
+            set {
+                UnSetupSelectedSeagment(_selectedSeagment);
+                SetProperty(ref _selectedSeagment, value);
+                SetupSelectedSeagment(_selectedSeagment);
+            }
+        }
+
+        private void UnSetupSelectedSeagment(Seagment seagment) {
+            if(seagment == null) {
+                return;
+            }
+            if(_seagmentBrushDict.TryGetValue(seagment,out var brushBlock)) {
+                brushBlock.Brush = _originSelectedBlockBrush;
+            }
+
+            UpdateBackgroundRequest.Raise(new Notification());
+        }
+
+        private void SetupSelectedSeagment(Seagment seagment) {
+            if(seagment == null) {
+                return;
+            }
+
+            if (!(_seagmentBrushDict.TryGetValue(seagment, out var brushBlock))) {
+                return;
+            }
+
+            _originSelectedBlockBrush = brushBlock.Brush;
+            brushBlock.Brush = HighLightBrush;
+
+            UpdateBackgroundRequest.Raise(new Notification());
+        }
     }
 
     /// <summary>
@@ -352,8 +454,8 @@ namespace WpfHexEditor.Sample.MVVM.ViewModels {
             _positionToolTip = ToolTipItemFactory.CreateIToolTipDataItem();
             _valToolTip = ToolTipItemFactory.CreateIToolTipDataItem();
             
-            _positionToolTip.KeyName = AppHelper.FindResourceString(Constants.ToolTipTag_Offset);
-            _valToolTip.KeyName = AppHelper.FindResourceString(Constants.ToolTipTag_Value);
+            _positionToolTip.KeyName = AppHelper.FindResourceString(ToolTipTag_Offset);
+            _valToolTip.KeyName = AppHelper.FindResourceString(ToolTipTag_Value);
 
 #if DEBUG
             

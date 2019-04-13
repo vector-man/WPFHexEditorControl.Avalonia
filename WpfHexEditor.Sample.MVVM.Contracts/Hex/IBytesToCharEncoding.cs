@@ -5,28 +5,28 @@ using System.Text;
 namespace WpfHexEditor.Sample.MVVM.Contracts.Hex
 {
     /// <summary>
-    /// 字符转换器;
+    /// The encoding algrithm that convert byte[] to char;
     /// </summary>
     public interface IBytesToCharEncoding {
         /// <summary>
-        /// 字符的字节长度;
+        /// The length of each char in byte;
         /// </summary>
         int BytePerChar { get; }
 
         char Convert(byte[] bytesToConvert);
 
         /// <summary>
-        /// 格式器标识;
+        /// The unique ID;
         /// </summary>
         string GUID { get; }
 
         /// <summary>
-        /// 编码种类;
+        /// Encoding name
         /// </summary>
         string EncodingName { get; }
 
         /// <summary>
-        /// 排序;
+        /// Sort;
         /// </summary>
         int Sort { get; }
     }
