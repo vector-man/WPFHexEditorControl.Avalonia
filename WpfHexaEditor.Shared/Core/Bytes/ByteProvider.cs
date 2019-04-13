@@ -691,7 +691,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public static long GetSelectionLength(long selectionStart, long selectionStop)
         {
-            if (selectionStop == -1 || selectionStop == -1)
+            if (selectionStart == -1 || selectionStop == -1)
                 return 0;
 
             if (selectionStart == selectionStop)
@@ -735,7 +735,7 @@ namespace WpfHexaEditor.Core.Bytes
         {
             //Validation
             if (!CanCopy(selectionStart, selectionStop)) return new byte[0];
-            if (selectionStop == -1 || selectionStop == -1) return new byte[0];
+            if (selectionStart == -1 || selectionStop == -1) return new byte[0];
 
             //Variable
             var bufferList = new List<byte>();

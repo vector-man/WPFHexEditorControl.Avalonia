@@ -111,7 +111,7 @@ namespace WpfHexaEditor.Core
             get => _caretWidth;
             set
             {
-                if (_caretHeight == value) return;
+                if (_caretWidth == value) return;
 
                 _caretWidth = value;
 
