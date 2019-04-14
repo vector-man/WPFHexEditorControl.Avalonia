@@ -225,7 +225,7 @@
                 <control:HexBox
                     x:Name="HbBsl"
                     Height="23"
-                    ToolTip="ByteShiftLeft test" />
+                    ToolTip="ByteShiftLeft test" />                
             </Menu>
 
             <TabControl>

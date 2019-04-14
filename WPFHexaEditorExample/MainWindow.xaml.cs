@@ -231,6 +231,10 @@ namespace WPFHexaEditorExample
             //HexEdit.BytePerLine = 9;
 
             //HexEdit.ReverseSelection();
+
+            //VisualByteAdress test
+            HexEdit.VisualByteAdressStart = 176;
+            HexEdit.VisualByteAdressLength = 675;
         }
 
         private void CTableTblDefaultEBCDICButton_Click(object sender, RoutedEventArgs e)
