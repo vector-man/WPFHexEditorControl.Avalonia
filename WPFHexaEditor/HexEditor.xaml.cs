@@ -2483,7 +2483,7 @@ namespace WpfHexaEditor
 
                 if (LinesInfoStackPanel.Children.Count == 0) return;
 
-                var startPosition = HexLiteralToLong((LinesInfoStackPanel.Children[0] as FastTextLine).Tag.ToString()).position;
+                var startPosition = GetFirstVisibleByteToGenerate();
 
                 if (AllowVisualByteAdress && startPosition < VisualByteAdressStart)
                     startPosition = VisualByteAdressStart;
@@ -2678,15 +2678,15 @@ namespace WpfHexaEditor
         /// </summary>
         private void UpdateLinesOffSet()
         {
-            var fds = MaxVisibleLine;
+            var maxVisibleLine = MaxVisibleLine;
 
             #region If the lines are less than "visible lines" create them
 
             var linesCount = LinesInfoStackPanel.Children.Count;
 
-            if (linesCount < fds)
+            if (linesCount < maxVisibleLine)
             {
-                for (var i = 0; i < fds - linesCount; i++)
+                for (var i = 0; i < maxVisibleLine - linesCount; i++)
                 {
                     var lineInfoLabel = new FastTextLine(this)
                     {
@@ -2711,30 +2711,22 @@ namespace WpfHexaEditor
 
             if (!ByteProvider.CheckIsOpen(_provider)) return;
 
-            for (var i = 0; i < fds; i++)
+            long firstByteInLine = GetFirstVisibleByteToGenerate();
+
+            for (var i = 0; i < maxVisibleLine; i++)
             {
-                //var firstLineByte = AllowVisualByteAdress
-                //    ? ((long)VerticalScrollBar.Value + i) * BytePerLine <= VisualByteAdressStart
-                //        ? VisualByteAdressStart + ByteShiftLeft
-                //        : ((long)VerticalScrollBar.Value + i) * BytePerLine + ByteShiftLeft
-                //    : ((long)VerticalScrollBar.Value + i) * BytePerLine + ByteShiftLeft;
-
-                var firstLineByte = ((long)VerticalScrollBar.Value + i) * BytePerLine + ByteShiftLeft;
-
                 var lineOffsetLabel = (FastTextLine)LinesInfoStackPanel.Children[i];
 
-                if (firstLineByte < _provider.Length)
+                if (i > 0) firstByteInLine += BytePerLine;
+
+                if (firstByteInLine < _provider.Length)
                 {
                     #region Set text visual
 
-                    var tag = $"0x{LongToHex(firstLineByte).ToUpper()}";
-
-                    lineOffsetLabel.Tag = tag;
-
                     if (HighLightSelectionStart &&
                         SelectionStart > -1 &&
-                        SelectionStart >= firstLineByte &&
-                        SelectionStart <= firstLineByte + BytePerLine - 1)
+                        SelectionStart >= firstByteInLine &&
+                        SelectionStart <= firstByteInLine + BytePerLine - 1)
                     {
                         lineOffsetLabel.FontWeight = FontWeights.Bold;
                         lineOffsetLabel.Foreground = ForegroundHighLightOffSetHeaderColor;
@@ -2754,15 +2746,15 @@ namespace WpfHexaEditor
                     {
                         lineOffsetLabel.FontWeight = FontWeights.Normal;
                         lineOffsetLabel.Foreground = ForegroundOffSetHeaderColor;
-                        lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {firstLineByte}";
+                        lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {firstByteInLine}";
 
                         switch (OffSetStringVisual)
                         {
                             case DataVisualType.Hexadecimal:
-                                lineOffsetLabel.Text = tag;
+                                lineOffsetLabel.Text = $"0x{LongToHex(firstByteInLine).ToUpper()}";
                                 break;
                             case DataVisualType.Decimal:
-                                lineOffsetLabel.Text = $"d{firstLineByte:d8}";
+                                lineOffsetLabel.Text = $"d{firstByteInLine:d8}";
                                 break;
                         }
                     }
@@ -2770,6 +2762,19 @@ namespace WpfHexaEditor
                     #endregion
                 }
             }
+        }
+
+        /// <summary>
+        /// Get the first byte position to generate in control viewers
+        /// </summary>
+        /// <returns>Return the first byte position to generate in control viewers</returns>
+        private long GetFirstVisibleByteToGenerate()
+        {
+            return AllowVisualByteAdress
+                ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft <= VisualByteAdressStart
+                    ? VisualByteAdressStart + ByteShiftLeft
+                    : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft
+                : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
         }
 
 

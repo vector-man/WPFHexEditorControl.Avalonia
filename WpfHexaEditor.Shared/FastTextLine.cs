@@ -121,10 +121,7 @@ namespace WpfHexaEditor
                 new Typeface(_parent.FontFamily, _parent.FontStyle, FontWeight, _parent.FontStretch), _parent.FontSize,
                 Foreground, VisualTreeHelper.GetDpi(this).PixelsPerDip);
 #endif
-
-
-
-
+                                   
             dc.DrawText(formatedText, new Point(RenderPoint.X, RenderPoint.Y));
 
             if (AutoWidth)
