@@ -1495,10 +1495,10 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get the column number of the position
         /// </summary>
-        public int GetColumnNumber(long position)
-        {
-            return (int)(position - ByteShiftLeft) % BytePerLine;
-        }
+        public int GetColumnNumber(long position) =>
+            AllowVisualByteAdress
+                ? (int)(position - ByteShiftLeft) % BytePerLine  //TODO: get the good column number when use AllowVisualByteAdress
+                : (int)(position - ByteShiftLeft) % BytePerLine;
 
         /// <summary>
         /// Set position in control at position in parameter
@@ -2245,7 +2245,7 @@ namespace WpfHexaEditor
         }
 
         private void VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) =>
-            RefreshView();
+            RefreshView(true);
 
         /// <summary>
         /// Update vertical scrollbar with file info
@@ -4080,7 +4080,6 @@ namespace WpfHexaEditor
         #endregion
 
         #region WORK IN PROGRESS // Configure the start/stop bytes that are loaded visually into the hexadecimal editor
-
         public bool AllowVisualByteAdress
         {
             get { return (bool)GetValue(AllowVisualByteAdressProperty); }
@@ -4097,7 +4096,7 @@ namespace WpfHexaEditor
             if (d is HexEditor ctrl && e.NewValue != e.OldValue)
             {
                 ctrl.UpdateScrollBar();
-                ctrl.RefreshView();
+                ctrl.RefreshView(true);                
             }
         }
                
@@ -4131,8 +4130,6 @@ namespace WpfHexaEditor
             if (value < 1 || !ByteProvider.CheckIsOpen(ctrl._provider)) return 1L;
 
             return value >= ctrl._provider.Length ? ctrl._provider.Length : baseValue;
-
-            //return (long)baseValue;
         }
 
         private static void VisualByteAdressLength_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
