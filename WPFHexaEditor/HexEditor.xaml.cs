@@ -2503,13 +2503,13 @@ namespace WpfHexaEditor
 
                     var nextPos = startPosition + index;
 
-                    if (index < readSize && _priLevel == curLevel &&
-                        AllowVisualByteAdress
-                            ? nextPos < VisualByteAdressStop
-                            : true)
-                    {
+                    if (index < readSize && _priLevel == curLevel)
+                    {       
                         byteControl.Byte = _viewBuffer[index];
                         byteControl.BytePositionInFile = nextPos;
+
+                        if (AllowVisualByteAdress && nextPos > VisualByteAdressStop)
+                            byteControl.Clear();
                     }
                     else
                         byteControl.Clear();
@@ -2535,14 +2535,14 @@ namespace WpfHexaEditor
 
                     var nextPos = startPosition + index;
 
-                    if (index < readSize && 
-                        AllowVisualByteAdress
-                            ? nextPos < VisualByteAdressStop
-                            : true)
+                    if (index < readSize)
                     {
                         sbCtrl.Byte = _viewBuffer[index];
                         sbCtrl.BytePositionInFile = nextPos;
                         sbCtrl.ByteNext = index < readSize - 1 ? (byte?)_viewBuffer[index + 1] : null;
+
+                        if (AllowVisualByteAdress && nextPos > VisualByteAdressStop)
+                            sbCtrl.Clear();
                     }
                     else
                         sbCtrl.Clear();
@@ -2721,7 +2721,7 @@ namespace WpfHexaEditor
 
                 var firstLineByte = ((long)VerticalScrollBar.Value + i) * BytePerLine + ByteShiftLeft;
 
-                var lineInfoLabel = (FastTextLine)LinesInfoStackPanel.Children[i];
+                var lineOffsetLabel = (FastTextLine)LinesInfoStackPanel.Children[i];
 
                 if (firstLineByte < _provider.Length)
                 {
@@ -2729,40 +2729,40 @@ namespace WpfHexaEditor
 
                     var tag = $"0x{LongToHex(firstLineByte).ToUpper()}";
 
-                    lineInfoLabel.Tag = tag;
+                    lineOffsetLabel.Tag = tag;
 
                     if (HighLightSelectionStart &&
                         SelectionStart > -1 &&
                         SelectionStart >= firstLineByte &&
                         SelectionStart <= firstLineByte + BytePerLine - 1)
                     {
-                        lineInfoLabel.FontWeight = FontWeights.Bold;
-                        lineInfoLabel.Foreground = ForegroundHighLightOffSetHeaderColor;
-                        lineInfoLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {SelectionStart}";
+                        lineOffsetLabel.FontWeight = FontWeights.Bold;
+                        lineOffsetLabel.Foreground = ForegroundHighLightOffSetHeaderColor;
+                        lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {SelectionStart}";
 
                         switch (OffSetStringVisual)
                         {
                             case DataVisualType.Hexadecimal:
-                                lineInfoLabel.Text = lineInfoLabel.Text = $"0x{LongToHex(SelectionStart).ToUpper()}";
+                                lineOffsetLabel.Text = lineOffsetLabel.Text = $"0x{LongToHex(SelectionStart).ToUpper()}";
                                 break;
                             case DataVisualType.Decimal:
-                                lineInfoLabel.Text = $"d{SelectionStart:d8}";
+                                lineOffsetLabel.Text = $"d{SelectionStart:d8}";
                                 break;
                         }
                     }
                     else
                     {
-                        lineInfoLabel.FontWeight = FontWeights.Normal;
-                        lineInfoLabel.Foreground = ForegroundOffSetHeaderColor;
-                        lineInfoLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {firstLineByte}";
+                        lineOffsetLabel.FontWeight = FontWeights.Normal;
+                        lineOffsetLabel.Foreground = ForegroundOffSetHeaderColor;
+                        lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {firstLineByte}";
 
                         switch (OffSetStringVisual)
                         {
                             case DataVisualType.Hexadecimal:
-                                lineInfoLabel.Text = tag;
+                                lineOffsetLabel.Text = tag;
                                 break;
                             case DataVisualType.Decimal:
-                                lineInfoLabel.Text = $"d{firstLineByte:d8}";
+                                lineOffsetLabel.Text = $"d{firstLineByte:d8}";
                                 break;
                         }
                     }
