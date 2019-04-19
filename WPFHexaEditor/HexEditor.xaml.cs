@@ -1495,7 +1495,10 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get the column number of the position
         /// </summary>
-        public int GetColumnNumber(long position) => (int)(position - ByteShiftLeft) % BytePerLine;
+        public int GetColumnNumber(long position)
+        {
+            return (int)(position - ByteShiftLeft) % BytePerLine;
+        }
 
         /// <summary>
         /// Set position in control at position in parameter
@@ -2758,6 +2761,9 @@ namespace WpfHexaEditor
                                 break;
                         }
                     }
+
+                    if (AllowVisualByteAdress && firstByteInLine > VisualByteAdressStop)
+                        lineOffsetLabel.Text = string.Empty;
 
                     #endregion
                 }
