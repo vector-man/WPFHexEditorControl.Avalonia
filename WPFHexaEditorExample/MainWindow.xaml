@@ -222,15 +222,16 @@
                 </MenuItem>
 
                 <MenuItem Click="TESTMenuItem_Click" Header="TEST" />
+                <Label Content="ByteShitLeft:"/>
                 <control:HexBox
                     x:Name="HbBsl"
                     Height="23"
-                    ToolTip="ByteShiftLeft test" />                
+                    ToolTip="ByteShiftLeft test" />
             </Menu>
 
             <TabControl>
                 <TabItem Header="TabItem" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top" Width="54">
-                        <control:HexEditor
+                    <control:HexEditor
                             x:Name="HexEdit"
                             Width="Auto"  
                             Height="Auto" 
@@ -241,7 +242,7 @@
                             ApplicationName="Wpf Hexeditor control sample"
                             BorderThickness="1"
                             ByteGrouping="FourByte"
-                            ByteShiftLeft="{Binding LongValue, ElementName=HbBsl, UpdateSourceTrigger=PropertyChanged}"
+                            ByteShiftLeft="{Binding LongValue, ElementName=HbBsl, UpdateSourceTrigger=PropertyChanged}"                            
                             ByteSpacerPositioning="HexBytePanel"
                             ByteSpacerVisualStyle="Dash"
                             ByteSpacerWidthTickness="Normal"

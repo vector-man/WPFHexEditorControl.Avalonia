@@ -46,7 +46,7 @@ namespace WPFHexaEditorExample
                 Application.Current.MainWindow.Cursor = Cursors.Wait;
 
                 HexEdit.FileName = fileDialog.FileName;
-                
+
                 Application.Current.MainWindow.Cursor = null;
             }
         }
@@ -224,17 +224,11 @@ namespace WPFHexaEditorExample
             //    Application.Current.DoEvents();
             //}
             #endregion
-
-            ///// BYTE SHIFTING TEST FOR FIXED length EDITOR
-            //HexEdit.ByteShiftLeft = 9;
-            //HexEdit.RefreshView(true);
-            //HexEdit.BytePerLine = 9;
-
-            //HexEdit.ReverseSelection();
-
+            
             //VisualByteAdress test
-            HexEdit.VisualByteAdressStart = 176;
-            HexEdit.VisualByteAdressLength = 675;
+            HexEdit.AllowVisualByteAdress = !HexEdit.AllowVisualByteAdress;
+            HexEdit.VisualByteAdressStart = 75;
+            HexEdit.VisualByteAdressLength = 500; 
         }
 
         private void CTableTblDefaultEBCDICButton_Click(object sender, RoutedEventArgs e)
