@@ -895,6 +895,9 @@ namespace WpfHexaEditor
                 }
             }
 
+            if (AllowVisualByteAdress && SelectionStart > VisualByteAdressStart)
+                SelectionStart = VisualByteAdressStart;
+
             if (SelectionStart < FirstVisibleBytePosition)
                 VerticalScrollBar.Value--;
 
@@ -929,6 +932,9 @@ namespace WpfHexaEditor
                 }
             }
 
+            if (AllowVisualByteAdress && SelectionStart > VisualByteAdressStop)
+                SelectionStart = VisualByteAdressStop;
+
             if (SelectionStart > LastVisibleBytePosition)
                 VerticalScrollBar.Value++;
 
@@ -942,9 +948,9 @@ namespace WpfHexaEditor
         private void Control_MoveDown(object sender, EventArgs e)
         {
             var test = SelectionStart + BytePerLine;
-
+                       
             if (Keyboard.Modifiers == ModifierKeys.Shift)
-            {
+            {                
                 if (test < _provider.Length)
                     SelectionStart += BytePerLine;
                 else
@@ -960,6 +966,9 @@ namespace WpfHexaEditor
                     SelectionStop += BytePerLine;
                 }
             }
+
+            if (AllowVisualByteAdress && SelectionStart > VisualByteAdressStop)
+                SelectionStart = VisualByteAdressStop;
 
             if (SelectionStart > LastVisibleBytePosition)
                 VerticalScrollBar.Value++;
@@ -988,6 +997,9 @@ namespace WpfHexaEditor
                     SelectionStop -= BytePerLine;
                 }
             }
+
+            if (AllowVisualByteAdress && SelectionStart < VisualByteAdressStart)
+                SelectionStart = VisualByteAdressStart;
 
             if (SelectionStart < FirstVisibleBytePosition)
                 VerticalScrollBar.Value--;
@@ -1245,9 +1257,12 @@ namespace WpfHexaEditor
             if (SelectionStart >= _provider.Length)
                 SelectionStart = _provider.Length;
 
+            if (AllowVisualByteAdress && SelectionStart > VisualByteAdressStop)
+                SelectionStart = VisualByteAdressStop;
+
             if (SelectionStart > LastVisibleBytePosition)
                 VerticalScrollBar.Value++;
-
+                       
             SetFocusAtSelectionStart();
         }
 
@@ -1275,6 +1290,9 @@ namespace WpfHexaEditor
 
             if (SelectionStart < 0)
                 SelectionStart = 0;
+
+            if (AllowVisualByteAdress && SelectionStart < VisualByteAdressStart)
+                SelectionStart = VisualByteAdressStart;
 
             if (SelectionStart < FirstVisibleBytePosition)
                 VerticalScrollBar.Value--;
