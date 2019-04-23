@@ -1515,7 +1515,7 @@ namespace WpfHexaEditor
         /// </summary>
         public int GetColumnNumber(long position) =>
             AllowVisualByteAdress
-                ? (int)(position - ByteShiftLeft) % BytePerLine  //TODO: get the good column number when use AllowVisualByteAdress
+                ? (int)(position - VisualByteAdressStart - ByteShiftLeft) % BytePerLine  //TODO: get the good column number when use AllowVisualByteAdress
                 : (int)(position - ByteShiftLeft) % BytePerLine;
 
         /// <summary>
@@ -2792,16 +2792,11 @@ namespace WpfHexaEditor
         /// Get the first byte position to generate in control viewers
         /// </summary>
         /// <returns>Return the first byte position to generate in control viewers</returns>
-        private long GetFirstVisibleByteToGenerate()
-        {
-            return AllowVisualByteAdress
-                ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft <= VisualByteAdressStart
-                    ? VisualByteAdressStart + ByteShiftLeft
-                    : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft
+        private long GetFirstVisibleByteToGenerate() =>
+            AllowVisualByteAdress
+                ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft + VisualByteAdressStart
                 : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
-        }
-
-
+        
         /// <summary>
         /// Get first visible byte position in control
         /// </summary>
