@@ -796,19 +796,12 @@ namespace WpfHexaEditor
 
         #region Lines methods
         /// <summary>
-        /// Obtain the max line for verticalscrollbar
+        /// Obtain the max line for vertical scrollbar
         /// </summary>
-        private long MaxLine
-        {
-            get
-            {
-                return AllowVisualByteAdress
+        private long MaxLine =>
+            AllowVisualByteAdress
                     ? ByteProvider.CheckIsOpen(_provider) ? VisualByteAdressLength / BytePerLine : 0
                     : ByteProvider.CheckIsOpen(_provider) ? _provider.Length / BytePerLine : 0;
-
-                //return ByteProvider.CheckIsOpen(_provider) ? _provider.Length / BytePerLine : 0;
-            }
-        }
 
         /// <summary>
         /// Get the number of row visible in control
@@ -2621,12 +2614,11 @@ namespace WpfHexaEditor
 
             TraverseHexAndStringBytes(ctrl =>
             {
-                if (ctrl.BytePositionInFile >= minSelect &&
-                    ctrl.BytePositionInFile <= maxSelect &&
-                    ctrl.BytePositionInFile != -1)
-                    ctrl.IsSelected = ctrl.Action != ByteAction.Deleted;
-                else
-                    ctrl.IsSelected = false;
+                ctrl.IsSelected = ctrl.BytePositionInFile >= minSelect &&
+                                  ctrl.BytePositionInFile <= maxSelect &&
+                                  ctrl.BytePositionInFile != -1
+                    ? ctrl.Action != ByteAction.Deleted
+                    : false;
             });
         }
 
@@ -2636,8 +2628,7 @@ namespace WpfHexaEditor
         private void UpdateHighLight()
         {
             if (_markedPositionList.Count > 0)
-                TraverseHexAndStringBytes(ctrl =>
-                    ctrl.IsHighLight = _markedPositionList.ContainsKey(ctrl.BytePositionInFile));
+                TraverseHexAndStringBytes(ctrl => ctrl.IsHighLight = _markedPositionList.ContainsKey(ctrl.BytePositionInFile));
             else //Un highlight all            
                 TraverseHexAndStringBytes(ctrl => ctrl.IsHighLight = false);
         }
@@ -4059,40 +4050,8 @@ namespace WpfHexaEditor
         }
 
         #endregion
-
-        #region WORK IN PROGRESS // CustomBackgroundBlock implementation
-
-        /// <summary>
-        /// Use CustomBackgroundBlock in the control
-        /// ONLY DETECT EXE FILE FOR NOW... NOT POSSIBLE TO CREATE OWN CBB (WILL BE POSSIBLE SOON)
-        /// </summary>
-        public bool UseCustomBackGroudBlock
-        {
-            get => (bool)GetValue(UseCustomBackGroudBlockProperty);
-            set => SetValue(UseCustomBackGroudBlockProperty, value);
-        }
-
-        // Using a DependencyProperty as the backing store for UseCustomBackGroudBlock.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty UseCustomBackGroudBlockProperty =
-            DependencyProperty.Register(nameof(UseCustomBackGroudBlock), typeof(bool), typeof(HexEditor),
-                new FrameworkPropertyMetadata(false, Control_UseCustomBackGroudBlockPropertyChanged));
-
-        private static void Control_UseCustomBackGroudBlockPropertyChanged(DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
-        {
-            if (d is HexEditor ctrl && e.NewValue != e.OldValue) ctrl.RefreshView();
-        }
-
-
-        private List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
-        
-        internal CustomBackgroundBlock GetCustomBackgroundBlock(long bytePositionInFile) =>
-            _cbbList?.FirstOrDefault(cbb => bytePositionInFile >= cbb.StartOffset &&
-                                            bytePositionInFile <= cbb.StopOffset);
-
-        #endregion
-
-        #region WORK IN PROGRESS // Configure the start/stop bytes that are loaded visually into the hexadecimal editor
+                
+        #region Configure the start/stop bytes that are loaded visually into the hexadecimal editor
         public bool AllowVisualByteAdress
         {
             get { return (bool)GetValue(AllowVisualByteAdressProperty); }
@@ -4190,6 +4149,38 @@ namespace WpfHexaEditor
                 ctrl.RefreshView();
             }
         }
+        #endregion
+
+        #region WORK IN PROGRESS // CustomBackgroundBlock implementation
+
+        /// <summary>
+        /// Use CustomBackgroundBlock in the control
+        /// ONLY DETECT EXE FILE FOR NOW... NOT POSSIBLE TO CREATE OWN CBB (WILL BE POSSIBLE SOON)
+        /// </summary>
+        public bool UseCustomBackGroudBlock
+        {
+            get => (bool)GetValue(UseCustomBackGroudBlockProperty);
+            set => SetValue(UseCustomBackGroudBlockProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for UseCustomBackGroudBlock.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty UseCustomBackGroudBlockProperty =
+            DependencyProperty.Register(nameof(UseCustomBackGroudBlock), typeof(bool), typeof(HexEditor),
+                new FrameworkPropertyMetadata(false, Control_UseCustomBackGroudBlockPropertyChanged));
+
+        private static void Control_UseCustomBackGroudBlockPropertyChanged(DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            if (d is HexEditor ctrl && e.NewValue != e.OldValue) ctrl.RefreshView();
+        }
+
+
+        private List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
+
+        internal CustomBackgroundBlock GetCustomBackgroundBlock(long bytePositionInFile) =>
+            _cbbList?.FirstOrDefault(cbb => bytePositionInFile >= cbb.StartOffset &&
+                                            bytePositionInFile <= cbb.StopOffset);
+
         #endregion
     }
 }
