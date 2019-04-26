@@ -1198,7 +1198,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get Hexadecimal from current selection
         /// </summary>
-        public string SelectionHexa
+        public string SelectionHex
         {
             get
             {
@@ -1814,7 +1814,7 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// Get the length of file/stream are opened in control
+        /// Get the length of byteprovider are opened in control
         /// </summary>
         public long Length => ByteProvider.CheckIsOpen(_provider) ? _provider.Length : -1;
 
@@ -2934,7 +2934,7 @@ namespace WpfHexaEditor
 
         #endregion Focus Methods
 
-        #region Find methods
+        #region Find/replace methods
 
         /// <summary>
         /// Find first occurence of string in stream. Search start as startPosition.
@@ -3023,6 +3023,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Find first occurence of byte[] in stream.
         /// </summary>
+        /// <returns>Return the position</returns>
         public long FindLast(byte[] data, bool highLight = false)
         {
             if (data == null) return -1;
@@ -3102,8 +3103,7 @@ namespace WpfHexaEditor
                     if (!_markedPositionList.ContainsValue(position))
                         for (var i = position; i < position + data.Length; i++)
                             _markedPositionList.Add(i, i);
-
-
+                    
                     SetScrollMarker(position, ScrollMarker.SearchHighLight);
                 }
 
@@ -3122,9 +3122,90 @@ namespace WpfHexaEditor
         /// </summary>
         /// <returns>Return null if no occurence found</returns>
         public IEnumerable<long> FindAllSelection(bool highLight) =>
-            SelectionLength > 0 ? FindAll(SelectionByteArray, highLight) : null;
+            SelectionLength > 0 
+                ? FindAll(SelectionByteArray, highLight) 
+                : null;
 
-        #endregion Find methods
+        /// <summary>
+        /// Replace the first byte array define by findDate in byteprovider at start position. 
+        /// </summary>
+        /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
+        public long ReplaceFirst(byte[] findData, byte[] replaceData, bool truckLength = true, long startPosition = 0, bool hightlight = false)
+        {
+            if (findData == null || replaceData == null) return -1;
+            if (!ByteProvider.CheckIsOpen(_provider)) return -1;
+
+            var position = FindFirst(findData, startPosition, hightlight);
+
+            if (position > -1)
+            {
+                byte[] finalReplaceData = truckLength
+                    ? replaceData.Take(findData.Length).ToArray()
+                    : replaceData;
+
+                _provider.Paste(position, finalReplaceData, false);
+
+                RefreshView();
+
+                return position;
+            }
+            else
+                return -1;
+        }
+
+        /// <summary>
+        /// Replace the first byte array define by findData in byteprovider at start position. Start the search at SelectionStart. 
+        /// </summary>
+        /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
+        public long ReplaceFirst(byte[] findData, byte[] replaceData, bool truckLength = true, bool hightlight = false) =>
+            ReplaceFirst(findData, replaceData, truckLength, SelectionStart, hightlight);
+
+        /// <summary>
+        /// Replace the first byte array define by findData in byteprovider at start position. 
+        /// Start the search at SelectionStart. 
+        /// No highlight
+        /// </summary>
+        /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
+        public long ReplaceFirst(byte[] findData, byte[] replaceData, bool truckLength = true) =>
+            ReplaceFirst(findData, replaceData, truckLength, SelectionStart, false);
+
+        /// <summary>
+        /// Replace the first byte array define by findData in byteprovider at start position. 
+        /// Start the search at SelectionStart. 
+        /// No highlight
+        /// Truck replace data to length of findData
+        /// </summary>
+        /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
+        public long ReplaceFirst(byte[] findData, byte[] replaceData) =>
+            ReplaceFirst(findData, replaceData, true, SelectionStart, false);
+
+        /// <summary>
+        /// Replace the first string define by find in byteprovider at start position. Start the search at SelectionStart. 
+        /// </summary>
+        /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
+        public long ReplaceFirst(string find, string replace, bool truckLength = true, bool hightlight = false) =>
+            ReplaceFirst(StringToByte(find), StringToByte(replace), truckLength, SelectionStart, hightlight);
+
+        /// <summary>
+        /// Replace the first string define by find in byteprovider at start position. 
+        /// Start the search at SelectionStart. 
+        /// No highlight
+        /// </summary>
+        /// <returns>Return the position of replace. Return -1 on error/no replace</returns>        
+        public long ReplaceFirst(string find, string replace, bool truckLength = true) =>
+            ReplaceFirst(StringToByte(find), StringToByte(replace), truckLength, SelectionStart, false);
+
+        /// <summary>
+        /// Replace the first string define by find in byteprovider at start position. 
+        /// Start the search at SelectionStart. 
+        /// No highlight
+        /// Truck replace data to length of findData
+        /// </summary>
+        /// <returns>Return the position of replace. Return -1 on error/no replace</returns>        
+        public long ReplaceFirst(string find, string replace) =>
+            ReplaceFirst(StringToByte(find), StringToByte(replace), true, SelectionStart, false);
+
+        #endregion Find/replace methods
 
         #region Statusbar
 

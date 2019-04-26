@@ -224,11 +224,14 @@ namespace WPFHexaEditorExample
             //    Application.Current.DoEvents();
             //}
             #endregion
-            
-            //VisualByteAdress test
-            HexEdit.AllowVisualByteAdress = !HexEdit.AllowVisualByteAdress;
-            HexEdit.VisualByteAdressStart = 75;
-            HexEdit.VisualByteAdressLength = 500; 
+
+            ////VisualByteAdress test
+            //HexEdit.AllowVisualByteAdress = !HexEdit.AllowVisualByteAdress;
+            //HexEdit.VisualByteAdressStart = 75;
+            //HexEdit.VisualByteAdressLength = 500; 
+
+            //
+            //HexEdit.ReplaceFirst(HexEdit.SelectionByteArray, ByteConverters.StringToByte("TEST"), false, 0, false);
         }
 
         private void CTableTblDefaultEBCDICButton_Click(object sender, RoutedEventArgs e)
