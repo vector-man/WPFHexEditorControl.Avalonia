@@ -1048,10 +1048,12 @@ namespace WpfHexaEditor.Core.Bytes
         /// Paste the string at position with posibility to expend and append at end of file
         /// </summary>
         /// <param name="pasteString">The string to paste</param>
-        /// <param name="startPosition">The position to start pasting</param>
+        /// <param name="startPosition">The position to start pasting. Return if position is less than zero </param>
         /// <param name="expend">If true expend the file if needed, ATTENTION: bytes expended can't be canceled with undo</param>
         public void Paste(long startPosition, string pasteString, bool expend)
         {
+            if (startPosition < 0) return;
+
             long pastelength = pasteString.Length;
             Position = startPosition;
             var i = 0;

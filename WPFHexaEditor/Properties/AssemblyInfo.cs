@@ -14,7 +14,7 @@ using System.Windows;
 [assembly: AssemblyTitle("Wpf Hexeditor usercontrol")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("derektremblay666@gmail.com")]
+[assembly: AssemblyCompany("Derek Tremblay (derektremblay666@gmail.com)")]
 [assembly: AssemblyProduct("WPFHexaEditor")]
 [assembly: AssemblyCopyright("Apache 2.0")]
 [assembly: AssemblyTrademark("")]

@@ -4046,7 +4046,7 @@ namespace WpfHexaEditor
         /// Allow the control to catch the text dropping 
         /// Note : AllowDrop need to be true
         /// </summary>
-        //public bool AllowTextDrop { get; set; } = true;
+        public bool AllowTextDrop { get; set; } = true;
 
         /// <summary>
         /// Show a messagebox for confirm open when a file are already open
@@ -4057,13 +4057,21 @@ namespace WpfHexaEditor
         {
             #region Text Dropping (Will be supported soon)
 
-            //var textDrop = e.Data.GetData(DataFormats.Text);
-            //if (textDrop != null && AllowTextDrop)
-            //{
-            //    var textDropped = textDrop as string[];
+            var textDrop = e.Data.GetData(DataFormats.Text);
+            if (textDrop != null && AllowTextDrop)            
+            {
+                var textDropped = textDrop as string;
 
-            //    return;
-            //}
+                if (!string.IsNullOrEmpty(textDropped) && ByteProvider.CheckIsOpen(_provider))
+                {
+                    //TODO: insert at mouve over position
+                    _provider.Paste(SelectionStart, textDropped, AllowExtend);
+
+                    RefreshView();
+                }
+
+                return;
+            }
 
             #endregion
 
