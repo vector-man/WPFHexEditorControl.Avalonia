@@ -231,7 +231,7 @@ namespace WPFHexaEditorExample
             //HexEdit.VisualByteAdressLength = 500; 
 
             //
-            //HexEdit.ReplaceFirst(HexEdit.SelectionByteArray, ByteConverters.StringToByte("TEST"), false, 0, false);
+            //HexEdit.ReplaceAll(HexEdit.SelectionByteArray, ByteConverters.StringToByte("TEST"), true, true);
         }
 
         private void CTableTblDefaultEBCDICButton_Click(object sender, RoutedEventArgs e)

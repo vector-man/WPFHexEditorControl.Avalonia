@@ -1508,7 +1508,7 @@ namespace WpfHexaEditor
         /// </summary>
         public int GetColumnNumber(long position) =>
             AllowVisualByteAdress
-                ? (int)(position - VisualByteAdressStart - ByteShiftLeft) % BytePerLine  //TODO: get the good column number when use AllowVisualByteAdress
+                ? (int)(position - VisualByteAdressStart - ByteShiftLeft) % BytePerLine 
                 : (int)(position - ByteShiftLeft) % BytePerLine;
 
         /// <summary>
@@ -2586,7 +2586,7 @@ namespace WpfHexaEditor
             if (!ByteProvider.CheckIsOpen(_provider)) return;
 
             var modifiedBytesDictionary =
-                _provider.GetByteModifieds(ByteAction.All); //TODO: get just bytes from view...
+                _provider.GetByteModifieds(ByteAction.All);
 
             TraverseHexAndStringBytes(ctrl =>
             {
@@ -3147,7 +3147,8 @@ namespace WpfHexaEditor
                 
                 SetScrollMarker(position, ScrollMarker.ByteModified);
 
-                UnSelectAll();
+                if (!hightlight) UnSelectAll();
+
                 RefreshView();
 
                 return position;
@@ -3255,6 +3256,73 @@ namespace WpfHexaEditor
         /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
         public long ReplaceNext(string find, string replace, bool truckLength = true) =>
             ReplaceFirst(StringToByte(find), StringToByte(replace), truckLength, SelectionStart + 1, false);
+
+        /////////////////////////
+
+        /// <summary>
+        /// Replace the all byte array define by findData in byteprovider. 
+        /// </summary>
+        /// <returns>Return the an IEnumerable contains all positions are replaced. Return null on error/no replace</returns>
+        public IEnumerable<long> ReplaceAll(byte[] findData, byte[] replaceData, bool truckLength = true, bool hightlight = false)
+        {
+            if (findData == null || replaceData == null) return null;
+            if (!ByteProvider.CheckIsOpen(_provider)) return null;
+
+            var positions = FindAll(findData, hightlight);
+
+            if (positions.Any())
+            {
+                byte[] finalReplaceData = truckLength
+                    ? replaceData.Take(findData.Length).ToArray()
+                    : replaceData;
+
+                foreach (var position in positions)
+                {
+                    _provider.Paste(position, finalReplaceData, false);
+                    SetScrollMarker(position, ScrollMarker.ByteModified);
+                }
+
+                if (!hightlight) UnSelectAll();
+
+                RefreshView();
+
+                return positions;
+            }
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// Replace the all byte array define by findData in byteprovider. 
+        /// No highlight
+        /// </summary>
+        /// <returns>Return the position of replace. Return null on error/no replace</returns>
+        public IEnumerable<long> ReplaceAll(byte[] findData, byte[] replaceData, bool truckLength = true) =>
+            ReplaceAll(findData, replaceData, truckLength, false);
+
+        /// <summary>
+        /// Replace the all string define by find in byteprovider. 
+        /// </summary>
+        /// <returns>Return the position of replace. Return null on error/no replace</returns>
+        public IEnumerable<long> ReplaceAll(string find, string replace, bool truckLength = true, bool hightlight = false) =>
+            ReplaceAll(StringToByte(find), StringToByte(replace), truckLength, hightlight);
+
+        /// <summary>
+        /// Replace the all string define by find in byteprovider.  
+        /// No highlight
+        /// Truck replace data to length of find
+        /// </summary>
+        /// <returns>Return the position of replace. Return null on error/no replace</returns>
+        public IEnumerable<long> ReplaceAll(string find, string replace) =>
+            ReplaceAll(StringToByte(find), StringToByte(replace), true, false);
+
+        /// <summary>
+        /// Replace the all byte array define by findData in byteprovider.  
+        /// No highlight
+        /// </summary>
+        /// <returns>Return the position of replace. Return null on error/no replace</returns>
+        public IEnumerable<long> ReplaceAll(string find, string replace, bool truckLength = true) =>
+            ReplaceAll(StringToByte(find), StringToByte(replace), truckLength, false);
 
 
         #endregion Find/replace methods
@@ -4183,12 +4251,6 @@ namespace WpfHexaEditor
 
         #endregion
 
-        #region TBL intellisense-like support
-
-        //TODO: to be implemented
-
-        #endregion
-
         #region Line offset coloring...
 
         /// <summary>
@@ -4335,6 +4397,12 @@ namespace WpfHexaEditor
         internal CustomBackgroundBlock GetCustomBackgroundBlock(long bytePositionInFile) =>
             _cbbList?.FirstOrDefault(cbb => bytePositionInFile >= cbb.StartOffset &&
                                             bytePositionInFile <= cbb.StopOffset);
+
+        #endregion
+
+        #region NOT IMPLEMENTED // TBL intellisense-like support
+
+        //TODO: to be implemented
 
         #endregion
     }
