@@ -4064,8 +4064,22 @@ namespace WpfHexaEditor
 
                 if (!string.IsNullOrEmpty(textDropped) && ByteProvider.CheckIsOpen(_provider))
                 {
-                    //TODO: insert at mouve over position
-                    _provider.Paste(SelectionStart, textDropped, AllowExtend);
+                    #region Insert at mouve over position
+                    var position = SelectionStart;
+                    bool rtn = false;
+                    TraverseHexAndStringBytes(ctrl =>
+                    {
+                        Application.Current.DoEvents();
+
+                        if (ctrl.IsMouseOverMe)
+                        {
+                            position = ctrl.BytePositionInFile;
+                            rtn = true;
+                        }
+                    }, ref rtn);
+                    #endregion
+
+                    _provider.Paste(position, textDropped, AllowExtend);
 
                     RefreshView();
                 }

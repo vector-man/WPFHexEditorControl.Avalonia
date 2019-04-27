@@ -22,6 +22,7 @@ namespace WpfHexaEditor.Core.Interfaces
         bool IsHighLight { get; set; }
         bool IsSelected { get; set; }
         bool InternalChange { get; set; }
+        bool IsMouseOverMe { get; }
 
         //Methods
         void UpdateVisual();

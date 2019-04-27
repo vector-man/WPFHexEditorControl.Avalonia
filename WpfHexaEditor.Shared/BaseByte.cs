@@ -113,6 +113,16 @@ namespace WpfHexaEditor
         public bool ReadOnlyMode { protected get; set; }
 
         /// <summary>
+        /// Get or set the description to shown in tooltip
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Return true if mouse is over... (Used with traverse methods via IByteControl)
+        /// </summary>
+        public bool IsMouseOverMe { get; internal set; }
+
+        /// <summary>
         /// Get or Set if control as selected
         /// </summary>
         public bool IsSelected
@@ -283,8 +293,6 @@ namespace WpfHexaEditor
 
             InvalidateVisual();
         }
-        
-        public string Description { get; set; }
 
         /// <summary>
         /// Auto highlite SelectionByte
@@ -359,6 +367,8 @@ namespace WpfHexaEditor
             if (e.LeftButton == MouseButtonState.Pressed)
                 MouseSelection?.Invoke(this, e);
 
+            IsMouseOverMe = true;
+
             base.OnMouseEnter(e);
         }
 
@@ -377,6 +387,8 @@ namespace WpfHexaEditor
                 Action != ByteAction.Deleted &&
                 Action != ByteAction.Added)
                 Background = cbb.Color;
+
+            IsMouseOverMe = false;
 
             UpdateAutoHighLiteSelectionByteVisual();
 
