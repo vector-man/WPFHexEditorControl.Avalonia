@@ -3127,7 +3127,7 @@ namespace WpfHexaEditor
                 : null;
 
         /// <summary>
-        /// Replace the first byte array define by findDate in byteprovider at start position. 
+        /// Replace the first byte array define by findData in byteprovider at start position. 
         /// </summary>
         /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
         public long ReplaceFirst(byte[] findData, byte[] replaceData, bool truckLength = true, long startPosition = 0, bool hightlight = false)
@@ -3144,7 +3144,10 @@ namespace WpfHexaEditor
                     : replaceData;
 
                 _provider.Paste(position, finalReplaceData, false);
+                
+                SetScrollMarker(position, ScrollMarker.ByteModified);
 
+                UnSelectAll();
                 RefreshView();
 
                 return position;
@@ -3154,14 +3157,14 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// Replace the first byte array define by findData in byteprovider at start position. Start the search at SelectionStart. 
+        /// Replace the first byte array define by findData in byteprovider at SelectionStart. Start the search at SelectionStart. 
         /// </summary>
         /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
         public long ReplaceFirst(byte[] findData, byte[] replaceData, bool truckLength = true, bool hightlight = false) =>
             ReplaceFirst(findData, replaceData, truckLength, SelectionStart, hightlight);
 
         /// <summary>
-        /// Replace the first byte array define by findData in byteprovider at start position. 
+        /// Replace the first byte array define by findData in byteprovider at SelectionStart. 
         /// Start the search at SelectionStart. 
         /// No highlight
         /// </summary>
@@ -3170,7 +3173,7 @@ namespace WpfHexaEditor
             ReplaceFirst(findData, replaceData, truckLength, SelectionStart, false);
 
         /// <summary>
-        /// Replace the first byte array define by findData in byteprovider at start position. 
+        /// Replace the first byte array define by findData in byteprovider at SelectionStart. 
         /// Start the search at SelectionStart. 
         /// No highlight
         /// Truck replace data to length of findData
@@ -3180,14 +3183,14 @@ namespace WpfHexaEditor
             ReplaceFirst(findData, replaceData, true, SelectionStart, false);
 
         /// <summary>
-        /// Replace the first string define by find in byteprovider at start position. Start the search at SelectionStart. 
+        /// Replace the first string define by find in byteprovider at SelectionStart. Start the search at SelectionStart. 
         /// </summary>
         /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
         public long ReplaceFirst(string find, string replace, bool truckLength = true, bool hightlight = false) =>
             ReplaceFirst(StringToByte(find), StringToByte(replace), truckLength, SelectionStart, hightlight);
 
         /// <summary>
-        /// Replace the first string define by find in byteprovider at start position. 
+        /// Replace the first string define by find in byteprovider at SelectionStart. 
         /// Start the search at SelectionStart. 
         /// No highlight
         /// </summary>
@@ -3204,6 +3207,55 @@ namespace WpfHexaEditor
         /// <returns>Return the position of replace. Return -1 on error/no replace</returns>        
         public long ReplaceFirst(string find, string replace) =>
             ReplaceFirst(StringToByte(find), StringToByte(replace), true, SelectionStart, false);
+
+        /// <summary>
+        /// Replace the next byte array define by findData in byteprovider at SelectionStart. 
+        /// </summary>
+        /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
+        public long ReplaceNext(byte[] findData, byte[] replaceData, bool truckLength = true, bool hightlight = false) =>
+            ReplaceFirst(findData, replaceData, truckLength, SelectionStart + 1, hightlight);
+
+        /// <summary>
+        /// Replace the next byte array define by findData in byteprovider at SelectionStart. 
+        /// No highlight
+        /// Truck replace data to length of findData
+        /// </summary>
+        /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
+        public long ReplaceNext(byte[] findData, byte[] replaceData) =>
+            ReplaceFirst(findData, replaceData, true, SelectionStart + 1, false);
+
+        /// <summary>
+        /// Replace the next byte array define by findData in byteprovider at SelectionStart. 
+        /// No highlight
+        /// </summary>
+        /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
+        public long ReplaceNext(byte[] findData, byte[] replaceData, bool truckLength = true) =>
+            ReplaceFirst(findData, replaceData, truckLength, SelectionStart + 1, false);
+
+        /// <summary>
+        /// Replace the next string define by find in byteprovider at SelectionStart. 
+        /// </summary>
+        /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
+        public long ReplaceNext(string find, string replace, bool truckLength = true, bool hightlight = false) =>
+            ReplaceFirst(StringToByte(find), StringToByte(replace), truckLength, SelectionStart + 1, hightlight);
+
+        /// <summary>
+        /// Replace the next string define by find in byteprovider at SelectionStart. 
+        /// No highlight
+        /// Truck replace data to length of findData
+        /// </summary>
+        /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
+        public long ReplaceNext(string find, string replace) =>
+            ReplaceFirst(StringToByte(find), StringToByte(replace), true, SelectionStart + 1, false);
+
+        /// <summary>
+        /// Replace the next string define by find in byteprovider at SelectionStart. 
+        /// No highlight
+        /// </summary>
+        /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
+        public long ReplaceNext(string find, string replace, bool truckLength = true) =>
+            ReplaceFirst(StringToByte(find), StringToByte(replace), truckLength, SelectionStart + 1, false);
+
 
         #endregion Find/replace methods
 
