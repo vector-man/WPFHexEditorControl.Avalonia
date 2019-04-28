@@ -37,6 +37,10 @@ namespace WpfHexaEditor.Dialog
         private void FindLastButton_Click(object sender, RoutedEventArgs e) =>
             _parent?.FindLast(FindHexEdit.GetAllBytes());
 
+
+        private void ReplaceButton_Click(object sender, RoutedEventArgs e) => 
+            _parent?.ReplaceFirst(FindHexEdit.GetAllBytes(), ReplaceHexEdit.GetAllBytes());
+
         private void ClearButton_Click(object sender, RoutedEventArgs e) => InitializeMStreamFind();
 
         private void ClearReplaceButton_Click(object sender, RoutedEventArgs e) => InitializeMStreamReplace();
@@ -62,6 +66,5 @@ namespace WpfHexaEditor.Dialog
             _replaceMs.WriteByte(0);
             ReplaceHexEdit.Stream = _replaceMs;
         }
-
     }
 }

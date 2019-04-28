@@ -219,6 +219,9 @@
   <ItemGroup>
     <Resource Include="Resources\Icon\Logo-Icon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icon\Settings-Icon.ico" />
+  </ItemGroup>
   <Import Project="..\WpfHexaEditor.Shared\WpfHexaEditor.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

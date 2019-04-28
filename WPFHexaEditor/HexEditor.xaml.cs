@@ -1373,24 +1373,6 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// Replace byte with another at selection position
-        /// </summary>
-        public void ReplaceByte(byte original, byte replace) =>
-            ReplaceByte(SelectionStart, SelectionLength, original, replace);
-
-        /// <summary>
-        /// Replace byte with another at start position
-        /// </summary>
-        public void ReplaceByte(long startPosition, long length, byte original, byte replace)
-        {
-            if (!ByteProvider.CheckIsOpen(_provider) || startPosition <= -1 || length <= 0) return;
-
-            _provider.ReplaceByte(startPosition, length, original, replace);
-            SetScrollMarker(SelectionStart, ScrollMarker.ByteModified, Properties.Resources.ReplaceWithByteString);
-            RefreshView();
-        }
-
-        /// <summary>
         /// Get all bytes from file or stream opened
         /// </summary>
         public byte[] GetAllBytes(bool copyChange)
@@ -1485,7 +1467,7 @@ namespace WpfHexaEditor
 
         #endregion Copy/Paste/Cut Methods
 
-        #region Set position methods
+        #region Position methods
 
         /// <summary>
         /// Set position of cursor
@@ -3127,6 +3109,24 @@ namespace WpfHexaEditor
                 : null;
 
         /// <summary>
+        /// Replace byte with another at selection position
+        /// </summary>
+        public void ReplaceByte(byte original, byte replace) =>
+            ReplaceByte(SelectionStart, SelectionLength, original, replace);
+
+        /// <summary>
+        /// Replace byte with another at start position
+        /// </summary>
+        public void ReplaceByte(long startPosition, long length, byte original, byte replace)
+        {
+            if (!ByteProvider.CheckIsOpen(_provider) || startPosition <= -1 || length <= 0) return;
+
+            _provider.ReplaceByte(startPosition, length, original, replace);
+            SetScrollMarker(SelectionStart, ScrollMarker.ByteModified, Properties.Resources.ReplaceWithByteString);
+            RefreshView();
+        }
+
+        /// <summary>
         /// Replace the first byte array define by findData in byteprovider at start position. 
         /// </summary>
         /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
@@ -3147,8 +3147,7 @@ namespace WpfHexaEditor
                 
                 SetScrollMarker(position, ScrollMarker.ByteModified);
 
-                if (!hightlight) UnSelectAll();
-
+                UnSelectAll();
                 RefreshView();
 
                 return position;
@@ -3257,8 +3256,6 @@ namespace WpfHexaEditor
         public long ReplaceNext(string find, string replace, bool truckLength = true) =>
             ReplaceFirst(StringToByte(find), StringToByte(replace), truckLength, SelectionStart + 1, false);
 
-        /////////////////////////
-
         /// <summary>
         /// Replace the all byte array define by findData in byteprovider. 
         /// </summary>
@@ -3282,8 +3279,7 @@ namespace WpfHexaEditor
                     SetScrollMarker(position, ScrollMarker.ByteModified);
                 }
 
-                if (!hightlight) UnSelectAll();
-
+                UnSelectAll();
                 RefreshView();
 
                 return positions;
@@ -3323,8 +3319,7 @@ namespace WpfHexaEditor
         /// <returns>Return the position of replace. Return null on error/no replace</returns>
         public IEnumerable<long> ReplaceAll(string find, string replace, bool truckLength = true) =>
             ReplaceAll(StringToByte(find), StringToByte(replace), truckLength, false);
-
-
+        
         #endregion Find/replace methods
 
         #region Statusbar
