@@ -66,5 +66,13 @@ namespace WpfHexaEditor.Dialog
             _replaceMs.WriteByte(0);
             ReplaceHexEdit.Stream = _replaceMs;
         }
+
+        private void SettingButton_Click(object sender, RoutedEventArgs e)
+        {
+            SettingPopup.IsOpen = true;
+        }
+
+        private void SettingMenuItem_Click(object sender, RoutedEventArgs e) => 
+            SettingPopup.IsOpen = false;
     }
 }
