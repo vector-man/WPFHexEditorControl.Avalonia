@@ -12,47 +12,63 @@ namespace WpfHexaEditor.Dialog
         private MemoryStream _replaceMs;
         private readonly HexEditor _parent;
 
-        public FindReplaceWindow(HexEditor parent)
+        public FindReplaceWindow(HexEditor parent, byte[] findData = null)
         {
             InitializeComponent();
 
             //Parent hexeditor for "binding" search
             _parent = parent;
-            
-            InitializeMStreamFind();
+
+            InitializeMStreamFind(findData);
             InitializeMStreamReplace();
         }
 
-        private void FindAllButton_Click(object sender, RoutedEventArgs e) =>
-            _parent?.FindAll(FindHexEdit.GetAllBytes(), true);
-
-        private void FindFirstButton_Click(object sender, RoutedEventArgs e) =>
-            _parent?.FindFirst(FindHexEdit.GetAllBytes());
-
+        #region Buttons events
+        private void ClearButton_Click(object sender, RoutedEventArgs e) => InitializeMStreamFind();
+        private void ClearReplaceButton_Click(object sender, RoutedEventArgs e) => InitializeMStreamReplace();
         private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
 
+        private void FindAllButton_Click(object sender, RoutedEventArgs e) =>
+            _parent?.FindAll(FindHexEdit.GetAllBytes(), HighlightMenuItem.IsChecked);
+
+        private void FindFirstButton_Click(object sender, RoutedEventArgs e) =>
+            _parent?.FindFirst(FindHexEdit.GetAllBytes(), 0, HighlightMenuItem.IsChecked);
+
         private void FindNextButton_Click(object sender, RoutedEventArgs e) =>
-            _parent?.FindNext(FindHexEdit.GetAllBytes());
+            _parent?.FindNext(FindHexEdit.GetAllBytes(), HighlightMenuItem.IsChecked);
 
         private void FindLastButton_Click(object sender, RoutedEventArgs e) =>
-            _parent?.FindLast(FindHexEdit.GetAllBytes());
+            _parent?.FindLast(FindHexEdit.GetAllBytes(), HighlightMenuItem.IsChecked);
 
+        private void ReplaceButton_Click(object sender, RoutedEventArgs e) =>
+            _parent?.ReplaceFirst(FindHexEdit.GetAllBytes(), ReplaceHexEdit.GetAllBytes(),
+                TrunkMenuItem.IsChecked, HighlightMenuItem.IsChecked);
 
-        private void ReplaceButton_Click(object sender, RoutedEventArgs e) => 
-            _parent?.ReplaceFirst(FindHexEdit.GetAllBytes(), ReplaceHexEdit.GetAllBytes());
+        private void ReplaceNextButton_Click(object sender, RoutedEventArgs e) =>
+            _parent?.ReplaceNext(FindHexEdit.GetAllBytes(), ReplaceHexEdit.GetAllBytes(),
+               TrunkMenuItem.IsChecked, HighlightMenuItem.IsChecked);
 
-        private void ClearButton_Click(object sender, RoutedEventArgs e) => InitializeMStreamFind();
+        private void ReplaceAllButton_Click(object sender, RoutedEventArgs e) =>
+            _parent?.ReplaceAll(FindHexEdit.GetAllBytes(), ReplaceHexEdit.GetAllBytes(),
+                TrunkMenuItem.IsChecked, HighlightMenuItem.IsChecked);
+        #endregion
 
-        private void ClearReplaceButton_Click(object sender, RoutedEventArgs e) => InitializeMStreamReplace();
-
+        #region Methods
         /// <summary>
         /// Initialize stream and hexeditor
         /// </summary>
-        private void InitializeMStreamFind()
+        private void InitializeMStreamFind(byte[] findData = null)
         {
             FindHexEdit.CloseProvider();
-            _findMs = new MemoryStream(1);
-            _findMs.WriteByte(0);
+
+            if (findData != null && findData.Length > 0)
+                _findMs = new MemoryStream(findData);
+            else
+            {
+                _findMs = new MemoryStream(1);
+                _findMs.WriteByte(0);
+            }                
+
             FindHexEdit.Stream = _findMs;
         }
 
@@ -66,13 +82,15 @@ namespace WpfHexaEditor.Dialog
             _replaceMs.WriteByte(0);
             ReplaceHexEdit.Stream = _replaceMs;
         }
+        #endregion
 
-        private void SettingButton_Click(object sender, RoutedEventArgs e)
-        {
+        #region Settings events
+        private void SettingButton_Click(object sender, RoutedEventArgs e) => 
             SettingPopup.IsOpen = true;
-        }
 
         private void SettingMenuItem_Click(object sender, RoutedEventArgs e) => 
             SettingPopup.IsOpen = false;
+        #endregion
+
     }
 }

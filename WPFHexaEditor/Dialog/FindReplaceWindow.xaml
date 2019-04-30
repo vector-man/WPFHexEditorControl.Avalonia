@@ -28,7 +28,7 @@
                StaysOpen="False"               
                >
             
-                <StackPanel Background="WhiteSmoke" Margin="1,0.5,0.5,0.5">
+                <StackPanel Background="WhiteSmoke" Margin="1,0.5,0.5,0.8">
                     <MenuItem x:Name="HighlightMenuItem" 
                               Header="TMP: HIGHLIGHT" 
                               IsCheckable="True"
@@ -105,8 +105,8 @@
             Margin="0,234,14,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
+            Click="ReplaceAllButton_Click"
             Content="{x:Static p:Resources.ReplaceAllString}"
-            IsEnabled="False"
             TabIndex="9" />
 
         <wpfHexaEditor:HexEditor
@@ -190,8 +190,8 @@
             Margin="0,202,14,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
+            Click="ReplaceNextButton_Click"
             Content="{x:Static p:Resources.ReplaceNextString}"
-            IsEnabled="False"
             TabIndex="7" />
 
         <Button x:Name="SettingButton"

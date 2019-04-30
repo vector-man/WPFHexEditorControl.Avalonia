@@ -265,7 +265,7 @@ namespace WPFHexaEditorExample
 
         private void ReplaceMenu_Click(object sender, RoutedEventArgs e)
         {
-            var window = new FindReplaceWindow(HexEdit)
+            var window = new FindReplaceWindow(HexEdit, HexEdit.SelectionByteArray)
             {
                 Owner = this
             };
