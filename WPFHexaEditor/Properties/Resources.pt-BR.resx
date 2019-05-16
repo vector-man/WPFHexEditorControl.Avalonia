@@ -232,6 +232,9 @@
   <data name="HexString" xml:space="preserve">
     <value>Hex</value>
   </data>
+  <data name="HighLightSettingString" xml:space="preserve">
+    <value>Realce todos os dados encontrados</value>
+  </data>
   <data name="KBTagString" xml:space="preserve">
     <value>Kb</value>
   </data>
@@ -279,6 +282,9 @@
   </data>
   <data name="ReplaceString" xml:space="preserve">
     <value>Substituir</value>
+  </data>
+  <data name="ReplaceTrimSettingString" xml:space="preserve">
+    <value>Apare os dados no comprimento de localização quando substituir</value>
   </data>
   <data name="ReplaceWithByteString" xml:space="preserve">
     <value>Substitua por byte</value>

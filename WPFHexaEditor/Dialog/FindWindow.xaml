@@ -13,7 +13,6 @@
     MinWidth="550"
     MaxHeight="500"
     MaxWidth="700"
-    Background="WhiteSmoke"
     mc:Ignorable="d" 
     ShowInTaskbar="False" 
     WindowStartupLocation="CenterOwner"

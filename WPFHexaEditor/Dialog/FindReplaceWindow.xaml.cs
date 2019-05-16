@@ -42,15 +42,15 @@ namespace WpfHexaEditor.Dialog
 
         private void ReplaceButton_Click(object sender, RoutedEventArgs e) =>
             _parent?.ReplaceFirst(FindHexEdit.GetAllBytes(), ReplaceHexEdit.GetAllBytes(),
-                TrunkMenuItem.IsChecked, HighlightMenuItem.IsChecked);
+                TrimMenuItem.IsChecked, HighlightMenuItem.IsChecked);
 
         private void ReplaceNextButton_Click(object sender, RoutedEventArgs e) =>
             _parent?.ReplaceNext(FindHexEdit.GetAllBytes(), ReplaceHexEdit.GetAllBytes(),
-               TrunkMenuItem.IsChecked, HighlightMenuItem.IsChecked);
+               TrimMenuItem.IsChecked, HighlightMenuItem.IsChecked);
 
         private void ReplaceAllButton_Click(object sender, RoutedEventArgs e) =>
             _parent?.ReplaceAll(FindHexEdit.GetAllBytes(), ReplaceHexEdit.GetAllBytes(),
-                TrunkMenuItem.IsChecked, HighlightMenuItem.IsChecked);
+                TrimMenuItem.IsChecked, HighlightMenuItem.IsChecked);
         #endregion
 
         #region Methods

@@ -300,4 +300,10 @@
   <data name="ReplaceWithString" xml:space="preserve">
     <value>Remplacer par :</value>
   </data>
+  <data name="HighLightSettingString" xml:space="preserve">
+    <value>Mettez en surbrillance toutes les données trouvées</value>
+  </data>
+  <data name="ReplaceTrimSettingString" xml:space="preserve">
+    <value>Couper les données sur la longueur de la recherche lors du remplacement</value>
+  </data>
 </root>

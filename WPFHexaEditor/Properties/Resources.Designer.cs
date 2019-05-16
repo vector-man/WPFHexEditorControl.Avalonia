@@ -19,7 +19,7 @@ namespace WpfHexaEditor.Properties {
     // à l'aide d'un outil, tel que ResGen ou Visual Studio.
     // Pour ajouter ou supprimer un membre, modifiez votre fichier .ResX, puis réexécutez ResGen
     // avec l'option /str ou régénérez votre projet VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -690,6 +690,15 @@ namespace WpfHexaEditor.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Highlight all data find.
+        /// </summary>
+        public static string HighLightSettingString {
+            get {
+                return ResourceManager.GetString("HighLightSettingString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Kb.
         /// </summary>
         public static string KBTagString {
@@ -830,6 +839,15 @@ namespace WpfHexaEditor.Properties {
         public static string ReplaceString {
             get {
                 return ResourceManager.GetString("ReplaceString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Trim the data on the find length when replace.
+        /// </summary>
+        public static string ReplaceTrimSettingString {
+            get {
+                return ResourceManager.GetString("ReplaceTrimSettingString", resourceCulture);
             }
         }
         

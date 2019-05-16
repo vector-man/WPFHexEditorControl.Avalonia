@@ -225,6 +225,9 @@
   <data name="HexString" xml:space="preserve">
     <value>十六进制</value>
   </data>
+  <data name="HighLightSettingString" xml:space="preserve">
+    <value>突出显示所有数据查找</value>
+  </data>
   <data name="KBTagString" xml:space="preserve">
     <value>KB</value>
   </data>
@@ -272,6 +275,9 @@
   </data>
   <data name="ReplaceString" xml:space="preserve">
     <value>更替</value>
+  </data>
+  <data name="ReplaceTrimSettingString" xml:space="preserve">
+    <value>更换时修剪查找长度的数据</value>
   </data>
   <data name="ReplaceWithByteString" xml:space="preserve">
     <value>用字节替换</value>

@@ -232,6 +232,9 @@
   <data name="HexString" xml:space="preserve">
     <value>Hex</value>
   </data>
+  <data name="HighLightSettingString" xml:space="preserve">
+    <value>Zaznacz wszystkie znalezione dane</value>
+  </data>
   <data name="KBTagString" xml:space="preserve">
     <value>Kb</value>
   </data>
@@ -279,6 +282,9 @@
   </data>
   <data name="ReplaceString" xml:space="preserve">
     <value>Zastąpić</value>
+  </data>
+  <data name="ReplaceTrimSettingString" xml:space="preserve">
+    <value>Przytnij dane na długości wyszukiwania po wymianie</value>
   </data>
   <data name="ReplaceWithByteString" xml:space="preserve">
     <value>Zmień na bajt</value>

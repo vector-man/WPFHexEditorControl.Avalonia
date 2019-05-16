@@ -225,6 +225,9 @@
   <data name="HexString" xml:space="preserve">
     <value>наговор</value>
   </data>
+  <data name="HighLightSettingString" xml:space="preserve">
+    <value>Выделите все данные найти</value>
+  </data>
   <data name="KBTagString" xml:space="preserve">
     <value>Kb</value>
   </data>
@@ -272,6 +275,9 @@
   </data>
   <data name="ReplaceString" xml:space="preserve">
     <value>Заменить</value>
+  </data>
+  <data name="ReplaceTrimSettingString" xml:space="preserve">
+    <value>Обрезать данные по длине нахождения при замене</value>
   </data>
   <data name="ReplaceWithByteString" xml:space="preserve">
     <value>Заменить байт</value>

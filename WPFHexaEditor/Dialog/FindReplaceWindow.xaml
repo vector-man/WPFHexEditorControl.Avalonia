@@ -10,10 +10,9 @@
     Width="193"
     Height="340"
     MinWidth="550"
-    MinHeight="340"
+    MinHeight="360"
     MaxWidth="700"
     MaxHeight="500"
-    Background="WhiteSmoke"
     Icon="/WPFHexaEditor;component/Resources/Icon/Logo-Icon.ico"
     ResizeMode="CanResizeWithGrip"
     ShowInTaskbar="False"
@@ -28,14 +27,14 @@
                StaysOpen="False"               
                >
             
-                <StackPanel Background="WhiteSmoke" Margin="1,0.5,0.5,0.8">
+                <StackPanel Background="{x:Static SystemColors.MenuBarBrush}" Margin="1,0.5,0.5,0.8">
                     <MenuItem x:Name="HighlightMenuItem" 
-                              Header="TMP: HIGHLIGHT" 
+                              Header="{x:Static p:Resources.ReplaceTrimSettingString}" 
                               IsCheckable="True"
                               IsChecked="True"
                               Click="SettingMenuItem_Click"/>
-                    <MenuItem x:Name="TrunkMenuItem" 
-                              Header="TMP: TRUNK REPLACE"
+                    <MenuItem x:Name="TrimMenuItem" 
+                              Header="{x:Static p:Resources.HighLightSettingString}"
                               IsCheckable="True" 
                               IsChecked="True"
                               Click="SettingMenuItem_Click"/>
