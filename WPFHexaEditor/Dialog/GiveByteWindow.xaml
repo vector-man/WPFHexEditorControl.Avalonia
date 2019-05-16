@@ -10,7 +10,6 @@
     Width="359"
     Height="121"
     x:ClassModifier="internal"
-    Background="WhiteSmoke"
     Icon="/WPFHexaEditor;component/Resources/Icon/Logo-Icon.ico"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
@@ -21,7 +20,7 @@
         <Button
             x:Name="OkButton"
             Width="75"
-            Margin="0,0,92,13"
+            Margin="0,0,92,10"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Click="OKButton_Click"
@@ -32,7 +31,7 @@
         <Button
             Width="75"
             Height="20"
-            Margin="0,0,12,13"
+            Margin="0,0,10,10"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Content="{x:Static p:Resources.CancelString}"
@@ -49,7 +48,7 @@
             x:Name="HexTextBox"
             Width="Auto"
             Height="23"
-            Margin="121,19,50,0"
+            Margin="143,20,10,0"
             VerticalAlignment="Top"
             MaximumValue="255" />
     </Grid>
