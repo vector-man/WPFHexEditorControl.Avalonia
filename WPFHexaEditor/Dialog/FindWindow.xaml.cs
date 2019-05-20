@@ -21,22 +21,21 @@ namespace WpfHexaEditor.Dialog
             InitializeMStream();
         }
 
+        private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
+        private void ClearButton_Click(object sender, RoutedEventArgs e) => InitializeMStream();
+
         private void FindAllButton_Click(object sender, RoutedEventArgs e) =>
             _parent?.FindAll(FindHexEdit.GetAllBytes(), true);
 
         private void FindFirstButton_Click(object sender, RoutedEventArgs e) =>
             _parent?.FindFirst(FindHexEdit.GetAllBytes());
-
-        private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
-
+               
         private void FindNextButton_Click(object sender, RoutedEventArgs e) =>
             _parent?.FindNext(FindHexEdit.GetAllBytes());
 
         private void FindLastButton_Click(object sender, RoutedEventArgs e) =>
             _parent?.FindLast(FindHexEdit.GetAllBytes());
-
-        private void ClearButton_Click(object sender, RoutedEventArgs e) => InitializeMStream();
-
+               
         /// <summary>
         /// Initialize stream and hexeditor
         /// </summary>

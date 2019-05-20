@@ -47,14 +47,14 @@
             Margin="10,41,129,16" 
             AllowAutoHightLighSelectionByte="False"
             AllowContextMenu="False"
-            AllowDeleteByte="False"
+            AllowDeleteByte="True"
             AllowExtend="True"
             AllowFileDrop="False"
             AppendNeedConfirmation="False"
             ByteModifiedColor="White"
             StatusBarVisibility="Collapsed" 
             ByteSpacerPositioning="Nothing"
-            BytePerLine="8" />
+            BytePerLine="8" AllowDrop="True" />
 
         <Label
             Margin="10,10,0,0"

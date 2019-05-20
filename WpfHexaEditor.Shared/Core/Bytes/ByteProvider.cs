@@ -743,7 +743,9 @@ namespace WpfHexaEditor.Core.Bytes
             #region Set start position
 
             _stream.Position = selectionStart != selectionStop
-                ? (selectionStart > selectionStop ? selectionStop : selectionStart)
+                ? (selectionStart > selectionStop 
+                    ? selectionStop 
+                    : selectionStart)
                 : selectionStart;
 
             #endregion

@@ -71,14 +71,16 @@
             VerticalAlignment="Top"
             AllowAutoHightLighSelectionByte="False"
             AllowContextMenu="False"
-            AllowDeleteByte="False"
+            AllowDeleteByte="True"
             AllowExtend="True"
             AllowFileDrop="False"
             AppendNeedConfirmation="False"
             ByteModifiedColor="White"
             BytePerLine="8"
             ByteSpacerPositioning="Nothing"
-            StatusBarVisibility="Collapsed" />
+            StatusBarVisibility="Collapsed" 
+            AllowDrop="True" 
+            BytesDeleted="FindHexEdit_BytesDeleted" />
 
         <Label
             Margin="10,10,0,0"
@@ -113,14 +115,17 @@
             Margin="10,187,129,10"
             AllowAutoHightLighSelectionByte="False"
             AllowContextMenu="False"
-            AllowDeleteByte="False"
+            AllowDeleteByte="True"
             AllowExtend="True"
             AllowFileDrop="False"
             AppendNeedConfirmation="False"
             ByteModifiedColor="White"
             BytePerLine="8"
             ByteSpacerPositioning="Nothing"
-            StatusBarVisibility="Collapsed" />
+            StatusBarVisibility="Collapsed" 
+            AllowDrop="True" 
+            BytesDeleted="ReplaceHexEdit_BytesDeleted"
+            />
 
         <Label
             Height="26"
