@@ -1033,16 +1033,6 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// Un highlight all byte as highlighted with find all methods
-        /// </summary>
-        public void UnHighLightAll()
-        {
-            _markedPositionList.Clear();
-            UpdateHighLight();
-            ClearScrollMarker(ScrollMarker.SearchHighLight);
-        }
-
-        /// <summary>
         /// Set the start byte position of selection
         /// </summary>
         public long SelectionStart
@@ -2940,9 +2930,7 @@ namespace WpfHexaEditor
 
                 if (!highLight) return position;
 
-                if (!_markedPositionList.ContainsValue(position))
-                    for (var i = position; i < position + data.Length; i++)
-                        _markedPositionList.Add(i, i);
+                AddHighLight(position, data.Length);
 
                 SetScrollMarker(position, ScrollMarker.SearchHighLight);
 
@@ -2979,9 +2967,7 @@ namespace WpfHexaEditor
 
                 if (!highLight) return position;
 
-                if (!_markedPositionList.ContainsValue(position))
-                    for (var i = position; i < position + data.Length; i++)
-                        _markedPositionList.Add(i, i);
+                AddHighLight(position, data.Length);
 
                 SetScrollMarker(position, ScrollMarker.SearchHighLight);
 
@@ -3019,9 +3005,7 @@ namespace WpfHexaEditor
 
                 if (!highLight) return position;
 
-                if (!_markedPositionList.ContainsValue(position))
-                    for (var i = position; i < position + data.Length; i++)
-                        _markedPositionList.Add(i, i);
+                AddHighLight(position, data.Length);
 
                 SetScrollMarker(position, ScrollMarker.SearchHighLight);
 
@@ -3082,10 +3066,8 @@ namespace WpfHexaEditor
                 var findAll = positions as IList<long> ?? positions.ToList();
                 foreach (var position in findAll)
                 {
-                    if (!_markedPositionList.ContainsValue(position))
-                        for (var i = position; i < position + data.Length; i++)
-                            _markedPositionList.Add(i, i);
-                    
+                    AddHighLight(position, data.Length);
+
                     SetScrollMarker(position, ScrollMarker.SearchHighLight);
                 }
 
@@ -3831,7 +3813,7 @@ namespace WpfHexaEditor
 
         #endregion Bottom and Top rectangle
 
-        #region Highlight selected byte        
+        #region Highlight support       
 
         /// <summary>
         /// Byte at selection start
@@ -3865,7 +3847,32 @@ namespace WpfHexaEditor
                 ctrl.UpdateVisual();
         }
 
-        #endregion Highlight selected byte
+        /// <summary>
+        /// Un highlight all byte as highlighted with find all methods
+        /// </summary>
+        public void UnHighLightAll()
+        {
+            _markedPositionList.Clear();
+            UpdateHighLight();
+            ClearScrollMarker(ScrollMarker.SearchHighLight);
+        }
+
+        public void AddHighLight(long startPosition, long length)
+        {
+            if (!_markedPositionList.ContainsValue(startPosition))
+                for (var i = startPosition; i < startPosition + length; i++)
+                    _markedPositionList.Add(i, i);
+        }
+
+        public void RemoveHighLight(long startPosition, long length)
+        {
+            if (!_markedPositionList.ContainsValue(startPosition))
+                for (var i = startPosition; i < startPosition + length; i++)
+                    _markedPositionList.Remove(i);
+        }
+
+
+        #endregion Highlight support
 
         #region ByteCount property/methods
 
