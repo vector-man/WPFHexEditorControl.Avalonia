@@ -236,12 +236,12 @@
                             Padding="5,5,0,5"
                             Content="{x:Static p:Resources.LineStatusBarTagString}"
                             FontWeight="Bold" />
-                        <Label Content="{Binding SelectionLine, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}">
+                        <Label Content="{Binding Path=SelectionLine, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}">
                             <Label.ToolTip>
                                 <StackPanel Orientation="Horizontal">
                                     <Label Content="Line :" FontWeight="Bold" />
-                                    <Label Content="{Binding SelectionLine, UpdateSourceTrigger=PropertyChanged}" />
-                                    <Label Content="{Binding SelectionLine, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}" />
+                                    <Label Content="{Binding Path=SelectionLine, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Label Content="{Binding Path=SelectionLine, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}" />
                                 </StackPanel>
                             </Label.ToolTip>
                         </Label>
@@ -254,12 +254,12 @@
                             Padding="5,5,0,5"
                             Content="{x:Static p:Resources.PositionString}"
                             FontWeight="Bold" />
-                        <Label Content="{Binding SelectionStart, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}">
+                        <Label Content="{Binding Path=SelectionStart, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}">
                             <Label.ToolTip>
                                 <StackPanel Orientation="Horizontal">
                                     <Label Content="{x:Static p:Resources.PositionString}" FontWeight="Bold" />
-                                    <Label Content="{Binding SelectionStart, UpdateSourceTrigger=PropertyChanged}" />
-                                    <Label Content="{Binding SelectionStart, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}" />
+                                    <Label Content="{Binding Path=SelectionStart, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Label Content="{Binding Path=SelectionStart, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}" />
                                 </StackPanel>
                             </Label.ToolTip>
                         </Label>
