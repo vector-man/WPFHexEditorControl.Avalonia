@@ -2930,7 +2930,7 @@ namespace WpfHexaEditor
 
                 if (!highLight) return position;
 
-                AddHighLight(position, data.Length);
+                AddHighLight(position, data.Length, false);
 
                 SetScrollMarker(position, ScrollMarker.SearchHighLight);
 
@@ -2967,7 +2967,7 @@ namespace WpfHexaEditor
 
                 if (!highLight) return position;
 
-                AddHighLight(position, data.Length);
+                AddHighLight(position, data.Length, false);
 
                 SetScrollMarker(position, ScrollMarker.SearchHighLight);
 
@@ -3005,7 +3005,7 @@ namespace WpfHexaEditor
 
                 if (!highLight) return position;
 
-                AddHighLight(position, data.Length);
+                AddHighLight(position, data.Length, false);
 
                 SetScrollMarker(position, ScrollMarker.SearchHighLight);
 
@@ -3066,7 +3066,7 @@ namespace WpfHexaEditor
                 var findAll = positions as IList<long> ?? positions.ToList();
                 foreach (var position in findAll)
                 {
-                    AddHighLight(position, data.Length);
+                    AddHighLight(position, data.Length, false);
 
                     SetScrollMarker(position, ScrollMarker.SearchHighLight);
                 }
@@ -3857,18 +3857,34 @@ namespace WpfHexaEditor
             ClearScrollMarker(ScrollMarker.SearchHighLight);
         }
 
-        public void AddHighLight(long startPosition, long length)
+        /// <summary>
+        /// Add highlight at position start
+        /// </summary>
+        /// <param name="startPosition">Position to start the highlight</param>
+        /// <param name="length">The length to highlight</param>
+        /// <param name="updateVisual">Set to true for update the visual after adding</param>
+        public void AddHighLight(long startPosition, long length, bool updateVisual = true)
         {
-            if (!_markedPositionList.ContainsValue(startPosition))
-                for (var i = startPosition; i < startPosition + length; i++)
+            for (var i = startPosition; i < startPosition + length; i++)
+                if (!_markedPositionList.ContainsValue(i))
                     _markedPositionList.Add(i, i);
+
+            if (updateVisual) UpdateHighLight();
         }
 
-        public void RemoveHighLight(long startPosition, long length)
+        /// <summary>
+        /// Remove highlight from position start
+        /// </summary>
+        /// <param name="startPosition">Position to start the remove of highlight</param>
+        /// <param name="length">The length of highlight to removing</param>
+        /// <param name="updateVisual">Set to true for update the visual after removing</param>
+        public void RemoveHighLight(long startPosition, long length, bool updateVisual = true)
         {
-            if (!_markedPositionList.ContainsValue(startPosition))
-                for (var i = startPosition; i < startPosition + length; i++)
+            for (var i = startPosition; i < startPosition + length; i++)
+                if (_markedPositionList.ContainsValue(i))
                     _markedPositionList.Remove(i);
+
+            if (updateVisual) UpdateHighLight();
         }
 
 
