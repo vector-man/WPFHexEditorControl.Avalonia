@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2018
+// Apache 2.0  - 2016-2019
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 // Contributor: Janus Tida
 //////////////////////////////////////////////
@@ -228,13 +228,14 @@ namespace WpfHexaEditor
 
                 if (Keyboard.GetKeyStates(Key.CapsLock) == KeyStates.Toggled)
                 {
-                    if (Keyboard.Modifiers != ModifierKeys.Shift && e.Key != Key.RightShift && e.Key != Key.LeftShift)
+                    if (Keyboard.Modifiers != ModifierKeys.Shift && Keyboard.Modifiers != ModifierKeys.Control && 
+                        e.Key != Key.RightShift && e.Key != Key.LeftShift)
                     {
                         Text = KeyValidator.GetCharFromKey(e.Key).ToString();
                         isok = true;
                     }
-                    else if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key != Key.RightShift &&
-                             e.Key != Key.LeftShift)
+                    else if (Keyboard.Modifiers == ModifierKeys.Shift && Keyboard.Modifiers != ModifierKeys.Control && 
+                             e.Key != Key.RightShift && e.Key != Key.LeftShift)
                     {
                         isok = true;
                         Text = KeyValidator.GetCharFromKey(e.Key).ToString().ToLower();
@@ -242,13 +243,14 @@ namespace WpfHexaEditor
                 }
                 else
                 {
-                    if (Keyboard.Modifiers != ModifierKeys.Shift && e.Key != Key.RightShift && e.Key != Key.LeftShift)
+                    if (Keyboard.Modifiers != ModifierKeys.Shift && Keyboard.Modifiers != ModifierKeys.Control &&
+                        e.Key != Key.RightShift && e.Key != Key.LeftShift)
                     {
                         Text = KeyValidator.GetCharFromKey(e.Key).ToString().ToLower();
                         isok = true;
                     }
-                    else if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key != Key.RightShift &&
-                             e.Key != Key.LeftShift)
+                    else if (Keyboard.Modifiers == ModifierKeys.Shift && Keyboard.Modifiers != ModifierKeys.Control && 
+                             e.Key != Key.RightShift && e.Key != Key.LeftShift)
                     {
                         isok = true;
                         Text = KeyValidator.GetCharFromKey(e.Key).ToString();
