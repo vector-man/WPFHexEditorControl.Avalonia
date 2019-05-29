@@ -26,7 +26,7 @@ Sample with custom character table (TBL) on SNES Final Fantasy II US
 Sample use ByteShiftLeft and BytePerLine properties with custom TBL for edit fixed lenght table...
 ![example](Images/Sample12-FIXEDTBL-BYTESHIFT.png?raw=true)
 
-Sample use of find dialog... (Replace dialog are under construction)
+Sample use of find and find/replace dialog...
 ![example](Images/Sample13-FindDialog.png?raw=true)
 
 ## What is TBL (custom character table)
@@ -37,6 +37,7 @@ Unicode TBL are supported. For use put value at the right of equal (=) like this
 ![example](Images/TBLExplain.png?raw=true)
 
 ## Somes features
+- Find and Find/Replace dialog
 - Append byte at end of file
 - Include HexBox, an Hexadecimal TextBox with spinner
 - Fill selection (or another array) with byte.
