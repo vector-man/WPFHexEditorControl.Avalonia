@@ -306,7 +306,7 @@
             HorizontalAlignment="Right"
             Content="ReadOnly"
             FontWeight="Bold"
-            Visibility="{Binding ReadOnlyMode, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+            Visibility="{Binding Path=ReadOnlyMode, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
         <!--#endregion-->
 
         <!--#region Scrollbar, marker, and move rectangle-->

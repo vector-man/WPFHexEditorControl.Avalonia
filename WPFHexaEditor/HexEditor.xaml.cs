@@ -4403,13 +4403,11 @@ namespace WpfHexaEditor
             DependencyProperty.Register(nameof(UseCustomBackGroudBlock), typeof(bool), typeof(HexEditor),
                 new FrameworkPropertyMetadata(false, Control_UseCustomBackGroudBlockPropertyChanged));
 
-        private static void Control_UseCustomBackGroudBlockPropertyChanged(DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
+        private static void Control_UseCustomBackGroudBlockPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is HexEditor ctrl && e.NewValue != e.OldValue) ctrl.RefreshView();
         }
-
-
+        
         private List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
 
         internal CustomBackgroundBlock GetCustomBackgroundBlock(long bytePositionInFile) =>
