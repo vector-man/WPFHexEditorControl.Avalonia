@@ -1,5 +1,5 @@
 ﻿<!--
-    Apache 2.0  - 2016-2018
+    Apache 2.0  - 2016-2019
     Author : Derek Tremblay (derektremblay666@gmail.com)
 -->
 
@@ -236,12 +236,12 @@
                             Padding="5,5,0,5"
                             Content="{x:Static p:Resources.LineStatusBarTagString}"
                             FontWeight="Bold" />
-                        <Label Content="{Binding Path=SelectionLine, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}">
+                        <Label Content="{Binding Path=SelectionLine, RelativeSource={RelativeSource AncestorType={x:Type local:HexEditor}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}">
                             <Label.ToolTip>
                                 <StackPanel Orientation="Horizontal">
                                     <Label Content="Line :" FontWeight="Bold" />
-                                    <Label Content="{Binding Path=SelectionLine, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged}" />
-                                    <Label Content="{Binding Path=SelectionLine, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}" />
+                                    <Label Content="{Binding Path=SelectionLine, RelativeSource={RelativeSource AncestorType={x:Type local:HexEditor}}, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Label Content="{Binding Path=SelectionLine, RelativeSource={RelativeSource AncestorType={x:Type local:HexEditor}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}" />
                                 </StackPanel>
                             </Label.ToolTip>
                         </Label>
@@ -254,12 +254,12 @@
                             Padding="5,5,0,5"
                             Content="{x:Static p:Resources.PositionString}"
                             FontWeight="Bold" />
-                        <Label Content="{Binding Path=SelectionStart, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}">
+                        <Label Content="{Binding Path=SelectionStart, RelativeSource={RelativeSource AncestorType={x:Type local:HexEditor}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}">
                             <Label.ToolTip>
                                 <StackPanel Orientation="Horizontal">
                                     <Label Content="{x:Static p:Resources.PositionString}" FontWeight="Bold" />
-                                    <Label Content="{Binding Path=SelectionStart, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged}" />
-                                    <Label Content="{Binding Path=SelectionStart, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}" />
+                                    <Label Content="{Binding Path=SelectionStart, RelativeSource={RelativeSource AncestorType={x:Type local:HexEditor}}, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Label Content="{Binding Path=SelectionStart, RelativeSource={RelativeSource AncestorType={x:Type local:HexEditor}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}" />
                                 </StackPanel>
                             </Label.ToolTip>
                         </Label>
@@ -306,7 +306,7 @@
             HorizontalAlignment="Right"
             Content="ReadOnly"
             FontWeight="Bold"
-            Visibility="{Binding Path=ReadOnlyMode, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+            Visibility="{Binding Path=ReadOnlyMode, RelativeSource={RelativeSource AncestorType={x:Type local:HexEditor}}, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
         <!--#endregion-->
 
         <!--#region Scrollbar, marker, and move rectangle-->

@@ -1,10 +1,11 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2018
+// Apache 2.0  - 2016-2019
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -45,6 +46,7 @@ namespace WpfHexaEditor.Core.Bytes
         public event EventHandler StreamOpened;
         public event EventHandler PositionChanged;
         public event EventHandler Undone;
+        public event EventHandler Redone;
         public event EventHandler DataCopiedToStream;
         public event EventHandler ChangesSubmited;
         public event EventHandler LongProcessChanged;
@@ -503,15 +505,6 @@ namespace WpfHexaEditor.Core.Bytes
         #endregion SubmitChanges to file/stream
 
         #region Bytes modifications methods
-
-        /// <summary>
-        /// Clear changes and undo
-        /// </summary>
-        public void ClearUndoChange()
-        {
-            _byteModifiedDictionary?.Clear();
-            UndoStack?.Clear();
-        }
 
         /// <summary>
         /// Check if the byte in parameter are modified and return original Bytemodified from list
@@ -1155,7 +1148,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Undo last byteaction
         /// </summary>
-        /// <returns>Return a list of long contening the position are undone. Return null on error</returns>
+        /// <returns>Return a list of long contening the position are undone.</returns>
         public void Undo()
         {
             if (CanUndo)
@@ -1166,6 +1159,7 @@ namespace WpfHexaEditor.Core.Bytes
 
                 bytePositionList.Add(last.BytePositionInFile);
                 _byteModifiedDictionary.Remove(last.BytePositionInFile);
+                RedoStack.Push(last);
 
                 if (undoLength > 1)
                     for (var i = 0; i < undoLength; i++)
@@ -1174,6 +1168,7 @@ namespace WpfHexaEditor.Core.Bytes
                             last = UndoStack.Pop();
                             bytePositionList.Add(last.BytePositionInFile);
                             _byteModifiedDictionary.Remove(last.BytePositionInFile);
+                            RedoStack.Push(last);
                         }
 
                 Undone?.Invoke(bytePositionList, new EventArgs());
@@ -1181,29 +1176,106 @@ namespace WpfHexaEditor.Core.Bytes
         }
 
         /// <summary>
+        /// Redo last action made with redo...
+        /// </summary>
+        /// <returns>Return a list of long contening the position are redone.</returns>
+        public void Redo()
+        {
+            if (CanRedo)
+            {
+                var last = RedoStack.Pop();
+                var bytePositionList = new List<long>();
+                var redoLength = last.UndoLength;
+
+                bytePositionList.Add(last.BytePositionInFile);
+                addUndo(last);
+
+                if (redoLength > 1)
+                    for (var i = 0; i < redoLength; i++)
+                        if (RedoStack.Count > 0)
+                        {
+                            last = RedoStack.Pop();
+                            bytePositionList.Add(last.BytePositionInFile);
+
+                            addUndo(last);
+                        }
+
+                Redone?.Invoke(bytePositionList, new EventArgs());
+            }
+
+            #region local fonction
+            void addUndo(ByteModified last){
+                //add undo...
+                switch (last.Action)
+                {
+                    case ByteAction.Deleted:
+                        AddByteDeleted(last.BytePositionInFile, last.UndoLength);
+                        break;
+                    case ByteAction.Modified:
+                        AddByteModified(last.Byte, last.BytePositionInFile, last.UndoLength);
+                        break;
+                }
+            }
+            #endregion
+        }
+
+        /// <summary>
+        /// Clear changes and undo
+        /// </summary>
+        public void ClearUndoChange()
+        {
+            _byteModifiedDictionary?.Clear();
+            UndoStack?.Clear();
+        }
+
+        /// <summary>
+        /// Clear changes and Redo
+        /// </summary>
+        public void ClearRedoChange() => RedoStack?.Clear();
+
+        /// <summary>
         /// Gets the undo count.
         /// </summary>
         public int UndoCount => UndoStack.Count;
 
         /// <summary>
-        /// Gets or sets the undo stack.
+        /// Gets the redo count.
+        /// </summary>
+        public int RedoCount => RedoStack.Count;
+
+        /// <summary>
+        /// Gets the undo stack.
         /// </summary>
         public Stack<ByteModified> UndoStack { get; } = new Stack<ByteModified>();
+
+        /// <summary>
+        /// Gets the redo stack.
+        /// </summary>
+        public Stack<ByteModified> RedoStack { get; } = new Stack<ByteModified>();
 
         /// <summary>
         /// Get or set for indicate if control CanUndo
         /// </summary>
         public bool IsUndoEnabled { get; set; } = true;
+        
+        /// <summary>
+        /// Get or set for indicate if control CanRedo
+        /// </summary>
+        public bool IsRedoEnabled { get; set; } = true;
 
         /// <summary>
         /// Check if the control can undone to a previous value
         /// </summary>
-        /// <returns></returns>
-        public bool CanUndo => IsUndoEnabled && _byteModifiedDictionary.Count > 0;
+        public bool CanUndo => IsUndoEnabled && UndoStack.Count > 0;
+
+        /// <summary>
+        /// Check if the control can redone to a previous value
+        /// </summary>
+        public bool CanRedo => IsRedoEnabled && RedoStack.Count > 0;
 
         #endregion Undo / Redo
 
-        #region Can do property...
+        #region Various can do property...
 
         /// <summary>
         /// Return true if Copy method could be invoked.
@@ -1269,26 +1341,33 @@ namespace WpfHexaEditor.Core.Bytes
                     break;
                 }
 
-                if ((byte) ReadByte() == bytesTofind[0])
+                try
                 {
-                    //position correction after read one byte
-                    Position--;
-                    i--;
+                    if ((byte)ReadByte() == bytesTofind[0])
+                    {
+                        //position correction after read one byte
+                        Position--;
+                        i--;
 
-                    if (buffer.Length > Length - Position)
-                        buffer = new byte[Length - Position];
+                        if (buffer.Length > Length - Position)
+                            buffer = new byte[Length - Position];
 
-                    //read buffer and find
-                    _stream.Read(buffer, 0, buffer.Length);
-                    var findindex = buffer.FindIndexOf(bytesTofind).ToList();
+                        //read buffer and find
+                        _stream.Read(buffer, 0, buffer.Length);
+                        var findindex = buffer.FindIndexOf(bytesTofind).ToList();
 
-                    //if byte if find add to list
-                    if (findindex.Any())
-                        foreach (var index in findindex)
-                            indexList.Add(index + i + 1);
+                        //if byte if find add to list
+                        if (findindex.Any())
+                            foreach (var index in findindex)
+                                indexList.Add(index + i + 1);
 
-                    //position correction
-                    i += buffer.Length;
+                        //position correction
+                        i += buffer.Length;
+                    }
+                }
+                catch (IndexOutOfRangeException e)
+                {
+                    Debug.Print(e.Message);
                 }
             }
 

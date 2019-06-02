@@ -65,6 +65,10 @@
                         x:Name="UndoMenu"
                         Click="UndoMenu_Click"
                         Header="Undo" />
+                    <MenuItem
+                        x:Name="RedoMenu"
+                        Click="RedoMenu_Click"
+                        Header="Redo" />
                     <Separator />
                     <MenuItem
                         x:Name="FindMenu"

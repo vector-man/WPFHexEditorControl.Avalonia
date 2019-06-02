@@ -240,19 +240,47 @@ namespace WpfHexaEditor
             DependencyProperty.Register(nameof(AllowBuildinCtrlz), typeof(bool), typeof(HexEditor),
                 new FrameworkPropertyMetadata(true, Control_AllowBuildinCTRLPropertyChanged));
 
+        public bool AllowBuildinCtrly
+        {
+            get => (bool)GetValue(AllowBuildinCtrlyProperty);
+            set => SetValue(AllowBuildinCtrlyProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for AllowBuildinCTRLY.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty AllowBuildinCtrlyProperty =
+            DependencyProperty.Register(nameof(AllowBuildinCtrly), typeof(bool), typeof(HexEditor),
+                new FrameworkPropertyMetadata(true, Control_AllowBuildinCTRLPropertyChanged));
+
         private static void Control_AllowBuildinCTRLPropertyChanged(DependencyObject d,
             DependencyPropertyChangedEventArgs e)
         {
             if (d is HexEditor ctrl && e.NewValue != e.OldValue) ctrl.RefreshView();
         }
-        
-        private void Control_CTRLZKey(object sender, EventArgs e) => Undo();
 
-        private void Control_CTRLCKey(object sender, EventArgs e) => CopyToClipboard();
+        private void Control_CTRLZKey(object sender, EventArgs e)
+        {
+            if (AllowBuildinCtrlz) Undo();
+        }
 
-        private void Control_CTRLAKey(object sender, EventArgs e) => SelectAll();
+        private void Control_CTRLYKey(object sender, EventArgs e)
+        {
+            if (AllowBuildinCtrly) Redo();
+        }
 
-        private void Control_CTRLVKey(object sender, EventArgs e) => Paste(AllowExtend);
+        private void Control_CTRLCKey(object sender, EventArgs e)
+        {
+            if (AllowBuildinCtrlc) CopyToClipboard();
+        }
+
+        private void Control_CTRLAKey(object sender, EventArgs e)
+        {
+            if (AllowBuildinCtrla) SelectAll();
+        }
+
+        private void Control_CTRLVKey(object sender, EventArgs e)
+        {
+            if (AllowBuildinCtrlv) Paste(AllowExtend);
+        }
 
         #endregion Build-in CTRL key support
 
@@ -1629,6 +1657,7 @@ namespace WpfHexaEditor
             if (!ByteProvider.CheckIsOpen(_provider)) return;
 
             _provider.ClearUndoChange();
+            _provider.ClearRedoChange();
         }
 
         /// <summary>
@@ -1656,10 +1685,33 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// NOT COMPLETED : Clear the scroll marker when undone 
+        /// Make Redo of the last bytemodified
+        /// </summary>
+        public void Redo(int repeat = 1)
+        {
+            UnSelectAll();
+
+            if (!ByteProvider.CheckIsOpen(_provider)) return;
+
+            for (var i = 0; i < repeat; i++)
+                _provider.Redo();
+
+            RefreshView();
+
+            //Update focus
+            if (RedoStack.Count == 0) return;
+
+            var position = RedoStack.ElementAt(0).BytePositionInFile;
+            if (!IsBytePositionAreVisible(position))
+                SetPosition(position);
+
+            SetFocusAt(position);
+        }
+
+        /// <summary>
+        /// Clear the scroll marker when undone 
         /// </summary>
         /// <param name="sender">List of long representing position in file are undone</param>
-        /// <param name="e"></param>
         private void Provider_Undone(object sender, EventArgs e)
         {
             switch (sender)
@@ -1679,9 +1731,19 @@ namespace WpfHexaEditor
         public long UndoCount => ByteProvider.CheckIsOpen(_provider) ? _provider.UndoCount : 0;
 
         /// <summary>
+        /// Get the undo count
+        /// </summary>
+        public long RedoCount => ByteProvider.CheckIsOpen(_provider) ? _provider.RedoCount : 0;
+
+        /// <summary>
         /// Get the undo stack
         /// </summary>
         public Stack<ByteModified> UndoStack => ByteProvider.CheckIsOpen(_provider) ? _provider.UndoStack : null;
+
+        /// <summary>
+        /// Get the Redo stack
+        /// </summary>
+        public Stack<ByteModified> RedoStack => ByteProvider.CheckIsOpen(_provider) ? _provider.RedoStack : null;
 
         #endregion Undo / Redo
 
@@ -2387,6 +2449,7 @@ namespace WpfHexaEditor
                     ctrl.CtrlzKey -= Control_CTRLZKey;
                     ctrl.CtrlcKey -= Control_CTRLCKey;
                     ctrl.CtrlvKey -= Control_CTRLVKey;
+                    ctrl.CtrlyKey -= Control_CTRLYKey;
 
                     #endregion
 
@@ -2410,6 +2473,7 @@ namespace WpfHexaEditor
                     ctrl.CtrlzKey += Control_CTRLZKey;
                     ctrl.CtrlcKey += Control_CTRLCKey;
                     ctrl.CtrlvKey += Control_CTRLVKey;
+                    ctrl.CtrlyKey += Control_CTRLYKey;
 
                     #endregion
                 });

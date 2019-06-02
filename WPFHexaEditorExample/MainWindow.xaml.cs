@@ -137,9 +137,8 @@ namespace WPFHexaEditorExample
         }
 
         private void UndoMenu_Click(object sender, RoutedEventArgs e) => HexEdit.Undo();
-
+        private void RedoMenu_Click(object sender, RoutedEventArgs e) => HexEdit.Redo();
         private void SetBookMarkButton_Click(object sender, RoutedEventArgs e) => HexEdit.SetBookMark();
-
         private void DeleteBookmark_Click(object sender, RoutedEventArgs e) => HexEdit.ClearScrollMarker(ScrollMarker.Bookmark);
 
         private void FindText_TextChanged(object sender, TextChangedEventArgs e)
@@ -276,5 +275,6 @@ namespace WPFHexaEditorExample
         {
 
         }
+
     }
 }

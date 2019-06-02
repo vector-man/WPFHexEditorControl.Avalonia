@@ -1,11 +1,10 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2017
-// Author       : Janus Tida
+// Apache 2.0  - 2017-2019
+// Author       : Janus Tida 
 // Contributor  : Derek Tremblay
 //////////////////////////////////////////////
 
 using System;
-using System.Windows.Media;
 
 namespace WpfHexaEditor.Core.Interfaces
 {
@@ -47,5 +46,6 @@ namespace WpfHexaEditor.Core.Interfaces
         event EventHandler CtrlvKey;
         event EventHandler CtrlcKey;
         event EventHandler CtrlaKey;
+        event EventHandler CtrlyKey;
     }
 }

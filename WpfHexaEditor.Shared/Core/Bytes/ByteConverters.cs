@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2018
+// Apache 2.0  - 2016-2019
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
@@ -24,39 +24,46 @@ namespace WpfHexaEditor.Core.Bytes
                 return val.ToString(ConstantReadOnly.HexStringFormat, CultureInfo.InvariantCulture);
 
             var chs = new char[saveBits];
-            for (int i = 1; i <= saveBits; i++) {
+            for (int i = 1; i <= saveBits; i++)
+            {
                 chs[saveBits - i] = ByteToHexChar((int)(val - (((val >> 4) << 4))));
                 val /= 16;
             }
 
             return new string(chs);
         }
-        
-        public static string LongToString(long val, int saveBits = -1) {
+
+        public static string LongToString(long val, int saveBits = -1)
+        {
             if (saveBits == -1)
                 return val.ToString();
 
             //Char[] with fixed size is always
             var chs = new char[saveBits];
-            for (int i = 1; i <= saveBits; i++) {
+            for (int i = 1; i <= saveBits; i++)
+            {
                 chs[saveBits - i] = (char)(val % 10 + 48);
                 val /= 10;
             }
             return new string(chs);
         }
 
-        public static int GetDecimalBits(long val) {
+        public static int GetDecimalBits(long val)
+        {
             var bits = 0;
-            while(val != 0) {
+            while (val != 0)
+            {
                 bits++;
                 val /= 10;
             }
             return bits;
         }
 
-        public static int GetHexBits(long val) {
+        public static int GetHexBits(long val)
+        {
             var bits = 0;
-            while(val != 0) {
+            while (val != 0)
+            {
                 bits++;
                 val /= 16;
             }
@@ -70,12 +77,12 @@ namespace WpfHexaEditor.Core.Bytes
         /// <remarks>
         /// Code from : https://github.com/pleonex/tinke/blob/master/Be.Windows.Forms.HexBox/ByteCharConverters.cs
         /// </remarks>
-        public static char ByteToChar(byte val) => val > 0x1F && !(val > 0x7E && val < 0xA0) ? (char) val : '.';
+        public static char ByteToChar(byte val) => val > 0x1F && !(val > 0x7E && val < 0xA0) ? (char)val : '.';
 
         /// <summary>
         /// Convert Char to Byte
         /// </summary>
-        public static byte CharToByte(char val) => (byte) val;
+        public static byte CharToByte(char val) => (byte)val;
 
         /// <summary>
         /// Converts a byte array to a hex string. For example: {10,11} = "0A 0B"
@@ -116,11 +123,14 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         /// <param name="val"></param>
         /// <param name="charArr">The length of this value should be 2.</param>
-        public static void ByteToHexCharArray(byte val,char[] charArr) {
-            if(charArr == null) {
+        public static void ByteToHexCharArray(byte val, char[] charArr)
+        {
+            if (charArr == null)
+            {
                 throw new ArgumentNullException(nameof(charArr));
             }
-            if(charArr.Length != 2) {
+            if (charArr.Length != 2)
+            {
                 throw new ArgumentException($"The length of {charArr} should be 2.");
             }
 
@@ -132,7 +142,7 @@ namespace WpfHexaEditor.Core.Bytes
         public static char ByteToHexChar(int val)
         {
             if (val < 10)
-                return (char) (48 + val);
+                return (char)(48 + val);
 
             switch (val)
             {

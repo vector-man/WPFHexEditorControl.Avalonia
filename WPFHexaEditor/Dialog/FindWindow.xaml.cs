@@ -24,6 +24,9 @@ namespace WpfHexaEditor.Dialog
         private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
         private void ClearButton_Click(object sender, RoutedEventArgs e) => InitializeMStream();
 
+        private void FindHexEdit_BytesDeleted(object sender, System.EventArgs e) =>
+            InitializeMStream(FindHexEdit.GetAllBytes());
+
         private void FindAllButton_Click(object sender, RoutedEventArgs e) =>
             _parent?.FindAll(FindHexEdit.GetAllBytes(), true);
 
@@ -39,11 +42,18 @@ namespace WpfHexaEditor.Dialog
         /// <summary>
         /// Initialize stream and hexeditor
         /// </summary>
-        private void InitializeMStream()
+        private void InitializeMStream(byte[] findData = null)
         {
             FindHexEdit.CloseProvider();
+
             _findMs = new MemoryStream(1);
-            _findMs.WriteByte(0);
+
+            if (findData != null && findData.Length > 0)
+                foreach (byte b in findData)
+                    _findMs.WriteByte(b);            
+            else            
+                _findMs.WriteByte(0);
+                            
             FindHexEdit.Stream = _findMs;
         }
     }

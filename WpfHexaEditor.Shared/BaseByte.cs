@@ -52,6 +52,7 @@ namespace WpfHexaEditor
         public event EventHandler CtrlvKey;
         public event EventHandler CtrlcKey;
         public event EventHandler CtrlaKey;
+        public event EventHandler CtrlyKey;
 
         #endregion Events
 
@@ -502,6 +503,12 @@ namespace WpfHexaEditor
             {
                 e.Handled = true;
                 CtrlzKey?.Invoke(this, new EventArgs());
+                return true;
+            }
+            else if (KeyValidator.IsCtrlYKey(e.Key))
+            {
+                e.Handled = true;
+                CtrlyKey?.Invoke(this, new EventArgs());
                 return true;
             }
             else if (KeyValidator.IsCtrlVKey(e.Key))
