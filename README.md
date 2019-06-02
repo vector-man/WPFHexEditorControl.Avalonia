@@ -41,15 +41,16 @@ Unicode TBL are supported. For use put value at the right of equal (=) like this
 - Append byte at end of file
 - Include HexBox, an Hexadecimal TextBox with spinner
 - Fill selection (or another array) with byte.
-- Support of common key in window like CTRL+C, CTRL+V, CTRL+Z, CTRL+A, ESC...
+- Support of common key in window like CTRL+C, CTRL+V, CTRL+Z, CTRL+Y, CTRL+A, ESC...
 - Copy to clipboard as code like C#, VB.Net, C, Java, F# ... 
 - Support custom .TBL character table file insted of default ASCII.
-- Undo (no redo for now)
+- Unlimited Undo / Redo
 - Finds methods (FindFirst, FindNext, FindAll, FindLast, FindSelection) and overload for (string, byte[])
 - Highlight byte with somes find methods
 - Bookmark
 - Group byte in block 
 - Show data as hexadecimal or decimal
+- Possibility to view only a part of file/stream in editor and dont loose anychange when used it (AllowVisualByteAdress...)
 - ...
 
 ## How to use
