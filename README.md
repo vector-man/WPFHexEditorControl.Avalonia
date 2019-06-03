@@ -1,6 +1,6 @@
 ![example](Images/Logo.png?raw=true)
   
-[![NuGet](https://img.shields.io/badge/Nuget-v1.6.3-green.svg)](https://www.nuget.org/packages/WPFHexaEditor/)
+[![NuGet](https://img.shields.io/badge/Nuget-v1.7.5-green.svg)](https://www.nuget.org/packages/WPFHexaEditor/)
 [![NetFramework](https://img.shields.io/badge/.Net%20Framework-4.7/4.5.1-green.svg)](https://www.microsoft.com/net/download/windows)
 [![NetFramework](https://img.shields.io/badge/Language-C%23%207.0-orange.svg)](https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/abbaye/WpfHexEditorControl/blob/master/LICENSE)
@@ -46,9 +46,10 @@ Unicode TBL are supported. For use put value at the right of equal (=) like this
 - Support custom .TBL character table file insted of default ASCII.
 - Unlimited Undo / Redo
 - Finds methods (FindFirst, FindNext, FindAll, FindLast, FindSelection) and overload for (string, byte[])
+- Replace methods (ReplaceFirst, ReplaceNext, ReplaceAll) and overload for (string, byte[])
 - Highlight byte with somes find methods
 - Bookmark
-- Group byte in block 
+- Group byte in block of 2,4,6,8 bytes...
 - Show data as hexadecimal or decimal
 - Possibility to view only a part of file/stream in editor and dont loose anychange when used it (AllowVisualByteAdress...)
 - ...
