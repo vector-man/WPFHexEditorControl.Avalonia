@@ -50,7 +50,7 @@
 
         <wpfHexaEditor:HexEditor
             x:Name="FindHexEdit"
-            Margin="10,41,129,16"
+            Margin="10,41,129,21"
             AllowAutoHightLighSelectionByte="False"
             AllowContextMenu="False"
             AllowDeleteByte="True"
@@ -61,7 +61,8 @@
             ByteModifiedColor="White"
             BytePerLine="8"
             ByteSpacerPositioning="Nothing"
-            StatusBarVisibility="Collapsed" BytesDeleted="FindHexEdit_BytesDeleted" />
+            BytesDeleted="FindHexEdit_BytesDeleted"
+            StatusBarVisibility="Collapsed" />
 
         <Label
             Margin="10,10,0,0"

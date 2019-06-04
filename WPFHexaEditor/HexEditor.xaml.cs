@@ -178,6 +178,19 @@ namespace WpfHexaEditor
         /// Occurs when byte as modified in control
         /// </summary>
         public event EventHandler BytesModified;
+        
+        /// <summary>
+        /// Occurs when undo are completed
+        /// </summary>
+        public event EventHandler Undone;
+
+        /// <summary>
+        /// Occurs when redo are completed
+        /// </summary>
+        public event EventHandler Redone;
+
+
+
 
         #endregion Events
 
@@ -1227,17 +1240,14 @@ namespace WpfHexaEditor
             }
             else
             {
-                FixSelectionStartStop();
+                //FixSelectionStartStop();
 
-                if (test < _provider.Length)
-                {
-                    SelectionStart++;
-                    SelectionStop++;
-                }
+                if (test < _provider.Length)                                    
+                    SelectionStart = ++SelectionStop;               
             }
 
             if (SelectionStart >= _provider.Length)
-                SelectionStart = _provider.Length;
+                SelectionStart = _provider.Length - 1;
 
             if (AllowVisualByteAdress && SelectionStart > VisualByteAdressStop)
                 SelectionStart = VisualByteAdressStop;
@@ -1682,6 +1692,8 @@ namespace WpfHexaEditor
                 SetPosition(position);
 
             SetFocusAt(position);
+
+            Undone?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -1706,6 +1718,8 @@ namespace WpfHexaEditor
                 SetPosition(position);
 
             SetFocusAt(position);
+
+            Redone?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
