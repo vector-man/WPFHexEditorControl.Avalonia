@@ -254,9 +254,6 @@
                             DefaultCopyToClipboardMode="HexaString"
                             ForegroundSecondColor="Blue"
                             OffSetStringVisual="Hexadecimal" 
-                        
-                            OffSetPanelPanelVisual="Both"
-                        
                             UseCustomBackGroudBlock="True"/>
                 </TabItem>
                 <TabItem Header="TabItem" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="54">
