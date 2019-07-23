@@ -508,6 +508,23 @@ namespace WpfHexaEditor
             if (d is HexEditor ctrl)
                 ctrl.RefreshView();
         }
+               
+        public OffSetPanelType OffSetPanelPanelVisual
+        {
+            get { return (OffSetPanelType)GetValue(OffSetPanelPanelVisualProperty); }
+            set { SetValue(OffSetPanelPanelVisualProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for OffSetPanelPanelVisual.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty OffSetPanelPanelVisualProperty =
+            DependencyProperty.Register(nameof(OffSetPanelPanelVisual), typeof(OffSetPanelType), typeof(HexEditor),
+                new FrameworkPropertyMetadata(OffSetPanelType.OffsetOnly, OffSetPanelPanelVisual_PropertyChanged));
+
+        private static void OffSetPanelPanelVisual_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is HexEditor ctrl)
+                ctrl.UpdateLinesOffSet();
+        }
 
         #endregion Miscellaneous property/methods
 
@@ -870,14 +887,14 @@ namespace WpfHexaEditor
         private void LinesOffSetLabel_MouseMove(object sender, MouseEventArgs e)
         {
             if (sender is FastTextLine line && e.LeftButton == MouseButtonState.Pressed)
-                SelectionStop = HexLiteralToLong(line.Text).position + BytePerLine - 1;
+                SelectionStop = HexLiteralToLong((string)line.Tag).position + BytePerLine - 1;            
         }
 
         private void LinesOffSetLabel_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (!(sender is FastTextLine line)) return;
 
-            SelectionStart = HexLiteralToLong(line.Text).position;
+            SelectionStart = HexLiteralToLong((string)line.Tag).position;
             SelectionStop = SelectionStart + BytePerLine - 1;
         }
 
@@ -1234,7 +1251,7 @@ namespace WpfHexaEditor
             if (Keyboard.Modifiers == ModifierKeys.Shift)
             {
                 if (test <= _provider.Length)
-                    SelectionStart++;
+                    SelectionStop++;
                 else
                     SelectionStart = _provider.Length;
             }
@@ -1390,8 +1407,7 @@ namespace WpfHexaEditor
         /// Get all bytes from file or stream opened and copy change
         /// </summary>
         public byte[] GetAllBytes() => GetAllBytes(true);
-
-
+        
         /// <summary>
         /// Return true if Copy method could be invoked.
         /// </summary>
@@ -1429,7 +1445,6 @@ namespace WpfHexaEditor
         /// Copy selection to a stream
         /// </summary>
         /// <param name="output">Output stream is not closed after copy</param>
-        /// <param name="copyChange"></param>
         public void CopyToStream(Stream output, bool copyChange) =>
             CopyToStream(output, SelectionStart, SelectionStop, copyChange);
 
@@ -1437,9 +1452,6 @@ namespace WpfHexaEditor
         /// Copy selection to a stream
         /// </summary>
         /// <param name="output">Output stream is not closed after copy</param>
-        /// <param name="selectionStart"></param>
-        /// <param name="selectionStop"></param>
-        /// <param name="copyChange"></param>
         public void CopyToStream(Stream output, long selectionStart, long selectionStop, bool copyChange)
         {
             if (!CanCopy()) return;
@@ -1451,9 +1463,6 @@ namespace WpfHexaEditor
         /// <summary>
         /// Return a byte array with the copy of data defined by selection start/stop
         /// </summary>
-        /// <param name="selectionStart"></param>
-        /// <param name="selectionStop"></param>
-        /// <param name="copyChange"></param>
         public byte[] GetCopyData(long selectionStart, long selectionStop, bool copyChange)
         {
             if (!CanCopy()) return null;
@@ -2010,7 +2019,7 @@ namespace WpfHexaEditor
 
             TraverseHexBytes(ctrl => ctrl.IsEnabled = true);
             TraverseStringBytes(ctrl => ctrl.IsEnabled = true);
-            TraverseLineInfos(ctrl => ctrl.IsEnabled = true);
+            TraverseLineOffSet(ctrl => ctrl.IsEnabled = true);
             TraverseHexHeader(ctrl => ctrl.IsEnabled = true);
             TopRectangle.IsEnabled = BottomRectangle.IsEnabled = true;
             VerticalScrollBar.IsEnabled = true;
@@ -2029,7 +2038,7 @@ namespace WpfHexaEditor
 
             TraverseHexBytes(ctrl => ctrl.IsEnabled = false);
             TraverseStringBytes(ctrl => ctrl.IsEnabled = false);
-            TraverseLineInfos(ctrl => ctrl.IsEnabled = false);
+            TraverseLineOffSet(ctrl => ctrl.IsEnabled = false);
             TraverseHexHeader(ctrl => ctrl.IsEnabled = false);
             TopRectangle.IsEnabled = BottomRectangle.IsEnabled = false;
             VerticalScrollBar.IsEnabled = false;
@@ -2087,7 +2096,7 @@ namespace WpfHexaEditor
 
         #endregion Open, Close, Save, byte provider ...
 
-        #region Traverses methods
+        #region Easy powerful traverses methods
 
         /// <summary>
         /// Used to make action on all visible hexbyte
@@ -2138,8 +2147,7 @@ namespace WpfHexaEditor
                 if (exit) return;
             }
         }
-
-
+        
         /// <summary>
         /// Used to make action on all visible stringbyte
         /// </summary>
@@ -2170,7 +2178,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Used to make action on all visible lineinfos
         /// </summary>
-        private void TraverseLineInfos(Action<FastTextLine> act)
+        private void TraverseLineOffSet(Action<FastTextLine> act)
         {
             var visibleLine = MaxVisibleLine;
             var cnt = 0;
@@ -2305,7 +2313,7 @@ namespace WpfHexaEditor
         }
         #endregion
 
-        #region Update methode / Refresh view
+        #region Update methods / Refresh view
 
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -2758,7 +2766,7 @@ namespace WpfHexaEditor
             #endregion
 
             //Clear all lines offset...
-            TraverseLineInfos(ctrl => { ctrl.Text = string.Empty; });
+            TraverseLineOffSet(ctrl => { ctrl.Tag = ctrl.Text = string.Empty; });
 
             if (!ByteProvider.CheckIsOpen(_provider)) return;
 
@@ -2783,13 +2791,40 @@ namespace WpfHexaEditor
                         lineOffsetLabel.Foreground = ForegroundHighLightOffSetHeaderColor;
                         lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {SelectionStart}";
 
+                        lineOffsetLabel.Tag = $"0x{LongToHex(SelectionStart).ToUpper()}";
                         switch (OffSetStringVisual)
                         {
                             case DataVisualType.Hexadecimal:
-                                lineOffsetLabel.Text = lineOffsetLabel.Text = $"0x{LongToHex(SelectionStart).ToUpper()}";
+                                #region Hexadecimal
+                                switch (OffSetPanelPanelVisual)
+                                {
+                                    case OffSetPanelType.OffsetOnly:
+                                        lineOffsetLabel.Text = $"0x{LongToHex(SelectionStart).ToUpper()}";
+                                        break;
+                                    case OffSetPanelType.LineOnly:
+                                        lineOffsetLabel.Text = $"ln {LongToHex((long)GetLineNumber(SelectionStart))}";
+                                        break;
+                                    case OffSetPanelType.Both:
+                                        lineOffsetLabel.Text = $"ln {LongToHex((long)GetLineNumber(SelectionStart))} 0x{LongToHex(SelectionStart).ToUpper()}";
+                                        break;
+                                }
+                                #endregion
                                 break;
                             case DataVisualType.Decimal:
-                                lineOffsetLabel.Text = $"d{SelectionStart:d8}";
+                                #region Decimal
+                                switch (OffSetPanelPanelVisual)
+                                {
+                                    case OffSetPanelType.OffsetOnly:
+                                        lineOffsetLabel.Text = $"d{SelectionStart:d8}";
+                                        break;
+                                    case OffSetPanelType.LineOnly:
+                                        lineOffsetLabel.Text = $"ln {GetLineNumber(SelectionStart)}";
+                                        break;
+                                    case OffSetPanelType.Both:
+                                        lineOffsetLabel.Text = $"ln {GetLineNumber(SelectionStart)} d{SelectionStart:d8}";
+                                        break;
+                                }
+                                #endregion
                                 break;
                         }
                     }
@@ -2799,20 +2834,46 @@ namespace WpfHexaEditor
                         lineOffsetLabel.Foreground = ForegroundOffSetHeaderColor;
                         lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {firstByteInLine}";
 
+                        lineOffsetLabel.Tag = $"0x{LongToHex(firstByteInLine).ToUpper()}";
                         switch (OffSetStringVisual)
                         {
                             case DataVisualType.Hexadecimal:
-                                lineOffsetLabel.Text = $"0x{LongToHex(firstByteInLine).ToUpper()}";
+                                #region Hexadecimal
+                                switch (OffSetPanelPanelVisual)
+                                {
+                                    case OffSetPanelType.OffsetOnly:
+                                        lineOffsetLabel.Text = $"0x{LongToHex(firstByteInLine).ToUpper()}";
+                                        break;
+                                    case OffSetPanelType.LineOnly:
+                                        lineOffsetLabel.Text = $"ln {LongToHex((long)GetLineNumber(firstByteInLine))}";
+                                        break;
+                                    case OffSetPanelType.Both:
+                                        lineOffsetLabel.Text = $"ln {LongToHex((long)GetLineNumber(firstByteInLine))} 0x{LongToHex(firstByteInLine).ToUpper()}";
+                                        break;
+                                }
+                                #endregion
                                 break;
                             case DataVisualType.Decimal:
-                                lineOffsetLabel.Text = $"d{firstByteInLine:d8}";
+                                #region Decimal
+                                switch (OffSetPanelPanelVisual)
+                                {
+                                    case OffSetPanelType.OffsetOnly:
+                                        lineOffsetLabel.Text = $"d{firstByteInLine:d8}";
+                                        break;
+                                    case OffSetPanelType.LineOnly:
+                                        lineOffsetLabel.Text = $"ln {GetLineNumber(firstByteInLine)}";
+                                        break;
+                                    case OffSetPanelType.Both:
+                                        lineOffsetLabel.Text = $"ln {GetLineNumber(firstByteInLine)} d{firstByteInLine:d8}";
+                                        break;
+                                }
+                                #endregion
                                 break;
                         }
                     }
 
                     if (AllowVisualByteAdress && firstByteInLine > VisualByteAdressStop)
-                        lineOffsetLabel.Text = string.Empty;
-
+                        lineOffsetLabel.Tag = lineOffsetLabel.Text = string.Empty;
                     #endregion
                 }
             }

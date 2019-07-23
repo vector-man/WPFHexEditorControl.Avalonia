@@ -178,6 +178,16 @@ namespace WpfHexaEditor.Core
         //Binary        //Editable
     }
 
+    /// <summary>
+    /// Used to select the visual of the offset panel
+    /// </summary>
+    public enum OffSetPanelType
+    {
+        OffsetOnly,
+        LineOnly,
+        Both
+    }
+
     public enum LayerPanel {
         Hex,
         String
