@@ -226,7 +226,7 @@
                 </MenuItem>
 
                 <MenuItem Click="TESTMenuItem_Click" Header="TEST" />
-                <Label Content="ByteShitLeft:"/>
+                <Label Content="ByteShitLeft:" />
                 <control:HexBox
                     x:Name="HbBsl"
                     Height="23"
@@ -234,30 +234,41 @@
             </Menu>
 
             <TabControl>
-                <TabItem Header="TabItem" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top" Width="54">
+                <TabItem
+                    Width="54"
+                    Height="20"
+                    Margin="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Header="TabItem">
                     <control:HexEditor
-                            x:Name="HexEdit"
-                            Width="Auto"  
-                            Height="Auto" 
-                            AllowByteCount="False"
-                            AllowDrop="True"
-                            AllowExtend="False"
-                            AppendNeedConfirmation="True"
-                            ApplicationName="Wpf Hexeditor control sample"
-                            BorderThickness="1"
-                            ByteGrouping="FourByte"
-                            ByteShiftLeft="{Binding LongValue, ElementName=HbBsl, UpdateSourceTrigger=PropertyChanged}"                            
-                            ByteSpacerPositioning="HexBytePanel"
-                            ByteSpacerVisualStyle="Dash"
-                            ByteSpacerWidthTickness="Normal"
-                            DataStringVisual="Hexadecimal"
-                            DefaultCopyToClipboardMode="HexaString"
-                            ForegroundSecondColor="Blue"
-                            OffSetStringVisual="Hexadecimal" 
-                            UseCustomBackGroudBlock="True"/>
+                        x:Name="HexEdit"
+                        Width="Auto"
+                        Height="Auto"
+                        AllowByteCount="False"
+                        AllowDrop="True"
+                        AllowExtend="False"
+                        AppendNeedConfirmation="True"
+                        ApplicationName="Wpf Hexeditor control sample"
+                        BorderThickness="1"
+                        ByteGrouping="FourByte"
+                        ByteShiftLeft="{Binding LongValue, ElementName=HbBsl, UpdateSourceTrigger=PropertyChanged}"
+                        ByteSpacerPositioning="HexBytePanel"
+                        ByteSpacerVisualStyle="Dash"
+                        ByteSpacerWidthTickness="Normal"
+                        DataStringVisual="Hexadecimal"
+                        DefaultCopyToClipboardMode="HexaString"
+                        ForegroundSecondColor="Blue"
+                        OffSetStringVisual="Hexadecimal"
+                        UseCustomBackGroudBlock="True" />
                 </TabItem>
-                <TabItem Header="TabItem" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="54">
-                    <Grid Background="#FFE5E5E5"/>
+                <TabItem
+                    Width="54"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Header="TabItem">
+                    <Grid Background="#FFE5E5E5" />
                 </TabItem>
             </TabControl>
         </DockPanel>

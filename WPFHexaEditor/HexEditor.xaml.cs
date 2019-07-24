@@ -509,18 +509,18 @@ namespace WpfHexaEditor
                 ctrl.RefreshView();
         }
                
-        public OffSetPanelType OffSetPanelPanelVisual
+        public OffSetPanelType OffSetPanelVisual
         {
-            get { return (OffSetPanelType)GetValue(OffSetPanelPanelVisualProperty); }
-            set { SetValue(OffSetPanelPanelVisualProperty, value); }
+            get { return (OffSetPanelType)GetValue(OffSetPanelVisualProperty); }
+            set { SetValue(OffSetPanelVisualProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for OffSetPanelPanelVisual.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty OffSetPanelPanelVisualProperty =
-            DependencyProperty.Register(nameof(OffSetPanelPanelVisual), typeof(OffSetPanelType), typeof(HexEditor),
-                new FrameworkPropertyMetadata(OffSetPanelType.OffsetOnly, OffSetPanelPanelVisual_PropertyChanged));
+        // Using a DependencyProperty as the backing store for OffSetPanelVisual.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty OffSetPanelVisualProperty =
+            DependencyProperty.Register(nameof(OffSetPanelVisual), typeof(OffSetPanelType), typeof(HexEditor),
+                new FrameworkPropertyMetadata(OffSetPanelType.OffsetOnly, OffSetPanelVisual_PropertyChanged));
 
-        private static void OffSetPanelPanelVisual_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OffSetPanelVisual_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is HexEditor ctrl)
                 ctrl.UpdateLinesOffSet();
@@ -2796,7 +2796,7 @@ namespace WpfHexaEditor
                         {
                             case DataVisualType.Hexadecimal:
                                 #region Hexadecimal
-                                switch (OffSetPanelPanelVisual)
+                                switch (OffSetPanelVisual)
                                 {
                                     case OffSetPanelType.OffsetOnly:
                                         lineOffsetLabel.Text = $"0x{LongToHex(SelectionStart).ToUpper()}";
@@ -2812,7 +2812,7 @@ namespace WpfHexaEditor
                                 break;
                             case DataVisualType.Decimal:
                                 #region Decimal
-                                switch (OffSetPanelPanelVisual)
+                                switch (OffSetPanelVisual)
                                 {
                                     case OffSetPanelType.OffsetOnly:
                                         lineOffsetLabel.Text = $"d{SelectionStart:d8}";
@@ -2839,7 +2839,7 @@ namespace WpfHexaEditor
                         {
                             case DataVisualType.Hexadecimal:
                                 #region Hexadecimal
-                                switch (OffSetPanelPanelVisual)
+                                switch (OffSetPanelVisual)
                                 {
                                     case OffSetPanelType.OffsetOnly:
                                         lineOffsetLabel.Text = $"0x{LongToHex(firstByteInLine).ToUpper()}";
@@ -2855,7 +2855,7 @@ namespace WpfHexaEditor
                                 break;
                             case DataVisualType.Decimal:
                                 #region Decimal
-                                switch (OffSetPanelPanelVisual)
+                                switch (OffSetPanelVisual)
                                 {
                                     case OffSetPanelType.OffsetOnly:
                                         lineOffsetLabel.Text = $"d{firstByteInLine:d8}";
