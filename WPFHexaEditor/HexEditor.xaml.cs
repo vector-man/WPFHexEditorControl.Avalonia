@@ -1881,7 +1881,7 @@ namespace WpfHexaEditor
         /// </summary>
         public void SubmitChanges()
         {
-            if (!ByteProvider.CheckIsOpen(_provider) || _provider.ReadOnlyMode) return;
+            if (!ByteProvider.CheckIsOpen(_provider) || _provider.ReadOnlyMode || !IsModified) return;
 
             _provider.SubmitChanges();
         }
