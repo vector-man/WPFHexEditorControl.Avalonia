@@ -112,7 +112,7 @@ namespace WpfHexaEditor.Core.Bytes
 
             set
             {
-                
+
                 _fileName = value;
                 OpenFile();
             }
@@ -277,7 +277,7 @@ namespace WpfHexaEditor.Core.Bytes
             var countAdjusted = count;
 
             if (Length - Position <= count)
-                countAdjusted = (int) (Length - Position);
+                countAdjusted = (int)(Length - Position);
 
             var bytesReaded = new byte[countAdjusted];
             _stream.Read(bytesReaded, 0, countAdjusted);
@@ -318,14 +318,12 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public void SubmitChanges()
         {
-            if (!CanWrite) {
+            if (!CanWrite)            
                 throw new InvalidOperationException($"Cannot write to stream while {nameof(CanWrite)} is set to false.");
-            }
-
-            if (!Stream.CanWrite) {
+            
+            if (!Stream.CanWrite)            
                 throw new InvalidOperationException($"Cannot write to stream while {nameof(Stream)}.{nameof(CanWrite)} is set to false.");
-            }
-
+            
             var cancel = false;
 
             //Launch event at process started
@@ -342,8 +340,10 @@ namespace WpfHexaEditor.Core.Bytes
                 : File.Open(Path.GetTempFileName(), FileMode.Open, FileAccess.ReadWrite);
 
             //Fast change only nothing byte deleted or added
-            if (!GetByteModifieds(ByteAction.Deleted).Any() && !GetByteModifieds(ByteAction.Added).Any() &&
-                !File.Exists(_newfilename)) {
+            if (!GetByteModifieds(ByteAction.Deleted).Any() && 
+                !GetByteModifieds(ByteAction.Added).Any() &&
+                !File.Exists(_newfilename))
+            {
                 var bytemodifiedList = GetByteModifieds(ByteAction.Modified);
                 double countChange = bytemodifiedList.Count;
                 i = 0;
@@ -351,12 +351,14 @@ namespace WpfHexaEditor.Core.Bytes
                 #region Fast save. only save byteaction=modified
 
                 foreach (var bm in bytemodifiedList)
-                    if (bm.Value.IsValid) {
+                    if (bm.Value.IsValid)
+                    {
                         //Set percent of progress
                         LongProcessProgress = i++ / countChange;
 
                         //Break process?
-                        if (!IsOnLongProcess) {
+                        if (!IsOnLongProcess)
+                        {
                             cancel = true;
                             break;
                         }
@@ -367,18 +369,24 @@ namespace WpfHexaEditor.Core.Bytes
 
                 #endregion
             }
-            else {
+            else
+            {
+                //assur that we have at less 1 byte modified... if not add the first byte of file
+                if (_byteModifiedDictionary.Count == 0)
+                    AddByteModified(GetByte(0).singleByte, 0);
+
                 byte[] buffer;
                 long bufferlength;
                 var sortedBm = GetByteModifieds(ByteAction.All).OrderBy(b => b.Key).ToList();
                 double countChange = sortedBm.Count;
                 i = 0;
-
+                    
                 //Set position
                 Position = 0;
 
                 //Start update and rewrite file.
-                foreach (var nextByteModified in sortedBm) {
+                foreach (var nextByteModified in sortedBm)
+                {
                     //Set percent of progress
                     LongProcessProgress = i++ / countChange;
 
@@ -391,7 +399,8 @@ namespace WpfHexaEditor.Core.Bytes
 
                     #region start read/write / use little block for optimize memory
 
-                    while (Position != nextByteModified.Key) {
+                    while (Position != nextByteModified.Key)
+                    {
                         bufferlength = nextByteModified.Key - Position;
 
                         //TEMPS
@@ -410,7 +419,8 @@ namespace WpfHexaEditor.Core.Bytes
 
                     #region Apply ByteAction!
 
-                    switch (nextByteModified.Value.Action) {
+                    switch (nextByteModified.Value.Action)
+                    {
                         //case ByteAction.Added:
                         //    //TODO : IMPLEMENTING ADD BYTE
                         //    break;
@@ -427,8 +437,10 @@ namespace WpfHexaEditor.Core.Bytes
 
                     #region Read/Write the last section of file
 
-                    if (nextByteModified.Key == sortedBm.Last().Key) {
-                        while (!Eof) {
+                    if (nextByteModified.Key == sortedBm.Last().Key)
+                    {
+                        while (!Eof)
+                        {
                             bufferlength = _stream.Length - Position;
 
                             //EOF
@@ -446,7 +458,8 @@ namespace WpfHexaEditor.Core.Bytes
                 #region Set stream to new file (save as)
 
                 var refreshByteProvider = false;
-                if (File.Exists(_newfilename)) {
+                if (File.Exists(_newfilename))
+                {
                     _stream = File.Open(_newfilename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
                     _stream.SetLength(newStream.Length);
                     refreshByteProvider = true;
@@ -460,12 +473,14 @@ namespace WpfHexaEditor.Core.Bytes
                 newStream.Position = 0;
                 buffer = new byte[ConstantReadOnly.Copyblocksize];
 
-                while (!Eof) {
+                while (!Eof)
+                {
                     //Set percent of progress
                     LongProcessProgress = Position / (double)Length;
 
                     //Break process?
-                    if (!IsOnLongProcess) {
+                    if (!IsOnLongProcess)
+                    {
                         cancel = true;
                         break;
                     }
@@ -498,8 +513,6 @@ namespace WpfHexaEditor.Core.Bytes
 
             //Launch event
             ChangesSubmited?.Invoke(this, new EventArgs());
-
-
         }
 
         #endregion SubmitChanges to file/stream
@@ -608,7 +621,7 @@ namespace WpfHexaEditor.Core.Bytes
                     {
                         //Do not freeze UI...
                         if (i % 2000 == 0)
-                            LongProcessProgress = (double) i / length;
+                            LongProcessProgress = (double)i / length;
 
                         //Break long process if needed
                         if (!IsOnLongProcess)
@@ -653,7 +666,7 @@ namespace WpfHexaEditor.Core.Bytes
                     {
                         //Do not freeze UI...
                         if (i % 2000 == 0)
-                            LongProcessProgress = (double) i / length;
+                            LongProcessProgress = (double)i / length;
 
                         //Break long process if needed
                         if (!IsOnLongProcess)
@@ -736,8 +749,8 @@ namespace WpfHexaEditor.Core.Bytes
             #region Set start position
 
             _stream.Position = selectionStart != selectionStop
-                ? (selectionStart > selectionStop 
-                    ? selectionStop 
+                ? (selectionStart > selectionStop
+                    ? selectionStop
                     : selectionStart)
                 : selectionStart;
 
@@ -758,7 +771,7 @@ namespace WpfHexaEditor.Core.Bytes
 
                 if (!success)
                 {
-                    bufferList.Add((byte) _stream.ReadByte());
+                    bufferList.Add((byte)_stream.ReadByte());
                     continue;
                 }
 
@@ -767,9 +780,9 @@ namespace WpfHexaEditor.Core.Bytes
                     case ByteAction.Modified:
                         if (byteModified.IsValid) bufferList.Add(byteModified.Byte.Value);
                         break;
-                    //case ByteAction.Deleted: //NOTHING to do we dont want to add deleted byte   
-                    //case ByteAction.Added: //TODO : IMPLEMENTING ADD BYTE       
-                    //    break;
+                        //case ByteAction.Deleted: //NOTHING to do we dont want to add deleted byte   
+                        //case ByteAction.Added: //TODO : IMPLEMENTING ADD BYTE       
+                        //    break;
                 }
 
                 _stream.Position++;
@@ -1032,7 +1045,7 @@ namespace WpfHexaEditor.Core.Bytes
             var buffer = GetCopyData(selectionStart, selectionStop, copyChange);
 
             if (output.CanWrite)
-                output.Write(buffer, (int) output.Length, buffer.Length);
+                output.Write(buffer, (int)output.Length, buffer.Length);
             else
                 throw new Exception(Properties.Resources.WritingErrorExeptionString);
 
@@ -1204,7 +1217,8 @@ namespace WpfHexaEditor.Core.Bytes
             }
 
             #region local fonction
-            void addUndo(ByteModified last){
+            void addUndo(ByteModified last)
+            {
                 //add undo...
                 switch (last.Action)
                 {
@@ -1257,7 +1271,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// Get or set for indicate if control CanUndo
         /// </summary>
         public bool IsUndoEnabled { get; set; } = true;
-        
+
         /// <summary>
         /// Get or set for indicate if control CanRedo
         /// </summary>
@@ -1332,7 +1346,7 @@ namespace WpfHexaEditor.Core.Bytes
             {
                 //Do not freeze UI...
                 if (i % 2000 == 0)
-                    LongProcessProgress = (double) Position / Length;
+                    LongProcessProgress = (double)Position / Length;
 
                 //Break long process if needed
                 if (!IsOnLongProcess)
@@ -1551,7 +1565,7 @@ namespace WpfHexaEditor.Core.Bytes
                     new XAttribute("Action", bm.Value.Action),
                     new XAttribute("HexByte",
                         bm.Value.Byte.HasValue
-                            ? new string(ByteConverters.ByteToHexCharArray((byte) bm.Value.Byte))
+                            ? new string(ByteConverters.ByteToHexCharArray((byte)bm.Value.Byte))
                             : string.Empty),
                     new XAttribute("Position", bm.Value.BytePositionInFile)));
 
@@ -1613,7 +1627,8 @@ namespace WpfHexaEditor.Core.Bytes
                     }
 
                 #region Add bytemodified to dictionary
-                switch (bm.Action) {
+                switch (bm.Action)
+                {
                     case ByteAction.Deleted:
                         AddByteDeleted(bm.BytePositionInFile, 1);
                         break;
