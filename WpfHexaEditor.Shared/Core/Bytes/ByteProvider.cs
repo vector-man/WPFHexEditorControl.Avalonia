@@ -460,8 +460,9 @@ namespace WpfHexaEditor.Core.Bytes
                 var refreshByteProvider = false;
                 if (File.Exists(_newfilename))
                 {
+                    _stream?.Close();
                     _stream = File.Open(_newfilename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
-                    _stream.SetLength(newStream.Length);
+                    _stream?.SetLength(newStream.Length);
                     refreshByteProvider = true;
                 }
 
