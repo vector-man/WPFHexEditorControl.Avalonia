@@ -1244,7 +1244,7 @@ namespace WpfHexaEditor
         {
             //CloseProvider();
         }
-
+                
         private void Control_MoveRight(object sender, EventArgs e)
         {
             var test = SelectionStart + 1;
@@ -4468,6 +4468,20 @@ namespace WpfHexaEditor
         }
         #endregion
 
+        #region Preload iByteControl at control creation
+
+        /// <summary>
+        /// Set to true for preload iByteControls at control creation for maximise the file/stream opening
+        /// </summary>
+        public bool AllowPreloadByteInEditor { get; set; } = true;
+
+        private void Control_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (AllowPreloadByteInEditor) BuildDataLines(MaxVisibleLine, true);
+        }
+
+        #endregion
+
         #region WORK IN PROGRESS // CustomBackgroundBlock implementation
 
         /// <summary>
@@ -4489,7 +4503,7 @@ namespace WpfHexaEditor
         {
             if (d is HexEditor ctrl && e.NewValue != e.OldValue) ctrl.RefreshView();
         }
-        
+
         private List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
 
         internal CustomBackgroundBlock GetCustomBackgroundBlock(long bytePositionInFile) =>
