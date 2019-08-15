@@ -178,7 +178,7 @@ namespace WpfHexaEditor
         /// Occurs when byte as modified in control
         /// </summary>
         public event EventHandler BytesModified;
-        
+
         /// <summary>
         /// Occurs when undo are completed
         /// </summary>
@@ -508,7 +508,7 @@ namespace WpfHexaEditor
             if (d is HexEditor ctrl)
                 ctrl.RefreshView();
         }
-               
+
         public OffSetPanelType OffSetPanelVisual
         {
             get { return (OffSetPanelType)GetValue(OffSetPanelVisualProperty); }
@@ -795,7 +795,7 @@ namespace WpfHexaEditor
         /// Stream or file are modified when IsModified are set to true.
         /// </summary>
         public bool IsModified { get; set; } = false;
-        
+
         /// <summary>
         /// Allow to delete byte on control
         /// </summary>
@@ -814,7 +814,7 @@ namespace WpfHexaEditor
 
             UpdateStatusBar();
         }
-        
+
         private void Control_ByteDeleted(object sender, EventArgs e) => DeleteSelection();
 
         /// <summary>
@@ -886,7 +886,7 @@ namespace WpfHexaEditor
         private void LinesOffSetLabel_MouseMove(object sender, MouseEventArgs e)
         {
             if (sender is FastTextLine line && e.LeftButton == MouseButtonState.Pressed)
-                SelectionStop = HexLiteralToLong((string)line.Tag).position + BytePerLine - 1;            
+                SelectionStop = HexLiteralToLong((string)line.Tag).position + BytePerLine - 1;
         }
 
         private void LinesOffSetLabel_MouseDown(object sender, MouseButtonEventArgs e)
@@ -983,9 +983,9 @@ namespace WpfHexaEditor
         private void Control_MoveDown(object sender, EventArgs e)
         {
             var test = SelectionStart + BytePerLine;
-                       
+
             if (Keyboard.Modifiers == ModifierKeys.Shift)
-            {                
+            {
                 if (test < _provider.Length)
                     SelectionStart += BytePerLine;
                 else
@@ -1239,12 +1239,12 @@ namespace WpfHexaEditor
                 return ByteToHex(ms.ToArray());
             }
         }
-                     
+
         private void Control_Unloaded(object sender, RoutedEventArgs e)
         {
             //CloseProvider();
         }
-                
+
         private void Control_MoveRight(object sender, EventArgs e)
         {
             var test = SelectionStart + 1;
@@ -1260,8 +1260,8 @@ namespace WpfHexaEditor
             {
                 //FixSelectionStartStop();
 
-                if (test < _provider.Length)                                    
-                    SelectionStart = ++SelectionStop;               
+                if (test < _provider.Length)
+                    SelectionStart = ++SelectionStop;
             }
 
             if (SelectionStart >= _provider.Length)
@@ -1272,7 +1272,7 @@ namespace WpfHexaEditor
 
             if (SelectionStart > LastVisibleBytePosition)
                 VerticalScrollBar.Value++;
-                       
+
             SetFocusAtSelectionStart();
         }
 
@@ -1408,7 +1408,7 @@ namespace WpfHexaEditor
         /// Get all bytes from file or stream opened and copy change
         /// </summary>
         public byte[] GetAllBytes() => GetAllBytes(true);
-        
+
         /// <summary>
         /// Return true if Copy method could be invoked.
         /// </summary>
@@ -1502,7 +1502,7 @@ namespace WpfHexaEditor
         /// </summary>
         public int GetColumnNumber(long position) =>
             AllowVisualByteAdress
-                ? (int)(position - VisualByteAdressStart - ByteShiftLeft) % BytePerLine 
+                ? (int)(position - VisualByteAdressStart - ByteShiftLeft) % BytePerLine
                 : (int)(position - ByteShiftLeft) % BytePerLine;
 
         /// <summary>
@@ -2148,7 +2148,7 @@ namespace WpfHexaEditor
                 if (exit) return;
             }
         }
-        
+
         /// <summary>
         /// Used to make action on all visible stringbyte
         /// </summary>
@@ -2320,7 +2320,7 @@ namespace WpfHexaEditor
         {
             if (e.HeightChanged) RefreshView(true);
         }
-             
+
         /// <summary>
         /// Refresh currentview of hexeditor
         /// </summary>
@@ -2499,6 +2499,7 @@ namespace WpfHexaEditor
                     ctrl.CtrlyKey += Control_CTRLYKey;
 
                     #endregion
+
                 });
 
             #endregion
@@ -2558,7 +2559,7 @@ namespace WpfHexaEditor
                     var nextPos = startPosition + index;
 
                     if (index < readSize && _priLevel == curLevel)
-                    {       
+                    {
                         byteControl.Byte = _viewBuffer[index];
                         byteControl.BytePositionInFile = nextPos;
 
@@ -2852,7 +2853,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get first visible byte position in control
         /// </summary>
-        private long FirstVisibleBytePosition => 
+        private long FirstVisibleBytePosition =>
             AllowVisualByteAdress
                 ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft + VisualByteAdressStart
                 : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
@@ -2868,8 +2869,8 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get last visible byte position in control
         /// </summary>
-        private long LastVisibleBytePosition => FirstVisibleBytePosition + (MaxVisibleLine ) * BytePerLine - 1;
-        
+        private long LastVisibleBytePosition => FirstVisibleBytePosition + (MaxVisibleLine) * BytePerLine - 1;
+
         #endregion First/Last visible byte methods
 
         #region Focus Methods
@@ -3148,8 +3149,8 @@ namespace WpfHexaEditor
         /// </summary>
         /// <returns>Return null if no occurence found</returns>
         public IEnumerable<long> FindAllSelection(bool highLight) =>
-            SelectionLength > 0 
-                ? FindAll(SelectionByteArray, highLight) 
+            SelectionLength > 0
+                ? FindAll(SelectionByteArray, highLight)
                 : null;
 
         /// <summary>
@@ -3188,7 +3189,7 @@ namespace WpfHexaEditor
                     : replaceData;
 
                 _provider.Paste(position, finalReplaceData, false);
-                
+
                 SetScrollMarker(position, ScrollMarker.ByteModified);
 
                 UnSelectAll();
@@ -3363,7 +3364,7 @@ namespace WpfHexaEditor
         /// <returns>Return the position of replace. Return null on error/no replace</returns>
         public IEnumerable<long> ReplaceAll(string find, string replace, bool truckLength = true) =>
             ReplaceAll(StringToByte(find), StringToByte(replace), truckLength, false);
-        
+
         #endregion Find/replace methods
 
         #region Statusbar
@@ -3884,6 +3885,27 @@ namespace WpfHexaEditor
 
         private void Control_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            #region Mousewheel Zoom support
+            if (_scaler == null) InitialiseZoomSupport();
+
+            if (Keyboard.Modifiers == ModifierKeys.Control && AllowZoom)
+            {
+                if (e.Delta > 0) //Zoom
+                {
+                    ScaleX += 0.1;
+                    ScaleY += 0.1;
+                }
+
+                if (e.Delta < 0) //UnZoom
+                {
+                    ScaleX -= 0.1;
+                    ScaleY -= 0.1;
+                }
+                return;
+            }
+            #endregion
+
+            #region Scroll up and down in the hex editor
             if (_provider == null || !_provider.IsOnLongProcess)
             {
                 if (e.Delta > 0) //UP
@@ -3892,9 +3914,10 @@ namespace WpfHexaEditor
                 if (e.Delta < 0) //Down
                     VerticalScrollBar.Value += e.Delta / 120 * -(int)MouseWheelSpeed;
             }
+            #endregion
         }
         #endregion
-
+                
         #region Highlight support       
 
         /// <summary>
@@ -4226,7 +4249,7 @@ namespace WpfHexaEditor
             #region Text Dropping (Will be supported soon)
 
             var textDrop = e.Data.GetData(DataFormats.Text);
-            if (textDrop != null && AllowTextDrop)            
+            if (textDrop != null && AllowTextDrop)
             {
                 var textDropped = textDrop as string;
 
@@ -4367,7 +4390,7 @@ namespace WpfHexaEditor
         }
 
         #endregion
-                
+
         #region Configure the start/stop bytes that are loaded visually into the hexadecimal editor
         public bool AllowVisualByteAdress
         {
@@ -4385,10 +4408,10 @@ namespace WpfHexaEditor
             if (d is HexEditor ctrl && e.NewValue != e.OldValue)
             {
                 ctrl.UpdateScrollBar();
-                ctrl.RefreshView(true);                
+                ctrl.RefreshView(true);
             }
         }
-               
+
         /// <summary>
         /// Set the last byte are virtually loaded in the control. 
         /// Note that all other bytes address after will not be shown in control.
@@ -4480,6 +4503,98 @@ namespace WpfHexaEditor
             if (AllowPreloadByteInEditor) BuildDataLines(MaxVisibleLine, true);
         }
 
+        #endregion
+
+        #region Control zoom support (90% completed, ISSUE: statusbar and scrollbar also zoom...)
+
+        private double _scaleX = 1.0;
+        private double _scaleY = 1.0;
+        private bool allowZoom = true;
+
+        /// <summary>
+        /// Get or set the zoom X factor
+        /// </summary>
+        public double ScaleX
+        {
+            get => _scaleX;
+            set
+            {
+                _scaleX = value > 0.5 && value < 2.0
+                    ? value
+                    : _scaleX;
+
+                UpdateZoom();
+            }
+        }
+
+        /// <summary>
+        /// Get or set the zoom Y factor
+        /// </summary>
+        public double ScaleY
+        {
+            get => _scaleY;
+            set
+            {
+                _scaleY = value > 0.5 && value < 2.0
+                    ? value
+                    : _scaleY;
+
+                UpdateZoom();
+            }
+        }
+
+        /// <summary>
+        /// Get or set the scale transform to work with zoom
+        /// </summary>
+        private ScaleTransform _scaler = null;
+
+        /// <summary>
+        /// Allow or not the capability to zoom control content (use with ScaleX and ScaleY property)
+        /// </summary>
+        public bool AllowZoom
+        {
+            get => allowZoom;
+
+            set
+            {
+                allowZoom = value;
+
+                InitialiseZoomSupport();
+            }
+        }
+        /// <summary>
+        /// Initialize the support of zoom
+        /// </summary>
+        private void InitialiseZoomSupport()
+        {
+            if (_scaler == null)
+            {
+                _scaler = new ScaleTransform(ScaleX, ScaleY);
+                LayoutTransform = _scaler;
+            }
+        }
+
+        /// <summary>
+        /// Update the zoom to ScaleX, ScaleY value if AllowZoom is true
+        /// </summary>
+        public void UpdateZoom()
+        {
+            if (AllowZoom)
+            {
+                if (_scaler == null) InitialiseZoomSupport();
+                _scaler.ScaleY = _scaleY;
+                _scaler.ScaleX = _scaleX;
+            }
+        }
+
+        /// <summary>
+        /// Reset the zoom
+        /// </summary>
+        public void ResetZoom()
+        {
+            ScaleX = 1.0;
+            ScaleY = 1.0;
+        }
         #endregion
 
         #region WORK IN PROGRESS // CustomBackgroundBlock implementation

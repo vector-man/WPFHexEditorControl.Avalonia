@@ -229,6 +229,8 @@ namespace WPFHexaEditorExample
             //HexEdit.VisualByteAdressStart = 75;
             //HexEdit.VisualByteAdressLength = 500; 
 
+            HexEdit.ResetZoom();
+
             //
             //HexEdit.ReplaceAll(HexEdit.SelectionByteArray, ByteConverters.StringToByte("TEST"), true, true);
         }
