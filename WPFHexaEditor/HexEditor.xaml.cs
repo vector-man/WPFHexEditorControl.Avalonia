@@ -862,7 +862,8 @@ namespace WpfHexaEditor
 
                 if (actualheight < 0) actualheight = 0;
 
-                return (int)(actualheight / LineHeight) + 1;
+                //TODO: ZOOM ISSUE - NEED TO FIX THE MAX VISIBLE LINE WHEN ZOOM IN/OUT
+                return (int)(actualheight / (LineHeight * ScaleY)) + 1;
             }
         }
 
@@ -3886,7 +3887,7 @@ namespace WpfHexaEditor
         private void Control_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             #region Mousewheel Zoom support
-            if (_scaler == null) InitialiseZoomSupport();
+            if (_scaler == null) InitialiseZoom();
 
             if (Keyboard.Modifiers == ModifierKeys.Control && AllowZoom)
             {
@@ -3917,7 +3918,7 @@ namespace WpfHexaEditor
             #endregion
         }
         #endregion
-                
+
         #region Highlight support       
 
         /// <summary>
@@ -4559,18 +4560,25 @@ namespace WpfHexaEditor
             {
                 allowZoom = value;
 
-                InitialiseZoomSupport();
+                InitialiseZoom();
             }
         }
         /// <summary>
         /// Initialize the support of zoom
         /// </summary>
-        private void InitialiseZoomSupport()
+        private void InitialiseZoom()
         {
             if (_scaler == null)
             {
                 _scaler = new ScaleTransform(ScaleX, ScaleY);
-                LayoutTransform = _scaler;
+
+                //LayoutTransform = _scaler;
+
+                HexHeaderStackPanel.LayoutTransform = _scaler;
+                HexDataStackPanel.LayoutTransform = _scaler;
+                StringDataStackPanel.LayoutTransform = _scaler;
+                LinesInfoStackPanel.LayoutTransform = _scaler;
+                //_caret.LayoutTransform = _scaler;
             }
         }
 
@@ -4581,9 +4589,11 @@ namespace WpfHexaEditor
         {
             if (AllowZoom)
             {
-                if (_scaler == null) InitialiseZoomSupport();
+                if (_scaler == null) InitialiseZoom();
                 _scaler.ScaleY = _scaleY;
                 _scaler.ScaleX = _scaleX;
+                
+                RefreshView(true);
             }
         }
 

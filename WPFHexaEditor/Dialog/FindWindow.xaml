@@ -57,6 +57,7 @@
             AllowDrop="True"
             AllowExtend="True"
             AllowFileDrop="False"
+            AllowZoom="False"
             AppendNeedConfirmation="False"
             ByteModifiedColor="White"
             BytePerLine="8"
