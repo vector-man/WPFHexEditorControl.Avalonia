@@ -22,6 +22,8 @@ namespace HexEditUnitTest
             var byteCount = bp.GetByteCount().Sum();
             watch.Stop();
 
+            bp.Dispose();
+
             Console.WriteLine($@"duration {watch.Elapsed}");
             Console.WriteLine($@"File length {length}");
 
