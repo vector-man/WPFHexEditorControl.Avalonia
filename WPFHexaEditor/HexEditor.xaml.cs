@@ -2103,7 +2103,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Used to make action on all visible hexbyte
         /// </summary>
-        private void TraverseHexBytes(Action<HexByte> act, ref bool exit)
+        private void TraverseHexBytes(Action<HexByte> act, ref bool exit, bool force = false)
         {
             var visibleLine = MaxVisibleLine;
             var cnt = 0;
@@ -2111,7 +2111,8 @@ namespace WpfHexaEditor
             //HexByte panel
             foreach (StackPanel hexDataStack in HexDataStackPanel.Children)
             {
-                if (cnt++ == visibleLine) break;
+                if (cnt++ == visibleLine && !force) break;
+
                 foreach (var ctrl in hexDataStack.Children)
                     if (ctrl is HexByte hexCtrl)
                         act(hexCtrl);
@@ -2132,7 +2133,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Used to make action on all visible stringbyte
         /// </summary>
-        private void TraverseStringBytes(Action<StringByte> act, ref bool exit)
+        private void TraverseStringBytes(Action<StringByte> act, ref bool exit, bool force = false)
         {
             var visibleLine = MaxVisibleLine;
             var cnt = 0;
@@ -2140,7 +2141,8 @@ namespace WpfHexaEditor
             //Stringbyte panel
             foreach (StackPanel stringDataStack in StringDataStackPanel.Children)
             {
-                if (cnt++ == visibleLine) break;
+                if (cnt++ == visibleLine && !force)
+                    break;
 
                 foreach (var ctrl in stringDataStack.Children)
                     if (ctrl is StringByte sbControl)
@@ -2162,20 +2164,22 @@ namespace WpfHexaEditor
         /// <summary>
         /// Used to make action on all visible hexbyte and stringbyte.
         /// </summary>
-        private void TraverseHexAndStringBytes(Action<IByteControl> act, ref bool exit)
+        private void TraverseHexAndStringBytes(Action<IByteControl> act, ref bool exit, bool force = false)
         {
-            TraverseStringBytes(act, ref exit);
-            TraverseHexBytes(act, ref exit);
+            TraverseStringBytes(act, ref exit, force);
+            TraverseHexBytes(act, ref exit, force);
         }
 
         /// <summary>
         /// Used to make action on all visible hexbyte and stringbyte.
         /// </summary>
-        private void TraverseHexAndStringBytes(Action<IByteControl> act)
+        private void TraverseHexAndStringBytes(Action<IByteControl> act, bool force = false)
         {
             var exit = false;
-            TraverseHexAndStringBytes(act, ref exit);
+            TraverseHexAndStringBytes(act, ref exit, force);
         }
+
+
 
         /// <summary>
         /// Used to make action on all visible lineinfos
@@ -2323,6 +2327,17 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
+        /// Clear all IByteControl in hexeditor
+        /// </summary>
+        /// <param name="force">Set to true for clear all byte visible (set by MaxVisibleLine) or not visible in control.</param>
+        private void ClearAllBytes(bool force = false) => TraverseHexAndStringBytes(ctrl => { ctrl.Clear(); }, force);
+
+        /// <summary>
+        /// Clear all lines offset...
+        /// </summary>
+        private void ClearLineInfo() => TraverseLineOffSet(ctrl => { ctrl.Tag = ctrl.Text = string.Empty; });
+
+        /// <summary>
         /// Refresh currentview of hexeditor
         /// </summary>
         public void RefreshView(bool controlResize = false, bool refreshData = true)
@@ -2331,7 +2346,6 @@ namespace WpfHexaEditor
             var watch = new Stopwatch();
             watch.Start();
 #endif
-
             UpdateLinesOffSet();
 
             if (refreshData)
@@ -2614,7 +2628,7 @@ namespace WpfHexaEditor
                 #region Clear IByteControl
 
                 _viewBuffer = null;
-                TraverseHexAndStringBytes(ctrl => { ctrl.Clear(); });
+                ClearAllBytes();
 
                 #endregion
             }
@@ -2769,7 +2783,7 @@ namespace WpfHexaEditor
             #endregion
 
             //Clear all lines offset...
-            TraverseLineOffSet(ctrl => { ctrl.Tag = ctrl.Text = string.Empty; });
+            ClearLineInfo();
 
             if (!ByteProvider.CheckIsOpen(_provider)) return;
 
@@ -4497,7 +4511,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Set to true for preload iByteControls at control creation for maximise the file/stream opening
         /// </summary>
-        public bool AllowPreloadByteInEditor { get; set; } = true;
+        public bool AllowPreloadByteInEditor { get; set; } = false;
 
         private void Control_Loaded(object sender, RoutedEventArgs e)
         {
@@ -4515,12 +4529,12 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get or set the zoom X factor
         /// </summary>
-        public double ScaleX
+        private double ScaleX
         {
             get => _scaleX;
             set
             {
-                _scaleX = value > 0.5 && value < 2.0
+                _scaleX = value >= 0.5 && value <= 2.0
                     ? value
                     : _scaleX;
 
@@ -4531,12 +4545,12 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get or set the zoom Y factor
         /// </summary>
-        public double ScaleY
+        private double ScaleY
         {
             get => _scaleY;
             set
             {
-                _scaleY = value > 0.5 && value < 2.0
+                _scaleY = value >= 0.5 && value <= 2.0
                     ? value
                     : _scaleY;
 
@@ -4572,8 +4586,6 @@ namespace WpfHexaEditor
             {
                 _scaler = new ScaleTransform(ScaleX, ScaleY);
 
-                //LayoutTransform = _scaler;
-
                 HexHeaderStackPanel.LayoutTransform = _scaler;
                 HexDataStackPanel.LayoutTransform = _scaler;
                 StringDataStackPanel.LayoutTransform = _scaler;
@@ -4583,28 +4595,39 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
+        /// Zoom the content of hexeditor
+        /// </summary>
+        /// <param name="scale">Posible value is in the range of 0.5 to 2.0  (50% to 200%)</param>
+        public void Zoom(double scale)
+        {
+            ScaleX = scale;
+            ScaleY = scale;
+                        
+            UpdateZoom();
+        }
+
+        /// <summary>
         /// Update the zoom to ScaleX, ScaleY value if AllowZoom is true
         /// </summary>
-        public void UpdateZoom()
+        private void UpdateZoom()
         {
             if (AllowZoom)
             {
                 if (_scaler == null) InitialiseZoom();
-                _scaler.ScaleY = _scaleY;
-                _scaler.ScaleX = _scaleX;
-                
+                _scaler.ScaleY = ScaleY;
+                _scaler.ScaleX = ScaleX;
+
+                ClearLineInfo();
+                ClearAllBytes(true);
                 RefreshView(true);
             }
         }
 
         /// <summary>
-        /// Reset the zoom
+        /// Reset the zoom to 100%
         /// </summary>
-        public void ResetZoom()
-        {
-            ScaleX = 1.0;
-            ScaleY = 1.0;
-        }
+        public void ResetZoom() => ScaleX = ScaleY = 1.0;
+
         #endregion
 
         #region WORK IN PROGRESS // CustomBackgroundBlock implementation

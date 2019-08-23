@@ -231,6 +231,19 @@
                     x:Name="HbBsl"
                     Height="23"
                     ToolTip="ByteShiftLeft test" />
+                <Slider
+                    x:Name="ZoomSlider"
+                    Width="111"
+                    LargeChange="0.1"
+                    Maximum="2"
+                    Minimum="0.5"
+                    ToolTip="Zoom editor (50% to 200%)"
+                    ValueChanged="ZoomSlider_ValueChanged"
+                    Value="1" />
+                <Button
+                    Click="Button_Click"
+                    Content="X"
+                    ToolTip="Reset zoom" />
             </Menu>
 
             <TabControl>

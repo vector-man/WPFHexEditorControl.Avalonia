@@ -1,6 +1,9 @@
 ﻿//////////////////////////////////////////////
 // Apache 2.0  - 2016-2018
 // Author : Derek Tremblay (derektremblay666@gmail.com)
+//
+//
+// NOT A TRUE PROJECT! IT'S JUST FOR TESTING THE HEXEDITOR... DO NOT WATCH THE CODE LOL ;) 
 //////////////////////////////////////////////
 
 using Microsoft.Win32;
@@ -30,7 +33,8 @@ namespace WPFHexaEditorExample
 
         public MainWindow()
         {
-            //System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("en");
+            //FORCE CULTURE
+            //System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo("en");
 
             InitializeComponent();
           
@@ -272,11 +276,20 @@ namespace WPFHexaEditorExample
             };
             window.Show();
         }
-
-        private void Image_MouseDown(object sender, MouseButtonEventArgs e)
+        
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-
+            ZoomSlider.Value = 1;
+            HexEdit.ResetZoom();
         }
 
+        private void ZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            try
+            {
+                HexEdit.Zoom(ZoomSlider.Value);
+            }
+            catch { }
+        }
     }
 }
