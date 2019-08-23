@@ -306,4 +306,10 @@
   <data name="ReplaceTrimSettingString" xml:space="preserve">
     <value>Couper les données sur la longueur de la recherche lors du remplacement</value>
   </data>
+  <data name="ZoomResetString" xml:space="preserve">
+    <value>Réinitialiser le zoom à 100%</value>
+  </data>
+  <data name="ZoomString" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
 </root>

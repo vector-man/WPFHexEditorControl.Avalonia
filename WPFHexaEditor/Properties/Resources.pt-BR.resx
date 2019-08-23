@@ -313,4 +313,10 @@
   <data name="WritingErrorExeptionString" xml:space="preserve">
     <value>Há uma escrita de erro.</value>
   </data>
+  <data name="ZoomResetString" xml:space="preserve">
+    <value>Redefinir zoom para 100%</value>
+  </data>
+  <data name="ZoomString" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
 </root>

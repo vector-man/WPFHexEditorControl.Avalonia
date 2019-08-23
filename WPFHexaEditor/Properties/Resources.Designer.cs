@@ -931,5 +931,23 @@ namespace WpfHexaEditor.Properties {
                 return ResourceManager.GetString("WritingErrorExeptionString", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Reset zoom to 100%.
+        /// </summary>
+        public static string ZoomResetString {
+            get {
+                return ResourceManager.GetString("ZoomResetString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Zoom.
+        /// </summary>
+        public static string ZoomString {
+            get {
+                return ResourceManager.GetString("ZoomString", resourceCulture);
+            }
+        }
     }
 }

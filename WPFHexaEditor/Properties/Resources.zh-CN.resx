@@ -306,4 +306,10 @@
   <data name="WritingErrorExeptionString" xml:space="preserve">
     <value>写入错误</value>
   </data>
+  <data name="ZoomResetString" xml:space="preserve">
+    <value>将缩放重置为100％</value>
+  </data>
+  <data name="ZoomString" xml:space="preserve">
+    <value>放大</value>
+  </data>
 </root>

@@ -369,4 +369,10 @@ Usually, this isn't filled in.</value>
   <data name="ReplaceTrimSettingString" xml:space="preserve">
     <value>Trim the data on the find length when replace</value>
   </data>
+  <data name="ZoomResetString" xml:space="preserve">
+    <value>Reset zoom to 100%</value>
+  </data>
+  <data name="ZoomString" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
 </root>

@@ -306,4 +306,10 @@
   <data name="WritingErrorExeptionString" xml:space="preserve">
     <value>При записи происходит ошибка.</value>
   </data>
+  <data name="ZoomResetString" xml:space="preserve">
+    <value>Сброс до 100%</value>
+  </data>
+  <data name="ZoomString" xml:space="preserve">
+    <value>Увеличить</value>
+  </data>
 </root>

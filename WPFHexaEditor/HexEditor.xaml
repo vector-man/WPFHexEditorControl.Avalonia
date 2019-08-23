@@ -231,6 +231,26 @@
                 Background="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:HexEditor}}, Path=BorderBrush}" />
 
             <StatusBar Height="27">
+                <StatusBarItem Padding="0">
+                    <StackPanel Orientation="Horizontal">
+                        <!--<Label
+                            Padding="5,5,0,5"
+                            Content="{x:Static p:Resources.ZoomString}"
+                            FontWeight="Bold" />-->
+                        <Label
+                            Width="40"
+                            Content="{Binding Path=ZoomScale, RelativeSource={RelativeSource AncestorType={x:Type local:HexEditor}}, UpdateSourceTrigger=PropertyChanged}"
+                            ContentStringFormat="P0"
+                            ToolTip="{x:Static p:Resources.ZoomString}" />
+                        <Button
+                            BorderThickness="0"
+                            Click="ZoomResetButton_Click"
+                            Content="X"
+                            FontWeight="Bold"
+                            ToolTip="{x:Static p:Resources.ZoomResetString}" />
+                    </StackPanel>
+                </StatusBarItem>
+                <Separator />
                 <StatusBarItem Width="90" Padding="0">
                     <StackPanel Orientation="Horizontal">
                         <Label

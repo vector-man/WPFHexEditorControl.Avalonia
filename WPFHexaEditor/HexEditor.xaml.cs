@@ -4612,6 +4612,7 @@ namespace WpfHexaEditor
         /// </summary>
         public void ResetZoom() => ZoomScale = 1.0;
 
+        private void ZoomResetButton_Click(object sender, RoutedEventArgs e) => ResetZoom();
         #endregion
 
         #region WORK IN PROGRESS // CustomBackgroundBlock implementation
@@ -4635,7 +4636,7 @@ namespace WpfHexaEditor
         {
             if (d is HexEditor ctrl && e.NewValue != e.OldValue) ctrl.RefreshView();
         }
-
+               
         private List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
 
         internal CustomBackgroundBlock GetCustomBackgroundBlock(long bytePositionInFile) =>
