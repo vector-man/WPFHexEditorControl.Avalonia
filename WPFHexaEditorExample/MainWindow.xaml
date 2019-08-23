@@ -238,8 +238,7 @@
                     Maximum="2"
                     Minimum="0.5"
                     ToolTip="Zoom editor (50% to 200%)"
-                    ValueChanged="ZoomSlider_ValueChanged"
-                    Value="1" />
+                    Value="{Binding ElementName=HexEdit, Path=ZoomScale}" />
                 <Button
                     Click="Button_Click"
                     Content="X"

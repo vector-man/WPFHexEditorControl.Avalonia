@@ -276,20 +276,7 @@ namespace WPFHexaEditorExample
             };
             window.Show();
         }
-        
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            ZoomSlider.Value = 1;
-            HexEdit.ResetZoom();
-        }
 
-        private void ZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            try
-            {
-                HexEdit.Zoom(ZoomSlider.Value);
-            }
-            catch { }
-        }
+        private void Button_Click(object sender, RoutedEventArgs e) => ZoomSlider.Value = 1;
     }
 }

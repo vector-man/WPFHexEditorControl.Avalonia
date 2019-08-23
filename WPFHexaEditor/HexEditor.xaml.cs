@@ -863,7 +863,7 @@ namespace WpfHexaEditor
                 if (actualheight < 0) actualheight = 0;
 
                 //TODO: ZOOM ISSUE - NEED TO FIX THE MAX VISIBLE LINE WHEN ZOOM IN/OUT
-                return (int)(actualheight / (LineHeight * ScaleY)) + 1;
+                return (int)(actualheight / (LineHeight * ZoomScale)) + 1;
             }
         }
 
@@ -2178,9 +2178,7 @@ namespace WpfHexaEditor
             var exit = false;
             TraverseHexAndStringBytes(act, ref exit, force);
         }
-
-
-
+                
         /// <summary>
         /// Used to make action on all visible lineinfos
         /// </summary>
@@ -3906,16 +3904,11 @@ namespace WpfHexaEditor
             if (Keyboard.Modifiers == ModifierKeys.Control && AllowZoom)
             {
                 if (e.Delta > 0) //Zoom
-                {
-                    ScaleX += 0.1;
-                    ScaleY += 0.1;
-                }
-
+                    ZoomScale += 0.1;
+                
                 if (e.Delta < 0) //UnZoom
-                {
-                    ScaleX -= 0.1;
-                    ScaleY -= 0.1;
-                }
+                    ZoomScale -= 0.1;
+                
                 return;
             }
             #endregion
@@ -4521,58 +4514,61 @@ namespace WpfHexaEditor
         #endregion
 
         #region Control zoom support (90% completed, ISSUE: statusbar and scrollbar also zoom...)
-
-        private double _scaleX = 1.0;
-        private double _scaleY = 1.0;
-        private bool allowZoom = true;
-
-        /// <summary>
-        /// Get or set the zoom X factor
-        /// </summary>
-        private double ScaleX
-        {
-            get => _scaleX;
-            set
-            {
-                _scaleX = value >= 0.5 && value <= 2.0
-                    ? value
-                    : _scaleX;
-
-                UpdateZoom();
-            }
-        }
-
-        /// <summary>
-        /// Get or set the zoom Y factor
-        /// </summary>
-        private double ScaleY
-        {
-            get => _scaleY;
-            set
-            {
-                _scaleY = value >= 0.5 && value <= 2.0
-                    ? value
-                    : _scaleY;
-
-                UpdateZoom();
-            }
-        }
-
         /// <summary>
         /// Get or set the scale transform to work with zoom
         /// </summary>
         private ScaleTransform _scaler = null;
 
         /// <summary>
+        /// Allow or not the zoom in control
+        /// </summary>
+        private bool _allowZoom = true;
+
+        /// <summary>
+        /// Get or set the zoom scale 
+        /// Posible Scale : 0.5 to 2.0 (50% to 200%)
+        /// </summary>
+        public double ZoomScale
+        {
+            get => (double)GetValue(ZoomScaleProperty);
+            set => SetValue(ZoomScaleProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for ZoomScale.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ZoomScaleProperty =
+            DependencyProperty.Register(nameof(ZoomScale), typeof(double), typeof(HexEditor),
+                new FrameworkPropertyMetadata(1D, ZoomScale_ChangedCallBack,
+                    ZoomScale_CoerceValueCallBack));
+
+        private static object ZoomScale_CoerceValueCallBack(DependencyObject d, object baseValue)
+        {
+            if (!(d is HexEditor ctrl)) return -1L;
+
+            var value = (double)baseValue;
+
+            return value >= 0.5 && value <= 2.0
+                ? value
+                : (double)baseValue;
+        }
+
+        private static void ZoomScale_ChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is HexEditor ctrl)) return;
+            if (e.NewValue == e.OldValue) return;
+
+            ctrl.UpdateZoom();
+        }
+
+        /// <summary>
         /// Allow or not the capability to zoom control content (use with ScaleX and ScaleY property)
         /// </summary>
         public bool AllowZoom
         {
-            get => allowZoom;
+            get => _allowZoom;
 
             set
             {
-                allowZoom = value;
+                _allowZoom = value;
 
                 InitialiseZoom();
             }
@@ -4584,7 +4580,7 @@ namespace WpfHexaEditor
         {
             if (_scaler == null)
             {
-                _scaler = new ScaleTransform(ScaleX, ScaleY);
+                _scaler = new ScaleTransform(ZoomScale, ZoomScale);
 
                 HexHeaderStackPanel.LayoutTransform = _scaler;
                 HexDataStackPanel.LayoutTransform = _scaler;
@@ -4595,18 +4591,6 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// Zoom the content of hexeditor
-        /// </summary>
-        /// <param name="scale">Posible value is in the range of 0.5 to 2.0  (50% to 200%)</param>
-        public void Zoom(double scale)
-        {
-            ScaleX = scale;
-            ScaleY = scale;
-                        
-            UpdateZoom();
-        }
-
-        /// <summary>
         /// Update the zoom to ScaleX, ScaleY value if AllowZoom is true
         /// </summary>
         private void UpdateZoom()
@@ -4614,8 +4598,8 @@ namespace WpfHexaEditor
             if (AllowZoom)
             {
                 if (_scaler == null) InitialiseZoom();
-                _scaler.ScaleY = ScaleY;
-                _scaler.ScaleX = ScaleX;
+                _scaler.ScaleY = ZoomScale;
+                _scaler.ScaleX = ZoomScale;
 
                 ClearLineInfo();
                 ClearAllBytes(true);
@@ -4626,7 +4610,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Reset the zoom to 100%
         /// </summary>
-        public void ResetZoom() => ScaleX = ScaleY = 1.0;
+        public void ResetZoom() => ZoomScale = 1.0;
 
         #endregion
 
