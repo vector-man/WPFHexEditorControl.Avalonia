@@ -858,11 +858,10 @@ namespace WpfHexaEditor
         {
             get
             {
-                var actualheight = ActualHeight - HexHeaderStackPanel.ActualHeight - StatusBarGrid.ActualHeight;
+                var actualheight = BaseGrid.RowDefinitions[1].ActualHeight;
 
                 if (actualheight < 0) actualheight = 0;
 
-                //TODO: ZOOM ISSUE - NEED TO FIX THE MAX VISIBLE LINE WHEN ZOOM IN/OUT
                 return (int)(actualheight / (LineHeight * ZoomScale)) + 1;
             }
         }
