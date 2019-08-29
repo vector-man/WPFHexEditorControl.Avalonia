@@ -52,6 +52,7 @@ Unicode TBL are supported. For use put value at the right of equal (=) like this
 - Group byte in block of 2,4,6,8 bytes...
 - Show data as hexadecimal or decimal
 - Possibility to view only a part of file/stream in editor and dont loose anychange when used it (AllowVisualByteAdress...)
+- Zoom / UnZoom hexeditor content (50% to 200%)
 - ...
 
 ## How to use
