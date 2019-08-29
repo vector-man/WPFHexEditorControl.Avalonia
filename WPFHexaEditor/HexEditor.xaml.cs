@@ -4177,7 +4177,7 @@ namespace WpfHexaEditor
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
                 BaseGrid.Children.Add(_caret);
-                _caret.CaretHeight = FontSize;
+                _caret.CaretHeight = LineHeight;
                 _caret.BlinkPeriod = 600;
                 _caret.Hide();
             }
@@ -4512,7 +4512,7 @@ namespace WpfHexaEditor
 
         #endregion
 
-        #region Control zoom support (90% completed, ISSUE: statusbar and scrollbar also zoom...)
+        #region Zoom in/out support
         /// <summary>
         /// Get or set the scale transform to work with zoom
         /// </summary>
@@ -4541,8 +4541,6 @@ namespace WpfHexaEditor
 
         private static object ZoomScale_CoerceValueCallBack(DependencyObject d, object baseValue)
         {
-            if (!(d is HexEditor ctrl)) return -1L;
-
             var value = (double)baseValue;
 
             return value >= 0.5 && value <= 2.0
@@ -4584,8 +4582,7 @@ namespace WpfHexaEditor
                 HexHeaderStackPanel.LayoutTransform = _scaler;
                 HexDataStackPanel.LayoutTransform = _scaler;
                 StringDataStackPanel.LayoutTransform = _scaler;
-                LinesInfoStackPanel.LayoutTransform = _scaler;
-                //_caret.LayoutTransform = _scaler;
+                LinesInfoStackPanel.LayoutTransform = _scaler;                
             }
         }
 
@@ -4599,6 +4596,8 @@ namespace WpfHexaEditor
                 if (_scaler == null) InitialiseZoom();
                 _scaler.ScaleY = ZoomScale;
                 _scaler.ScaleX = ZoomScale;
+
+                //TODO: Update caret size...
 
                 ClearLineInfo();
                 ClearAllBytes(true);
