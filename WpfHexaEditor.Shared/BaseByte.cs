@@ -2,7 +2,7 @@
 // Apache 2.0  - 2016-2018
 // Base author  : Derek Tremblay (derektremblay666@gmail.com)
 // Contributor  : emes30
-// Notice       : The idea to make a base class with common bytecontrol code if taken 
+// Notice       : The idea to make a base class with common bytecontrol code is taken 
 //                from emes30 fork (https://github.com/emes30/WpfHexEditorControl)
 //////////////////////////////////////////////
 
@@ -255,7 +255,9 @@ namespace WpfHexaEditor
                 FontWeight = _parent.FontWeight;
                 Foreground = _parent.ForegroundContrast;
 
-                Background = FirstSelected ? _parent.SelectionFirstColor : _parent.SelectionSecondColor;
+                Background = FirstSelected
+                    ? _parent.SelectionFirstColor
+                    : _parent.SelectionSecondColor;
             }
             else if (IsHighLight)
             {
@@ -285,7 +287,9 @@ namespace WpfHexaEditor
                 Description = cbb != null ? cbb.Description : "";
 
                 Background = cbb != null ? cbb.Color : Brushes.Transparent;
-                Foreground = _parent.GetColumnNumber(BytePositionInFile) % 2 == 0 ? _parent.Foreground : _parent.ForegroundSecondColor;
+                Foreground = _parent.GetColumnNumber(BytePositionInFile) % 2 == 0 
+                    ? _parent.Foreground 
+                    : _parent.ForegroundSecondColor;
 
                 FontWeight = _parent.FontWeight;
             }
@@ -300,9 +304,8 @@ namespace WpfHexaEditor
         /// </summary>
         protected void UpdateAutoHighLiteSelectionByteVisual()
         {
-            if (_parent.AllowAutoHightLighSelectionByte && 
-                _parent.SelectionByte != null && Byte == _parent.SelectionByte && 
-                !IsSelected)
+            if (_parent.AllowAutoHightLighSelectionByte && _parent.SelectionByte != null &&
+                Byte == _parent.SelectionByte && !IsSelected)
                 Background = _parent.AutoHighLiteSelectionByteBrush;
         }
 
@@ -430,7 +433,7 @@ namespace WpfHexaEditor
 
         protected bool KeyValidation(KeyEventArgs e)
         {
-#region Key validation and launch event if needed
+            #region Key validation and launch event if needed
 
             if (KeyValidator.IsUpKey(e.Key))
             {
@@ -531,10 +534,10 @@ namespace WpfHexaEditor
             }
 
             return false;
-#endregion
+            #endregion
         }
     }
-#endregion
+    #endregion
 
 }
 

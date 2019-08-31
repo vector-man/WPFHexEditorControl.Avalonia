@@ -1,22 +1,36 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2018
+// Apache 2.0  - 2018-2019
 // Author : Janus Tida
-// Modified by : Derek Tremblay
+// Contributor: Derek Tremblay
 //////////////////////////////////////////////
 
-using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using WpfHexaEditor.Core.Interfaces;
+using WpfHexaEditor.Core;
 
 namespace WpfHexaEditor
 {
     public abstract class FontControlBase : FrameworkElement, IFontControl
     {
+        #region Global class variable
+        private GlyphTypeface _glyphTypeface;
+        private Typeface _typeface;
+        private Size? _charSize;
+
+#if NET47
+        private double? _pixelPerDip;
+#endif
+        #endregion
+
+        #region Base properties
+        /// <summary>
+        /// The size of font 
+        /// </summary>
         public double FontSize
         {
-            get => (double) GetValue(FontSizeProperty);
+            get => (double)GetValue(FontSizeProperty);
             set => SetValue(FontSizeProperty, value);
         }
 
@@ -29,34 +43,29 @@ namespace WpfHexaEditor
                     FontSize_PropertyChanged
                 ));
 
-        //Cuz font size may affectrender,the CellSize and squareSize should be updated.
+        /// <summary>
+        /// Cuz font size may affectrender,the CellSize and squareSize should be updated.
+        /// </summary>        
         private static void FontSize_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is FontControlBase dataLB))
                 return;
 
-            dataLB.OnFontSizeChanged((double) e.OldValue, (double) e.NewValue);
+            dataLB.OnFontSizeChanged((double)e.OldValue, (double)e.NewValue);
         }
 
-        protected virtual void OnFontSizeChanged(double oldFontSize, double newFontSize) {
+        protected virtual void OnFontSizeChanged(double oldFontSize, double newFontSize)
+        {
             UpdateCharSize();
             UpdateFont();
         }
-          
 
         /// <summary>
-        /// Update CharSize...
+        /// Chose the font family
         /// </summary>
-        private void UpdateCharSize() => _charSize = null;
-
-        private void UpdateFont() {
-            _typeface = null;
-        }
-
-
         public FontFamily FontFamily
         {
-            get => (FontFamily) GetValue(FontFamilyProperty);
+            get => (FontFamily)GetValue(FontFamilyProperty);
             set => SetValue(FontFamilyProperty, value);
         }
 
@@ -73,24 +82,25 @@ namespace WpfHexaEditor
         {
             if (!(d is FontControlBase dataLB))
                 return;
-             
-            dataLB.OnFontFamilyChanged((FontFamily) e.OldValue, (FontFamily) e.NewValue);
+
+            dataLB.OnFontFamilyChanged((FontFamily)e.OldValue, (FontFamily)e.NewValue);
         }
 
-        protected virtual void OnFontFamilyChanged(FontFamily oldFontSize, FontFamily newFontSize) {
+        protected virtual void OnFontFamilyChanged(FontFamily oldFontSize, FontFamily newFontSize)
+        {
             UpdateCharSize();
             UpdateFont();
         }
 
         public FontWeight FontWeight
         {
-            get => (FontWeight) GetValue(FontWeightProperty);
+            get => (FontWeight)GetValue(FontWeightProperty);
             set => SetValue(FontWeightProperty, value);
         }
 
         public Brush Foreground
         {
-            get => (Brush) GetValue(ForegroundProperty);
+            get => (Brush)GetValue(ForegroundProperty);
             set => SetValue(ForegroundProperty, value);
         }
 
@@ -118,68 +128,39 @@ namespace WpfHexaEditor
             if (!(d is FontControlBase fontLB))
                 return;
 
-            fontLB.OnFontWeightChanged((FontWeight) e.OldValue, (FontWeight) e.NewValue);
+            fontLB.OnFontWeightChanged((FontWeight)e.OldValue, (FontWeight)e.NewValue);
         }
 
-        protected virtual void OnFontWeightChanged(FontWeight oldFontWeight, FontWeight newFontWeight) {
+        protected virtual void OnFontWeightChanged(FontWeight oldFontWeight, FontWeight newFontWeight)
+        {
             UpdateCharSize();
             UpdateFont();
         }
-            
+        #endregion
 
+        #region Methods
 
-#if NET47
-        protected double PixelPerDip =>
-            (_pixelPerDip ?? (_pixelPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip)).Value;
+        /// <summary>
+        /// Update CharSize...
+        /// </summary>
+        private void UpdateCharSize() => _charSize = null;
 
-        private double? _pixelPerDip;
-#endif
+        /// <summary>
+        /// Update the font
+        /// </summary>
+        private void UpdateFont() => _typeface = null;
 
-        protected Typeface TypeFace => _typeface ??
-                                       (_typeface = new Typeface(FontFamily, new FontStyle(), FontWeight,
-                                           new FontStretch()));
-
-        private Typeface _typeface;
-
-        //"D" may have the "widest" size
-        public const char WidestChar = 'D';
-
-        private Size? _charSize;
-
-        //Get the size of every char text;
-        public Size CharSize
+        /// <summary>
+        /// Get the formatted text as needed
+        /// </summary>
+        protected FormattedText GetFormattedText(string text, double fontSize, Brush foreground)
         {
-            get {
-                if (_charSize == null) {
-                    var glyphIndex = GlyphTypeface.CharacterToGlyphMap[WidestChar];
-                    _charSize = new Size(
-                        GlyphTypeface.AdvanceWidths[glyphIndex] * FontSize,
-                        GlyphTypeface.AdvanceHeights[glyphIndex] * FontSize
-                    );
-                }
-
-                return _charSize.Value;
-            }
-        }
-
-        private GlyphTypeface _glyphTypeface;
-        protected GlyphTypeface GlyphTypeface {
-            get {
-                if(_glyphTypeface == null && TypeFace != null) {
-                    TypeFace.TryGetGlyphTypeface(out _glyphTypeface);
-                }
-
-                return _glyphTypeface;
-            }
-        }
-
-
-        protected FormattedText GetFormattedText(string text, double fontSize, Brush foreground) {
 #if NET451
             var formattedText = new FormattedText(
                 text,
                 CultureInfo.CurrentCulture,
-                FlowDirection.LeftToRight, TypeFace,
+                FlowDirection.LeftToRight,
+                TypeFace,
                 fontSize,
                 foreground
             );
@@ -190,12 +171,63 @@ namespace WpfHexaEditor
             (
                 text,
                 CultureInfo.CurrentCulture,
-                FlowDirection.LeftToRight, TypeFace, FontSize,
-                foreground, PixelPerDip
+                FlowDirection.LeftToRight,
+                TypeFace,
+                FontSize,
+                foreground,
+                PixelPerDip
             );
 #endif
 
             return formattedText;
         }
+
+        #endregion
+
+        #region Other custom properties
+#if NET47
+        protected double PixelPerDip =>
+            (_pixelPerDip ?? (_pixelPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip)).Value;
+
+#endif
+
+        protected Typeface TypeFace => _typeface ??
+            (_typeface = new Typeface(FontFamily, new FontStyle(), FontWeight, new FontStretch()));
+
+
+        //Get the size of every char text;
+        public Size CharSize
+        {
+            get
+            {
+                if (_charSize == null)
+                {
+                    var glyphIndex = GlyphTypeface.CharacterToGlyphMap[ConstantReadOnly.WidestChar];
+
+                    _charSize = new Size(
+                        GlyphTypeface.AdvanceWidths[glyphIndex] * FontSize,
+                        GlyphTypeface.AdvanceHeights[glyphIndex] * FontSize
+                        );
+                }
+
+                return _charSize.Value;
+            }
+        }
+
+        protected GlyphTypeface GlyphTypeface
+        {
+            get
+            {
+                if (_glyphTypeface == null && TypeFace != null)
+                {
+                    TypeFace.TryGetGlyphTypeface(out _glyphTypeface);
+                }
+
+                return _glyphTypeface;
+            }
+        }
+
+        #endregion
     }
+
 }

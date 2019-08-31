@@ -4167,7 +4167,7 @@ namespace WpfHexaEditor
 
         #endregion IByteControl grouping
 
-        #region Caret support
+            #region Caret support
 
         /// <summary>
         /// Initialize the caret

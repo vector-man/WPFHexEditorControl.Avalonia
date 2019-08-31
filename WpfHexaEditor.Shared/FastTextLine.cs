@@ -11,6 +11,9 @@ using System.Windows.Media;
 
 namespace WpfHexaEditor
 {
+    /// <summary>
+    /// Light Label like control
+    /// </summary>
     internal class FastTextLine: FrameworkElement
     {
         private readonly HexEditor _parent;
