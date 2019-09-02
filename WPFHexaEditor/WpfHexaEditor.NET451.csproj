@@ -74,9 +74,6 @@
     <Compile Include="Dialog\ReplaceByteWindow.xaml.cs">
       <DependentUpon>ReplaceByteWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DrawedHexEditor.xaml.cs">
-      <DependentUpon>DrawedHexEditor.xaml</DependentUpon>
-    </Compile>
     <Compile Include="HexBox.xaml.cs">
       <DependentUpon>HexBox.xaml</DependentUpon>
     </Compile>
@@ -121,10 +118,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialog\GiveByteWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="DrawedHexEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

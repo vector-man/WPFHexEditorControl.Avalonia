@@ -19,7 +19,9 @@ namespace WpfHexaEditor.Core.Converters
         {
             var (success, val) = ByteConverters.IsHexValue(value.ToString());
 
-            return success ? (object) val : string.Empty;
+            return success 
+                ? (object) val 
+                : string.Empty;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => value;

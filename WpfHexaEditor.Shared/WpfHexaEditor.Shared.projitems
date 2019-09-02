@@ -11,31 +11,18 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BaseByte.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteCaret.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\GenericStaticInstance.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IHexBrushPosition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\CustomBackgroundBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\ExeFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbExpressionParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbFileParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\CellEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\HexMouseButtonOnCellEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\MouseButtonOnCellEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\MouseOnCellEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Layers\CellStepsLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BrushBlock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\BytesToCharEncodings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\HexBrushPosition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IBytesToCharEncoding.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IEditTransaction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IStreamBrushBlock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\ICellsLayer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IFontControl.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IHexBrushPosition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Transactions\CanRedoChangedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Transactions\CanUndoChangedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Transactions\StandardEditTransaction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DefaultFileHeader\ExeFile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ToolTipExtension.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Layers\StringDataLayer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Layers\HexDataLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BookMark.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteConverters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteModified.cs" />
@@ -45,16 +32,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\CharacterTable\Enum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\CharacterTable\TBLStream.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ConstantReadOnly.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Converters\BoolInverterConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Converters\HexToLongStringConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Converters\LongToHexStringConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Enumeration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\GenericStaticInstance.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IOffsetsInfoLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IByteControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IByteModified.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IDataLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\KeyValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\MethodExtention\ApplicationExtention.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\MethodExtention\ByteArrayExtention.cs" />
@@ -62,17 +45,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\MethodExtention\StringExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\MethodExtention\TrackExtention.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Native\NativeMethods.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\SerializerHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Layers\DataLayerBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FastTextLine.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FontControlBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HexByte.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StringByte.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Core\Xcbb\Exefile.xcbb" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Layers\" />
   </ItemGroup>
 </Project>
