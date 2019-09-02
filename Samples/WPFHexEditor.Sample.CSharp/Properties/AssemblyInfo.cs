@@ -1,16 +1,21 @@
-﻿using System.Reflection;
+﻿//////////////////////////////////////////////
+// Apache 2.0  - 2016-2018
+// Author : Derek Tremblay (derektremblay666@gmail.com)
+//////////////////////////////////////////////
+
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TestDemoUI")]
+[assembly: AssemblyTitle("WPFHexaEditorExample")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TestDemoUI")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyProduct("WPFHexaEditorExample")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -28,16 +33,14 @@ using System.Windows;
 
 //[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
 
-
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located
-                                     //(used if a resource is not found in the page,
-                                     // or application resource dictionaries)
+    //(used if a resource is not found in the page,
+    // or application resource dictionaries)
     ResourceDictionaryLocation.SourceAssembly //where the generic resource dictionary is located
-                                              //(used if a resource is not found in the page,
-                                              // app, or any theme specific resource dictionaries)
+    //(used if a resource is not found in the page,
+    // app, or any theme specific resource dictionaries)
 )]
-
 
 // Version information for an assembly consists of the following four values:
 //
