@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{E7C58EBD-5476-4A12-83EB-235DE68AF079}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WpfHexaEditor", "WpfHexaEditor", "{6D763435-6274-4814-95AE-B93894FF5D5E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WpfHexEditor", "WpfHexEditor", "{6D763435-6274-4814-95AE-B93894FF5D5E}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "WpfHexaEditor.Shared", "WpfHexaEditor.Shared\WpfHexaEditor.Shared.shproj", "{6A739E54-2388-44F0-8D55-CDBBE55ED668}"
 EndProject
