@@ -1,12 +1,12 @@
 //////////////////////////////////////////////
-// Apache 2.0  - 2003-2017
+// Apache 2.0  - 2003-2019
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
 namespace WpfHexaEditor.Core.CharacterTable
 {
     /// <summary>
-    /// Type de DTE qui sera utilis?dans les classe de DTE
+    /// Type of DTE used in TBL
     /// </summary>
     public enum DteType
     {

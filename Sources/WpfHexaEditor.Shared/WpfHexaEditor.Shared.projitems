@@ -10,18 +10,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BaseByte.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteCaret.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\GenericStaticInstance.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IHexBrushPosition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\CustomBackgroundBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\ExeFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbExpressionParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbFileParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\BrushBlock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\HexBrushPosition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IBytesToCharEncoding.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IStreamBrushBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DefaultFileHeader\ExeFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BookMark.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteConverters.cs" />

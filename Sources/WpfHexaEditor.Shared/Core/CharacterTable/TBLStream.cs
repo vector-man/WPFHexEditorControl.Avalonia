@@ -1,5 +1,5 @@
 //////////////////////////////////////////////
-// Apache 2.0  - 2003-2017
+// Apache 2.0  - 2003-2019
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
@@ -12,53 +12,39 @@ using WpfHexaEditor.Core.Bytes;
 
 namespace WpfHexaEditor.Core.CharacterTable
 {
-    /// <inheritdoc />
     /// <summary>
-    /// Cet objet représente un fichier Thingy TBL (entrée + valeur)
+    /// Used to manage Thingy TBL file (entry=value)
     /// </summary>
     public sealed class TblStream : IDisposable
     {
-        /// <summary>Chemin vers le fichier (path)</summary>
-        private string _fileName;
+        #region Global class variables        
+        /// <summary>
+        /// TBL file path
+        /// </summary>
+        private string _fileName = string.Empty;
 
-        /// <summary>Tableau de DTE représentant tous les les entrée du fichier</summary>
+        /// <summary>
+        /// Represente the whole TBL file
+        /// </summary>
         private Dictionary<string, Dte> _dteList = new Dictionary<string, Dte>();
+        #endregion
 
-        #region Constructeurs
-
+        #region Constructors
         /// <summary>
         /// Constructeur permétant de charg?le fichier DTE
         /// </summary>
-        /// <param name="fileName"></param>
-        public TblStream(string fileName)
-        {
-            _dteList.Clear();
-
-            //check if exist and load file
-            if (File.Exists(fileName))
-            {
-                _fileName = fileName;
-                Load();
-            }
-            else
-                throw new FileNotFoundException();
-        }
+        public TblStream(string fileName) => FileName = fileName;
 
         /// <summary>
-        /// Constructeur permétant de charg?le fichier DTE
+        /// Constructeur permétant de chargéle fichier DTE
         /// </summary>
-        public TblStream()
-        {
-            _dteList.Clear();
-            _fileName = string.Empty;
-        }
-
-        #endregion Constructeurs
+        public TblStream() { }
+        #endregion
 
         #region Indexer
 
         /// <summary>
-        /// Indexeur permetant de travailler sur les DTE contenue dans TBL a la facons d'un tableau.
+        /// Indexer to work on the DTE contained in TBL in the manner of a table.
         /// </summary>
         public Dte this[string index]
         {
@@ -66,16 +52,15 @@ namespace WpfHexaEditor.Core.CharacterTable
             set => _dteList[index] = value;
         }
 
-        #endregion Indexer
+        #endregion
 
-        #region Méthodes
+        #region Methods
 
         /// <summary>
-        /// Trouver une entr?dans la table de jeu qui corestpond a la valeur hexa
+        /// Find entry in TBL file
         /// </summary>
-        /// <param name="hex">Valeur hexa a rechercher dans la TBL</param>
-        /// <param name="showSpecialValue">Afficher les valeurs de fin de block et de ligne</param>
-        /// <returns></returns>
+        /// <param name="hex">Hex value to find match</param>
+        /// <param name="showSpecialValue">Fin the Endblock and EndLine</param>
         public string FindMatch(string hex, bool showSpecialValue)
         {
             if (showSpecialValue)
@@ -84,7 +69,9 @@ namespace WpfHexaEditor.Core.CharacterTable
                 if (_dteList.ContainsKey($"*{hex}")) return Properties.Resources.LineTagString; //"<ln>";
             }
 
-            return _dteList.ContainsKey(hex) ? _dteList[hex].Value : "#";
+            return _dteList.ContainsKey(hex) 
+                ? _dteList[hex].Value
+                : "#";
         }
 
         /// <summary>
@@ -104,8 +91,7 @@ namespace WpfHexaEditor.Core.CharacterTable
             {
                 if (i < data.Length - 1)
                 {
-                    var mte = FindMatch(ByteConverters.ByteToHex(data[i]) + ByteConverters.ByteToHex(data[i + 1]),
-                        true);
+                    var mte = FindMatch(ByteConverters.ByteToHex(data[i]) + ByteConverters.ByteToHex(data[i + 1]), true);
 
                     if (mte != "#")
                     {
@@ -119,31 +105,38 @@ namespace WpfHexaEditor.Core.CharacterTable
 
             return sb.ToString();
         }
+        
+        /// <summary>
+        /// Close the TBL and clear object
+        /// </summary>
+        public void Close()
+        {
+            _fileName = string.Empty;
+            _dteList.Clear();
+        }
 
         /// <summary>
-        /// Charg?la chaine dans l'objet
+        /// Load the TBL file
         /// </summary>
         private void Load(string tblString)
         {
-            //Vide la collection
-            _dteList.Clear();
-            //ouverture du fichier
-
-            //lecture du fichier jusqua la fin et séparation par ligne
-            char[] sepEndLine = {'\n'}; //Fin de ligne
-            char[] sepEqual = {'='}; //Fin de ligne
+            //Variables
+            char[] sepEndLine = {'\n'}; //end line char
+            char[] sepEqual = {'='}; //equal separator char
 
             //build strings line
             var textFromString = new StringBuilder(tblString);
-            textFromString.Insert(textFromString.Length, new[] {'\r', '\n'});
+            textFromString.Insert(textFromString.Length, new[] { '\r', '\n' });
             var lines = textFromString.ToString().Split(sepEndLine);
+            
+            //Clear before loading
+            _dteList.Clear();
 
-            //remplir la collection de DTE : this._DTE
+            #region Fill dtelist dictionary 
             foreach (var line in lines)
             {
                 var info = line.Split(sepEqual);
 
-                //ajout a la collection (ne prend pas encore en charge le Japonais)
                 Dte dte;
                 try
                 {
@@ -170,25 +163,25 @@ namespace WpfHexaEditor.Core.CharacterTable
                         case @"/":
                             dte = new Dte(info[0].Substring(0, info[0].Length - 1), string.Empty, DteType.EndBlock);
                             break;
-
                         case @"*":
                             dte = new Dte(info[0].Substring(0, info[0].Length - 1), string.Empty, DteType.EndLine);
                             break;
-                        //case @"\":
                         default:
                             continue;
                     }
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    //Du a une entre qui a 2 = de suite... EX:  XX==
+                    //Occurs when two == are in the same line
                     dte = new Dte(info[0], "=", DteType.DualTitleEncoding);
                 }
 
                 _dteList.Add(dte.Entry, dte);
+                
             }
+            #endregion
 
-            //Load bookmark
+            #region Load bookmark
             BookMarks.Clear();
             foreach (var line in lines)
             {
@@ -201,8 +194,8 @@ namespace WpfHexaEditor.Core.CharacterTable
                         fav.Description = lineSplited[1].Substring(0, lineSplited[1].Length - 1);
 
                         lineSplited = line.Split('h');
-                        fav.BytePositionInFile = ByteConverters
-                            .HexLiteralToLong(lineSplited[0].Substring(1, lineSplited[0].Length - 1)).position;
+                        fav.BytePositionInFile = 
+                            ByteConverters.HexLiteralToLong(lineSplited[0].Substring(1, lineSplited[0].Length - 1)).position;
                         fav.Marker = ScrollMarker.TblBookmark;
                         BookMarks.Add(fav);
                     }
@@ -212,17 +205,15 @@ namespace WpfHexaEditor.Core.CharacterTable
                     //Nothing to add if error
                 }
             }
+            #endregion
         }
 
         /// <summary>
-        /// Charg?le fichier dans l'objet
+        /// Load TBL file
         /// </summary>
         private void Load()
         {
-            //Vide la collection
-            _dteList.Clear();
             //ouverture du fichier
-
             if (!File.Exists(_fileName))
             {
                 var fs = File.Create(_fileName);
@@ -246,20 +237,19 @@ namespace WpfHexaEditor.Core.CharacterTable
         }
 
         /// <summary>
-        /// Enregistrer dans le fichier
+        /// Save tbl file
         /// </summary>
-        /// <returns>Retourne vrai si le fichier ?ét?bien enregistr?/returns>
-        public bool Save()
+        public void Save()
         {
-            //ouverture du fichier
             var myFile = new FileStream(_fileName, FileMode.Create, FileAccess.Write);
-            var tblFile = new StreamWriter(myFile, Encoding.ASCII);
+            var tblFile = new StreamWriter(myFile, Encoding.Unicode); //ASCII
 
             if (tblFile.BaseStream.CanWrite)
             {
                 //Save tbl set
                 foreach (var dte in _dteList)
-                    if (dte.Value.Type != DteType.EndBlock && dte.Value.Type != DteType.EndLine)
+                    if (dte.Value.Type != DteType.EndBlock && 
+                        dte.Value.Type != DteType.EndLine)
                         tblFile.WriteLine(dte.Value.Entry + "=" + dte.Value);
                     else
                         tblFile.WriteLine(dte.Value.Entry);
@@ -269,95 +259,67 @@ namespace WpfHexaEditor.Core.CharacterTable
                 foreach (var mark in BookMarks)
                     tblFile.WriteLine(mark.ToString());
 
-                //Ecriture de 2 saut de ligne a la fin du fichier.
-                //(obligatoire pour certain logiciel utilisant les TBL)
+                //Add to line at end of file. Needed for some apps that using tbl file
                 tblFile.WriteLine();
                 tblFile.WriteLine();
             }
 
-            //Ferme le fichier TBL
+            //close file
             tblFile.Close();
-
-            return true;
         }
 
         /// <summary>
-        /// Ajouter un element a la collection
+        /// Add a DTE/MTE in TBL
         /// </summary>
-        /// <param name="dte">objet DTE a ajouter fans la collection</param>
         public void Add(Dte dte) => _dteList.Add(dte.Entry, dte);
 
         /// <summary>
-        /// Effacer un element de la collection a partir d'un objet DTE
+        /// Remove TBL entry
         /// </summary>
         /// <param name="dte"></param>
         public void Remove(Dte dte) => _dteList.Remove(dte.Entry);
 
-        #endregion Méthodes
+        #endregion
 
-        #region Propriétés
-
+        #region Property
         /// <summary>
-        /// Chemin d'acces au fichier (path)
-        /// La fonction load doit etre appeler pour rafraichir la fonction
+        /// Get or set the File path to TBL
         /// </summary>
         public string FileName
         {
             get => _fileName;
             internal set
             {
-                _fileName = value;
-                Load();
+                if (File.Exists(value))
+                {
+                    _fileName = value;
+                    Load();
+                }
+                else
+                    throw new FileNotFoundException();
             }
         }
 
         /// <summary>
-        /// Total d'élement dans l'objet TBL
+        /// Get the count of DTE/MTE in the TBL
         /// </summary>
         public int Length => _dteList.Count;
 
         /// <summary>
-        /// Avoir acess au Bookmark
+        /// Get of set bookmarks
         /// </summary>
         public List<BookMark> BookMarks { get; set; } = new List<BookMark>();
 
-        /// <summary>
-        /// Obtenir le total d'entr?DTE dans la Table
-        /// </summary>
         public int TotalDte => _dteList.Count(l => l.Value.Type == DteType.DualTitleEncoding);
-
-        /// <summary>
-        /// Obtenir le total d'entr?MTE dans la Table
-        /// </summary>
         public int TotalMte => _dteList.Count(l => l.Value.Type == DteType.MultipleTitleEncoding);
-
-        /// <summary>
-        /// Obtenir le total d'entr?ASCII dans la Table
-        /// </summary>
         public int TotalAscii => _dteList.Count(l => l.Value.Type == DteType.Ascii);
-
-        /// <summary>
-        /// Obtenir le total d'entr?Invalide dans la Table
-        /// </summary>
         public int TotalInvalid => _dteList.Count(l => l.Value.Type == DteType.Invalid);
-
-        /// <summary>
-        /// Obtenir le total d'entr?Japonais dans la Table
-        /// </summary>
         public int TotalJaponais => _dteList.Count(l => l.Value.Type == DteType.Japonais);
-
-        /// <summary>
-        /// Obtenir le total d'entr?Fin de ligne dans la Table
-        /// </summary>
         public int TotalEndLine => _dteList.Count(l => l.Value.Type == DteType.EndLine);
-
-        /// <summary>
-        /// Obtenir le total d'entr?Fin de Block dans la Table
-        /// </summary>
         public int TotalEndBlock => _dteList.Count(l => l.Value.Type == DteType.EndBlock);
 
         /// <summary>
-        /// Renvoi le caractere de fin de block
+        /// Get the end block char
         /// </summary>
         public string EndBlock
         {
@@ -372,7 +334,7 @@ namespace WpfHexaEditor.Core.CharacterTable
         }
 
         /// <summary>
-        /// Renvoi le caractere de fin de ligne
+        /// Get the end line char
         /// </summary>
         public string EndLine
         {
@@ -391,7 +353,7 @@ namespace WpfHexaEditor.Core.CharacterTable
         /// </summary>
         public bool AllowEdit { get; set; }
 
-        #endregion Propriétés
+        #endregion
 
         #region Build default TBL
 
@@ -421,7 +383,7 @@ namespace WpfHexaEditor.Core.CharacterTable
 
         #region IDisposable Support
 
-        private bool _disposedValue; // Pour détecter les appels redondants
+        private bool _disposedValue; // To detect redundant calls
 
         void Dispose(bool disposing)
         {
@@ -436,12 +398,7 @@ namespace WpfHexaEditor.Core.CharacterTable
             }
         }
 
-        // Ce code est ajout?pour implémenter correctement le modèle supprimable.
-        public void Dispose()
-        {
-            // Ne modifiez pas ce code. Placez le code de nettoyage dans Dispose(bool disposing) ci-dessus.
-            Dispose(true);
-        }
+        public void Dispose() => Dispose(true);
 
         #endregion
     }
