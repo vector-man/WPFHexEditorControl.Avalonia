@@ -10,7 +10,7 @@ using WpfHexaEditor.Core.Bytes;
 namespace WpfHexaEditor.Core.Xcbb
 {
     /// <summary>
-    /// IMPLEMENTATION NON COMPLETED
+    /// IMPLEMENTATION NOT COMPLETED
     /// Used to create block of custom colors background 
     /// </summary>
     /// TODO : Add programated positon..

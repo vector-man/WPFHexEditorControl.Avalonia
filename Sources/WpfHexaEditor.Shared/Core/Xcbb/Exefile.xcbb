@@ -2,7 +2,7 @@
 
 <!--DEV TEST - wpf hexeditor control - Custom Backgroung Block definition file-->
 
-<XcbbFileDefinition FileType="exe" ValidIf="0x00-0x01=$'4D 5A'">
+<XcbbFileDefinition FileType="exe" ValidIf="[0x00-0x01]=$'4D 5A'">
   <CustomBackgroundBlock PositionStart="0x00" Lenght="2" BackColor="BlueViolet">
     <LocalizedDescription Language="en-US" IsDefault="True" Description="This is the 'magic number' of an EXE file."/>
     <LocalizedDescription Language="fr-CA" Description="C'est le 'nombre magique' d'un fichier EXE."/>

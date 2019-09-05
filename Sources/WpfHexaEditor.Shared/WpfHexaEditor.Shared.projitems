@@ -16,7 +16,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\ExeFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbExpressionParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbFileParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DefaultFileHeader\ExeFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BookMark.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteConverters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteModified.cs" />

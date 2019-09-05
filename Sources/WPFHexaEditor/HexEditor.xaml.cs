@@ -28,7 +28,7 @@ using Path = System.IO.Path;
 namespace WpfHexaEditor
 {
     /// <summary> 
-    /// WPF HexEditor control
+    /// Wpf HexEditor control
     /// </summary>
     public partial class HexEditor : IDisposable
     {
@@ -1941,8 +1941,8 @@ namespace WpfHexaEditor
 
                 ////TEMPS : CUSTOMBACKGROUNDBLOCK (CBB) /////////
                 ////TODO: Add autodetect file type and create external CBB...
-                // if (UseCustomBackGroudBlock)
-                //     _cbbList = new ExeFile().GetCustomBackgroundBlock(_provider);
+                //if (UseCustomBackGroudBlock)
+                //    _cbbList = new ExeFile().GetCustomBackgroundBlock(_provider);
                 /////////////////////////////////////////////////
 
                 RefreshView(true);
@@ -4167,7 +4167,7 @@ namespace WpfHexaEditor
 
         #endregion IByteControl grouping
 
-            #region Caret support
+        #region Caret support
 
         /// <summary>
         /// Initialize the caret
