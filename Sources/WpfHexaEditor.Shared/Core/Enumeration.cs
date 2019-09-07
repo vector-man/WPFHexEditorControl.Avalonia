@@ -188,15 +188,12 @@ namespace WpfHexaEditor.Core
         Both
     }
 
-    public enum LayerPanel {
-        Hex,
-        String
+    /// <summary>
+    /// Used to fix the wigth of the offset panel
+    /// </summary>
+    public enum OffSetPanelFixedWidth
+    {
+        Dynamic,
+        Fixed
     }
-
-    public enum HexChar {
-        First,
-        Second
-    }
-
-
 }

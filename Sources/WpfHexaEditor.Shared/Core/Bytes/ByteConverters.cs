@@ -18,20 +18,11 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Convert long to hex value
         /// </summary>
-        public static string LongToHex(long val, int saveBits = -1)
-        {
-            if (saveBits == -1)
-                return val.ToString(ConstantReadOnly.HexStringFormat, CultureInfo.InvariantCulture);
-
-            var chs = new char[saveBits];
-            for (int i = 1; i <= saveBits; i++)
-            {
-                chs[saveBits - i] = ByteToHexChar((int)(val - (((val >> 4) << 4))));
-                val /= 16;
-            }
-
-            return new string(chs);
-        }
+        public static string LongToHex(long val, OffSetPanelFixedWidth offsetwight = OffSetPanelFixedWidth.Dynamic) =>
+            val.ToString(offsetwight == OffSetPanelFixedWidth.Dynamic
+                ? ConstantReadOnly.HexStringFormat
+                : ConstantReadOnly.HexLineInfoStringFormat
+                    , CultureInfo.InvariantCulture);
 
         public static string LongToString(long val, int saveBits = -1)
         {

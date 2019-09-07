@@ -525,9 +525,20 @@ namespace WpfHexaEditor
             if (d is HexEditor ctrl)
                 ctrl.UpdateLinesOffSet();
         }
+               
+        public OffSetPanelFixedWidth OffSetPanelFixedWidthVisual
+        {
+            get { return (OffSetPanelFixedWidth)GetValue(OffSetPanelFixedWidthVisualProperty); }
+            set { SetValue(OffSetPanelFixedWidthVisualProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for OffSetPanelFixedWidthVisual.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty OffSetPanelFixedWidthVisualProperty =
+            DependencyProperty.Register(nameof(OffSetPanelFixedWidthVisual), typeof(OffSetPanelFixedWidth), typeof(HexEditor),
+                new FrameworkPropertyMetadata(OffSetPanelFixedWidth.Dynamic, OffSetPanelVisual_PropertyChanged));
 
         #endregion Miscellaneous property/methods
-
+        
         #region Data visual type support
 
         /// <summary>
@@ -1495,7 +1506,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get the line number of position in parameter
         /// </summary>
-        public double GetLineNumber(long position) => (position - ByteShiftLeft) / BytePerLine;
+        public long GetLineNumber(long position) => (position - ByteShiftLeft) / BytePerLine;
 
         /// <summary>
         /// Get the column number of the position
@@ -2316,7 +2327,7 @@ namespace WpfHexaEditor
         }
         #endregion
 
-        #region Update methods / Refresh view
+        #region General update methods / Refresh view
 
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -2679,7 +2690,7 @@ namespace WpfHexaEditor
         /// </summary>
         private void UpdateSelectionLine() =>
             SelectionLine = ByteProvider.CheckIsOpen(_provider)
-                ? (long)GetLineNumber(SelectionStart)
+                ? GetLineNumber(SelectionStart)
                 : 0;
 
 
@@ -2824,29 +2835,32 @@ namespace WpfHexaEditor
                             switch (OffSetPanelVisual)
                             {
                                 case OffSetPanelType.OffsetOnly:
-                                    lineOffsetLabel.Text = $"0x{LongToHex(actualPosition).ToUpper()}";
+                                    lineOffsetLabel.Text = $"0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpper()}";
                                     break;
                                 case OffSetPanelType.LineOnly:
-                                    lineOffsetLabel.Text = $"ln {LongToHex((long)GetLineNumber(actualPosition))}";
+                                    lineOffsetLabel.Text = $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual).ToUpper()}";
                                     break;
                                 case OffSetPanelType.Both:
-                                    lineOffsetLabel.Text = $"ln {LongToHex((long)GetLineNumber(actualPosition))} 0x{LongToHex(actualPosition).ToUpper()}";
+                                    lineOffsetLabel.Text = $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual)} 0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpper()}";
                                     break;
                             }
                             #endregion
                             break;
                         case DataVisualType.Decimal:
+
+                            var format = OffSetPanelFixedWidthVisual == OffSetPanelFixedWidth.Dynamic ? "G" : "D8";
+
                             #region Decimal
                             switch (OffSetPanelVisual)
                             {
                                 case OffSetPanelType.OffsetOnly:
-                                    lineOffsetLabel.Text = $"d{actualPosition:d8}";
+                                    lineOffsetLabel.Text = $"d{actualPosition.ToString(format)}";
                                     break;
                                 case OffSetPanelType.LineOnly:
-                                    lineOffsetLabel.Text = $"ln {GetLineNumber(actualPosition)}";
+                                    lineOffsetLabel.Text = $"ln {GetLineNumber(actualPosition).ToString(format)}";
                                     break;
                                 case OffSetPanelType.Both:
-                                    lineOffsetLabel.Text = $"ln {GetLineNumber(actualPosition)} d{actualPosition:d8}";
+                                    lineOffsetLabel.Text = $"ln {GetLineNumber(actualPosition).ToString(format)} d{actualPosition.ToString(format)}";
                                     break;
                             }
                             #endregion
@@ -2860,7 +2874,7 @@ namespace WpfHexaEditor
             }
         }
         #endregion Update view
-
+        
         #region First/Last visible byte methods
         /// <summary>
         /// Get first visible byte position in control
@@ -3515,8 +3529,7 @@ namespace WpfHexaEditor
                 #region Set position in scrollbar
 
                 var topPosition =
-                    (GetLineNumber(bookMark.BytePositionInFile) * VerticalScrollBar.Track.TickHeight(MaxLine) - 1)
-                    .Round(1);
+                    (GetLineNumber(bookMark.BytePositionInFile) * VerticalScrollBar.Track.TickHeight(MaxLine) - 1).Round(1);
 
                 if (double.IsNaN(topPosition))
                     topPosition = 0;
