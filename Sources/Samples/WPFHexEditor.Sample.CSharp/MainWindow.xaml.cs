@@ -118,23 +118,6 @@ namespace WPFHexaEditorExample
             ViewMenu.IsSubmenuOpen = false;
         }
 
-        private void GOHexPosition_Click(object sender, RoutedEventArgs e)
-        {
-            var (success, position) = ByteConverters.HexLiteralToLong(PositionHexText.Text);
-
-            if (success && position > 0)
-                HexEdit.SetPosition(position, 1);
-            else
-                MessageBox.Show("Enter hexa value.");
-
-            ViewMenu.IsSubmenuOpen = false;
-        }
-
-        private void PositionHexText_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            GoPositionHexaButton.IsEnabled = ByteConverters.IsHexValue(PositionHexText.Text).success;
-        }
-
         private void PositionText_TextChanged(object sender, TextChangedEventArgs e)
         {
             GoPositionButton.IsEnabled = long.TryParse(PositionText.Text, out var _);
@@ -212,33 +195,6 @@ namespace WPFHexaEditorExample
                 HexEdit.SubmitChanges(fileDialog.FileName, true);
         }
 
-        private void TESTMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            ///// SAVE STATE TEST
-            //HexEdit.SaveCurrentState("test.xml");
-            //HexEdit.LoadCurrentState("test.xml");
-
-            #region REFRESH RATE TEST
-            //var rnd = new Random();
-            //for (var i = 0; i < 200; i++)
-            //{
-            //    HexEdit.SetPosition(rnd.Next(0, (int)HexEdit.Length));
-            //    //HexEdit.BytePerLine = rnd.Next(1, 16);
-            //    Application.Current.DoEvents();
-            //}
-            #endregion
-
-            ////VisualByteAdress test
-            //HexEdit.AllowVisualByteAdress = !HexEdit.AllowVisualByteAdress;
-            //HexEdit.VisualByteAdressStart = 75;
-            //HexEdit.VisualByteAdressLength = 500; 
-
-            HexEdit.ResetZoom();
-
-            //
-            //HexEdit.ReplaceAll(HexEdit.SelectionByteArray, ByteConverters.StringToByte("TEST"), true, true);
-        }
-
         private void CTableTblDefaultEBCDICButton_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.MainWindow.Cursor = Cursors.Wait;
@@ -277,6 +233,10 @@ namespace WPFHexaEditorExample
             window.Show();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e) => ZoomSlider.Value = 1;
+        private void Button_Click(object sender, RoutedEventArgs e) => 
+            ZoomSlider.Value = 1;
+
+        private void HbSetPosition_ValueChanged(object sender, System.EventArgs e) =>
+            HexEdit.SetPosition(HbSetPosition.LongValue, 1);
     }
 }

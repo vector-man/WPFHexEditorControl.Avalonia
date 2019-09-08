@@ -1,8 +1,9 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2017
+// Apache 2.0  - 2017-2019
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,6 +18,14 @@ namespace WpfHexaEditor
     public partial class HexBox
     {
         public HexBox() => InitializeComponent();
+
+        #region Events
+        /// <summary>
+        /// Occurs when value are changed.
+        /// </summary>
+        public event EventHandler ValueChanged;
+
+        #endregion
 
         #region Properties
 
@@ -81,13 +90,17 @@ namespace WpfHexaEditor
                 if (e.NewValue != e.OldValue)
                 {
                     var val = ByteConverters.LongToHex((long) e.NewValue);
+
                     if (val == "00000000")
                         val = "0";
-                    else if (val.Length >= 3) val = val.TrimStart('0');
+                    else if (val.Length >= 3)
+                        val = val.TrimStart('0');
 
                     ctrl.HexTextBox.Text = val.ToUpper();
                     ctrl.HexTextBox.CaretIndex = ctrl.HexTextBox.Text.Length;
                     ctrl.ToolTip = e.NewValue;
+
+                    ctrl.ValueChanged?.Invoke(ctrl, new EventArgs());
                 }
         }
 
@@ -108,13 +121,11 @@ namespace WpfHexaEditor
         /// <summary>
         /// Update value from decimal long
         /// </summary>
-        /// <param name="value"></param>
         private void UpdateValueFrom(long value) => LongValue = value;
 
         /// <summary>
         /// Update value from hex string
         /// </summary>
-        /// <param name="value"></param>
         private void UpdateValueFrom(string value)
         {
             var (success, val) = ByteConverters.HexLiteralToLong(value);
@@ -126,18 +137,13 @@ namespace WpfHexaEditor
 
         #region Controls events
 
-        private void HexTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (KeyValidator.IsHexKey(e.Key) ||
-                KeyValidator.IsBackspaceKey(e.Key) ||
-                KeyValidator.IsDeleteKey(e.Key) ||
-                KeyValidator.IsArrowKey(e.Key) ||
-                KeyValidator.IsTabKey(e.Key) ||
-                KeyValidator.IsEnterKey(e.Key))
-                e.Handled = false;
-            else
-                e.Handled = true;
-        }
+        private void HexTextBox_PreviewKeyDown(object sender, KeyEventArgs e) =>
+            e.Handled = !KeyValidator.IsHexKey(e.Key) &&
+                !KeyValidator.IsBackspaceKey(e.Key) &&
+                !KeyValidator.IsDeleteKey(e.Key) &&
+                !KeyValidator.IsArrowKey(e.Key) &&
+                !KeyValidator.IsTabKey(e.Key) &&
+                !KeyValidator.IsEnterKey(e.Key);
 
         private void HexTextBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -146,13 +152,16 @@ namespace WpfHexaEditor
 
             if (e.Key == Key.Down)
                 SubstractOne();
+
+            HexTextBox.Focus();
         }
 
         private void UpButton_Click(object sender, RoutedEventArgs e) => AddOne();
 
         private void DownButton_Click(object sender, RoutedEventArgs e) => SubstractOne();
 
-        private void HexTextBox_TextChanged(object sender, TextChangedEventArgs e) => UpdateValueFrom(HexTextBox.Text);
+        private void HexTextBox_TextChanged(object sender, TextChangedEventArgs e) => 
+            UpdateValueFrom(HexTextBox.Text);
 
         private void CopyHexaMenuItem_Click(object sender, RoutedEventArgs e) =>
             Clipboard.SetText($"0x{HexTextBox.Text}");

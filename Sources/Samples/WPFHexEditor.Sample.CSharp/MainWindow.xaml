@@ -180,13 +180,22 @@
                     <StackPanel Margin="0" Orientation="Horizontal">
                         <Label Width="100" Content="BytePerline" />
                         <TextBox
-                            Width="75"
+                            Width="96"
                             VerticalContentAlignment="Center"
                             Text="{Binding BytePerLine, ElementName=HexEdit, UpdateSourceTrigger=LostFocus}"
                             TextWrapping="Wrap" />
                         <Label Content="(Lost focus)" />
                     </StackPanel>
                     <Separator />
+                    <StackPanel Orientation="Horizontal">
+                        <Label Width="100" Content="ByteShitLeft" />
+                        <control:HexBox
+                            x:Name="HbBsl"
+                            Width="96"
+                            Height="22"
+                            ToolTip="ByteShiftLeft test" />
+                        <Separator />
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Width="100" Content="SetPosition" />
                         <TextBox
@@ -201,18 +210,12 @@
                             IsEnabled="False" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <Label Width="75" Content="SetPosition" />
-                        <Label Width="25" Content="0x" />
-                        <TextBox
-                            x:Name="PositionHexText"
-                            Width="75"
-                            VerticalContentAlignment="Center"
-                            TextChanged="PositionHexText_TextChanged" />
-                        <Button
-                            x:Name="GoPositionHexaButton"
-                            Click="GOHexPosition_Click"
-                            Content="GO"
-                            IsEnabled="False" />
+                        <Label Width="100" Content="SetPosition" />
+                        <control:HexBox
+                            x:Name="HbSetPosition"
+                            Width="96"
+                            Height="22"
+                            ValueChanged="HbSetPosition_ValueChanged" />
                     </StackPanel>
                 </MenuItem>
 
@@ -224,13 +227,6 @@
                         IsCheckable="True"
                         IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=HeaderVisibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </MenuItem>
-
-                <MenuItem Click="TESTMenuItem_Click" Header="TEST" />
-                <Label Content="ByteShitLeft:" />
-                <control:HexBox
-                    x:Name="HbBsl"
-                    Height="23"
-                    ToolTip="ByteShiftLeft test" />
                 <Slider
                     x:Name="ZoomSlider"
                     Width="111"
@@ -247,12 +243,13 @@
 
             <TabControl>
                 <TabItem
-                    Width="54"
                     Height="20"
                     Margin="0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    Header="TabItem">
+                    Header="{Binding ElementName=HexEdit, Path=FileName, Converter={StaticResource FilenameConverter}}"
+                    ToolTip="{Binding ElementName=HexEdit, Path=FileName}">
+
                     <control:HexEditor
                         x:Name="HexEdit"
                         Width="Auto"
@@ -273,14 +270,6 @@
                         ForegroundSecondColor="Blue"
                         OffSetStringVisual="Hexadecimal"
                         UseCustomBackGroudBlock="True" />
-                </TabItem>
-                <TabItem
-                    Width="54"
-                    Height="20"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Header="TabItem">
-                    <Grid Background="#FFE5E5E5" />
                 </TabItem>
             </TabControl>
         </DockPanel>

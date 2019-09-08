@@ -1880,7 +1880,7 @@ namespace WpfHexaEditor
             ClearAllScrollMarker();
             UnSelectAll();
             RefreshView();
-            UpdateHeader();
+            UpdateHeader(true);
             UpdateScrollBar();
 
             //Debug
