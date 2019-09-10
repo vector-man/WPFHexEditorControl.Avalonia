@@ -251,7 +251,7 @@
                     </StackPanel>
                 </StatusBarItem>
                 <Separator />
-                <StatusBarItem Width="90" Padding="0">
+                <StatusBarItem Width="110" Padding="0">
                     <StackPanel Orientation="Horizontal">
                         <Label
                             Padding="5,5,0,5"

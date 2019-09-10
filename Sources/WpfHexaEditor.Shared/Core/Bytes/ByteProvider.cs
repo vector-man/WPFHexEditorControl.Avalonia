@@ -712,7 +712,6 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Get the byte at selection start.
         /// </summary>
-        /// <param name="position"></param>
         /// <param name="copyChange">if true take bytemodified in operation</param>
         public (byte? singleByte, bool succes) GetByte(long position, bool copyChange = true)
         {
@@ -735,9 +734,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Copies the current selection in the hex box to the Clipboard.
         /// </summary>
-        /// <param name="selectionStop"></param>
-        /// <param name="copyChange">Set tu true if you want onclude change in your copy. Set to false to copy directly from source</param>
-        /// <param name="selectionStart"></param>
+        /// <param name="copyChange">Set tu true if you want include change in your copy. Set to false to copy directly from source</param>
         public byte[] GetCopyData(long selectionStart, long selectionStop, bool copyChange)
         {
             //Validation
@@ -795,11 +792,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Copy selection of byte to clipboard
         /// </summary>
-        /// <param name="selectionStop"></param>
         /// <param name="copyChange">Set to true if you want onclude change in your copy. Set to false to copy directly from source</param>
-        /// <param name="copypastemode"></param>
-        /// <param name="selectionStart"></param>
-        /// <param name="tbl"></param>
         public void CopyToClipboard(CopyPasteMode copypastemode, long selectionStart, long selectionStop,
             bool copyChange = true, TblStream tbl = null)
         {
@@ -934,7 +927,7 @@ namespace WpfHexaEditor.Core.Bytes
                         $"char sDataHex[] =\"{ByteConverters.StringToHex(ByteConverters.BytesToString(buffer))}\";");
                     sb.AppendLine();
                     sb.AppendLine();
-                    sb.Append($"unsigned char rawData[{length}] ");
+                    sb.Append($"unsigned char rawData[{length}] {{");
                     sb.AppendLine();
                     sb.Append("\t");
                     break;

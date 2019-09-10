@@ -81,7 +81,7 @@ namespace WpfHexaEditor
             }
 
             SetBinding(ToolTipProperty, txtBinding);
-
+            
             #endregion
             
             //Default properties
@@ -352,7 +352,7 @@ namespace WpfHexaEditor
                 typeface, _parent.FontSize, Foreground);
 #endif
 
-            dc.DrawText(formattedText, new Point(2, 0));
+            dc.DrawText(formattedText, new Point(2, 2));
 
             //Update properties
             TextFormatted = formattedText;
@@ -417,7 +417,7 @@ namespace WpfHexaEditor
 
         protected override void OnToolTipOpening(ToolTipEventArgs e)
         {
-            if (Byte == null)
+            if (Byte == null || !_parent.ShowByteToolTip)
                 e.Handled = true;
 
             base.OnToolTipOpening(e);

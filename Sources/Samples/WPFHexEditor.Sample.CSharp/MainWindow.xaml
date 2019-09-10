@@ -226,6 +226,11 @@
                         Header="Header visibility"
                         IsCheckable="True"
                         IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=HeaderVisibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem
+                        x:Name="ShowToolTypeMenu"
+                        Header="Show byte ToolTip"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=ShowByteToolTip, UpdateSourceTrigger=PropertyChanged}" />
                 </MenuItem>
                 <Slider
                     x:Name="ZoomSlider"
@@ -247,9 +252,7 @@
                     Margin="0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    Header="{Binding ElementName=HexEdit, Path=FileName, Converter={StaticResource FilenameConverter}}"
-                    ToolTip="{Binding ElementName=HexEdit, Path=FileName}">
-
+                    Header="{Binding ElementName=HexEdit, Path=FileName, Converter={StaticResource FilenameConverter}}">
                     <control:HexEditor
                         x:Name="HexEdit"
                         Width="Auto"

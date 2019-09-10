@@ -14,6 +14,9 @@
 
     <!--  USED FOR TOOLTIP OF IBYTECONTROL  -->
     <ToolTip x:Key="ByteToolTip">
+        <ToolTip.RenderTransform>
+            <ScaleTransform ScaleX="0.7" ScaleY="0.7" />
+        </ToolTip.RenderTransform>
         <StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label
