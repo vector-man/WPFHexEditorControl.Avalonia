@@ -76,7 +76,7 @@
             Height="110"
             Margin="10,41,129,0"
             VerticalAlignment="Top"
-            AllowAutoHightLighSelectionByte="False"
+            AllowAutoHighLightSelectionByte="False"
             AllowContextMenu="False"
             AllowDeleteByte="True"
             AllowDrop="True"
@@ -121,7 +121,7 @@
         <wpfHexaEditor:HexEditor
             x:Name="ReplaceHexEdit"
             Margin="10,187,129,10"
-            AllowAutoHightLighSelectionByte="False"
+            AllowAutoHighLightSelectionByte="False"
             AllowContextMenu="False"
             AllowDeleteByte="True"
             AllowDrop="True"

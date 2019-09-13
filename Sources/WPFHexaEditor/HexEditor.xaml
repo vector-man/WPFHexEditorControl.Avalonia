@@ -319,11 +319,9 @@
 
         <Label
             Grid.Row="2"
-            Grid.RowSpan="2"
             Grid.Column="2"
-            Grid.ColumnSpan="2"
             Width="64"
-            Margin="0,1,40,1"
+            Margin="0,1,5,0"
             HorizontalAlignment="Right"
             Content="ReadOnly"
             FontWeight="Bold"
@@ -408,6 +406,7 @@
                 Opacity="0.9"
                 ToolTip="{x:Static p:Resources.CancelLongProcessToolTipString}" />
         </Border>
+
         <Label
             x:Name="TblLabel"
             Grid.Row="2"

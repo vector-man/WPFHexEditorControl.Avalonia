@@ -28,7 +28,8 @@ namespace WPFHexaEditorExample
         {
             HeaderVisibility,
             ReadOnly,
-            ScrollVisibility
+            ScrollVisibility,
+            StatusBarVisibility
         }
 
         public MainWindow()
@@ -69,13 +70,16 @@ namespace WPFHexaEditorExample
 
         private void ShowHeaderMenu_Click(object sender, RoutedEventArgs e) => UpdateSetting(SettingEnum.HeaderVisibility);
 
+        private void StatusBarVisibility_Click(object sender, RoutedEventArgs e) => UpdateSetting(SettingEnum.StatusBarVisibility);
+
         private void UpdateSetting(SettingEnum setting)
         {
             switch (setting)
             {
                 case SettingEnum.HeaderVisibility:
-                    HexEdit.HeaderVisibility = !Settings.Default.HeaderVisibility ? Visibility.Collapsed : Visibility.Visible;
-
+                    HexEdit.HeaderVisibility = !Settings.Default.HeaderVisibility 
+                        ? Visibility.Collapsed 
+                        : Visibility.Visible;
                     Settings.Default.HeaderVisibility = HexEdit.HeaderVisibility == Visibility.Visible;
                     break;
                 case SettingEnum.ReadOnly:
@@ -83,6 +87,13 @@ namespace WPFHexaEditorExample
 
                     HexEdit.ClearAllChange();
                     HexEdit.RefreshView();
+                    break;
+                case SettingEnum.StatusBarVisibility:
+                    HexEdit.StatusBarVisibility = !Settings.Default.StatusBarVisibility
+                        ? Visibility.Collapsed
+                        : Visibility.Visible;
+
+                    Settings.Default.StatusBarVisibility = HexEdit.StatusBarVisibility == Visibility.Visible;
                     break;
             }
         }
@@ -238,5 +249,6 @@ namespace WPFHexaEditorExample
 
         private void HbSetPosition_ValueChanged(object sender, System.EventArgs e) =>
             HexEdit.SetPosition(HbSetPosition.LongValue, 1);
+
     }
 }

@@ -214,8 +214,7 @@
                         <control:HexBox
                             x:Name="HbSetPosition"
                             Width="96"
-                            Height="22"
-                            ValueChanged="HbSetPosition_ValueChanged" />
+                            Height="22" />
                     </StackPanel>
                 </MenuItem>
 
@@ -227,23 +226,64 @@
                         IsCheckable="True"
                         IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=HeaderVisibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                     <MenuItem
-                        x:Name="ShowToolTypeMenu"
+                        Click="StatusBarVisibility_Click"
+                        Header="Statusbar visibility"
+                        IsCheckable="True"
+                        IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=StatusBarVisibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                </MenuItem>
+                <MenuItem x:Name="OptionMenu" Header="Options">
+                    <MenuItem
+                        Header="Allow context menu"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowContextMenu, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem
                         Header="Show byte ToolTip"
                         IsCheckable="True"
                         IsChecked="{Binding ElementName=HexEdit, Path=ShowByteToolTip, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem
+                        Header="Auto highlight bytes same as the selected byte"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowAutoHighLightSelectionByte, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem
+                        Header="Count the number of the selected byte"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowByteCount, UpdateSourceTrigger=PropertyChanged}" />
+                    <Separator />
+                    <MenuItem
+                        Header="Allow the possibility to delete byte"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowDeleteByte, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem
+                        Header="Allow expend at end of file"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowExtend, UpdateSourceTrigger=PropertyChanged}" />
+                    <Separator />
+                    <MenuItem
+                        Header="Allow drop over control"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowDrop, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem
+                        Header="Allow file drop"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowFileDrop, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem
+                        Header="Allow text drop"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowTextDrop, UpdateSourceTrigger=PropertyChanged}" />
+                    <Separator />
+                    <MenuItem
+                        Header="Allow zoom"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowZoom, UpdateSourceTrigger=PropertyChanged}" />
+                    <Slider
+                        x:Name="ZoomSlider"
+                        Width="111"
+                        LargeChange="0.1"
+                        Maximum="2"
+                        Minimum="0.5"
+                        ToolTip="Zoom editor (50% to 200%)"
+                        Value="{Binding ElementName=HexEdit, Path=ZoomScale}" />
                 </MenuItem>
-                <Slider
-                    x:Name="ZoomSlider"
-                    Width="111"
-                    LargeChange="0.1"
-                    Maximum="2"
-                    Minimum="0.5"
-                    ToolTip="Zoom editor (50% to 200%)"
-                    Value="{Binding ElementName=HexEdit, Path=ZoomScale}" />
-                <Button
-                    Click="Button_Click"
-                    Content="X"
-                    ToolTip="Reset zoom" />
             </Menu>
 
             <TabControl>

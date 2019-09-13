@@ -1688,7 +1688,7 @@ namespace WpfHexaEditor
                     break;
             }
 
-            ctrl.RefreshView();
+            ctrl.RefreshView(true);
         }
 
         #endregion Visibility property
@@ -3963,7 +3963,16 @@ namespace WpfHexaEditor
         /// <summary>
         /// Set to true for highlight the same byte are selected in view.
         /// </summary>
-        public bool AllowAutoHightLighSelectionByte { get; set; } = true;
+        public bool AllowAutoHighLightSelectionByte
+        {
+            get => (bool)GetValue(AllowAutoHighLightSelectionByteProperty);
+            set => SetValue(AllowAutoHighLightSelectionByteProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for AllowAutoHighLightSelectionByte.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty AllowAutoHighLightSelectionByteProperty =
+            DependencyProperty.Register(nameof(AllowAutoHighLightSelectionByte), typeof(bool), typeof(HexEditor),
+                new FrameworkPropertyMetadata(true, AutoHighLiteSelectionByte_Changed));        
 
         /// <summary>
         /// Brush used to color the selectionbyte
@@ -3977,11 +3986,9 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for AutoHighLiteSelectionByteBrush.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty AutoHighLiteSelectionByteBrushProperty =
             DependencyProperty.Register(nameof(AutoHighLiteSelectionByteBrush), typeof(Brush), typeof(HexEditor),
-                new FrameworkPropertyMetadata(Brushes.LightBlue,
-                    AutoHighLiteSelectionByteBrush_Changed));
+                new FrameworkPropertyMetadata(Brushes.LightBlue, AutoHighLiteSelectionByte_Changed));
 
-        private static void AutoHighLiteSelectionByteBrush_Changed(DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
+        private static void AutoHighLiteSelectionByte_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is HexEditor ctrl)
                 ctrl.UpdateVisual();

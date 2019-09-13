@@ -93,6 +93,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="Configs\NET451\App.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
