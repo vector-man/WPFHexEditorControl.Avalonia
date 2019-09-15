@@ -1,5 +1,5 @@
 ﻿<!--
-    Apache 2.0  - 2016-2018
+    Apache 2.0  - 2016-2019
     Author : Derek Tremblay (derektremblay666@gmail.com)
 -->
 
@@ -277,7 +277,7 @@
                         IsChecked="{Binding ElementName=HexEdit, Path=AllowZoom, UpdateSourceTrigger=PropertyChanged}" />
                     <Slider
                         x:Name="ZoomSlider"
-                        Width="111"
+                        Width="225"
                         LargeChange="0.1"
                         Maximum="2"
                         Minimum="0.5"

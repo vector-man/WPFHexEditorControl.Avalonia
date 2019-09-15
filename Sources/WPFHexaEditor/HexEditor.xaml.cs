@@ -848,7 +848,7 @@ namespace WpfHexaEditor
         /// </summary>
         public void DeleteSelection()
         {
-            if (!CanDelete()) return;
+            if (!CanDelete) return;
             if (!ByteProvider.CheckIsOpen(_provider)) return;
 
             var position = SelectionStart > SelectionStop ? SelectionStop : SelectionStart;
@@ -1438,12 +1438,12 @@ namespace WpfHexaEditor
         /// <summary>
         /// Return true if Copy method could be invoked.
         /// </summary>
-        public bool CanCopy() => SelectionLength >= 1 && ByteProvider.CheckIsOpen(_provider);
+        public bool CanCopy => SelectionLength >= 1 && ByteProvider.CheckIsOpen(_provider);
 
         /// <summary>
         /// Return true if delete method could be invoked.
         /// </summary>
-        public bool CanDelete() => CanCopy() && !ReadOnlyMode && AllowDeleteByte;
+        public bool CanDelete => CanCopy && !ReadOnlyMode && AllowDeleteByte;
 
         /// <summary>
         /// Copy to clipboard with default CopyPasteMode.ASCIIString
@@ -1462,7 +1462,7 @@ namespace WpfHexaEditor
         public void CopyToClipboard(CopyPasteMode copypastemode, long selectionStart, long selectionStop,
             bool copyChange, TblStream tbl)
         {
-            if (!CanCopy()) return;
+            if (!CanCopy) return;
             if (!ByteProvider.CheckIsOpen(_provider)) return;
 
             _provider.CopyToClipboard(copypastemode, selectionStart, selectionStop, copyChange, tbl);
@@ -1481,7 +1481,7 @@ namespace WpfHexaEditor
         /// <param name="output">Output stream is not closed after copy</param>
         public void CopyToStream(Stream output, long selectionStart, long selectionStop, bool copyChange)
         {
-            if (!CanCopy()) return;
+            if (!CanCopy) return;
             if (!ByteProvider.CheckIsOpen(_provider)) return;
 
             _provider.CopyToStream(output, selectionStart, selectionStop, copyChange);
@@ -1492,7 +1492,7 @@ namespace WpfHexaEditor
         /// </summary>
         public byte[] GetCopyData(long selectionStart, long selectionStop, bool copyChange)
         {
-            if (!CanCopy()) return null;
+            if (!CanCopy) return null;
             if (!ByteProvider.CheckIsOpen(_provider)) return null;
 
             return _provider.GetCopyData(selectionStart, selectionStop, copyChange);

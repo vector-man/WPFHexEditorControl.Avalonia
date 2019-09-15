@@ -250,5 +250,17 @@ namespace WPFHexaEditorExample
         private void HbSetPosition_ValueChanged(object sender, System.EventArgs e) =>
             HexEdit.SetPosition(HbSetPosition.LongValue, 1);
 
+        private void CopyCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            
+        }
+
+        private void CopyCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
+            e.CanExecute = HexEdit.CanCopy;
+
+        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+
+        }
     }
 }
