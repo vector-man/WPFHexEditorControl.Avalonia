@@ -28,62 +28,104 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.elementHost = new System.Windows.Forms.Integration.ElementHost();
             this.hexEditor = new WpfHexaEditor.HexEditor();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.toolStripBar1 = new System.Windows.Forms.ToolStrip();
+            this.OpenFileButton = new System.Windows.Forms.ToolStripButton();
+            this.OpenTBLButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripContainer1.ContentPanel.SuspendLayout();
+            this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
+            this.toolStripContainer1.SuspendLayout();
+            this.toolStripBar1.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // toolStripContainer1
+            // 
+            // 
+            // toolStripContainer1.ContentPanel
+            // 
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.elementHost);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(868, 412);
+            this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
+            this.toolStripContainer1.Name = "toolStripContainer1";
+            this.toolStripContainer1.Size = new System.Drawing.Size(868, 437);
+            this.toolStripContainer1.TabIndex = 4;
+            this.toolStripContainer1.Text = "toolStripContainer1";
+            // 
+            // toolStripContainer1.TopToolStripPanel
+            // 
+            this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStripBar1);
             // 
             // elementHost
             // 
-            this.elementHost.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.elementHost.Location = new System.Drawing.Point(0, 41);
+            this.elementHost.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.elementHost.Location = new System.Drawing.Point(0, 0);
             this.elementHost.Name = "elementHost";
-            this.elementHost.Size = new System.Drawing.Size(868, 396);
-            this.elementHost.TabIndex = 1;
+            this.elementHost.Size = new System.Drawing.Size(868, 412);
+            this.elementHost.TabIndex = 3;
             this.elementHost.Text = "elementHost";
             this.elementHost.Child = this.hexEditor;
             // 
-            // button1
+            // toolStripBar1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Open File";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.toolStripBar1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStripBar1.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.toolStripBar1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.OpenFileButton,
+            this.OpenTBLButton});
+            this.toolStripBar1.Location = new System.Drawing.Point(3, 0);
+            this.toolStripBar1.Name = "toolStripBar1";
+            this.toolStripBar1.Size = new System.Drawing.Size(159, 25);
+            this.toolStripBar1.TabIndex = 0;
             // 
-            // button2
+            // OpenFileButton
             // 
-            this.button2.Location = new System.Drawing.Point(94, 12);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Open TBL";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.toolStripButton2_Click);
+            this.OpenFileButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.OpenFileButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.OpenFileButton.Name = "OpenFileButton";
+            this.OpenFileButton.Size = new System.Drawing.Size(59, 22);
+            this.OpenFileButton.Text = "Open file";
+            this.OpenFileButton.TextImageRelation = System.Windows.Forms.TextImageRelation.TextAboveImage;
+            this.OpenFileButton.Click += new System.EventHandler(this.OpenFileButton_Click);
+            // 
+            // OpenTBLButton
+            // 
+            this.OpenTBLButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.OpenTBLButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.OpenTBLButton.Name = "OpenTBLButton";
+            this.OpenTBLButton.Size = new System.Drawing.Size(88, 22);
+            this.OpenTBLButton.Text = "Import TBL file";
+            this.OpenTBLButton.Click += new System.EventHandler(this.OpenTBLButton_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(868, 437);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.elementHost);
+            this.Controls.Add(this.toolStripContainer1);
             this.Name = "MainForm";
-            this.Text = "WpfHexEditor Winform sample";
+            this.Text = "Wpf HexEditor WinForm sample";
+            this.toolStripContainer1.ContentPanel.ResumeLayout(false);
+            this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
+            this.toolStripContainer1.TopToolStripPanel.PerformLayout();
+            this.toolStripContainer1.ResumeLayout(false);
+            this.toolStripContainer1.PerformLayout();
+            this.toolStripBar1.ResumeLayout(false);
+            this.toolStripBar1.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
+        private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.Integration.ElementHost elementHost;
         private WpfHexaEditor.HexEditor hexEditor;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ToolStrip toolStripBar1;
+        private System.Windows.Forms.ToolStripButton OpenFileButton;
+        private System.Windows.Forms.ToolStripButton OpenTBLButton;
     }
 }
 

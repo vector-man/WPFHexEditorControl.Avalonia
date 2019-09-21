@@ -15,7 +15,7 @@ namespace WpfHexEditor.Winform.Sample
             hexEditor.ForegroundSecondColor = Brushes.Blue;
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        private void OpenFileButton_Click(object sender, EventArgs e)
         {
             var fileDialog = new OpenFileDialog();
 
@@ -23,7 +23,7 @@ namespace WpfHexEditor.Winform.Sample
                 hexEditor.FileName = fileDialog.FileName;
         }
 
-        private void toolStripButton2_Click(object sender, EventArgs e)
+        private void OpenTBLButton_Click(object sender, EventArgs e)
         {
             var fileDialog = new OpenFileDialog();
 
