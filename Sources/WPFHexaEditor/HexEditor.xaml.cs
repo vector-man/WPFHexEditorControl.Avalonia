@@ -4574,14 +4574,10 @@ namespace WpfHexaEditor
                 new FrameworkPropertyMetadata(1D, ZoomScale_ChangedCallBack,
                     ZoomScale_CoerceValueCallBack));
 
-        private static object ZoomScale_CoerceValueCallBack(DependencyObject d, object baseValue)
-        {
-            var value = (double)baseValue;
-
-            return value >= 0.5 && value <= 2.0
-                ? value
-                : (double)baseValue;
-        }
+        private static object ZoomScale_CoerceValueCallBack(DependencyObject d, object baseValue) =>
+            (double)baseValue >= 0.5 && (double)baseValue <= 2.0001
+                ? (double)baseValue
+                : d.GetValue(ZoomScaleProperty);
 
         private static void ZoomScale_ChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
