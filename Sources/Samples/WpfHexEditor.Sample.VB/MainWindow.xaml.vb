@@ -1,10 +1,6 @@
 ﻿Imports Microsoft.Win32
 Imports System.IO
-Imports System.Windows
-Imports System.Windows.Controls
-Imports System.Windows.Input
 Imports WpfHexaEditor.Core
-Imports WpfHexaEditor.Core.Bytes
 Imports WpfHexaEditor.Core.CharacterTable
 Imports WpfHexaEditor.Dialog
 Imports WpfHexEditor.Sample.VB.MySettings

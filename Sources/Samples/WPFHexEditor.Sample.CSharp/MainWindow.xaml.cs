@@ -131,23 +131,17 @@ namespace WPFHexaEditorExample
         private void PositionText_TextChanged(object sender, TextChangedEventArgs e) => 
             GoPositionButton.IsEnabled = long.TryParse(PositionText.Text, out var _);
 
-        private void UndoMenu_Click(object sender, RoutedEventArgs e) => 
-            HexEdit.Undo();
+        private void UndoMenu_Click(object sender, RoutedEventArgs e) => HexEdit.Undo();
 
-        private void RedoMenu_Click(object sender, RoutedEventArgs e) => 
-            HexEdit.Redo();
+        private void RedoMenu_Click(object sender, RoutedEventArgs e) => HexEdit.Redo();
 
-        private void SetBookMarkButton_Click(object sender, RoutedEventArgs e) =>             
-            HexEdit.SetBookMark();
+        private void SetBookMarkButton_Click(object sender, RoutedEventArgs e) => HexEdit.SetBookMark();
 
-        private void DeleteBookmark_Click(object sender, RoutedEventArgs e) => 
-            HexEdit.ClearScrollMarker(ScrollMarker.Bookmark);
+        private void DeleteBookmark_Click(object sender, RoutedEventArgs e) => HexEdit.ClearScrollMarker(ScrollMarker.Bookmark);
 
-        private void FindAllSelection_Click(object sender, RoutedEventArgs e) => 
-            HexEdit.FindAllSelection(true);
+        private void FindAllSelection_Click(object sender, RoutedEventArgs e) => HexEdit.FindAllSelection(true);
 
-        private void SelectAllButton_Click(object sender, RoutedEventArgs e) => 
-            HexEdit.SelectAll();
+        private void SelectAllButton_Click(object sender, RoutedEventArgs e) => HexEdit.SelectAll();
 
         private void CTableASCIIButton_Click(object sender, RoutedEventArgs e)
         {
