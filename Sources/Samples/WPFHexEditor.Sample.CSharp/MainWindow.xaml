@@ -78,6 +78,10 @@
                         x:Name="ReplaceMenu"
                         Click="ReplaceMenu_Click"
                         Header="Find and replace..." />
+                    <MenuItem
+                        x:Name="FindAllSelection"
+                        Click="FindAllSelection_Click"
+                        Header="Find all occurence of selection" />
                     <Separator />
                     <MenuItem
                         x:Name="SetReadOnlyMenu"
@@ -115,43 +119,6 @@
                             Header="Remove all bookmarks" />
                     </MenuItem>
                     <Separator />
-                    <MenuItem Header="Find">
-                        <MenuItem
-                            x:Name="FindAllSelection"
-                            Click="FindAllSelection_Click"
-                            Header="Find all occurence of selection" />
-                        <StackPanel Orientation="Horizontal">
-                            <Label
-                                Width="75"
-                                Padding="0,5,5,5"
-                                Content="Find string" />
-                            <TextBox
-                                x:Name="FindText"
-                                Width="75"
-                                VerticalContentAlignment="Center"
-                                TextChanged="FindText_TextChanged" />
-                            <Button
-                                x:Name="FindFirstButton"
-                                Click="FindFirstButton_Click"
-                                Content="|&lt;--"
-                                IsEnabled="False" />
-                            <Button
-                                x:Name="FindPreviousButton"
-                                Click="FindPreviousButton_Click"
-                                Content=" &lt; "
-                                IsEnabled="False" />
-                            <Button
-                                x:Name="FindNextButton"
-                                Click="FindNextButton_Click"
-                                Content=" &gt; "
-                                IsEnabled="False" />
-                            <Button
-                                x:Name="FindLastButton"
-                                Click="FindFirstButton_Click"
-                                Content="--&gt;|"
-                                IsEnabled="False" />
-                        </StackPanel>
-                    </MenuItem>
                     <MenuItem Header="Character table">
                         <MenuItem
                             x:Name="CTableAsciiButton"

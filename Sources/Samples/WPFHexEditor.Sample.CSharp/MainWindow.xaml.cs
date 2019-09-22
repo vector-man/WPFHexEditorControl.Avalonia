@@ -12,7 +12,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using WpfHexaEditor.Core;
-using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.CharacterTable;
 using WpfHexaEditor.Dialog;
 using WPFHexaEditorExample.Properties;
@@ -129,35 +128,26 @@ namespace WPFHexaEditorExample
             ViewMenu.IsSubmenuOpen = false;
         }
 
-        private void PositionText_TextChanged(object sender, TextChangedEventArgs e)
-        {
+        private void PositionText_TextChanged(object sender, TextChangedEventArgs e) => 
             GoPositionButton.IsEnabled = long.TryParse(PositionText.Text, out var _);
-        }
 
-        private void UndoMenu_Click(object sender, RoutedEventArgs e) => HexEdit.Undo();
-        private void RedoMenu_Click(object sender, RoutedEventArgs e) => HexEdit.Redo();
-        private void SetBookMarkButton_Click(object sender, RoutedEventArgs e) => HexEdit.SetBookMark();
-        private void DeleteBookmark_Click(object sender, RoutedEventArgs e) => HexEdit.ClearScrollMarker(ScrollMarker.Bookmark);
+        private void UndoMenu_Click(object sender, RoutedEventArgs e) => 
+            HexEdit.Undo();
 
-        private void FindText_TextChanged(object sender, TextChangedEventArgs e)
-        {
-        }
+        private void RedoMenu_Click(object sender, RoutedEventArgs e) => 
+            HexEdit.Redo();
 
-        private void FindFirstButton_Click(object sender, RoutedEventArgs e)
-        {
-        }
+        private void SetBookMarkButton_Click(object sender, RoutedEventArgs e) =>             
+            HexEdit.SetBookMark();
 
-        private void FindPreviousButton_Click(object sender, RoutedEventArgs e)
-        {
-        }
+        private void DeleteBookmark_Click(object sender, RoutedEventArgs e) => 
+            HexEdit.ClearScrollMarker(ScrollMarker.Bookmark);
 
-        private void FindAllSelection_Click(object sender, RoutedEventArgs e) => HexEdit.FindAllSelection(true);
+        private void FindAllSelection_Click(object sender, RoutedEventArgs e) => 
+            HexEdit.FindAllSelection(true);
 
-        private void SelectAllButton_Click(object sender, RoutedEventArgs e) => HexEdit.SelectAll();
-
-        private void FindNextButton_Click(object sender, RoutedEventArgs e)
-        {
-        }
+        private void SelectAllButton_Click(object sender, RoutedEventArgs e) => 
+            HexEdit.SelectAll();
 
         private void CTableASCIIButton_Click(object sender, RoutedEventArgs e)
         {
