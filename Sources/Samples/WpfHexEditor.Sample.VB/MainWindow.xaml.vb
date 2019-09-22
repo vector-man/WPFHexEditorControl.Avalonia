@@ -30,9 +30,9 @@ Namespace WPFHexaEditorExample
         End Sub
 
         Private Sub SaveMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            Application.Current.MainWindow.Cursor = Cursors.Wait
+            Windows.Application.Current.MainWindow.Cursor = Cursors.Wait
             HexEdit.SubmitChanges()
-            Application.Current.MainWindow.Cursor = Nothing
+            Windows.Application.Current.MainWindow.Cursor = Nothing
         End Sub
 
         Private Sub CloseFileMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
@@ -147,22 +147,22 @@ Namespace WPFHexaEditorExample
             If fileDialog.ShowDialog() IsNot Nothing Then
 
                 If File.Exists(fileDialog.FileName) Then
-                    Application.Current.MainWindow.Cursor = Cursors.Wait
+                    Windows.Application.Current.MainWindow.Cursor = Cursors.Wait
                     HexEdit.LoadTblFile(fileDialog.FileName)
                     HexEdit.TypeOfCharacterTable = CharacterTableType.TblFile
                     CTableAsciiButton.IsChecked = False
                     CTableTblButton.IsChecked = True
                     CTableTblDefaultAsciiButton.IsChecked = False
-                    Application.Current.MainWindow.Cursor = Nothing
+                    Windows.Application.Current.MainWindow.Cursor = Nothing
                 End If
             End If
         End Sub
 
         Private Sub CTableTBLDefaultASCIIButton_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            Application.Current.MainWindow.Cursor = Cursors.Wait
+            Windows.Application.Current.MainWindow.Cursor = Cursors.Wait
             HexEdit.TypeOfCharacterTable = CharacterTableType.TblFile
             HexEdit.LoadDefaultTbl()
-            Application.Current.MainWindow.Cursor = Nothing
+            Windows.Application.Current.MainWindow.Cursor = Nothing
         End Sub
 
         Private Sub SaveAsMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
@@ -171,31 +171,31 @@ Namespace WPFHexaEditorExample
         End Sub
 
         Private Sub CTableTblDefaultEBCDICButton_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            Application.Current.MainWindow.Cursor = Cursors.Wait
+            Windows.Application.Current.MainWindow.Cursor = Cursors.Wait
             HexEdit.TypeOfCharacterTable = CharacterTableType.TblFile
             HexEdit.LoadDefaultTbl(DefaultCharacterTableType.EbcdicWithSpecialChar)
-            Application.Current.MainWindow.Cursor = Nothing
+            Windows.Application.Current.MainWindow.Cursor = Nothing
         End Sub
 
         Private Sub CTableTblDefaultEBCDICNoSPButton_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            Application.Current.MainWindow.Cursor = Cursors.Wait
+            Windows.Application.Current.MainWindow.Cursor = Cursors.Wait
             HexEdit.TypeOfCharacterTable = CharacterTableType.TblFile
             HexEdit.LoadDefaultTbl(DefaultCharacterTableType.EbcdicNoSpecialChar)
-            Application.Current.MainWindow.Cursor = Nothing
+            Windows.Application.Current.MainWindow.Cursor = Nothing
         End Sub
 
         Private Sub FindMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            Dim window = New FindWindow(HexEdit) With {
+            Call New FindWindow(HexEdit) With
+            {
                 .Owner = Me
-            }
-            window.Show()
+            }.Show()
         End Sub
 
         Private Sub ReplaceMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            Dim window = New FindReplaceWindow(HexEdit, HexEdit.SelectionByteArray) With {
+            Call New FindReplaceWindow(HexEdit, HexEdit.SelectionByteArray) With
+            {
                 .Owner = Me
-            }
-            window.Show()
+            }.Show()
         End Sub
     End Class
 End Namespace

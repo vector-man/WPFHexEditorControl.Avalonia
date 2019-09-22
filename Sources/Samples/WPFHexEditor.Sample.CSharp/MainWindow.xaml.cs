@@ -18,9 +18,6 @@ using WPFHexaEditorExample.Properties;
 
 namespace WPFHexaEditorExample
 {
-    /// <summary>
-    /// Logique d'interaction pour MainWindow.xaml
-    /// </summary>
     public partial class MainWindow
     {
         private enum SettingEnum
@@ -210,22 +207,16 @@ namespace WPFHexaEditorExample
             Application.Current.MainWindow.Cursor = null;
         }
 
-        private void FindMenu_Click(object sender, RoutedEventArgs e)
-        {
-            var window = new FindWindow(HexEdit)
+        private void FindMenu_Click(object sender, RoutedEventArgs e) => 
+            new FindWindow(HexEdit)
             {
                 Owner = this
-            };
-            window.Show();
-        }
+            }.Show();
 
-        private void ReplaceMenu_Click(object sender, RoutedEventArgs e)
-        {
-            var window = new FindReplaceWindow(HexEdit, HexEdit.SelectionByteArray)
+        private void ReplaceMenu_Click(object sender, RoutedEventArgs e) => 
+            new FindReplaceWindow(HexEdit, HexEdit.SelectionByteArray)
             {
                 Owner = this
-            };
-            window.Show();
-        }
+            }.Show();
     }
 }
