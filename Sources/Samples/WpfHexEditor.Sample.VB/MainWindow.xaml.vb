@@ -130,24 +130,12 @@ Namespace WPFHexaEditorExample
             HexEdit.ClearScrollMarker(ScrollMarker.Bookmark)
         End Sub
 
-        Private Sub FindText_TextChanged(ByVal sender As Object, ByVal e As TextChangedEventArgs)
-        End Sub
-
-        Private Sub FindFirstButton_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-        End Sub
-
-        Private Sub FindPreviousButton_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-        End Sub
-
         Private Sub FindAllSelection_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
             HexEdit.FindAllSelection(True)
         End Sub
 
         Private Sub SelectAllButton_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
             HexEdit.SelectAll()
-        End Sub
-
-        Private Sub FindNextButton_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
         End Sub
 
         Private Sub CTableASCIIButton_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
