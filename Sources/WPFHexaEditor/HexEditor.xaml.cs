@@ -831,7 +831,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Hide bytes that are deleted
         /// </summary>
-        public bool HideByteDeleted { get; set; } = false;
+        public bool HideByteDeleted { get; set; } = true;
 
         private void Control_ByteModified(object sender, EventArgs e)
         {
@@ -1136,20 +1136,7 @@ namespace WpfHexaEditor
             if (!(d is HexEditor ctrl)) return -1L;
             if (!ByteProvider.CheckIsOpen(ctrl._provider)) return -1L;
             if ((long)baseValue < -1) return -1L;
-            
-            ////DEV TEST Not stable / buggy:
-            ////Check for find the nearest byte not deleted
-            //if (ctrl.HideByteDeleted)
-            //    if (ctrl._provider.CheckIfIsByteModified((long)baseValue, ByteAction.Deleted).success)
-            //    {
-            //        var testValue = (long)baseValue;
-
-            //        while (ctrl._provider.CheckIfIsByteModified(testValue, ByteAction.Deleted).success)                    
-            //            testValue++;                   
-
-            //        return testValue;
-            //    }
-                        
+                                 
             return baseValue;
         }
 
@@ -2621,7 +2608,7 @@ namespace WpfHexaEditor
                             if (!_provider.Eof)
                             {
                                 _viewBuffer[readSize] = (byte)_provider.ReadByte();
-                                _viewBufferBytePosition[readSize] = _provider.Position;
+                                _viewBufferBytePosition[readSize] = _provider.Position - 1;
                                 readSize++;
                             }
                         }
