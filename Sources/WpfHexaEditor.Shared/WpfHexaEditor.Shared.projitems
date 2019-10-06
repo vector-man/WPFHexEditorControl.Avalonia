@@ -13,10 +13,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Converters\PathToFilenameConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\GenericStaticInstance.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\CustomBackgroundBlock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\ExeFile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbExpressionParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbFileParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BookMark.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteConverters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteModified.cs" />
@@ -39,6 +35,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\MethodExtention\StringExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\MethodExtention\TrackExtention.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Native\NativeMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\CustomBackgroundBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\ExeFile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbExpressionParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbFileParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FastTextLine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HexByte.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StringByte.cs" />

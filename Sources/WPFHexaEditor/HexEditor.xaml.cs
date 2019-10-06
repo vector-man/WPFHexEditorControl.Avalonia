@@ -69,6 +69,7 @@ namespace WpfHexaEditor
         /// To save the time when Scolling i do not building them every time when scolling.
         /// </summary>
         private byte[] _viewBuffer;
+        private long[] _viewBufferBytePosition;
 
         /// <summary>
         /// Used for control the view on refresh
@@ -393,7 +394,7 @@ namespace WpfHexaEditor
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateHeader();
-            ctrl.UpdateLinesOffSet();
+            ctrl.UpdateLinesInfo();
         }
 
         public new Brush Background
@@ -523,7 +524,7 @@ namespace WpfHexaEditor
         private static void OffSetPanelVisual_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is HexEditor ctrl)
-                ctrl.UpdateLinesOffSet();
+                ctrl.UpdateLinesInfo();
         }
                
         public OffSetPanelFixedWidth OffSetPanelFixedWidthVisual
@@ -575,7 +576,7 @@ namespace WpfHexaEditor
             DependencyPropertyChangedEventArgs e)
         {
             if (d is HexEditor ctrl && e.NewValue != e.OldValue)
-                ctrl.UpdateLinesOffSet();
+                ctrl.UpdateLinesInfo();
         }
 
         public DataVisualType DataStringVisual
@@ -827,6 +828,11 @@ namespace WpfHexaEditor
         /// </summary>
         public bool AllowDeleteByte { get; set; } = true;
 
+        /// <summary>
+        /// Hide bytes that are deleted
+        /// </summary>
+        public bool HideByteDeleted { get; set; } = false;
+
         private void Control_ByteModified(object sender, EventArgs e)
         {
             if (sender is IByteControl ctrl)
@@ -857,9 +863,11 @@ namespace WpfHexaEditor
 
             SetScrollMarker(position, ScrollMarker.ByteDeleted);
 
-            UpdateByteModified();
-            UpdateSelection();
-            UpdateStatusBar();
+            UpdateScrollBar();
+            RefreshView(true);
+            //UpdateByteModified();
+            //UpdateSelection();
+            //UpdateStatusBar();
 
             //Invoke BytesDeleted Event and send a tuple <long, byte[]> with original data
             //var data = Tuple.Create(SelectionStart, _provider.GetCopyData(SelectionStart, SelectionStop, false));
@@ -872,10 +880,19 @@ namespace WpfHexaEditor
         /// <summary>
         /// Obtain the max line for vertical scrollbar
         /// </summary>
-        private long MaxLine =>
-            AllowVisualByteAddress
-                    ? ByteProvider.CheckIsOpen(_provider) ? VisualByteAdressLength / BytePerLine : 0
-                    : ByteProvider.CheckIsOpen(_provider) ? _provider.Length / BytePerLine : 0;
+        private long MaxLine
+        {
+            get
+            {
+                long byteDeletedCount = 0;
+                if (ByteProvider.CheckIsOpen(_provider) && HideByteDeleted)
+                    byteDeletedCount = _provider.GetByteModifieds(ByteAction.Deleted).Count;
+                
+                return AllowVisualByteAddress
+                          ? ByteProvider.CheckIsOpen(_provider) ? (VisualByteAdressLength - byteDeletedCount) / BytePerLine : 0
+                          : ByteProvider.CheckIsOpen(_provider) ? (_provider.Length - byteDeletedCount) / BytePerLine : 0;
+            }
+        }
 
         /// <summary>
         /// Get the number of row visible in control
@@ -1117,28 +1134,38 @@ namespace WpfHexaEditor
         private static object SelectionStart_CoerceValueCallBack(DependencyObject d, object baseValue)
         {
             if (!(d is HexEditor ctrl)) return -1L;
+            if (!ByteProvider.CheckIsOpen(ctrl._provider)) return -1L;
+            if ((long)baseValue < -1) return -1L;
+            
+            ////DEV TEST Not stable / buggy:
+            ////Check for find the nearest byte not deleted
+            //if (ctrl.HideByteDeleted)
+            //    if (ctrl._provider.CheckIfIsByteModified((long)baseValue, ByteAction.Deleted).success)
+            //    {
+            //        var testValue = (long)baseValue;
 
-            var value = (long)baseValue;
+            //        while (ctrl._provider.CheckIfIsByteModified(testValue, ByteAction.Deleted).success)                    
+            //            testValue++;                   
 
-            if (value < -1) return -1L;
-
-            return !ByteProvider.CheckIsOpen(ctrl._provider) ? -1L : baseValue;
+            //        return testValue;
+            //    }
+                        
+            return baseValue;
         }
 
         private static void SelectionStart_ChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is HexEditor ctrl)) return;
             if (e.NewValue == e.OldValue) return;
+            if (!ByteProvider.CheckIsOpen(ctrl._provider)) return;
 
-            ctrl.SelectionByte = ByteProvider.CheckIsOpen(ctrl._provider)
-                ? ctrl._provider.GetByte(ctrl.SelectionStart).singleByte
-                : null;
+            ctrl.SelectionByte = ctrl._provider.GetByte(ctrl.SelectionStart).singleByte;
 
             ctrl.UpdateSelection();
             ctrl.UpdateSelectionLine();
             ctrl.UpdateVisual();
             ctrl.UpdateStatusBar();
-            ctrl.UpdateLinesOffSet();
+            ctrl.UpdateLinesInfo();
             ctrl.UpdateHeader(true);
             ctrl.SetScrollMarker(0, ScrollMarker.SelectionStart);
 
@@ -2046,7 +2073,7 @@ namespace WpfHexaEditor
 
             TraverseHexBytes(ctrl => ctrl.IsEnabled = true);
             TraverseStringBytes(ctrl => ctrl.IsEnabled = true);
-            TraverseLineOffSet(ctrl => ctrl.IsEnabled = true);
+            TraverseLineInfo(ctrl => ctrl.IsEnabled = true);
             TraverseHexHeader(ctrl => ctrl.IsEnabled = true);
             TopRectangle.IsEnabled = BottomRectangle.IsEnabled = true;
             VerticalScrollBar.IsEnabled = true;
@@ -2065,7 +2092,7 @@ namespace WpfHexaEditor
 
             TraverseHexBytes(ctrl => ctrl.IsEnabled = false);
             TraverseStringBytes(ctrl => ctrl.IsEnabled = false);
-            TraverseLineOffSet(ctrl => ctrl.IsEnabled = false);
+            TraverseLineInfo(ctrl => ctrl.IsEnabled = false);
             TraverseHexHeader(ctrl => ctrl.IsEnabled = false);
             TopRectangle.IsEnabled = BottomRectangle.IsEnabled = false;
             VerticalScrollBar.IsEnabled = false;
@@ -2207,7 +2234,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Used to make action on all visible lineinfos
         /// </summary>
-        private void TraverseLineOffSet(Action<FastTextLine> act)
+        private void TraverseLineInfo(Action<FastTextLine> act)
         {
             var visibleLine = MaxVisibleLine;
             var cnt = 0;
@@ -2337,7 +2364,7 @@ namespace WpfHexaEditor
                 VerticalScrollBar.Visibility = Visibility.Visible;
                 VerticalScrollBar.SmallChange = 1;
                 VerticalScrollBar.LargeChange = ScrollLargeChange;
-                VerticalScrollBar.Maximum = MaxLine - 1;
+                VerticalScrollBar.Maximum = MaxLine - MaxVisibleLine + 1;
             }
         }
         #endregion
@@ -2358,7 +2385,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Clear all lines offset...
         /// </summary>
-        private void ClearLineInfo() => TraverseLineOffSet(ctrl => { ctrl.Tag = ctrl.Text = string.Empty; });
+        private void ClearLineInfo() => TraverseLineInfo(ctrl => { ctrl.Tag = ctrl.Text = string.Empty; });
 
         /// <summary>
         /// Refresh currentview of hexeditor
@@ -2369,7 +2396,7 @@ namespace WpfHexaEditor
             var watch = new Stopwatch();
             watch.Start();
 #endif
-            UpdateLinesOffSet();
+            UpdateLinesInfo();
 
             if (refreshData)
                 UpdateViewers(controlResize);
@@ -2544,7 +2571,8 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// Update the data and string stackpanels to current view;
+        /// Update the data and string panels to current view.
+        /// Only load what is needed in the view
         /// </summary>
         private void UpdateViewers(bool controlResize)
         {
@@ -2553,26 +2581,27 @@ namespace WpfHexaEditor
             {
                 var bufferlength = MaxVisibleLine * BytePerLine + 1 + ByteShiftLeft;
 
+                #region Build the buffer lenght if needed
+
                 if (controlResize)
                 {
-                    #region Control need to resize
-
                     if (_viewBuffer != null)
                     {
                         if (_viewBuffer.Length < bufferlength)
                         {
                             BuildDataLines(MaxVisibleLine);
                             _viewBuffer = new byte[bufferlength];
+                            _viewBufferBytePosition = new long[bufferlength];
                         }
                     }
                     else
                     {
                         _viewBuffer = new byte[bufferlength];
+                        _viewBufferBytePosition = new long[bufferlength];
                         BuildDataLines(MaxVisibleLine);
-                    }
-
-                    #endregion
+                    }                    
                 }
+                #endregion
 
                 if (LinesInfoStackPanel.Children.Count == 0) return;
 
@@ -2581,33 +2610,66 @@ namespace WpfHexaEditor
                 if (AllowVisualByteAddress && startPosition < VisualByteAdressStart)
                     startPosition = VisualByteAdressStart;
 
+                #region read the data from the provider and warns if necessary to load the bytes that have been deleted
                 _provider.Position = startPosition;
-                var readSize = _provider.Read(_viewBuffer, 0, bufferlength);
+                var readSize = 0;
+                if (HideByteDeleted)
+                    for (int i = 0; i < _viewBuffer.Count(); i++)
+                    {
+                        if (!_provider.CheckIfIsByteModified(_provider.Position, ByteAction.Deleted).success)
+                        {
+                            if (!_provider.Eof)
+                            {
+                                _viewBuffer[readSize] = (byte)_provider.ReadByte();
+                                _viewBufferBytePosition[readSize] = _provider.Position;
+                                readSize++;
+                            }
+                        }
+                        else
+                        {
+                            _viewBufferBytePosition[readSize] = -1;
+                            _provider.Position++;
+                            i--;
+                        }
+                    }
+                else
+                {
+                    readSize = _provider.Read(_viewBuffer, 0, bufferlength <= _viewBuffer.Count()
+                                                                    ? bufferlength
+                                                                    : _viewBuffer.Count());
+                }
+                #endregion
+
                 var index = 0;
 
-                #region HexByte refresh
+                #region HexByte panel refresh
 
-                TraverseHexBytes(byteControl =>
+                TraverseHexBytes(ctrl =>
                 {
-                    byteControl.Action = ByteAction.Nothing;
-                    byteControl.ReadOnlyMode = ReadOnlyMode;
+                    ctrl.Action = ByteAction.Nothing;
+                    ctrl.ReadOnlyMode = ReadOnlyMode;
 
-                    byteControl.InternalChange = true;
+                    ctrl.InternalChange = true;
 
                     var nextPos = startPosition + index;
 
+                    //Prevent load if byte are deleted from file
+                    if (HideByteDeleted)
+                        while (_provider.CheckIfIsByteModified(nextPos, ByteAction.Deleted).success)                        
+                            nextPos++;                        
+
                     if (index < readSize && _priLevel == curLevel)
                     {
-                        byteControl.Byte = _viewBuffer[index];
-                        byteControl.BytePositionInFile = nextPos;
+                        ctrl.Byte = _viewBuffer[index];
+                        ctrl.BytePositionInFile = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
 
                         if (AllowVisualByteAddress && nextPos > VisualByteAdressStop)
-                            byteControl.Clear();
+                            ctrl.Clear();
                     }
                     else
-                        byteControl.Clear();
+                        ctrl.Clear();
 
-                    byteControl.InternalChange = false;
+                    ctrl.InternalChange = false;
                     index++;
                 });
 
@@ -2615,32 +2677,38 @@ namespace WpfHexaEditor
 
                 index = 0;
 
-                #region StringByte refresh
+                #region StringByte panel refresh
 
-                TraverseStringBytes(sbCtrl =>
+                TraverseStringBytes(ctrl =>
                 {
-                    sbCtrl.Action = ByteAction.Nothing;
-                    sbCtrl.ReadOnlyMode = ReadOnlyMode;
+                    ctrl.Action = ByteAction.Nothing;
+                    ctrl.ReadOnlyMode = ReadOnlyMode;
 
-                    sbCtrl.InternalChange = true;
-                    sbCtrl.TblCharacterTable = _tblCharacterTable;
-                    sbCtrl.TypeOfCharacterTable = TypeOfCharacterTable;
+                    ctrl.InternalChange = true;
+                    ctrl.TblCharacterTable = _tblCharacterTable;
+                    ctrl.TypeOfCharacterTable = TypeOfCharacterTable;
 
                     var nextPos = startPosition + index;
 
+                    //Prevent load if byte are deleted from file
+                    if (HideByteDeleted)
+                        while (_provider.CheckIfIsByteModified(nextPos, ByteAction.Deleted).success)                        
+                            nextPos++;                        
+
                     if (index < readSize)
                     {
-                        sbCtrl.Byte = _viewBuffer[index];
-                        sbCtrl.BytePositionInFile = nextPos;
-                        sbCtrl.ByteNext = index < readSize - 1 ? (byte?)_viewBuffer[index + 1] : null;
+                        ctrl.Byte = _viewBuffer[index];
+                        ctrl.BytePositionInFile = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
+
+                        ctrl.ByteNext = index < readSize - 1 ? (byte?)_viewBuffer[index + 1] : null;
 
                         if (AllowVisualByteAddress && nextPos > VisualByteAdressStop)
-                            sbCtrl.Clear();
+                            ctrl.Clear();
                     }
                     else
-                        sbCtrl.Clear();
+                        ctrl.Clear();
 
-                    sbCtrl.InternalChange = false;
+                    ctrl.InternalChange = false;
                     index++;
                 });
 
@@ -2774,7 +2842,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Update the position info panel at left of the control
         /// </summary>
-        private void UpdateLinesOffSet()
+        private void UpdateLinesInfo()
         {
             var maxVisibleLine = MaxVisibleLine;
 
@@ -2819,10 +2887,11 @@ namespace WpfHexaEditor
 
                 if (i > 0) firstByteInLine += BytePerLine;
 
-                if (firstByteInLine < _provider.Length)
-                {
+                //if (firstByteInLine < (_provider.Length - _provider.GetByteModifieds(ByteAction.Deleted).Count))
+                //{
                     #region Set text visual
-                    if (HighLightSelectionStart &&
+                    if (!HideByteDeleted &&
+                        HighLightSelectionStart &&
                         SelectionStart > -1 &&
                         SelectionStart >= firstByteInLine &&
                         SelectionStart <= firstByteInLine + BytePerLine - 1)
@@ -2884,8 +2953,9 @@ namespace WpfHexaEditor
 
                     if (AllowVisualByteAddress && firstByteInLine > VisualByteAdressStop)
                         lineOffsetLabel.Tag = lineOffsetLabel.Text = string.Empty;
+
                     #endregion
-                }
+                //}
             }
         }
         #endregion Update view
@@ -4665,7 +4735,7 @@ namespace WpfHexaEditor
         {
             if (d is HexEditor ctrl && e.NewValue != e.OldValue) ctrl.RefreshView();
         }
-               
+
         private List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
 
         internal CustomBackgroundBlock GetCustomBackgroundBlock(long bytePositionInFile) =>
@@ -4674,10 +4744,5 @@ namespace WpfHexaEditor
 
         #endregion
 
-        #region NOT IMPLEMENTED // TBL intellisense-like support
-
-        //TODO: to be implemented
-
-        #endregion
     }
 }

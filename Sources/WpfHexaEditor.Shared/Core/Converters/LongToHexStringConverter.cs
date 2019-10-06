@@ -14,20 +14,16 @@ namespace WpfHexaEditor.Core.Converters
     /// </summary>
     public sealed class LongToHexStringConverter : GenericStaticInstance<LongToHexStringConverter>,IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            const string defaultRtn = "0x00000000";
-
-            return value != null
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+            value != null
                 ? (long.TryParse(value.ToString(), out var longValue)
                     ? (longValue > -1
                         ? "0x" + longValue
                               .ToString(ConstantReadOnly.HexLineInfoStringFormat, CultureInfo.InvariantCulture)
                               .ToUpper()
-                        : defaultRtn)
-                    : defaultRtn)
-                : defaultRtn;
-        }
+                        : ConstantReadOnly.DefaultHex8String)
+                    : ConstantReadOnly.DefaultHex8String)
+                : ConstantReadOnly.DefaultHex8String;
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => value;
     }

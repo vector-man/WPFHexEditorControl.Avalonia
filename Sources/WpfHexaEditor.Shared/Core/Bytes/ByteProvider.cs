@@ -289,7 +289,29 @@ namespace WpfHexaEditor.Core.Bytes
         /// Read bytes
         /// </summary>
         public int Read(byte[] destination, int offset, int count) =>
-            IsOpen && _stream.CanRead ? _stream.Read(destination, offset, count) : -1;
+            IsOpen && _stream.CanRead 
+            ? _stream.Read(destination, offset, count) 
+            : -1;
+
+        //DEV TEST
+        //public int Read(byte[] destination, int offset, int count)
+        //{
+        //    if (!IsOpen || !_stream.CanRead) return -1;
+
+        //    for (int i = 0; i < count; i++)
+        //    {
+        //        if (!CheckIfIsByteModified(Position, ByteAction.Deleted).success)
+        //            destination[i] = (byte)ReadByte();
+        //        else
+        //        {
+        //            i--;
+        //            Position++;
+        //        }
+
+        //    }
+
+        //    return count;  //_stream.Read(destination, offset, count); 
+        //}
 
         #endregion read byte
 
@@ -649,8 +671,6 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         /// <param name="startPosition">The position to start fill</param>
         /// <param name="length">The length of the selection</param>
-        /// <param name="original"></param>
-        /// <param name="replace"></param>
         public void ReplaceByte(long startPosition, long length, byte original, byte replace)
         {
             //Launch event at process strated
@@ -852,8 +872,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Copy selection to clipboard in code block
         /// </summary>
-        private void CopyToClipboard_Language(long selectionStart, long selectionStop, bool copyChange, DataObject da,
-            CodeLanguage language)
+        private void CopyToClipboard_Language(long selectionStart, long selectionStop, bool copyChange, DataObject da, CodeLanguage language)
         {
             if (!CanCopy(selectionStart, selectionStop)) return;
 
@@ -1028,12 +1047,11 @@ namespace WpfHexaEditor.Core.Bytes
         /// Copy selection of byte to a stream
         /// </summary>
         /// <param name="output">Output stream. Data will be copied at end of stream</param>
-        /// <param name="selectionStop"></param>
         /// <param name="copyChange">Set tu true if you want onclude change in your copy. Set to false to copy directly from source</param>
-        /// <param name="selectionStart"></param>
         public void CopyToStream(Stream output, long selectionStart, long selectionStop, bool copyChange = true)
         {
             if (!CanCopy(selectionStart, selectionStop)) return;
+            if (output is null) return;
 
             //Variables
             var buffer = GetCopyData(selectionStart, selectionStop, copyChange);
@@ -1055,6 +1073,7 @@ namespace WpfHexaEditor.Core.Bytes
         public void Paste(long startPosition, string pasteString, bool expend)
         {
             if (startPosition < 0) return;
+            if (pasteString is null) return;
 
             long pastelength = pasteString.Length;
             Position = startPosition;
@@ -1093,6 +1112,8 @@ namespace WpfHexaEditor.Core.Bytes
         /// <param name="expend">If true expend the file if needed, ATTENTION: bytes expended can't be canceled with undo</param>
         public void Paste(long startPosition, byte[] pasteBytes, bool expend)
         {
+            if (pasteBytes is null) return;
+
             long pastelength = pasteBytes.Length;
             Position = startPosition;
             var i = 0;
