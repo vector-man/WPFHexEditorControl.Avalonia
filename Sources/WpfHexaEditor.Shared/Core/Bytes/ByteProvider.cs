@@ -545,13 +545,32 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Check if the byte in parameter are modified and return original Bytemodified from list
         /// </summary>
-        public (bool success, ByteModified val) CheckIfIsByteModified(long BytePositionInStream,
+        public (bool success, ByteModified val) CheckIfIsByteModified(long bytePositionInStream,
             ByteAction action = ByteAction.Modified)
         {
-            return _byteModifiedDictionary.TryGetValue(BytePositionInStream, out var byteModified)
-                   && byteModified.IsValid && (byteModified.Action == action || action == ByteAction.All)
-                ? (true, byteModified)
-                : (false, null);
+            //if (action != ByteAction.Deleted)
+            //{
+                return _byteModifiedDictionary.TryGetValue(bytePositionInStream, out var byteModified)
+                       && byteModified.IsValid && (byteModified.Action == action || action == ByteAction.All)
+                    ? (true, byteModified)
+                    : (false, null);
+            //}
+            //else //checkup is deleted
+            //{
+            //    var find = false;
+            //    ByteModified byteModified = null;
+            //    foreach (var bm in _byteModifiedDictionary.Where(bm => bm.Value.Action == ByteAction.Deleted))
+            //        if (bm.Value.BytePositionInStream >= bytePositionInStream &&
+            //            bm.Value.BytePositionInStream <= bytePositionInStream)
+            //        {
+            //            find = true;
+            //            byteModified = bm.Value;
+            //        }
+                
+            //    return find
+            //        ? (true, byteModified)
+            //        : (false, null);
+            //}
         }
 
         /// <summary>
@@ -567,7 +586,7 @@ namespace WpfHexaEditor.Core.Bytes
             var byteModified = new ByteModified
             {
                 Byte = @byte,
-                UndoLength = undoLength,
+                Length = undoLength,
                 BytePositionInStream = BytePositionInStream,
                 Action = ByteAction.Modified
             };
@@ -586,9 +605,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Add/Modifiy a ByteModifed in the list of byte have deleted
         /// </summary>
-        public void AddByteDeleted(long BytePositionInStream, long length)
+        public void AddByteDeleted(long bytePositionInStream, long length)
         {
-            var position = BytePositionInStream;
+            var position = bytePositionInStream;
 
             for (var i = 0; i < length; i++)
             {
@@ -602,16 +621,33 @@ namespace WpfHexaEditor.Core.Bytes
                 var byteModified = new ByteModified
                 {
                     Byte = new byte(),
-                    UndoLength = length,
+                    Length = length,
                     BytePositionInStream = position,
                     Action = ByteAction.Deleted
                 };
                 _byteModifiedDictionary.Add(position, byteModified);
+
                 UndoStack.Push(byteModified);
 
                 position++;
             }
+
+            //DEV TEST: ONLY ADD 1 BYTEMODIFIED ALSO OF 1 BY BYTE ARE DELETED...
+            ////TODO: CHECK IF BYTE ARE ALREADY DELETED AND IF YES CHECK IF LENGHT FIT THEN AJUST...
+            ////    var (success, _) = CheckIfIsByteModified(position, ByteAction.All);
+
+            //var byteModified = new ByteModified
+            //{
+            //    Byte = new byte(),
+            //    Length = length,
+            //    BytePositionInStream = bytePositionInStream, //First byte deleted
+            //    Action = ByteAction.Deleted
+            //};
+            //_byteModifiedDictionary.Add(bytePositionInStream, byteModified);
+
+            //UndoStack.Push(byteModified);
         }
+    
 
         /// <summary>
         /// Return an IEnumerable ByteModified have action set to Modified
@@ -1183,7 +1219,7 @@ namespace WpfHexaEditor.Core.Bytes
             {
                 var last = UndoStack.Pop();
                 var bytePositionList = new List<long>();
-                var undoLength = last.UndoLength;
+                var undoLength = last.Action != ByteAction.Deleted ? last.Length : 1;
 
                 bytePositionList.Add(last.BytePositionInStream);
                 _byteModifiedDictionary.Remove(last.BytePositionInStream);
@@ -1213,7 +1249,7 @@ namespace WpfHexaEditor.Core.Bytes
             {
                 var last = RedoStack.Pop();
                 var bytePositionList = new List<long>();
-                var redoLength = last.UndoLength;
+                var redoLength = last.Action != ByteAction.Deleted ? last.Length : 1;
 
                 bytePositionList.Add(last.BytePositionInStream);
                 addUndo(last);
@@ -1238,10 +1274,10 @@ namespace WpfHexaEditor.Core.Bytes
                 switch (last.Action)
                 {
                     case ByteAction.Deleted:
-                        AddByteDeleted(last.BytePositionInStream, last.UndoLength);
+                        AddByteDeleted(last.BytePositionInStream, last.Length);
                         break;
                     case ByteAction.Modified:
-                        AddByteModified(last.Byte, last.BytePositionInStream, last.UndoLength);
+                        AddByteModified(last.Byte, last.BytePositionInStream, last.Length);
                         break;
                 }
             }

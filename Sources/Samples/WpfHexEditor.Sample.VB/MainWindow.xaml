@@ -217,6 +217,10 @@
                         IsChecked="{Binding ElementName=HexEdit, Path=AllowByteCount, UpdateSourceTrigger=PropertyChanged}" />
                     <Separator />
                     <MenuItem
+                        Header="Hide byte are deleted"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=HideByteDeleted, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem
                         Header="Allow the possibility to delete byte"
                         IsCheckable="True"
                         IsChecked="{Binding ElementName=HexEdit, Path=AllowDeleteByte, UpdateSourceTrigger=PropertyChanged}" />

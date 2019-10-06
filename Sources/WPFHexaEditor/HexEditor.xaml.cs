@@ -822,17 +822,7 @@ namespace WpfHexaEditor
         /// Stream or file are modified when IsModified are set to true.
         /// </summary>
         public bool IsModified { get; set; } = false;
-
-        /// <summary>
-        /// Allow to delete byte on control
-        /// </summary>
-        public bool AllowDeleteByte { get; set; } = true;
-
-        /// <summary>
-        /// Hide bytes that are deleted
-        /// </summary>
-        public bool HideByteDeleted { get; set; } = true;
-
+        
         private void Control_ByteModified(object sender, EventArgs e)
         {
             if (sender is IByteControl ctrl)
@@ -848,32 +838,6 @@ namespace WpfHexaEditor
         }
 
         private void Control_ByteDeleted(object sender, EventArgs e) => DeleteSelection();
-
-        /// <summary>
-        /// Delete selection, add scroll marker and update control
-        /// </summary>
-        public void DeleteSelection()
-        {
-            if (!CanDelete) return;
-            if (!ByteProvider.CheckIsOpen(_provider)) return;
-
-            var position = SelectionStart > SelectionStop ? SelectionStop : SelectionStart;
-            var firstbyte = FirstVisibleBytePosition;
-
-            _provider.AddByteDeleted(position, SelectionLength);
-
-            SetScrollMarker(position, ScrollMarker.ByteDeleted);
-
-            UpdateScrollBar();
-            RefreshView(true);
-
-            //Update selection
-            SetPosition(firstbyte);
-            UnSelectAll(true);
-            
-            //Launch deleted event
-            BytesDeleted?.Invoke(this, new EventArgs());
-        }
 
         #endregion ByteModified methods/event/methods
 
@@ -948,6 +912,21 @@ namespace WpfHexaEditor
             UnSelectAll();
             UnHighLightAll();
             Focus();
+        }
+
+        private void Control_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Delete:
+                    DeleteSelection();
+                    break;
+                case Key.Escape:
+                    UnSelectAll();
+                    UnHighLightAll();
+                    Focus();
+                    break;
+            }
         }
 
         private void Control_MovePageUp(object sender, EventArgs e)
@@ -4705,6 +4684,70 @@ namespace WpfHexaEditor
         public void ResetZoom() => ZoomScale = 1.0;
 
         private void ZoomResetButton_Click(object sender, RoutedEventArgs e) => ResetZoom();
+        #endregion
+
+        #region Delete byte support
+        /// <summary>
+        /// Allow to delete byte on control
+        /// </summary>
+        public bool AllowDeleteByte
+        {
+            get { return (bool)GetValue(AllowDeleteByteProperty); }
+            set { SetValue(AllowDeleteByteProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for AllowDeleteByte.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty AllowDeleteByteProperty =
+            DependencyProperty.Register(nameof(AllowDeleteByte), typeof(bool), typeof(HexEditor), 
+                new FrameworkPropertyMetadata(true, Control_DeletePropertyChanged));
+
+        /// <summary>
+        /// Hide bytes that are deleted
+        /// </summary>
+        public bool HideByteDeleted
+        {
+            get { return (bool)GetValue(HideByteDeletedProperty); }
+            set { SetValue(HideByteDeletedProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for HideByteDeleted.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty HideByteDeletedProperty =
+            DependencyProperty.Register(nameof(HideByteDeleted), typeof(bool), typeof(HexEditor),
+                 new FrameworkPropertyMetadata(false, Control_DeletePropertyChanged));
+
+        private static void Control_DeletePropertyChanged(DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            if (d is HexEditor ctrl && e.NewValue != e.OldValue)
+                ctrl.RefreshView(true);
+        }
+
+        /// <summary>
+        /// Delete selection, add scroll marker and update control
+        /// </summary>
+        public void DeleteSelection()
+        {
+            if (!CanDelete) return;
+            if (!ByteProvider.CheckIsOpen(_provider)) return;
+
+            var position = SelectionStart > SelectionStop ? SelectionStop : SelectionStart;
+            var firstbyte = FirstVisibleBytePosition;
+
+            _provider.AddByteDeleted(position, SelectionLength);
+
+            SetScrollMarker(position, ScrollMarker.ByteDeleted);
+
+            UpdateScrollBar();
+            RefreshView(true);
+
+            //Update selection
+            SetPosition(firstbyte);
+            UnSelectAll(true);
+
+            //Launch deleted event
+            BytesDeleted?.Invoke(this, new EventArgs());
+        }
+
         #endregion
 
         #region WORK IN PROGRESS // CustomBackgroundBlock implementation

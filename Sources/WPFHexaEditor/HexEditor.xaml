@@ -18,6 +18,7 @@
     Drop="Control_Drop"
     Focusable="True"
     FontSize="11"
+    KeyDown="Control_KeyDown"
     Loaded="Control_Loaded"
     MouseWheel="Control_MouseWheel"
     Unloaded="Control_Unloaded"

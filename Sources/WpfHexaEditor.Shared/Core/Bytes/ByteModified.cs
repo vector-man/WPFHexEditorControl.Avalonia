@@ -26,7 +26,7 @@ namespace WpfHexaEditor.Core.Bytes
             Byte = val;
             Action = action;
             BytePositionInStream = BytePositionInStream;
-            UndoLength = undoLength;
+            Length = undoLength;
         }
 
         #endregion constructor
@@ -51,7 +51,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Number of byte to undo when this byte is reach
         /// </summary>
-        public long UndoLength { get; set; } = 1;
+        public long Length { get; set; } = 1;
 
         #endregion properties
 
@@ -76,7 +76,7 @@ namespace WpfHexaEditor.Core.Bytes
             Byte = null;
             Action = ByteAction.Nothing;
             BytePositionInStream = -1;
-            UndoLength = 1;
+            Length = 1;
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace WpfHexaEditor.Core.Bytes
         {
             Action = Action,
             Byte = Byte,
-            UndoLength = UndoLength,
+            Length = Length,
             BytePositionInStream = BytePositionInStream
         };
 
