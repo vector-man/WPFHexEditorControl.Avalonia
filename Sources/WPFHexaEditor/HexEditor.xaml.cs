@@ -831,7 +831,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Hide bytes that are deleted
         /// </summary>
-        public bool HideByteDeleted { get; set; } = false;
+        public bool HideByteDeleted { get; set; } = true;
 
         private void Control_ByteModified(object sender, EventArgs e)
         {
@@ -858,6 +858,7 @@ namespace WpfHexaEditor
             if (!ByteProvider.CheckIsOpen(_provider)) return;
 
             var position = SelectionStart > SelectionStop ? SelectionStop : SelectionStart;
+            var firstbyte = FirstVisibleBytePosition;
 
             _provider.AddByteDeleted(position, SelectionLength);
 
@@ -865,12 +866,12 @@ namespace WpfHexaEditor
 
             UpdateScrollBar();
             RefreshView(true);
-            //UpdateByteModified();
-            //UpdateSelection();
-            //UpdateStatusBar();
 
-            //Invoke BytesDeleted Event and send a tuple <long, byte[]> with original data
-            //var data = Tuple.Create(SelectionStart, _provider.GetCopyData(SelectionStart, SelectionStop, false));
+            //Update selection
+            SetPosition(firstbyte);
+            UnSelectAll(true);
+            
+            //Launch deleted event
             BytesDeleted?.Invoke(this, new EventArgs());
         }
 
@@ -1210,10 +1211,15 @@ namespace WpfHexaEditor
         /// <summary>
         /// Reset selection to -1
         /// </summary>
-        public void UnSelectAll()
+        public void UnSelectAll(bool cleanFocus = false)
         {
-            SelectionStart = -1;
-            SelectionStop = -1;
+            SelectionStart = SelectionStop = -1;
+
+            if (cleanFocus)
+            {
+                HideCaret();
+                Focus();
+            }
         }
 
         /// <summary>
