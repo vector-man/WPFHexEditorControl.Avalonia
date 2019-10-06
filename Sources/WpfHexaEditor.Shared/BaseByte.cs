@@ -96,7 +96,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Position in file
         /// </summary>
-        public long BytePositionInFile { get; set; } = -1L;
+        public long BytePositionInStream { get; set; } = -1L;
 
         /// <summary>
         /// Used for selection coloring
@@ -282,12 +282,12 @@ namespace WpfHexaEditor
             }
             else
             {
-                var cbb = _parent.GetCustomBackgroundBlock(BytePositionInFile);
+                var cbb = _parent.GetCustomBackgroundBlock(BytePositionInStream);
 
                 Description = cbb != null ? cbb.Description : "";
 
                 Background = cbb != null ? cbb.Color : Brushes.Transparent;
-                Foreground = _parent.GetColumnNumber(BytePositionInFile) % 2 == 0 
+                Foreground = _parent.GetColumnNumber(BytePositionInStream) % 2 == 0 
                     ? _parent.Foreground 
                     : _parent.ForegroundSecondColor;
 
@@ -320,7 +320,7 @@ namespace WpfHexaEditor
         public virtual void Clear()
         {
             InternalChange = true;
-            BytePositionInFile = -1;
+            BytePositionInStream = -1;
             Byte = null;
             Action = ByteAction.Nothing;
             IsSelected = false;
@@ -378,7 +378,7 @@ namespace WpfHexaEditor
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
-            var cbb = _parent.GetCustomBackgroundBlock(BytePositionInFile);
+            var cbb = _parent.GetCustomBackgroundBlock(BytePositionInStream);
             
             if (Byte != null && !IsSelected && !IsHighLight &&
                 Action != ByteAction.Modified &&

@@ -15,7 +15,7 @@ namespace WpfHexaEditor.Core.Interfaces
     internal interface IByteControl
     {
         //Properties
-        long BytePositionInFile { get; set; }
+        long BytePositionInStream { get; set; }
         ByteAction Action { get; set; }
         byte? Byte { get; set; }
         bool IsHighLight { get; set; }

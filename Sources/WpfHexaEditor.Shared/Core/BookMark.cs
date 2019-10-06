@@ -13,20 +13,20 @@ namespace WpfHexaEditor.Core
     public sealed class BookMark
     {
         public ScrollMarker Marker { get; set; } = ScrollMarker.Nothing;
-        public long BytePositionInFile { get; set; }
+        public long BytePositionInStream { get; set; }
         public string Description { get; set; } = string.Empty;
 
         public BookMark() { }
 
         public BookMark(string description, long position)
         {
-            BytePositionInFile = position;
+            BytePositionInStream = position;
             Description = description;
         }
 
         public BookMark(string description, long position, ScrollMarker marker)
         {
-            BytePositionInFile = position;
+            BytePositionInStream = position;
             Description = description;
             Marker = marker;
         }
@@ -35,6 +35,6 @@ namespace WpfHexaEditor.Core
         /// String representation
         /// </summary>
         /// <returns></returns>
-        public override string ToString() => $"({ByteConverters.LongToHex(BytePositionInFile)}h){Description}";
+        public override string ToString() => $"({ByteConverters.LongToHex(BytePositionInStream)}h){Description}";
     }
 }

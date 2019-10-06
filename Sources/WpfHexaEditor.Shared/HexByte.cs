@@ -132,7 +132,7 @@ namespace WpfHexaEditor
                                     byteValueCharArray[0] + byteValueCharArray[1].ToString())[0];
 
                                 //Insert byte at end of file
-                                if (_parent.Length != BytePositionInFile + 1)
+                                if (_parent.Length != BytePositionInStream + 1)
                                 {
                                     _keyDownLabel = KeyDownLabel.NextPosition;
                                     OnMoveNext(new EventArgs());
@@ -200,7 +200,7 @@ namespace WpfHexaEditor
                         _parent.MoveCaret(TransformToAncestor(_parent).Transform(new Point(size.Width + 1, 0)));
                         break;
                     case KeyDownLabel.NextPosition:
-                        if (_parent.Length == BytePositionInFile + 1)
+                        if (_parent.Length == BytePositionInStream + 1)
                             if (_parent.AllowExtend)
                             {
                                 _parent.SetCaretMode(CaretMode.Insert);

@@ -145,7 +145,7 @@ namespace WpfHexaEditor
             else
             {
                 #region TBL COLORING
-                var cbb = _parent.GetCustomBackgroundBlock(BytePositionInFile);
+                var cbb = _parent.GetCustomBackgroundBlock(BytePositionInStream);
 
                 Description = cbb != null ? cbb.Description : "";
 
@@ -264,7 +264,7 @@ namespace WpfHexaEditor
                     Byte = ByteConverters.CharToByte(Text[0]);
 
                     //Insert byte at end of file
-                    if (_parent.Length == BytePositionInFile + 1)
+                    if (_parent.Length == BytePositionInStream + 1)
                     {
                         byte[] byteToAppend = { 0 };
                         _parent.AppendByte(byteToAppend);

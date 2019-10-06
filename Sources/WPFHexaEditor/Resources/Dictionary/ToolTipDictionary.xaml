@@ -40,9 +40,9 @@
                     Width="50"
                     Content="{x:Static p:Resources.LongString}"
                     FontWeight="Bold" />
-                <Label Width="70" Content="{Binding BytePositionInFile, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Width="70" Content="{Binding BytePositionInStream, UpdateSourceTrigger=PropertyChanged}" />
                 <Label Content="{x:Static p:Resources.HexString}" FontWeight="Bold" />
-                <Label Content="{Binding BytePositionInFile, Converter={StaticResource LongHexConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Content="{Binding BytePositionInStream, Converter={StaticResource LongHexConverter}, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
             <Separator />
             <StackPanel Orientation="Horizontal">
@@ -72,9 +72,9 @@
                     Content="{x:Static p:Resources.PositionString}"
                     FontWeight="Bold" />
                 <Label Content="{x:Static p:Resources.LongString}" FontWeight="Bold" />
-                <Label Content="{Binding BytePositionInFile, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Content="{Binding BytePositionInStream, UpdateSourceTrigger=PropertyChanged}" />
                 <Label Content="{x:Static p:Resources.HexString}" FontWeight="Bold" />
-                <Label Content="{Binding BytePositionInFile, Converter={StaticResource LongHexConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Content="{Binding BytePositionInStream, Converter={StaticResource LongHexConverter}, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label

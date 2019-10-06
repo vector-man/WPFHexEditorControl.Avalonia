@@ -194,7 +194,7 @@ namespace WpfHexaEditor.Core.CharacterTable
                         fav.Description = lineSplited[1].Substring(0, lineSplited[1].Length - 1);
 
                         lineSplited = line.Split('h');
-                        fav.BytePositionInFile = 
+                        fav.BytePositionInStream = 
                             ByteConverters.HexLiteralToLong(lineSplited[0].Substring(1, lineSplited[0].Length - 1)).position;
                         fav.Marker = ScrollMarker.TblBookmark;
                         BookMarks.Add(fav);

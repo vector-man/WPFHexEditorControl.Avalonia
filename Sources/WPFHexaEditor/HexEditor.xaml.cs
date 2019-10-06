@@ -837,8 +837,8 @@ namespace WpfHexaEditor
         {
             if (sender is IByteControl ctrl)
             {
-                _provider.AddByteModified(ctrl.Byte, ctrl.BytePositionInFile);
-                SetScrollMarker(ctrl.BytePositionInFile, ScrollMarker.ByteModified);
+                _provider.AddByteModified(ctrl.Byte, ctrl.BytePositionInStream);
+                SetScrollMarker(ctrl.BytePositionInStream, ScrollMarker.ByteModified);
                 UpdateByteModified();
 
                 BytesModified?.Invoke(this, new EventArgs());
@@ -1090,11 +1090,11 @@ namespace WpfHexaEditor
             if (!(sender is IByteControl ctrl)) return;
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
-                SelectionStop = ctrl.BytePositionInFile;
+                SelectionStop = ctrl.BytePositionInStream;
             else
             {
-                SelectionStart = ctrl.BytePositionInFile;
-                SelectionStop = ctrl.BytePositionInFile;
+                SelectionStart = ctrl.BytePositionInStream;
+                SelectionStop = ctrl.BytePositionInStream;
             }
 
             UpdateSelectionColor(ctrl is StringByte ? FirstColor.StringByteData : FirstColor.HexByteData);
@@ -1111,7 +1111,7 @@ namespace WpfHexaEditor
             var focusedControl = Keyboard.FocusedElement;
 
             //update selection
-            SelectionStop = bCtrl.BytePositionInFile != -1 ? bCtrl.BytePositionInFile : LastVisibleBytePosition;
+            SelectionStop = bCtrl.BytePositionInStream != -1 ? bCtrl.BytePositionInStream : LastVisibleBytePosition;
 
             UpdateSelectionColor(focusedControl is HexByte ? FirstColor.HexByteData : FirstColor.StringByteData);
             UpdateSelection();
@@ -1737,7 +1737,7 @@ namespace WpfHexaEditor
             //Update focus
             if (UndoStack.Count == 0) return;
 
-            var position = UndoStack.ElementAt(0).BytePositionInFile;
+            var position = UndoStack.ElementAt(0).BytePositionInStream;
             if (!IsBytePositionAreVisible(position))
                 SetPosition(position);
 
@@ -1763,7 +1763,7 @@ namespace WpfHexaEditor
             //Update focus
             if (RedoStack.Count == 0) return;
 
-            var position = RedoStack.ElementAt(0).BytePositionInFile;
+            var position = RedoStack.ElementAt(0).BytePositionInStream;
             if (!IsBytePositionAreVisible(position))
                 SetPosition(position);
 
@@ -2648,7 +2648,7 @@ namespace WpfHexaEditor
                     if (index < readSize && _priLevel == curLevel)
                     {
                         ctrl.Byte = _viewBuffer[index];
-                        ctrl.BytePositionInFile = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
+                        ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
 
                         if (AllowVisualByteAddress && nextPos > VisualByteAdressStop)
                             ctrl.Clear();
@@ -2685,7 +2685,7 @@ namespace WpfHexaEditor
                     if (index < readSize)
                     {
                         ctrl.Byte = _viewBuffer[index];
-                        ctrl.BytePositionInFile = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
+                        ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
 
                         ctrl.ByteNext = index < readSize - 1 ? (byte?)_viewBuffer[index + 1] : null;
 
@@ -2724,7 +2724,7 @@ namespace WpfHexaEditor
 
             TraverseHexAndStringBytes(ctrl =>
             {
-                if (!modifiedBytesDictionary.TryGetValue(ctrl.BytePositionInFile, out var byteModified)) return;
+                if (!modifiedBytesDictionary.TryGetValue(ctrl.BytePositionInStream, out var byteModified)) return;
 
                 ctrl.InternalChange = true;
                 ctrl.Byte = byteModified.Byte;
@@ -2748,9 +2748,9 @@ namespace WpfHexaEditor
 
             TraverseHexAndStringBytes(ctrl =>
             {
-                ctrl.IsSelected = ctrl.BytePositionInFile >= minSelect &&
-                                  ctrl.BytePositionInFile <= maxSelect &&
-                                  ctrl.BytePositionInFile != -1
+                ctrl.IsSelected = ctrl.BytePositionInStream >= minSelect &&
+                                  ctrl.BytePositionInStream <= maxSelect &&
+                                  ctrl.BytePositionInStream != -1
                     ? ctrl.Action != ByteAction.Deleted
                     : false;
             });
@@ -2770,7 +2770,7 @@ namespace WpfHexaEditor
         private void UpdateHighLight()
         {
             if (_markedPositionList.Count > 0)
-                TraverseHexAndStringBytes(ctrl => ctrl.IsHighLight = _markedPositionList.ContainsKey(ctrl.BytePositionInFile));
+                TraverseHexAndStringBytes(ctrl => ctrl.IsHighLight = _markedPositionList.ContainsKey(ctrl.BytePositionInStream));
             else //Un highlight all            
                 TraverseHexAndStringBytes(ctrl => ctrl.IsHighLight = false);
         }
@@ -3008,17 +3008,17 @@ namespace WpfHexaEditor
         /// <summary>
         /// Set focus on byte
         /// </summary>
-        private void SetFocusHexDataPanel(long bytePositionInFile)
+        private void SetFocusHexDataPanel(long BytePositionInStream)
         {
             if (ByteProvider.CheckIsOpen(_provider))
             {
-                if (bytePositionInFile >= _provider.Length)
+                if (BytePositionInStream >= _provider.Length)
                     return;
 
                 var rtn = false;
                 TraverseHexBytes(ctrl =>
                 {
-                    if (ctrl.BytePositionInFile == bytePositionInFile)
+                    if (ctrl.BytePositionInStream == BytePositionInStream)
                     {
                         ctrl.Focus();
                         rtn = true;
@@ -3038,17 +3038,17 @@ namespace WpfHexaEditor
         /// <summary>
         /// Set focus on byte
         /// </summary>
-        private void SetFocusStringDataPanel(long bytePositionInFile)
+        private void SetFocusStringDataPanel(long BytePositionInStream)
         {
             if (ByteProvider.CheckIsOpen(_provider))
             {
-                if (bytePositionInFile >= _provider.Length)
+                if (BytePositionInStream >= _provider.Length)
                     return;
 
                 var rtn = false;
                 TraverseStringBytes(ctrl =>
                 {
-                    if (ctrl.BytePositionInFile == bytePositionInFile)
+                    if (ctrl.BytePositionInStream == BytePositionInStream)
                     {
                         ctrl.Focus();
                         rtn = true;
@@ -3560,7 +3560,7 @@ namespace WpfHexaEditor
         /// </summary>
         /// <param name="mark"></param>
         private void SetScrollMarker(BookMark mark) =>
-            SetScrollMarker(mark.BytePositionInFile, mark.Marker, mark.Description);
+            SetScrollMarker(mark.BytePositionInStream, mark.Marker, mark.Description);
 
         /// <summary>
         /// Set marker at position
@@ -3576,7 +3576,7 @@ namespace WpfHexaEditor
                 var bookMark = new BookMark
                 {
                     Marker = marker,
-                    BytePositionInFile = position,
+                    BytePositionInStream = position,
                     Description = description
                 };
 
@@ -3593,7 +3593,7 @@ namespace WpfHexaEditor
                         }
                     }, ref exit);
 
-                    bookMark.BytePositionInFile = SelectionStart;
+                    bookMark.BytePositionInStream = SelectionStart;
                 }
 
                 #endregion
@@ -3601,7 +3601,7 @@ namespace WpfHexaEditor
                 #region Set position in scrollbar
 
                 var topPosition =
-                    (GetLineNumber(bookMark.BytePositionInFile) * VerticalScrollBar.Track.TickHeight(MaxLine) - 1).Round(1);
+                    (GetLineNumber(bookMark.BytePositionInStream) * VerticalScrollBar.Track.TickHeight(MaxLine) - 1).Round(1);
 
                 if (double.IsNaN(topPosition))
                     topPosition = 0;
@@ -3673,7 +3673,7 @@ namespace WpfHexaEditor
                 }
 
                 rect.MouseDown += Rect_MouseDown;
-                //rect.DataContext = new ByteModified {BytePositionInFile = position};
+                //rect.DataContext = new ByteModified {BytePositionInStream = position};
                 rect.Margin = new Thickness(0, topPosition, rightPosition, 0);
 
                 #endregion
@@ -3686,7 +3686,7 @@ namespace WpfHexaEditor
         private void Rect_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (sender is Rectangle rect && rect.Tag is BookMark bm)
-                SetPosition(bm.Marker != ScrollMarker.SelectionStart ? bm.BytePositionInFile : SelectionStart, 1);
+                SetPosition(bm.Marker != ScrollMarker.SelectionStart ? bm.BytePositionInStream : SelectionStart, 1);
         }
 
         /// <summary>
@@ -3703,7 +3703,7 @@ namespace WpfHexaEditor
                     ctrl.Margin = new Thickness
                     (
                         0,
-                        GetLineNumber(bm.BytePositionInFile) * VerticalScrollBar.Track.TickHeight(MaxLine) - ctrl.ActualHeight,
+                        GetLineNumber(bm.BytePositionInStream) * VerticalScrollBar.Track.TickHeight(MaxLine) - ctrl.ActualHeight,
                         0,
                         0
                     );
@@ -3742,7 +3742,7 @@ namespace WpfHexaEditor
         {
             TraverseScrollMarker(sm =>
             {
-                if (sm.Tag is BookMark mark && mark.Marker == marker && mark.BytePositionInFile == position)
+                if (sm.Tag is BookMark mark && mark.Marker == marker && mark.BytePositionInStream == position)
                     MarkerGrid.Children.Remove(sm);
             });
         }
@@ -3754,7 +3754,7 @@ namespace WpfHexaEditor
         {
             TraverseScrollMarker(sm =>
             {
-                if (sm.Tag is BookMark mark && mark.BytePositionInFile == position)
+                if (sm.Tag is BookMark mark && mark.BytePositionInStream == position)
                     MarkerGrid.Children.Remove(sm);
             });
         }
@@ -3774,7 +3774,7 @@ namespace WpfHexaEditor
             {
                 //position                
                 if (sender is IByteControl ctrl)
-                    _rightClickBytePosition = ctrl.BytePositionInFile;
+                    _rightClickBytePosition = ctrl.BytePositionInStream;
 
                 if (SelectionLength <= 1)
                 {
@@ -4363,7 +4363,7 @@ namespace WpfHexaEditor
 
                         if (ctrl.IsMouseOverMe)
                         {
-                            position = ctrl.BytePositionInFile;
+                            position = ctrl.BytePositionInStream;
                             rtn = true;
                         }
                     }, ref rtn);
@@ -4725,9 +4725,9 @@ namespace WpfHexaEditor
 
         private List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
 
-        internal CustomBackgroundBlock GetCustomBackgroundBlock(long bytePositionInFile) =>
-            _cbbList?.FirstOrDefault(cbb => bytePositionInFile >= cbb.StartOffset &&
-                                            bytePositionInFile <= cbb.StopOffset);
+        internal CustomBackgroundBlock GetCustomBackgroundBlock(long BytePositionInStream) =>
+            _cbbList?.FirstOrDefault(cbb => BytePositionInStream >= cbb.StartOffset &&
+                                            BytePositionInStream <= cbb.StopOffset);
 
         #endregion
 

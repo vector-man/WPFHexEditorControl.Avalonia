@@ -13,7 +13,7 @@ namespace WpfHexaEditor.Core.Interfaces
         ByteAction Action { get; set; }
 
         byte? Byte { get; set; }
-        long BytePositionInFile { get; set; }
+        long BytePositionInStream { get; set; }
         bool IsValid { get; }
         long UndoLength { get; set; }
 

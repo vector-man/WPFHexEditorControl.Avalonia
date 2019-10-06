@@ -21,11 +21,11 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// complete contructor
         /// </summary>
-        public ByteModified(byte? val, ByteAction action, long bytePositionInFile, long undoLength)
+        public ByteModified(byte? val, ByteAction action, long BytePositionInStream, long undoLength)
         {
             Byte = val;
             Action = action;
-            BytePositionInFile = bytePositionInFile;
+            BytePositionInStream = BytePositionInStream;
             UndoLength = undoLength;
         }
 
@@ -46,7 +46,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Get of Set te position in file
         /// </summary>
-        public long BytePositionInFile { get; set; } = -1;
+        public long BytePositionInStream { get; set; } = -1;
 
         /// <summary>
         /// Number of byte to undo when this byte is reach
@@ -60,13 +60,13 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Check if the object is valid and data can be used for action
         /// </summary>
-        public bool IsValid => BytePositionInFile > -1 && Action != ByteAction.Nothing && Byte != null;
+        public bool IsValid => BytePositionInStream > -1 && Action != ByteAction.Nothing && Byte != null;
 
         /// <summary>
         /// String representation of byte
         /// </summary>
         public override string ToString() =>
-            $"ByteModified - Action:{Action} Position:{BytePositionInFile} Byte:{Byte}";
+            $"ByteModified - Action:{Action} Position:{BytePositionInStream} Byte:{Byte}";
 
         /// <summary>
         /// Clear object
@@ -75,7 +75,7 @@ namespace WpfHexaEditor.Core.Bytes
         {
             Byte = null;
             Action = ByteAction.Nothing;
-            BytePositionInFile = -1;
+            BytePositionInStream = -1;
             UndoLength = 1;
         }
 
@@ -88,7 +88,7 @@ namespace WpfHexaEditor.Core.Bytes
             Action = Action,
             Byte = Byte,
             UndoLength = UndoLength,
-            BytePositionInFile = BytePositionInFile
+            BytePositionInStream = BytePositionInStream
         };
 
         /// <summary>
