@@ -831,7 +831,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Hide bytes that are deleted
         /// </summary>
-        public bool HideByteDeleted { get; set; } = true;
+        public bool HideByteDeleted { get; set; } = false;
 
         private void Control_ByteModified(object sender, EventArgs e)
         {
