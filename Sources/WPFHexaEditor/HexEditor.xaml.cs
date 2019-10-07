@@ -979,26 +979,22 @@ namespace WpfHexaEditor
 
         private void Control_MovePageDown(object sender, EventArgs e)
         {
-            var visibleLine = MaxVisibleLine;
-            var byteToMove = BytePerLine * visibleLine;
-            var test = SelectionStart + byteToMove;
+            //Prevent infinite loop
+            _setFocusTest = false;
+
+            //Get the new position from SelectionStart down one page
+            var newPosition = HideByteDeleted
+                ? GetValidPositionFrom(SelectionStart, BytePerLine * MaxVisibleLine)
+                : SelectionStart + BytePerLine;
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
-            {
-                if (test < _provider.Length)
-                    SelectionStart += byteToMove;
-                else
-                    SelectionStart = _provider.Length;
-            }
+                SelectionStart = newPosition < _provider.Length ? newPosition : _provider.Length;
             else
             {
                 FixSelectionStartStop();
 
-                if (test < _provider.Length)
-                {
-                    SelectionStart += byteToMove;
-                    SelectionStop += byteToMove;
-                }
+                if (newPosition < _provider.Length)
+                    SelectionStart = SelectionStop = newPosition;
             }
 
             if (AllowVisualByteAddress && SelectionStart > VisualByteAdressStop)
@@ -1009,31 +1005,27 @@ namespace WpfHexaEditor
 
             if (sender is HexByte || sender is StringByte)
             {
-                VerticalScrollBar.Value += visibleLine - 1;
+                VerticalScrollBar.Value += MaxVisibleLine - 1;
                 SetFocusAtSelectionStart();
             }
         }
 
         private void Control_MoveDown(object sender, EventArgs e)
         {
-            var test = SelectionStart + BytePerLine;
+            _setFocusTest = false;
+
+            var newPosition = HideByteDeleted
+                ? GetValidPositionFrom(SelectionStart, BytePerLine)
+                : SelectionStart + BytePerLine;
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
-            {
-                if (test < _provider.Length)
-                    SelectionStart += BytePerLine;
-                else
-                    SelectionStart = _provider.Length;
-            }
+                SelectionStart = newPosition < _provider.Length ? newPosition : _provider.Length;
             else
             {
                 FixSelectionStartStop();
 
-                if (test < _provider.Length)
-                {
-                    SelectionStart += BytePerLine;
-                    SelectionStop += BytePerLine;
-                }
+                if (newPosition < _provider.Length)
+                    SelectionStart = SelectionStop = newPosition;
             }
 
             if (AllowVisualByteAddress && SelectionStart > VisualByteAdressStop)
@@ -1047,24 +1039,22 @@ namespace WpfHexaEditor
 
         private void Control_MoveUp(object sender, EventArgs e)
         {
-            var test = SelectionStart - BytePerLine;
+            //Prevent infinite loop
+            _setFocusTest = false;
+
+            //Get the new position from SelectionStart
+            var newPosition = HideByteDeleted
+                ? GetValidPositionFrom(SelectionStart, -BytePerLine)
+                : SelectionStart - BytePerLine;  
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
-            {
-                if (test > -1)
-                    SelectionStart -= BytePerLine;
-                else
-                    SelectionStart = 0;
-            }
+                SelectionStart = newPosition > -1 ? newPosition : 0;
             else
             {
                 FixSelectionStartStop();
 
-                if (test > -1)
-                {
-                    SelectionStart -= BytePerLine;
-                    SelectionStop -= BytePerLine;
-                }
+                if (newPosition > -1)
+                    SelectionStart = SelectionStop = newPosition; 
             }
 
             if (AllowVisualByteAddress && SelectionStart < VisualByteAdressStart)
@@ -1083,10 +1073,7 @@ namespace WpfHexaEditor
             if (Keyboard.Modifiers == ModifierKeys.Shift)
                 SelectionStop = ctrl.BytePositionInStream;
             else
-            {
-                SelectionStart = ctrl.BytePositionInStream;
-                SelectionStop = ctrl.BytePositionInStream;
-            }
+                SelectionStart = SelectionStop = ctrl.BytePositionInStream;
 
             UpdateSelectionColor(ctrl is StringByte ? FirstColor.StringByteData : FirstColor.HexByteData);
             UpdateVisual();
@@ -1558,7 +1545,40 @@ namespace WpfHexaEditor
         public void SetPosition(string hexLiteralPosition, long byteLength) =>
             SetPosition(HexLiteralToLong(hexLiteralPosition).position, byteLength);
 
-        #endregion Set position methods
+        /// <summary>
+        /// Give a next valid position
+        /// </summary>
+        /// <param name="position">Start position for compute the correction</param>
+        /// <param name="positionCorrection">Positive or negative position number to add/substract from position</param>
+        private long GetValidPositionFrom(long position, long positionCorrection)
+        {
+            if (!ByteProvider.CheckIsOpen(_provider)) return -1;
+
+            long validPosition = position;
+            long gap = positionCorrection >= 0 ? positionCorrection : -positionCorrection;
+
+            long cnt = 0;
+            for (long i = 0; i < gap; i++)
+            {
+                if (_provider.CheckIfIsByteModified(position + (positionCorrection > 0 ? cnt : -cnt), ByteAction.Deleted).success)
+                {
+                    validPosition += positionCorrection > 0 ? 1 : -1;
+                    i--;
+                }
+                else
+                    validPosition += positionCorrection > 0 ? 1 : -1;
+
+                cnt++;
+            }
+
+#if DEBUG
+            var debugstring = validPosition > 0 ? validPosition : -1;
+            Debug.Print($"Position : D{position} C{cnt} F{debugstring}");
+#endif
+            return validPosition > 0 ? validPosition : -1;
+        }
+
+        #endregion position methods
 
         #region Visibility property
 
@@ -2970,9 +2990,14 @@ namespace WpfHexaEditor
         #region Focus Methods
 
         /// <summary>
+        /// Prevent infinite loop on SetFocusHexDataPanel and SetFocusStringDataPanel
+        /// </summary>
+        bool _setFocusTest = false;
+        
+        /// <summary>
         /// Update the focus to selection start
         /// </summary>
-        private void UpdateFocus()
+        public void UpdateFocus()
         {
             if (SelectionStartIsVisible)
                 SetFocusAtSelectionStart();
@@ -2986,7 +3011,7 @@ namespace WpfHexaEditor
         public void SetFocusAtSelectionStart() => SetFocusAt(SelectionStart);
 
         /// <summary>
-        /// Set the focus to the selection start
+        /// Set the focus to the bytePosition
         /// </summary>
         public void SetFocusAt(long bytePosition)
         {
@@ -3000,21 +3025,21 @@ namespace WpfHexaEditor
                     break;
             }
         }
-
+                
         /// <summary>
         /// Set focus on byte
         /// </summary>
-        private void SetFocusHexDataPanel(long BytePositionInStream)
+        private void SetFocusHexDataPanel(long bytePositionInStream)
         {
             if (ByteProvider.CheckIsOpen(_provider))
             {
-                if (BytePositionInStream >= _provider.Length)
+                if (bytePositionInStream >= _provider.Length)
                     return;
 
                 var rtn = false;
                 TraverseHexBytes(ctrl =>
                 {
-                    if (ctrl.BytePositionInStream == BytePositionInStream)
+                    if (ctrl.BytePositionInStream == bytePositionInStream)
                     {
                         ctrl.Focus();
                         rtn = true;
@@ -3022,9 +3047,13 @@ namespace WpfHexaEditor
                 }, ref rtn);
 
                 if (rtn) return;
-
-                if (VerticalScrollBar.Value < VerticalScrollBar.Maximum)
-                    VerticalScrollBar.Value++;
+                
+                if (VerticalScrollBar.Value < VerticalScrollBar.Maximum && !_setFocusTest)
+                {
+                    _setFocusTest = true;
+                    VerticalScrollBar.Value++;                    
+                    Debug.Print("VerticalScrollBar.Value++");
+                }
 
                 if (!SelectionStartIsVisible && SelectionLength == 1)
                     SetPosition(SelectionStart, 1);
@@ -3034,17 +3063,17 @@ namespace WpfHexaEditor
         /// <summary>
         /// Set focus on byte
         /// </summary>
-        private void SetFocusStringDataPanel(long BytePositionInStream)
+        private void SetFocusStringDataPanel(long bytePositionInStream)
         {
             if (ByteProvider.CheckIsOpen(_provider))
             {
-                if (BytePositionInStream >= _provider.Length)
+                if (bytePositionInStream >= _provider.Length)
                     return;
 
                 var rtn = false;
                 TraverseStringBytes(ctrl =>
                 {
-                    if (ctrl.BytePositionInStream == BytePositionInStream)
+                    if (ctrl.BytePositionInStream == bytePositionInStream)
                     {
                         ctrl.Focus();
                         rtn = true;
@@ -3053,8 +3082,12 @@ namespace WpfHexaEditor
 
                 if (rtn) return;
 
-                if (VerticalScrollBar.Value < VerticalScrollBar.Maximum)
+                if (VerticalScrollBar.Value < VerticalScrollBar.Maximum && !_setFocusTest)
+                {
+                    _setFocusTest = true;
                     VerticalScrollBar.Value++;
+                    Debug.Print("VerticalScrollBar.Value++");
+                }
 
                 if (!SelectionStartIsVisible && SelectionLength == 1)
                     SetPosition(SelectionStart, 1);
@@ -4567,11 +4600,10 @@ namespace WpfHexaEditor
 
         private static void VisualByteAdressStart_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is HexEditor ctrl && e.NewValue != e.OldValue)
-            {
-                ctrl.UpdateScrollBar();
-                ctrl.RefreshView();
-            }
+            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+
+            ctrl.UpdateScrollBar();
+            ctrl.RefreshView();
         }
         #endregion
 

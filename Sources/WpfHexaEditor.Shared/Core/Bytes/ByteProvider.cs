@@ -91,9 +91,18 @@ namespace WpfHexaEditor.Core.Bytes
         public ByteProviderStreamType StreamType { get; internal set; } = ByteProviderStreamType.Nothing;
 
         /// <summary>
-        /// Get the length of file. Return -1 if file is close.
+        /// Get the original length of file/stream . Return -1 if file is close.
         /// </summary>
-        public long Length => IsOpen ? _stream.Length : -1;
+        public long Length => IsOpen 
+            ? _stream.Length //- GetByteModifieds(ByteAction.Deleted).Count() + GetByteModifieds(ByteAction.Added).Count()
+            : -1;
+
+        /// <summary>
+        /// Get the length of file/stream included byte added and deleted. Return -1 if file is close.
+        /// </summary>
+        public long LengthAjusted => IsOpen
+            ? _stream.Length - GetByteModifieds(ByteAction.Deleted).Count() + GetByteModifieds(ByteAction.Added).Count()
+            : -1;
 
         /// <summary>
         /// Return true if file or stream are empty or close.
