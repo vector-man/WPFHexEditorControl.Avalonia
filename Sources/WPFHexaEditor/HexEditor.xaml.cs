@@ -28,8 +28,12 @@ using Path = System.IO.Path;
 namespace WpfHexaEditor
 {
     /// <summary> 
-    /// Wpf HexEditor control
+    /// Wpf HexEditor control implementation
     /// </summary>
+    /// <remarks>
+    /// A fast, fully customisable Wpf user control for editing file or stream as hexadecimal. 
+    /// Can be used in Wpf or WinForm application.
+    /// </remarks>
     public partial class HexEditor : IDisposable
     {
         #region Global class variables
@@ -69,6 +73,11 @@ namespace WpfHexaEditor
         /// To save the time when Scolling i do not building them every time when scolling.
         /// </summary>
         private byte[] _viewBuffer;
+
+        /// <summary>
+        /// Save the view byte buffer position as a field. 
+        /// To save the time when Scolling i do not building them every time when scolling.
+        /// </summary>
         private long[] _viewBufferBytePosition;
 
         /// <summary>
@@ -916,6 +925,8 @@ namespace WpfHexaEditor
 
         private void Control_KeyDown(object sender, KeyEventArgs e)
         {
+            //TODO: need to fix... not occurs all times as needed.
+
             switch (e.Key)
             {
                 case Key.Delete:
@@ -2785,8 +2796,8 @@ namespace WpfHexaEditor
                 {
                     Height = LineHeight,
                     AutoWidth = false,
-                    FontWeight = hlHeader ? FontWeights.Bold : FontWeights.Normal,
-                    Foreground = hlHeader ? ForegroundHighLightOffSetHeaderColor : ForegroundOffSetHeaderColor,
+                    FontWeight = hlHeader && !HideByteDeleted ? FontWeights.Bold : FontWeights.Normal,
+                    Foreground = hlHeader && !HideByteDeleted? ForegroundHighLightOffSetHeaderColor : ForegroundOffSetHeaderColor,
                     RenderPoint = new Point(2, 2),
                 };
 
@@ -3677,8 +3688,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Update all scroll marker position
         /// </summary>
-        private void UpdateScrollMarkerPosition()
-        {
+        private void UpdateScrollMarkerPosition() =>
             TraverseScrollMarker(ctrl =>
             {
                 if (!(ctrl.Tag is BookMark bm)) return;
@@ -3698,7 +3708,6 @@ namespace WpfHexaEditor
                     ctrl.Margin = new Thickness(0);
                 }
             });
-        }
 
         /// <summary>
         /// Clear ScrollMarker
@@ -3709,40 +3718,33 @@ namespace WpfHexaEditor
         /// Clear ScrollMarker
         /// </summary>
         /// <param name="marker">Type of marker to clear</param>
-        public void ClearScrollMarker(ScrollMarker marker)
-        {
+        public void ClearScrollMarker(ScrollMarker marker) =>
             TraverseScrollMarker(sm =>
             {
                 if (sm.Tag is BookMark mark && mark.Marker == marker)
                     MarkerGrid.Children.Remove(sm);
             });
-        }
 
         /// <summary>
         /// Clear ScrollMarker
         /// </summary>
         /// <param name="marker">Type of marker to clear</param>
-        /// <param name="position"></param>
-        public void ClearScrollMarker(ScrollMarker marker, long position)
-        {
+        public void ClearScrollMarker(ScrollMarker marker, long position) => 
             TraverseScrollMarker(sm =>
             {
                 if (sm.Tag is BookMark mark && mark.Marker == marker && mark.BytePositionInStream == position)
                     MarkerGrid.Children.Remove(sm);
             });
-        }
 
         /// <summary>
         /// Clear ScrollMarker at position
         /// </summary>
-        public void ClearScrollMarker(long position)
-        {
+        public void ClearScrollMarker(long position) =>
             TraverseScrollMarker(sm =>
             {
                 if (sm.Tag is BookMark mark && mark.BytePositionInStream == position)
                     MarkerGrid.Children.Remove(sm);
             });
-        }
 
         #endregion Bookmark and other scrollmarker
 
@@ -3959,7 +3961,6 @@ namespace WpfHexaEditor
         #endregion Bottom and Top rectangle
 
         #region MouseWheel support
-
         /// <summary>
         /// Control the mouse wheel speed
         /// </summary>
@@ -3995,8 +3996,7 @@ namespace WpfHexaEditor
         }
         #endregion
 
-        #region Highlight support       
-
+        #region Highlight support
         /// <summary>
         /// Byte at selection start
         /// </summary>
@@ -4074,9 +4074,7 @@ namespace WpfHexaEditor
                     _markedPositionList.Remove(i);
 
             if (updateVisual) UpdateHighLight();
-        }
-
-
+        }        
         #endregion Highlight support
 
         #region ByteCount property/methods
@@ -4138,7 +4136,6 @@ namespace WpfHexaEditor
         #endregion
 
         #region IByteControl grouping support
-
         public ByteSpacerPosition ByteSpacerPositioning
         {
             get => (ByteSpacerPosition)GetValue(ByteSpacerPositioningProperty);
@@ -4279,6 +4276,9 @@ namespace WpfHexaEditor
         #endregion
 
         #region Append/expend bytes to end of file
+        //////////
+        // TODO: Will be updated soon with the possibility to insert byte anywhere :)
+        //////////
 
         /// <summary>
         /// Allow control to append/expend byte at end of file

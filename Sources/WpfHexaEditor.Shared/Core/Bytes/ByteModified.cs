@@ -14,18 +14,16 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Default contructor
         /// </summary>
-        public ByteModified()
-        {
-        }
+        public ByteModified() { }
 
         /// <summary>
         /// complete contructor
         /// </summary>
-        public ByteModified(byte? val, ByteAction action, long BytePositionInStream, long undoLength)
+        public ByteModified(byte? val, ByteAction action, long bytePositionInStream, long undoLength)
         {
             Byte = val;
             Action = action;
-            BytePositionInStream = BytePositionInStream;
+            BytePositionInStream = bytePositionInStream;
             Length = undoLength;
         }
 
