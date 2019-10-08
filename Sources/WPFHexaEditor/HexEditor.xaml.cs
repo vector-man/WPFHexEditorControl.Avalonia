@@ -942,26 +942,22 @@ namespace WpfHexaEditor
 
         private void Control_MovePageUp(object sender, EventArgs e)
         {
-            var visibleLine = MaxVisibleLine;
-            var byteToMove = BytePerLine * visibleLine;
-            var test = SelectionStart - byteToMove;
+            //Prevent infinite loop
+            _setFocusTest = false;
+
+            //Get the new position from SelectionStart down one page
+            var newPosition = HideByteDeleted
+                ? GetValidPositionFrom(SelectionStart, -(BytePerLine * MaxVisibleLine))
+                : SelectionStart - BytePerLine;
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
-            {
-                if (test > -1)
-                    SelectionStart -= byteToMove;
-                else
-                    SelectionStart = 0;
-            }
+                SelectionStart = newPosition < _provider.Length ? newPosition : 0;
             else
             {
                 FixSelectionStartStop();
 
-                if (test > -1)
-                {
-                    SelectionStart -= byteToMove;
-                    SelectionStop -= byteToMove;
-                }
+                if (newPosition > -1)
+                    SelectionStart = SelectionStop = newPosition;
             }
 
             if (AllowVisualByteAddress && SelectionStart > VisualByteAdressStart)
@@ -972,7 +968,7 @@ namespace WpfHexaEditor
 
             if (sender is HexByte || sender is StringByte)
             {
-                VerticalScrollBar.Value -= visibleLine - 1;
+                VerticalScrollBar.Value -= MaxVisibleLine - 1;
                 SetFocusAtSelectionStart();
             }
         }
@@ -1270,11 +1266,14 @@ namespace WpfHexaEditor
 
         private void Control_MoveRight(object sender, EventArgs e)
         {
-            var test = SelectionStart + 1;
+            //Get the new position from SelectionStart down one page
+            var newPosition = HideByteDeleted
+                ? GetValidPositionFrom(SelectionStart, 1)
+                : SelectionStart++;
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
             {
-                if (test <= _provider.Length)
+                if (newPosition <= _provider.Length)
                     SelectionStop++;
                 else
                     SelectionStart = _provider.Length;
@@ -1283,7 +1282,7 @@ namespace WpfHexaEditor
             {
                 //FixSelectionStartStop();
 
-                if (test < _provider.Length)
+                if (newPosition < _provider.Length)
                     SelectionStart = ++SelectionStop;
             }
 
@@ -1301,24 +1300,20 @@ namespace WpfHexaEditor
 
         private void Control_MoveLeft(object sender, EventArgs e)
         {
-            var test = SelectionStart - 1;
+            //Prevent infinite loop
+            _setFocusTest = false;
+
+            //Get the new position from SelectionStart down one page
+            var newPosition = GetValidPositionFrom(SelectionStart, -1);
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
-            {
-                if (test > -1)
-                    SelectionStart--;
-                else
-                    SelectionStart = 0;
-            }
+                SelectionStart = newPosition > -1 ? newPosition : 0;
             else
             {
                 FixSelectionStartStop();
 
-                if (test > -1)
-                {
-                    SelectionStart--;
-                    SelectionStop--;
-                }
+                if (newPosition > -1)
+                    SelectionStart = SelectionStop = newPosition;
             }
 
             if (SelectionStart < 0)
@@ -1560,6 +1555,8 @@ namespace WpfHexaEditor
             long cnt = 0;
             for (long i = 0; i < gap; i++)
             {
+                cnt++;
+
                 if (_provider.CheckIfIsByteModified(position + (positionCorrection > 0 ? cnt : -cnt), ByteAction.Deleted).success)
                 {
                     validPosition += positionCorrection > 0 ? 1 : -1;
@@ -1567,8 +1564,6 @@ namespace WpfHexaEditor
                 }
                 else
                     validPosition += positionCorrection > 0 ? 1 : -1;
-
-                cnt++;
             }
 
 #if DEBUG
