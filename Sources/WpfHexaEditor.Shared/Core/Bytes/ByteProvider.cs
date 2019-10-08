@@ -349,12 +349,12 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public void SubmitChanges()
         {
-            if (!CanWrite)            
+            if (!CanWrite)
                 throw new InvalidOperationException($"Cannot write to stream while {nameof(CanWrite)} is set to false.");
-            
-            if (!Stream.CanWrite)            
+
+            if (!Stream.CanWrite)
                 throw new InvalidOperationException($"Cannot write to stream while {nameof(Stream)}.{nameof(CanWrite)} is set to false.");
-            
+
             var cancel = false;
 
             //Launch event at process started
@@ -366,113 +366,79 @@ namespace WpfHexaEditor.Core.Bytes
             int i;
 
             //Create appropriate temp stream for new file.
-            var newStream = Length < ConstantReadOnly.Largefilelength
-                ? (Stream)new MemoryStream()
-                : File.Open(Path.GetTempFileName(), FileMode.Open, FileAccess.ReadWrite);
-
-            //Fast change only nothing byte deleted or added
-            if (!GetByteModifieds(ByteAction.Deleted).Any() && 
-                !GetByteModifieds(ByteAction.Added).Any() &&
-                !File.Exists(_newfilename))
+            using (var memoryStream = new MemoryStream())
             {
-                var bytemodifiedList = GetByteModifieds(ByteAction.Modified);
-                double countChange = bytemodifiedList.Count;
-                i = 0;
+                var newStream = Length < ConstantReadOnly.Largefilelength
+                        ? (Stream)memoryStream
+                        : File.Open(Path.GetTempFileName(), FileMode.Open, FileAccess.ReadWrite);
 
-                #region Fast save. only save byteaction=modified
+                //Fast change only nothing byte deleted or added
+                if (!GetByteModifieds(ByteAction.Deleted).Any() &&
+                    !GetByteModifieds(ByteAction.Added).Any() &&
+                    !File.Exists(_newfilename))
+                {
+                    var bytemodifiedList = GetByteModifieds(ByteAction.Modified);
+                    double countChange = bytemodifiedList.Count;
+                    i = 0;
 
-                foreach (var bm in bytemodifiedList)
-                    if (bm.Value.IsValid)
+                    #region Fast save. only save byteaction=modified
+
+                    foreach (var bm in bytemodifiedList)
+                        if (bm.Value.IsValid)
+                        {
+                            //Set percent of progress
+                            LongProcessProgress = i++ / countChange;
+
+                            //Break process?
+                            if (!IsOnLongProcess)
+                            {
+                                cancel = true;
+                                break;
+                            }
+
+                            _stream.Position = bm.Key;
+                            _stream.WriteByte(bm.Value.Byte.Value);
+                        }
+
+                    #endregion
+                }
+                else
+                {
+                    //assur that we have at less 1 byte modified... if not add the first byte of file
+                    if (_byteModifiedDictionary.Count == 0)
+                        AddByteModified(GetByte(0).singleByte, 0);
+
+                    byte[] buffer;
+                    long bufferlength;
+                    var sortedBm = GetByteModifieds(ByteAction.All).OrderBy(b => b.Key).ToList();
+                    double countChange = sortedBm.Count;
+                    i = 0;
+
+                    //Set position
+                    Position = 0;
+
+                    //Start update and rewrite file.
+                    foreach (var nextByteModified in sortedBm)
                     {
                         //Set percent of progress
                         LongProcessProgress = i++ / countChange;
 
                         //Break process?
                         if (!IsOnLongProcess)
+                            break;
+
+                        //Reset buffer
+                        buffer = new byte[ConstantReadOnly.Copyblocksize];
+
+                        #region start read/write / use little block for optimize memory
+
+                        while (Position != nextByteModified.Key)
                         {
-                            cancel = true;
-                            break;
-                        }
+                            bufferlength = nextByteModified.Key - Position;
 
-                        _stream.Position = bm.Key;
-                        _stream.WriteByte(bm.Value.Byte.Value);
-                    }
-
-                #endregion
-            }
-            else
-            {
-                //assur that we have at less 1 byte modified... if not add the first byte of file
-                if (_byteModifiedDictionary.Count == 0)
-                    AddByteModified(GetByte(0).singleByte, 0);
-
-                byte[] buffer;
-                long bufferlength;
-                var sortedBm = GetByteModifieds(ByteAction.All).OrderBy(b => b.Key).ToList();
-                double countChange = sortedBm.Count;
-                i = 0;
-                    
-                //Set position
-                Position = 0;
-
-                //Start update and rewrite file.
-                foreach (var nextByteModified in sortedBm)
-                {
-                    //Set percent of progress
-                    LongProcessProgress = i++ / countChange;
-
-                    //Break process?
-                    if (!IsOnLongProcess)
-                        break;
-
-                    //Reset buffer
-                    buffer = new byte[ConstantReadOnly.Copyblocksize];
-
-                    #region start read/write / use little block for optimize memory
-
-                    while (Position != nextByteModified.Key)
-                    {
-                        bufferlength = nextByteModified.Key - Position;
-
-                        //TEMPS
-                        if (bufferlength < 0)
-                            bufferlength = 1;
-
-                        //EOF
-                        if (bufferlength < ConstantReadOnly.Copyblocksize)
-                            buffer = new byte[bufferlength];
-
-                        _stream.Read(buffer, 0, buffer.Length);
-                        newStream.Write(buffer, 0, buffer.Length);
-                    }
-
-                    #endregion
-
-                    #region Apply ByteAction!
-
-                    switch (nextByteModified.Value.Action)
-                    {
-                        //case ByteAction.Added:
-                        //    //TODO : IMPLEMENTING ADD BYTE
-                        //    break;
-                        case ByteAction.Deleted:
-                            Position++;
-                            break;
-                        case ByteAction.Modified:
-                            Position++;
-                            newStream.WriteByte(nextByteModified.Value.Byte.Value);
-                            break;
-                    }
-
-                    #endregion
-
-                    #region Read/Write the last section of file
-
-                    if (nextByteModified.Key == sortedBm.Last().Key)
-                    {
-                        while (!Eof)
-                        {
-                            bufferlength = _stream.Length - Position;
+                            //TEMPS
+                            if (bufferlength < 0)
+                                bufferlength = 1;
 
                             //EOF
                             if (bufferlength < ConstantReadOnly.Copyblocksize)
@@ -481,60 +447,97 @@ namespace WpfHexaEditor.Core.Bytes
                             _stream.Read(buffer, 0, buffer.Length);
                             newStream.Write(buffer, 0, buffer.Length);
                         }
+
+                        #endregion
+
+                        #region Apply ByteAction!
+
+                        switch (nextByteModified.Value.Action)
+                        {
+                            //case ByteAction.Added:
+                            //    //TODO : IMPLEMENTING ADD BYTE
+                            //    break;
+                            case ByteAction.Deleted:
+                                Position++;
+                                break;
+                            case ByteAction.Modified:
+                                Position++;
+                                newStream.WriteByte(nextByteModified.Value.Byte.Value);
+                                break;
+                        }
+
+                        #endregion
+
+                        #region Read/Write the last section of file
+
+                        if (nextByteModified.Key == sortedBm.Last().Key)
+                        {
+                            while (!Eof)
+                            {
+                                bufferlength = _stream.Length - Position;
+
+                                //EOF
+                                if (bufferlength < ConstantReadOnly.Copyblocksize)
+                                    buffer = new byte[bufferlength];
+
+                                _stream.Read(buffer, 0, buffer.Length);
+                                newStream.Write(buffer, 0, buffer.Length);
+                            }
+                        }
+
+                        #endregion
+                    }
+
+                    #region Set stream to new file (save as)
+
+                    var refreshByteProvider = false;
+                    if (File.Exists(_newfilename))
+                    {
+                        _stream?.Close();
+                        _stream = File.Open(_newfilename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+                        _stream?.SetLength(newStream.Length);
+                        refreshByteProvider = true;
                     }
 
                     #endregion
-                }
 
-                #region Set stream to new file (save as)
+                    #region Write new data to current stream
 
-                var refreshByteProvider = false;
-                if (File.Exists(_newfilename))
-                {
-                    _stream?.Close();
-                    _stream = File.Open(_newfilename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
-                    _stream?.SetLength(newStream.Length);
-                    refreshByteProvider = true;
-                }
+                    Position = 0;
+                    newStream.Position = 0;
+                    buffer = new byte[ConstantReadOnly.Copyblocksize];
 
-                #endregion
-
-                #region Write new data to current stream
-
-                Position = 0;
-                newStream.Position = 0;
-                buffer = new byte[ConstantReadOnly.Copyblocksize];
-
-                while (!Eof)
-                {
-                    //Set percent of progress
-                    LongProcessProgress = Position / (double)Length;
-
-                    //Break process?
-                    if (!IsOnLongProcess)
+                    while (!Eof)
                     {
-                        cancel = true;
-                        break;
+                        //Set percent of progress
+                        LongProcessProgress = Position / (double)Length;
+
+                        //Break process?
+                        if (!IsOnLongProcess)
+                        {
+                            cancel = true;
+                            break;
+                        }
+
+                        bufferlength = _stream.Length - Position;
+
+                        //EOF
+                        if (bufferlength < ConstantReadOnly.Copyblocksize)
+                            buffer = new byte[bufferlength];
+
+                        newStream.Read(buffer, 0, buffer.Length);
+                        _stream.Write(buffer, 0, buffer.Length);
                     }
+                    _stream.SetLength(newStream.Length);
 
-                    bufferlength = _stream.Length - Position;
+                    #endregion
 
-                    //EOF
-                    if (bufferlength < ConstantReadOnly.Copyblocksize)
-                        buffer = new byte[bufferlength];
+                    //dispose resource
+                    newStream.Close();
 
-                    newStream.Read(buffer, 0, buffer.Length);
-                    _stream.Write(buffer, 0, buffer.Length);
+                    if (refreshByteProvider)
+                        FileName = _newfilename;
                 }
-                _stream.SetLength(newStream.Length);
-
-                #endregion
-
-                //dispose resource
-                newStream.Close();
-
-                if (refreshByteProvider)
-                    FileName = _newfilename;
             }
 
             //Launch event at process completed
@@ -906,8 +909,10 @@ namespace WpfHexaEditor.Core.Bytes
             }
 
             //set memorystream (BinaryData) clipboard data
-            var ms = new MemoryStream(buffer, 0, buffer.Length, false, true);
-            da.SetData("BinaryData", ms);
+            using (var ms = new MemoryStream(buffer, 0, buffer.Length, false, true))
+            {
+                da.SetData("BinaryData", ms);
+            }
 
             Clipboard.SetDataObject(da, true);
 

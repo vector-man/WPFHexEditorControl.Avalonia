@@ -946,9 +946,7 @@ namespace WpfHexaEditor
             _setFocusTest = false;
 
             //Get the new position from SelectionStart down one page
-            var newPosition = HideByteDeleted
-                ? GetValidPositionFrom(SelectionStart, -(BytePerLine * MaxVisibleLine))
-                : SelectionStart - BytePerLine;
+            var newPosition = GetValidPositionFrom(SelectionStart, -(BytePerLine * MaxVisibleLine));
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
                 SelectionStart = newPosition < _provider.Length ? newPosition : 0;
@@ -979,9 +977,7 @@ namespace WpfHexaEditor
             _setFocusTest = false;
 
             //Get the new position from SelectionStart down one page
-            var newPosition = HideByteDeleted
-                ? GetValidPositionFrom(SelectionStart, BytePerLine * MaxVisibleLine)
-                : SelectionStart + BytePerLine;
+            var newPosition = GetValidPositionFrom(SelectionStart, BytePerLine * MaxVisibleLine);
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
                 SelectionStart = newPosition < _provider.Length ? newPosition : _provider.Length;
@@ -1010,9 +1006,7 @@ namespace WpfHexaEditor
         {
             _setFocusTest = false;
 
-            var newPosition = HideByteDeleted
-                ? GetValidPositionFrom(SelectionStart, BytePerLine)
-                : SelectionStart + BytePerLine;
+            var newPosition = GetValidPositionFrom(SelectionStart, BytePerLine);
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
                 SelectionStart = newPosition < _provider.Length ? newPosition : _provider.Length;
@@ -1039,9 +1033,7 @@ namespace WpfHexaEditor
             _setFocusTest = false;
 
             //Get the new position from SelectionStart
-            var newPosition = HideByteDeleted
-                ? GetValidPositionFrom(SelectionStart, -BytePerLine)
-                : SelectionStart - BytePerLine;  
+            var newPosition = GetValidPositionFrom(SelectionStart, -BytePerLine);
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
                 SelectionStart = newPosition > -1 ? newPosition : 0;
@@ -1227,9 +1219,11 @@ namespace WpfHexaEditor
         {
             get
             {
-                var ms = new MemoryStream();
-                CopyToStream(ms, true);
-                return ms.ToArray();
+                using (var ms = new MemoryStream())
+                {
+                    CopyToStream(ms, true);
+                    return ms.ToArray();
+                }
             }
         }
 
@@ -1240,9 +1234,11 @@ namespace WpfHexaEditor
         {
             get
             {
-                var ms = new MemoryStream();
-                CopyToStream(ms, true);
-                return BytesToString(ms.ToArray());
+                using (var ms = new MemoryStream())
+                {
+                    CopyToStream(ms, true);
+                    return BytesToString(ms.ToArray());
+                }
             }
         }
 
@@ -1253,9 +1249,11 @@ namespace WpfHexaEditor
         {
             get
             {
-                var ms = new MemoryStream();
-                CopyToStream(ms, true);
-                return ByteToHex(ms.ToArray());
+                using (var ms = new MemoryStream())
+                {
+                    CopyToStream(ms, true);
+                    return ByteToHex(ms.ToArray());
+                }
             }
         }
 
@@ -1266,24 +1264,25 @@ namespace WpfHexaEditor
 
         private void Control_MoveRight(object sender, EventArgs e)
         {
+            //Prevent infinite loop
+            _setFocusTest = false;
+
             //Get the new position from SelectionStart down one page
-            var newPosition = HideByteDeleted
-                ? GetValidPositionFrom(SelectionStart, 1)
-                : SelectionStart++;
+            var newPosition = GetValidPositionFrom(SelectionStart, 1);
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
             {
                 if (newPosition <= _provider.Length)
-                    SelectionStop++;
+                    SelectionStop = GetValidPositionFrom(SelectionStop, 1);
                 else
                     SelectionStart = _provider.Length;
             }
             else
             {
-                //FixSelectionStartStop();
+                FixSelectionStartStop();
 
                 if (newPosition < _provider.Length)
-                    SelectionStart = ++SelectionStop;
+                    SelectionStart = SelectionStop = newPosition;
             }
 
             if (SelectionStart >= _provider.Length)
@@ -1417,9 +1416,11 @@ namespace WpfHexaEditor
         {
             if (!ByteProvider.CheckIsOpen(_provider)) return null;
 
-            var cstream = new MemoryStream();
-            CopyToStream(cstream, 0, Length - 1, copyChange);
-            return cstream.ToArray();
+            using (var cstream = new MemoryStream())
+            {
+                CopyToStream(cstream, 0, Length - 1, copyChange);
+                return cstream.ToArray();
+            }
         }
 
         /// <summary>
@@ -1841,13 +1842,14 @@ namespace WpfHexaEditor
             //Refresh stream
             if (!ByteProvider.CheckIsOpen(_provider)) return;
 
-            var stream = new MemoryStream();
+            using (var stream = new MemoryStream())
+            {
+                _provider.Position = 0;
+                _provider.Stream.CopyTo(stream);
 
-            _provider.Position = 0;
-            _provider.Stream.CopyTo(stream);
-
-            CloseProvider();
-            OpenStream(stream);
+                CloseProvider();
+                OpenStream(stream);
+            }
 
             ChangesSubmited?.Invoke(this, new EventArgs());
         }
