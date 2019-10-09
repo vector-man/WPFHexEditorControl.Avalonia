@@ -116,36 +116,30 @@ namespace WpfHexaEditor.Core.Bytes
         /// <param name="charArr">The length of this value should be 2.</param>
         public static void ByteToHexCharArray(byte val, char[] charArr)
         {
-            if (charArr == null)
-            {
+            if (charArr == null)            
                 throw new ArgumentNullException(nameof(charArr));
-            }
-            if (charArr.Length != 2)
-            {
-                throw new ArgumentException($"The length of {charArr} should be 2.");
-            }
+            
+            if (charArr.Length != 2)            
+                throw new ArgumentException($"The length of {charArr} should be 2.");            
 
             charArr[0] = ByteToHexChar(val >> 4);
             charArr[1] = ByteToHexChar(val - ((val >> 4) << 4));
         }
 
         //Convert a byte to Hex char,i.e,10 = 'A'
-        public static char ByteToHexChar(int val)
-        {
-            if (val < 10)
-                return (char)(48 + val);
-
-            switch (val)
-            {
-                case 10: return 'A';
-                case 11: return 'B';
-                case 12: return 'C';
-                case 13: return 'D';
-                case 14: return 'E';
-                case 15: return 'F';
-                default: return 's';
-            }
-        }
+        public static char ByteToHexChar(int val) =>
+            val < 10
+                ? (char)(48 + val)
+                : (val switch
+                        {
+                            10 => 'A',
+                            11 => 'B',
+                            12 => 'C',
+                            13 => 'D',
+                            14 => 'E',
+                            15 => 'F',
+                            _ => 's',
+                        });
 
         /// <summary>
         /// Converts the byte to a hex string. For example: "10" = "0A";

@@ -1067,6 +1067,34 @@ namespace WpfHexaEditor
             UpdateVisual();
         }
 
+        private void Control_DoubleClick(object sender, EventArgs e)
+        {
+            if (!(sender is IByteControl ctrl)) return;
+            if (!ByteProvider.CheckIsOpen(_provider)) return;
+
+            //TODO: ADD PROPERTIES TO CONTROL IF THIS FONCTION WORK OR NOT...
+            
+            #region Select all same byte of SelectionStart in rage of selectionStart
+            var (singleByte, succes) = _provider.GetByte(SelectionStart);
+            if (succes)
+            {
+                var startPosition = SelectionStart;
+                var stopPosition = SelectionStop;
+
+                //Selection start
+                while (_provider.GetByte(--startPosition).singleByte == singleByte && startPosition > 0)
+                    SelectionStart = startPosition;
+
+                //Selection stop
+                while (_provider.GetByte(++stopPosition).singleByte == singleByte && stopPosition < _provider.Length)
+                    SelectionStop = stopPosition;
+            }
+            #endregion
+
+            UpdateSelectionColor(ctrl is StringByte ? FirstColor.StringByteData : FirstColor.HexByteData);
+            UpdateVisual();
+        }
+
         private void Control_MouseSelection(object sender, EventArgs e)
         {
             //Prevent false mouse selection on file open
@@ -1567,10 +1595,10 @@ namespace WpfHexaEditor
                     validPosition += positionCorrection > 0 ? 1 : -1;
             }
 
-#if DEBUG
-            var debugstring = validPosition > 0 ? validPosition : -1;
-            Debug.Print($"Position : D{position} C{cnt} F{debugstring}");
-#endif
+//#if DEBUG
+//            var debugstring = validPosition > 0 ? validPosition : -1;
+//            Debug.Print($"Position : D{position} C{cnt} F{debugstring}");
+//#endif
             return validPosition > 0 ? validPosition : -1;
         }
 
@@ -2524,6 +2552,7 @@ namespace WpfHexaEditor
                     ctrl.MovePrevious -= Control_MovePrevious;
                     ctrl.MouseSelection -= Control_MouseSelection;
                     ctrl.Click -= Control_Click;
+                    ctrl.DoubleClick -= Control_DoubleClick;
                     ctrl.RightClick -= Control_RightClick;
                     ctrl.MoveUp -= Control_MoveUp;
                     ctrl.MoveDown -= Control_MoveDown;
@@ -2548,6 +2577,7 @@ namespace WpfHexaEditor
                     ctrl.MovePrevious += Control_MovePrevious;
                     ctrl.MouseSelection += Control_MouseSelection;
                     ctrl.Click += Control_Click;
+                    ctrl.DoubleClick += Control_DoubleClick;
                     ctrl.RightClick += Control_RightClick;
                     ctrl.MoveUp += Control_MoveUp;
                     ctrl.MoveDown += Control_MoveDown;

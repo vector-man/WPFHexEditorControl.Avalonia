@@ -1109,7 +1109,7 @@ namespace WpfHexaEditor.Core.Bytes
             if (output.CanWrite)
                 output.Write(buffer, (int)output.Length, buffer.Length);
             else
-                throw new Exception(Properties.Resources.WritingErrorExeptionString);
+                throw new IOException(Properties.Resources.WritingErrorExeptionString);
 
             DataCopiedToStream?.Invoke(this, new EventArgs());
         }

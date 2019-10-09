@@ -38,6 +38,7 @@ namespace WpfHexaEditor
         public event EventHandler MouseSelection;
         public event EventHandler Click;
         public event EventHandler RightClick;
+        public event EventHandler DoubleClick;
         public event EventHandler MoveNext;
         public event EventHandler MovePrevious;
         public event EventHandler MoveRight;
@@ -406,7 +407,16 @@ namespace WpfHexaEditor
                 if (!IsFocused)
                     Focus();
 
-                Click?.Invoke(this, e);
+                switch (e.ClickCount)
+                {
+                    case 1:                        
+                        Click?.Invoke(this, e);
+                        break;
+                    case 2:
+                        DoubleClick?.Invoke(this, e);
+                        break;
+                }
+
             }
 
             if (e.RightButton == MouseButtonState.Pressed)

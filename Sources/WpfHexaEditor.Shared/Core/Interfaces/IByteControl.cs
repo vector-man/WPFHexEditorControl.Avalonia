@@ -31,6 +31,7 @@ namespace WpfHexaEditor.Core.Interfaces
         event EventHandler ByteModified;
         event EventHandler MouseSelection;
         event EventHandler Click;
+        event EventHandler DoubleClick;
         event EventHandler RightClick;
         event EventHandler MoveNext;
         event EventHandler MovePrevious;
