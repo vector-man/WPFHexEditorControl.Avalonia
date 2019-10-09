@@ -53,6 +53,8 @@ Unicode TBL are supported. For use put value at the right of equal (=) like this
 - Show data as hexadecimal or decimal
 - Possibility to view only a part of file/stream in editor and dont loose anychange when used it (AllowVisualByteAdress...)
 - Zoom / UnZoom hexeditor content (50% to 200%)
+- Positility to show or not the bytes are deleted.
+- Customize the color of bytes, TBL, background, header, and much more ...
 - ...
 
 ## How to use
