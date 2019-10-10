@@ -4821,11 +4821,11 @@ namespace WpfHexaEditor
                     var stopPosition = SelectionStop;
 
                     //Selection start
-                    while (_provider.GetByte(--startPosition).singleByte == singleByte && startPosition > 0)
+                    while (_provider.GetByte(GetValidPositionFrom(startPosition--, -1)).singleByte == singleByte && startPosition > 0)
                         SelectionStart = startPosition;
 
                     //Selection stop
-                    while (_provider.GetByte(++stopPosition).singleByte == singleByte && stopPosition < _provider.Length)
+                    while (_provider.GetByte(GetValidPositionFrom(stopPosition++, 1)).singleByte == singleByte && stopPosition < _provider.Length)
                         SelectionStop = stopPosition;
                 }
             }
