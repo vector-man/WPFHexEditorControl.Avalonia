@@ -1053,48 +1053,7 @@ namespace WpfHexaEditor
 
             SetFocusAtSelectionStart();
         }
-
-        private void Control_Click(object sender, EventArgs e)
-        {
-            if (!(sender is IByteControl ctrl)) return;
-
-            if (Keyboard.Modifiers == ModifierKeys.Shift)
-                SelectionStop = ctrl.BytePositionInStream;
-            else
-                SelectionStart = SelectionStop = ctrl.BytePositionInStream;
-
-            UpdateSelectionColor(ctrl is StringByte ? FirstColor.StringByteData : FirstColor.HexByteData);
-            UpdateVisual();
-        }
-
-        private void Control_DoubleClick(object sender, EventArgs e)
-        {
-            if (!(sender is IByteControl ctrl)) return;
-            if (!ByteProvider.CheckIsOpen(_provider)) return;
-
-            //TODO: ADD PROPERTIES TO CONTROL IF THIS FONCTION WORK OR NOT...
-            
-            #region Select all same byte of SelectionStart in rage of selectionStart
-            var (singleByte, succes) = _provider.GetByte(SelectionStart);
-            if (succes)
-            {
-                var startPosition = SelectionStart;
-                var stopPosition = SelectionStop;
-
-                //Selection start
-                while (_provider.GetByte(--startPosition).singleByte == singleByte && startPosition > 0)
-                    SelectionStart = startPosition;
-
-                //Selection stop
-                while (_provider.GetByte(++stopPosition).singleByte == singleByte && stopPosition < _provider.Length)
-                    SelectionStop = stopPosition;
-            }
-            #endregion
-
-            UpdateSelectionColor(ctrl is StringByte ? FirstColor.StringByteData : FirstColor.HexByteData);
-            UpdateVisual();
-        }
-
+        
         private void Control_MouseSelection(object sender, EventArgs e)
         {
             //Prevent false mouse selection on file open
@@ -4809,6 +4768,74 @@ namespace WpfHexaEditor
 
         #endregion
 
+        #region Click and double click support
+
+        /// <summary>
+        /// Select all same byte of SelectionStart in rage of SelectionStart at double click
+        /// </summary>
+        public bool AllowAutoSelectSameByteAtDoubleClick
+        {
+            get { return (bool)GetValue(AllowAutoSelectSameByteAtDoubleClickProperty); }
+            set { SetValue(AllowAutoSelectSameByteAtDoubleClickProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for AllowAutoSelectSameByteAtDoubleClick.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty AllowAutoSelectSameByteAtDoubleClickProperty =
+            DependencyProperty.Register(nameof(AllowAutoSelectSameByteAtDoubleClick), typeof(bool), typeof(HexEditor), 
+                new FrameworkPropertyMetadata(true, Control_AllowAutoSelectSameByteAtDoubleClick));
+
+        private static void Control_AllowAutoSelectSameByteAtDoubleClick(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+
+            ctrl.RefreshView();
+        }
+
+        private void Control_Click(object sender, EventArgs e)
+        {
+            if (!(sender is IByteControl ctrl)) return;
+
+            if (Keyboard.Modifiers == ModifierKeys.Shift)
+                SelectionStop = ctrl.BytePositionInStream;
+            else
+                SelectionStart = SelectionStop = ctrl.BytePositionInStream;
+
+            UpdateSelectionColor(ctrl is StringByte ? FirstColor.StringByteData : FirstColor.HexByteData);
+            UpdateVisual();
+        }
+
+        private void Control_DoubleClick(object sender, EventArgs e)
+        {
+            if (!(sender is IByteControl ctrl)) return;
+            if (!ByteProvider.CheckIsOpen(_provider)) return;
+
+            //TODO: ADD PROPERTIES TO CONTROL IF THIS FONCTION WORK OR NOT...
+
+            #region Select all same byte of SelectionStart in rage of selectionStart
+            if (AllowAutoSelectSameByteAtDoubleClick)
+            {
+                var (singleByte, succes) = _provider.GetByte(SelectionStart);
+                if (succes)
+                {
+                    var startPosition = SelectionStart;
+                    var stopPosition = SelectionStop;
+
+                    //Selection start
+                    while (_provider.GetByte(--startPosition).singleByte == singleByte && startPosition > 0)
+                        SelectionStart = startPosition;
+
+                    //Selection stop
+                    while (_provider.GetByte(++stopPosition).singleByte == singleByte && stopPosition < _provider.Length)
+                        SelectionStop = stopPosition;
+                }
+            }
+            #endregion
+
+            UpdateSelectionColor(ctrl is StringByte ? FirstColor.StringByteData : FirstColor.HexByteData);
+            UpdateVisual();
+        }
+        #endregion
+
         #region WORK IN PROGRESS // CustomBackgroundBlock implementation
 
         /// <summary>
@@ -4828,7 +4855,9 @@ namespace WpfHexaEditor
 
         private static void Control_UseCustomBackGroudBlockPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is HexEditor ctrl && e.NewValue != e.OldValue) ctrl.RefreshView();
+            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+
+            ctrl.RefreshView();
         }
 
         private List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
