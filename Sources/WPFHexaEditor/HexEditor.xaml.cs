@@ -199,6 +199,15 @@ namespace WpfHexaEditor
         /// </summary>
         public event EventHandler Redone;
 
+        /// <summary>
+        /// Occurs on byte click completed
+        /// </summary>
+        public event EventHandler ByteClick;
+
+        /// <summary>
+        /// Occurs on byte double click completed
+        /// </summary>
+        public event EventHandler ByteDoubleClick;
 
 
 
@@ -4768,7 +4777,7 @@ namespace WpfHexaEditor
 
         #endregion
 
-        #region Click and double click support
+        #region Byte click and double click support
 
         /// <summary>
         /// Select all same byte of SelectionStart in rage of SelectionStart at double click
@@ -4802,14 +4811,15 @@ namespace WpfHexaEditor
 
             UpdateSelectionColor(ctrl is StringByte ? FirstColor.StringByteData : FirstColor.HexByteData);
             UpdateVisual();
+
+            //launch click event 
+            ByteClick?.Invoke(sender, e);
         }
 
         private void Control_DoubleClick(object sender, EventArgs e)
         {
             if (!(sender is IByteControl ctrl)) return;
             if (!ByteProvider.CheckIsOpen(_provider)) return;
-
-            //TODO: ADD PROPERTIES TO CONTROL IF THIS FONCTION WORK OR NOT...
 
             #region Select all same byte of SelectionStart in rage of selectionStart
             if (AllowAutoSelectSameByteAtDoubleClick)
@@ -4833,6 +4843,9 @@ namespace WpfHexaEditor
 
             UpdateSelectionColor(ctrl is StringByte ? FirstColor.StringByteData : FirstColor.HexByteData);
             UpdateVisual();
+
+            //launch click event 
+            ByteDoubleClick?.Invoke(sender, e);
         }
         #endregion
 
