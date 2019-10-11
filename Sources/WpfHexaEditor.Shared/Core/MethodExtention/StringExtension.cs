@@ -13,17 +13,26 @@ namespace WpfHexaEditor.Core.MethodExtention
         /// <remarks>
         /// Code from :
         /// https://stackoverflow.com/questions/11447019/is-there-any-way-to-find-the-width-of-a-character-in-a-fixed-width-font-given-t
+        /// 
+        /// Modified/adapted by Derek Tremblay
         /// </remarks>
         public static Size GetScreenSize(this string text, FontFamily fontFamily, double fontSize, FontStyle fontStyle,
-            FontWeight fontWeight, FontStretch fontStretch)
+            FontWeight fontWeight, FontStretch fontStretch, Brush foreGround)
         {
-            fontFamily = fontFamily ?? new TextBlock().FontFamily;
+            fontFamily ??= new TextBlock().FontFamily;
             fontSize = fontSize > 0 ? fontSize : new TextBlock().FontSize;
 
             var typeface = new Typeface(fontFamily, fontStyle, fontWeight, fontStretch);
-#pragma warning disable CS0618 // Le type ou le membre est obsolète
-            var ft = new FormattedText(text ?? string.Empty, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, Brushes.Black);
-#pragma warning restore CS0618 // Le type ou le membre est obsolète
+
+#if NET47
+            var ft = new FormattedText(text ?? string.Empty, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
+                typeface, fontSize, foreGround, VisualTreeHelper.GetDpi(Application.Current.MainWindow).PixelsPerDip);
+#endif
+#if NET451
+            var ft = new FormattedText(text ?? string.Empty, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
+                typeface, fontSize, foreGround);
+#endif
+
 
             return new Size(ft.Width, ft.Height);
         }

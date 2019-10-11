@@ -186,7 +186,7 @@ namespace WpfHexaEditor
                 //TODO: clear size and use BaseByte.TextFormatted property...
                 var size = Text[1].ToString()
                     .GetScreenSize(_parent.FontFamily, _parent.FontSize, _parent.FontStyle, FontWeight,
-                        _parent.FontStretch);
+                        _parent.FontStretch, _parent.Foreground);
 
                 _parent.SetCaretSize(Width / 2, size.Height);
                 _parent.SetCaretMode(CaretMode.Overwrite);
