@@ -212,6 +212,10 @@
                         IsCheckable="True"
                         IsChecked="{Binding ElementName=HexEdit, Path=AllowAutoHighLightSelectionByte, UpdateSourceTrigger=PropertyChanged}" />
                     <MenuItem
+                        Header="Auto select all same byte of SelectionStart in rage at double click"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowAutoSelectSameByteAtDoubleClick, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem
                         Header="Count the number of the selected byte"
                         IsCheckable="True"
                         IsChecked="{Binding ElementName=HexEdit, Path=AllowByteCount, UpdateSourceTrigger=PropertyChanged}" />
