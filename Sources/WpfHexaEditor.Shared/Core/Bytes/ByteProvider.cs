@@ -910,9 +910,7 @@ namespace WpfHexaEditor.Core.Bytes
 
             //set memorystream (BinaryData) clipboard data
             using (var ms = new MemoryStream(buffer, 0, buffer.Length, false, true))
-            {
                 da.SetData("BinaryData", ms);
-            }
 
             Clipboard.SetDataObject(da, true);
 

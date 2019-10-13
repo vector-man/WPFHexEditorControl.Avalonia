@@ -1215,11 +1215,9 @@ namespace WpfHexaEditor
         {
             get
             {
-                using (var ms = new MemoryStream())
-                {
-                    CopyToStream(ms, true);
-                    return ms.ToArray();
-                }
+                using var ms = new MemoryStream();
+                CopyToStream(ms, true);
+                return ms.ToArray();
             }
         }
 
@@ -1230,11 +1228,9 @@ namespace WpfHexaEditor
         {
             get
             {
-                using (var ms = new MemoryStream())
-                {
-                    CopyToStream(ms, true);
-                    return BytesToString(ms.ToArray());
-                }
+                using var ms = new MemoryStream();
+                CopyToStream(ms, true);
+                return BytesToString(ms.ToArray());
             }
         }
 
@@ -1245,11 +1241,9 @@ namespace WpfHexaEditor
         {
             get
             {
-                using (var ms = new MemoryStream())
-                {
-                    CopyToStream(ms, true);
-                    return ByteToHex(ms.ToArray());
-                }
+                using var ms = new MemoryStream();
+                CopyToStream(ms, true);
+                return ByteToHex(ms.ToArray());
             }
         }
 
@@ -1412,11 +1406,9 @@ namespace WpfHexaEditor
         {
             if (!ByteProvider.CheckIsOpen(_provider)) return null;
 
-            using (var cstream = new MemoryStream())
-            {
-                CopyToStream(cstream, 0, Length - 1, copyChange);
-                return cstream.ToArray();
-            }
+            using var cstream = new MemoryStream();
+            CopyToStream(cstream, 0, Length - 1, copyChange);
+            return cstream.ToArray();
         }
 
         /// <summary>
