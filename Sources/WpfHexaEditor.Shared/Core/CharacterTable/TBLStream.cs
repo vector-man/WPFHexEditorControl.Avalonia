@@ -15,6 +15,7 @@ namespace WpfHexaEditor.Core.CharacterTable
     /// <summary>
     /// Used to manage Thingy TBL file (entry=value)
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix", Justification = "<En attente>")]
     public sealed class TblStream : IDisposable
     {
         #region Global class variables        

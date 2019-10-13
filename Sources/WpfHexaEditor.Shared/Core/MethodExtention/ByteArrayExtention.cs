@@ -16,6 +16,7 @@ namespace WpfHexaEditor.Core.MethodExtention
         /// <summary>
         /// Finds all index of byte find
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "<En attente>")]
         public static IEnumerable<long> FindIndexOf(this byte[] self, byte[] candidate)
         {
             if (!IsEmptyLocate(self, candidate))

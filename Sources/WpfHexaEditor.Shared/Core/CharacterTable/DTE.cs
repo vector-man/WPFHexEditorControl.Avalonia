@@ -1,5 +1,5 @@
 //////////////////////////////////////////////
-// Apache 2.0  - 2003-2017
+// Apache 2.0  - 2003-2019
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
@@ -61,7 +61,7 @@ namespace WpfHexaEditor.Core.CharacterTable
         /// </summary>
         public string Entry
         {
-            set => _entry = value.ToUpper();
+            set => _entry = value != null ? value.ToUpper(): string.Empty;
             get => _entry;
         }
 
@@ -93,6 +93,8 @@ namespace WpfHexaEditor.Core.CharacterTable
 
         public static DteType TypeDte(Dte dteValue)
         {
+            if (dteValue == null) return DteType.Invalid;
+
             try
             {
                 switch (dteValue._entry.Length)
@@ -126,6 +128,8 @@ namespace WpfHexaEditor.Core.CharacterTable
 
         public static DteType TypeDte(string dteValue)
         {
+            if (dteValue == null) return DteType.Invalid;
+
             try
             {
                 if (dteValue == Properties.Resources.EndTagString)
@@ -134,10 +138,14 @@ namespace WpfHexaEditor.Core.CharacterTable
                 if (dteValue == Properties.Resources.LineTagString)
                     return DteType.EndLine; //<ln>
 
-                if (dteValue.Length == 1)
-                    return DteType.Ascii;
-                if (dteValue.Length == 2)
-                    return DteType.DualTitleEncoding;
+                switch (dteValue.Length)
+                {
+                    case 1:
+                        return DteType.Ascii;
+                    case 2:
+                        return DteType.DualTitleEncoding;
+                }
+
                 if (dteValue.Length > 2)
                     return DteType.MultipleTitleEncoding;
             }

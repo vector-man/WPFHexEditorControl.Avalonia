@@ -196,4 +196,13 @@ namespace WpfHexaEditor.Core
         Dynamic,
         Fixed
     }
+
+    /// <summary>
+    /// Use mode of the caret
+    /// </summary>
+    public enum CaretMode
+    {
+        Insert,
+        Overwrite
+    }
 }

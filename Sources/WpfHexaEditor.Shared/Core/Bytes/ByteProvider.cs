@@ -424,8 +424,7 @@ namespace WpfHexaEditor.Core.Bytes
                         LongProcessProgress = i++ / countChange;
 
                         //Break process?
-                        if (!IsOnLongProcess)
-                            break;
+                        if (!IsOnLongProcess) break;
 
                         //Reset buffer
                         buffer = new byte[ConstantReadOnly.Copyblocksize];
@@ -454,9 +453,9 @@ namespace WpfHexaEditor.Core.Bytes
 
                         switch (nextByteModified.Value.Action)
                         {
-                            //case ByteAction.Added:
-                            //    //TODO : IMPLEMENTING ADD BYTE
-                            //    break;
+                            case ByteAction.Added:
+                                //TODO : IMPLEMENTING ADD BYTE
+                                break;
                             case ByteAction.Deleted:
                                 Position++;
                                 break;

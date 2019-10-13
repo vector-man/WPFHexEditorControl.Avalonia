@@ -35,24 +35,6 @@ namespace HexEditUnitTest.Core.Bytes {
 
 
             Trace.WriteLine(watch.ElapsedMilliseconds);
-        }
-
-        [TestMethod]
-        public void GetDecimalBitsTest() {
-            Assert.AreEqual(ByteConverters.GetDecimalBits(1), 1);
-            Assert.AreEqual(ByteConverters.GetDecimalBits(10),2);
-            Assert.AreEqual(ByteConverters.GetDecimalBits(100), 3);
-            Assert.AreEqual(ByteConverters.GetDecimalBits(1010), 4);
-            Assert.AreEqual(ByteConverters.GetDecimalBits(9999), 4);
-            Assert.AreEqual(ByteConverters.GetDecimalBits(9999 + 1), 5);
-        }
-
-        [TestMethod]
-        public void GetHexBitsTest() {
-            
-            Assert.AreEqual(ByteConverters.GetHexBits(0x1), 1);
-            Assert.AreEqual(ByteConverters.GetHexBits(0xf), 1);
-            Assert.AreEqual(ByteConverters.GetHexBits(0x10), 2);
-        }
+        }        
     }
 }

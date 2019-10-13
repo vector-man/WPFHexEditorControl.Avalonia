@@ -16,14 +16,8 @@ using System.Threading;
 namespace WpfHexaEditor.Core
 {
     /// <summary>
-    /// Use mode of the caret
+    /// This class represent a visual caret on editor
     /// </summary>
-    public enum CaretMode
-    {
-        Insert,
-        Overwrite
-    }
-
     public sealed class Caret : FrameworkElement, INotifyPropertyChanged
     {
         #region Global class variables
@@ -277,7 +271,6 @@ namespace WpfHexaEditor.Core
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        //[NotifyPropertyChangedInvocator]
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

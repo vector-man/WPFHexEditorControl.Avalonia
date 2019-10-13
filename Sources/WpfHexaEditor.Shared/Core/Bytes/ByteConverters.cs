@@ -26,8 +26,7 @@ namespace WpfHexaEditor.Core.Bytes
 
         public static string LongToString(long val, int saveBits = -1)
         {
-            if (saveBits == -1)
-                return val.ToString();
+            if (saveBits == -1) return val.ToString();
 
             //Char[] with fixed size is always
             var chs = new char[saveBits];
@@ -38,29 +37,6 @@ namespace WpfHexaEditor.Core.Bytes
             }
             return new string(chs);
         }
-
-        public static int GetDecimalBits(long val)
-        {
-            var bits = 0;
-            while (val != 0)
-            {
-                bits++;
-                val /= 10;
-            }
-            return bits;
-        }
-
-        public static int GetHexBits(long val)
-        {
-            var bits = 0;
-            while (val != 0)
-            {
-                bits++;
-                val /= 16;
-            }
-            return bits;
-        }
-
 
         /// <summary>
         /// Convert Byte to Char (can be used as visible text)
@@ -175,8 +151,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public static byte[] HexToByte(string hex)
         {
-            if (string.IsNullOrEmpty(hex))
-                return null;
+            if (string.IsNullOrEmpty(hex)) return null;
 
             hex = hex.Trim();
             var hexArray = hex.Split(' ');
@@ -187,8 +162,7 @@ namespace WpfHexaEditor.Core.Bytes
                 var hexValue = hexArray[i];
                 var (isByte, val) = HexToUniqueByte(hexValue);
 
-                if (!isByte)
-                    return null;
+                if (!isByte) return null;
 
                 byteArray[i] = val;
             }
@@ -245,12 +219,8 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Check if is an hexa byte string
         /// </summary>
-        public static (bool success, byte[] value) IsHexaByteStringValue(string hexastring)
-        {
-            var byteArray = HexToByte(hexastring);
-
-            return byteArray == null ? (false, null) : (true, byteArray);
-        }
+        public static (bool success, byte[] value) IsHexaByteStringValue(string hexastring) => 
+            HexToByte(hexastring) == null ? (false, null) : (true, byteArray: HexToByte(hexastring));
 
         /// <summary>
         /// Convert string to byte array
