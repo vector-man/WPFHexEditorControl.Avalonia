@@ -1563,10 +1563,6 @@ namespace WpfHexaEditor
                     validPosition += positionCorrection > 0 ? 1 : -1;
             }
 
-//#if DEBUG
-//            var debugstring = validPosition > 0 ? validPosition : -1;
-//            Debug.Print($"Position : D{position} C{cnt} F{debugstring}");
-//#endif
             return validPosition > 0 ? validPosition : -1;
         }
 
@@ -2871,7 +2867,6 @@ namespace WpfHexaEditor
 
             #endregion
 
-            //Clear all lines offset...
             ClearLineInfo();
 
             if (!ByteProvider.CheckIsOpen(_provider)) return;
@@ -2885,75 +2880,72 @@ namespace WpfHexaEditor
 
                 if (i > 0) firstByteInLine += BytePerLine;
 
-                //if (firstByteInLine < (_provider.Length - _provider.GetByteModifieds(ByteAction.Deleted).Count))
-                //{
-                    #region Set text visual
-                    if (!HideByteDeleted &&
-                        HighLightSelectionStart &&
-                        SelectionStart > -1 &&
-                        SelectionStart >= firstByteInLine &&
-                        SelectionStart <= firstByteInLine + BytePerLine - 1)
-                    {
-                        lineOffsetLabel.FontWeight = FontWeights.Bold;
-                        lineOffsetLabel.Foreground = ForegroundHighLightOffSetHeaderColor;
-                        lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {SelectionStart}";
-                        lineOffsetLabel.Tag = $"0x{LongToHex(SelectionStart).ToUpper()}";
-                        actualPosition = SelectionStart;
-                    }
-                    else
-                    {
-                        lineOffsetLabel.FontWeight = FontWeights.Normal;
-                        lineOffsetLabel.Foreground = ForegroundOffSetHeaderColor;
-                        lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {firstByteInLine}";
-                        lineOffsetLabel.Tag = $"0x{LongToHex(firstByteInLine).ToUpper()}";
-                        actualPosition = firstByteInLine;
-                    }
+                #region Set text visual
+                if (!HideByteDeleted &&
+                    HighLightSelectionStart &&
+                    SelectionStart > -1 &&
+                    SelectionStart >= firstByteInLine &&
+                    SelectionStart <= firstByteInLine + BytePerLine - 1)
+                {
+                    lineOffsetLabel.FontWeight = FontWeights.Bold;
+                    lineOffsetLabel.Foreground = ForegroundHighLightOffSetHeaderColor;
+                    lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {SelectionStart}";
+                    lineOffsetLabel.Tag = $"0x{LongToHex(SelectionStart).ToUpper()}";
+                    actualPosition = SelectionStart;
+                }
+                else
+                {
+                    lineOffsetLabel.FontWeight = FontWeights.Normal;
+                    lineOffsetLabel.Foreground = ForegroundOffSetHeaderColor;
+                    lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {firstByteInLine}";
+                    lineOffsetLabel.Tag = $"0x{LongToHex(firstByteInLine).ToUpper()}";
+                    actualPosition = firstByteInLine;
+                }
 
-                    //update the visual
-                    switch (OffSetStringVisual)
-                    {
-                        case DataVisualType.Hexadecimal:
-                            #region Hexadecimal
-                            switch (OffSetPanelVisual)
-                            {
-                                case OffSetPanelType.OffsetOnly:
-                                    lineOffsetLabel.Text = $"0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpper()}";
-                                    break;
-                                case OffSetPanelType.LineOnly:
-                                    lineOffsetLabel.Text = $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual).ToUpper()}";
-                                    break;
-                                case OffSetPanelType.Both:
-                                    lineOffsetLabel.Text = $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual)} 0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpper()}";
-                                    break;
-                            }
-                            #endregion
-                            break;
-                        case DataVisualType.Decimal:
+                //update the visual
+                switch (OffSetStringVisual)
+                {
+                    case DataVisualType.Hexadecimal:
+                        #region Hexadecimal
+                        switch (OffSetPanelVisual)
+                        {
+                            case OffSetPanelType.OffsetOnly:
+                                lineOffsetLabel.Text = $"0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpper()}";
+                                break;
+                            case OffSetPanelType.LineOnly:
+                                lineOffsetLabel.Text = $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual).ToUpper()}";
+                                break;
+                            case OffSetPanelType.Both:
+                                lineOffsetLabel.Text = $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual)} 0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpper()}";
+                                break;
+                        }
+                        #endregion
+                        break;
+                    case DataVisualType.Decimal:
 
-                            var format = OffSetPanelFixedWidthVisual == OffSetPanelFixedWidth.Dynamic ? "G" : "D8";
+                        var format = OffSetPanelFixedWidthVisual == OffSetPanelFixedWidth.Dynamic ? "G" : "D8";
 
-                            #region Decimal
-                            switch (OffSetPanelVisual)
-                            {
-                                case OffSetPanelType.OffsetOnly:
-                                    lineOffsetLabel.Text = $"d{actualPosition.ToString(format)}";
-                                    break;
-                                case OffSetPanelType.LineOnly:
-                                    lineOffsetLabel.Text = $"ln {GetLineNumber(actualPosition).ToString(format)}";
-                                    break;
-                                case OffSetPanelType.Both:
-                                    lineOffsetLabel.Text = $"ln {GetLineNumber(actualPosition).ToString(format)} d{actualPosition.ToString(format)}";
-                                    break;
-                            }
-                            #endregion
-                            break;
-                    }
+                        #region Decimal
+                        switch (OffSetPanelVisual)
+                        {
+                            case OffSetPanelType.OffsetOnly:
+                                lineOffsetLabel.Text = $"d{actualPosition.ToString(format)}";
+                                break;
+                            case OffSetPanelType.LineOnly:
+                                lineOffsetLabel.Text = $"ln {GetLineNumber(actualPosition).ToString(format)}";
+                                break;
+                            case OffSetPanelType.Both:
+                                lineOffsetLabel.Text = $"ln {GetLineNumber(actualPosition).ToString(format)} d{actualPosition.ToString(format)}";
+                                break;
+                        }
+                        #endregion
+                        break;
+                }
 
-                    if (AllowVisualByteAddress && firstByteInLine > VisualByteAdressStop)
-                        lineOffsetLabel.Tag = lineOffsetLabel.Text = string.Empty;
+                if (AllowVisualByteAddress && firstByteInLine > VisualByteAdressStop)
+                    lineOffsetLabel.Tag = lineOffsetLabel.Text = string.Empty;
 
-                    #endregion
-                //}
+                #endregion
             }
         }
         #endregion Update view
@@ -3022,71 +3014,63 @@ namespace WpfHexaEditor
         }
                 
         /// <summary>
-        /// Set focus on byte
+        /// Set focus on byte in the hex panel
         /// </summary>
         private void SetFocusHexDataPanel(long bytePositionInStream)
         {
-            if (ByteProvider.CheckIsOpen(_provider))
+            if (!ByteProvider.CheckIsOpen(_provider)) return;
+            if (bytePositionInStream >= _provider.Length) return;
+
+            var rtn = false;
+            TraverseHexBytes(ctrl =>
             {
-                if (bytePositionInStream >= _provider.Length)
-                    return;
-
-                var rtn = false;
-                TraverseHexBytes(ctrl =>
+                if (ctrl.BytePositionInStream == bytePositionInStream)
                 {
-                    if (ctrl.BytePositionInStream == bytePositionInStream)
-                    {
-                        ctrl.Focus();
-                        rtn = true;
-                    }
-                }, ref rtn);
-
-                if (rtn) return;
-                
-                if (VerticalScrollBar.Value < VerticalScrollBar.Maximum && !_setFocusTest)
-                {
-                    _setFocusTest = true;
-                    VerticalScrollBar.Value++;                    
-                    Debug.Print("VerticalScrollBar.Value++");
+                    ctrl.Focus();
+                    rtn = true;
                 }
+            }, ref rtn);
 
-                if (!SelectionStartIsVisible && SelectionLength == 1)
-                    SetPosition(SelectionStart, 1);
+            if (rtn) return;
+
+            if (VerticalScrollBar.Value < VerticalScrollBar.Maximum && !_setFocusTest)
+            {
+                _setFocusTest = true;
+                VerticalScrollBar.Value++;
             }
+
+            if (!SelectionStartIsVisible && SelectionLength == 1)
+                SetPosition(SelectionStart, 1);
         }
 
         /// <summary>
-        /// Set focus on byte
+        /// Set focus on byte in the string panel
         /// </summary>
         private void SetFocusStringDataPanel(long bytePositionInStream)
         {
-            if (ByteProvider.CheckIsOpen(_provider))
+            if (!ByteProvider.CheckIsOpen(_provider)) return;
+            if (bytePositionInStream >= _provider.Length) return;
+
+            var rtn = false;
+            TraverseStringBytes(ctrl =>
             {
-                if (bytePositionInStream >= _provider.Length)
-                    return;
-
-                var rtn = false;
-                TraverseStringBytes(ctrl =>
+                if (ctrl.BytePositionInStream == bytePositionInStream)
                 {
-                    if (ctrl.BytePositionInStream == bytePositionInStream)
-                    {
-                        ctrl.Focus();
-                        rtn = true;
-                    }
-                }, ref rtn);
-
-                if (rtn) return;
-
-                if (VerticalScrollBar.Value < VerticalScrollBar.Maximum && !_setFocusTest)
-                {
-                    _setFocusTest = true;
-                    VerticalScrollBar.Value++;
-                    Debug.Print("VerticalScrollBar.Value++");
+                    ctrl.Focus();
+                    rtn = true;
                 }
+            }, ref rtn);
 
-                if (!SelectionStartIsVisible && SelectionLength == 1)
-                    SetPosition(SelectionStart, 1);
+            if (rtn) return;
+
+            if (VerticalScrollBar.Value < VerticalScrollBar.Maximum && !_setFocusTest)
+            {
+                _setFocusTest = true;
+                VerticalScrollBar.Value++;
             }
+
+            if (!SelectionStartIsVisible && SelectionLength == 1)
+                SetPosition(SelectionStart, 1);
         }
 
         #endregion Focus Methods
@@ -4285,20 +4269,33 @@ namespace WpfHexaEditor
             }
         }
 
+        /// <summary>
+        /// Move the caret in a screen point
+        /// </summary>
         internal void MoveCaret(Point point) => _caret.MoveCaret(point);
 
-        internal bool IsVisibleCaret => _caret.IsVisibleCaret;
-
+        /// <summary>
+        /// Hide the caret
+        /// </summary>
         internal void HideCaret() => _caret.Hide();
 
+        /// <summary>
+        /// Return true if caret is visible
+        /// </summary>
         public bool IsCaretVisible => _caret.IsVisibleCaret;
 
+        /// <summary>
+        /// Set the site of caret
+        /// </summary>
         internal void SetCaretSize(double width, double height)
         {
             _caret.CaretWidth = width;
             _caret.CaretHeight = height;
         }
 
+        /// <summary>
+        /// Set the mode of caret (Insert or Overtwrite)
+        /// </summary>
         internal void SetCaretMode(CaretMode mode) => _caret.CaretMode = mode;
 
         #endregion
