@@ -130,7 +130,8 @@ namespace WpfHexaEditor.Core
         Slow = 3,
         Normal = 5,
         Fast = 7,
-        VeryFast = 9
+        VeryFast = 9,
+        System
     }
 
     /// <summary>

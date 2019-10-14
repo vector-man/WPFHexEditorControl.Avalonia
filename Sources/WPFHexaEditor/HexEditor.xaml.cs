@@ -22,6 +22,7 @@ using WpfHexaEditor.Core.Interfaces;
 using WpfHexaEditor.Core.MethodExtention;
 using WpfHexaEditor.Core.Xcbb;
 using WpfHexaEditor.Dialog;
+using static System.Windows.Forms.SystemInformation;
 using static WpfHexaEditor.Core.Bytes.ByteConverters;
 using static WpfHexaEditor.Core.Bytes.ByteProvider;
 using Path = System.IO.Path;
@@ -3969,7 +3970,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Control the mouse wheel speed
         /// </summary>
-        public MouseWheelSpeed MouseWheelSpeed { get; set; } = MouseWheelSpeed.Normal;
+        public MouseWheelSpeed MouseWheelSpeed { get; set; } = MouseWheelSpeed.System;
 
         private void Control_MouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -3992,10 +3993,16 @@ namespace WpfHexaEditor
             if (_provider == null || !_provider.IsOnLongProcess)
             {
                 if (e.Delta > 0) //UP
-                    VerticalScrollBar.Value -= e.Delta / 120 * (int)MouseWheelSpeed;
+                    VerticalScrollBar.Value -= e.Delta / 120 * 
+                        (MouseWheelSpeed == MouseWheelSpeed.System
+                            ? MouseWheelScrollLines
+                            :(int)MouseWheelSpeed);
 
                 if (e.Delta < 0) //Down
-                    VerticalScrollBar.Value += e.Delta / 120 * -(int)MouseWheelSpeed;
+                    VerticalScrollBar.Value += e.Delta / 120 * 
+                       -(MouseWheelSpeed == MouseWheelSpeed.System
+                            ? MouseWheelScrollLines
+                            : (int)MouseWheelSpeed);
             }
             #endregion
         }
