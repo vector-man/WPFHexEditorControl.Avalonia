@@ -71,7 +71,6 @@
     <Compile Include="Dialog\ReplaceByteWindow.xaml.cs">
       <DependentUpon>ReplaceByteWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="HexBox.xaml.cs">
       <DependentUpon>HexBox.xaml</DependentUpon>
     </Compile>
