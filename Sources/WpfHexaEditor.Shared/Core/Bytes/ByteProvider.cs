@@ -663,7 +663,6 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Return an IEnumerable ByteModified have action set to Modified
         /// </summary>
-        /// <returns></returns>
         public IDictionary<long, ByteModified> GetByteModifieds(ByteAction action) =>
             action == ByteAction.All
                 ? _byteModifiedDictionary

@@ -356,7 +356,7 @@ namespace WpfHexaEditor
             dc.DrawText(formattedText, new Point(2, 2));
 
 //#if DEBUG && NET47
-//            //FOR DEBUG HIDEBYTEDELETED ONLY...
+//            //FOR HELP TO DEBUG HIDEBYTEDELETED ONLY...
 //            if (_parent.HideByteDeleted && BytePositionInStream < 10000)
 //            {
 //                var formattedText2 = new FormattedText(BytePositionInStream.ToString(), CultureInfo.InvariantCulture, FlowDirection.LeftToRight,

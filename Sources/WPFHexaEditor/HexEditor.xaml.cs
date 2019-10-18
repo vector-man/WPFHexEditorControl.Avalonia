@@ -1720,6 +1720,7 @@ namespace WpfHexaEditor
 
         /// <summary>
         /// Make undo of last the last bytemodified
+        /// TODO: Fixe when HideByteDeleted
         /// </summary>
         public void Undo(int repeat = 1)
         {
@@ -2945,14 +2946,43 @@ namespace WpfHexaEditor
         #endregion Update view
 
         #region First/Last visible byte methods
+        ///// <summary>
+        ///// Get first visible byte position in control
+        ///// </summary>
+        //private long FirstVisibleBytePosition =>
+        //    AllowVisualByteAddress
+        //        ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft + VisualByteAdressStart
+        //        : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
+
         /// <summary>
         /// Get first visible byte position in control
+        /// TODO: fix the first visible byte when HideByteDeleted are activated... 90% completed
         /// </summary>
-        private long FirstVisibleBytePosition =>
-            AllowVisualByteAddress
-                ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft + VisualByteAdressStart
-                : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
-        
+        private long FirstVisibleBytePosition
+        {
+            get
+            {
+                if (HideByteDeleted)
+                {
+                    long testPosition = AllowVisualByteAddress
+                        ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft + VisualByteAdressStart
+                        : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
+
+                    var cnt = CheckIsOpen(_provider)
+                            ? _provider.GetByteModifieds(ByteAction.Deleted).Count(b => b.Value.BytePositionInStream < testPosition)
+                            : 0;
+
+                    return testPosition + (cnt % BytePerLine);                    
+                }
+                else
+                {
+                    return AllowVisualByteAddress
+                        ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft + VisualByteAdressStart
+                        : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
+                }
+            }
+        }
+
         /// <summary>
         /// Return True if SelectionStart are visible in control
         /// </summary>
