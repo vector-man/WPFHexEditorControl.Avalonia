@@ -355,6 +355,17 @@ namespace WpfHexaEditor
 
             dc.DrawText(formattedText, new Point(2, 2));
 
+//#if DEBUG && NET47
+//            //FOR DEBUG HIDEBYTEDELETED ONLY...
+//            if (_parent.HideByteDeleted && BytePositionInStream < 10000)
+//            {
+//                var formattedText2 = new FormattedText(BytePositionInStream.ToString(), CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
+//                    typeface, 8, Brushes.Green, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+
+//                dc.DrawText(formattedText2, new Point(0, 10));
+//            }
+//#endif
+
             //Update properties
             TextFormatted = formattedText;
         }

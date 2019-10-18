@@ -872,7 +872,7 @@ namespace WpfHexaEditor
                 long byteDeletedCount = 0;
                 if (CheckIsOpen(_provider) && HideByteDeleted)
                     byteDeletedCount = _provider.GetByteModifieds(ByteAction.Deleted).Count;
-                
+
                 return AllowVisualByteAddress
                           ? CheckIsOpen(_provider) ? (VisualByteAdressLength - byteDeletedCount) / BytePerLine : 0
                           : CheckIsOpen(_provider) ? (_provider.Length - byteDeletedCount) / BytePerLine : 0;
@@ -1557,7 +1557,7 @@ namespace WpfHexaEditor
                     validPosition += positionCorrection > 0 ? 1 : -1;
             }
 
-            return validPosition > 0 ? validPosition : -1;
+            return validPosition >= 0 ? validPosition : -1;
         }
 
         #endregion position methods
@@ -2943,7 +2943,7 @@ namespace WpfHexaEditor
             }
         }
         #endregion Update view
-        
+
         #region First/Last visible byte methods
         /// <summary>
         /// Get first visible byte position in control
@@ -2952,7 +2952,7 @@ namespace WpfHexaEditor
             AllowVisualByteAddress
                 ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft + VisualByteAdressStart
                 : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
-
+        
         /// <summary>
         /// Return True if SelectionStart are visible in control
         /// </summary>
@@ -2964,8 +2964,17 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get last visible byte position in control
         /// </summary>
-        private long LastVisibleBytePosition => FirstVisibleBytePosition + (MaxVisibleLine) * BytePerLine - 1;
+        private long LastVisibleBytePosition
+        {
+            get
+            {
+                long lastByte = 0;
 
+                TraverseHexBytes(ctrl => { lastByte = ctrl.BytePositionInStream; });
+                
+                return lastByte;
+            }
+        }
         #endregion First/Last visible byte methods
 
         #region Focus Methods
@@ -4727,6 +4736,7 @@ namespace WpfHexaEditor
 
         /// <summary>
         /// Hide bytes that are deleted
+        /// TODO: NOT COMPLETED... NEED TO FIX THE FIRST VISIBLE BYTE...
         /// </summary>
         public bool HideByteDeleted
         {
@@ -4737,7 +4747,7 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for HideByteDeleted.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty HideByteDeletedProperty =
             DependencyProperty.Register(nameof(HideByteDeleted), typeof(bool), typeof(HexEditor),
-                 new FrameworkPropertyMetadata(false, Control_DeletePropertyChanged));
+                 new FrameworkPropertyMetadata(true, Control_DeletePropertyChanged));
 
         private static void Control_DeletePropertyChanged(DependencyObject d,
             DependencyPropertyChangedEventArgs e)
