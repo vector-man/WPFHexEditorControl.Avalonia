@@ -4747,7 +4747,7 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for HideByteDeleted.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty HideByteDeletedProperty =
             DependencyProperty.Register(nameof(HideByteDeleted), typeof(bool), typeof(HexEditor),
-                 new FrameworkPropertyMetadata(true, Control_DeletePropertyChanged));
+                 new FrameworkPropertyMetadata(false, Control_DeletePropertyChanged));
 
         private static void Control_DeletePropertyChanged(DependencyObject d,
             DependencyPropertyChangedEventArgs e)
