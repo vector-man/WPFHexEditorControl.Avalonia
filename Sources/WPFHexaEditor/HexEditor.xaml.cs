@@ -2946,14 +2946,6 @@ namespace WpfHexaEditor
         #endregion Update view
 
         #region First/Last visible byte methods
-        ///// <summary>
-        ///// Get first visible byte position in control
-        ///// </summary>
-        //private long FirstVisibleBytePosition =>
-        //    AllowVisualByteAddress
-        //        ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft + VisualByteAdressStart
-        //        : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
-
         /// <summary>
         /// Get first visible byte position in control
         /// TODO: fix the first visible byte when HideByteDeleted are activated... 90% completed
@@ -2962,23 +2954,24 @@ namespace WpfHexaEditor
         {
             get
             {
+                //compute the cibled position for the first visible byte position
+                long cibledPosition = AllowVisualByteAddress
+                    ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft + VisualByteAdressStart
+                    : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
+
                 if (HideByteDeleted)
                 {
-                    long testPosition = AllowVisualByteAddress
-                        ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft + VisualByteAdressStart
-                        : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
-
+                    //Count the byte are deleted before the cibled position
                     var cnt = CheckIsOpen(_provider)
-                            ? _provider.GetByteModifieds(ByteAction.Deleted).Count(b => b.Value.BytePositionInStream < testPosition)
-                            : 0;
+                        ? _provider.GetByteModifieds(ByteAction.Deleted).Count(b => b.Value.BytePositionInStream < cibledPosition)
+                        : 0;
 
-                    return testPosition + (cnt % BytePerLine);                    
+                    //Apply a correction to the cibled position
+                    return cibledPosition + (cnt % BytePerLine);   
                 }
                 else
                 {
-                    return AllowVisualByteAddress
-                        ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft + VisualByteAdressStart
-                        : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
+                    return cibledPosition;
                 }
             }
         }
@@ -4777,7 +4770,7 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for HideByteDeleted.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty HideByteDeletedProperty =
             DependencyProperty.Register(nameof(HideByteDeleted), typeof(bool), typeof(HexEditor),
-                 new FrameworkPropertyMetadata(false, Control_DeletePropertyChanged));
+                 new FrameworkPropertyMetadata(true, Control_DeletePropertyChanged));
 
         private static void Control_DeletePropertyChanged(DependencyObject d,
             DependencyPropertyChangedEventArgs e)
