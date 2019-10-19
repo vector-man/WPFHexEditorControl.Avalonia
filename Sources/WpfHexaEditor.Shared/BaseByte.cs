@@ -357,7 +357,7 @@ namespace WpfHexaEditor
 
 //#if DEBUG && NET47
 //            //FOR HELP TO DEBUG HIDEBYTEDELETED ONLY...
-//            if (_parent.HideByteDeleted && BytePositionInStream < 10000)
+//            if (_parent.HideByteDeleted && BytePositionInStream < 10000 && Core.Bytes.ByteConverters.IsHexValue(Text).success)
 //            {
 //                var formattedText2 = new FormattedText(BytePositionInStream.ToString(), CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
 //                    typeface, 8, Brushes.Green, VisualTreeHelper.GetDpi(this).PixelsPerDip);

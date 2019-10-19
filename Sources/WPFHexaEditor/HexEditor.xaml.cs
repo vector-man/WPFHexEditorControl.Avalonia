@@ -2960,19 +2960,13 @@ namespace WpfHexaEditor
                     : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
 
                 if (HideByteDeleted)
-                {
                     //Count the byte are deleted before the cibled position
-                    var cnt = CheckIsOpen(_provider)
-                        ? _provider.GetByteModifieds(ByteAction.Deleted).Count(b => b.Value.BytePositionInStream < cibledPosition)
-                        : 0;
-
-                    //Apply a correction to the cibled position
-                    return cibledPosition + (cnt % BytePerLine);   
-                }
+                    return cibledPosition + 
+                        (CheckIsOpen(_provider)
+                            ? _provider.GetByteModifieds(ByteAction.Deleted).Count(b => b.Value.BytePositionInStream < cibledPosition)
+                            : 0);
                 else
-                {
                     return cibledPosition;
-                }
             }
         }
 
@@ -4770,7 +4764,7 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for HideByteDeleted.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty HideByteDeletedProperty =
             DependencyProperty.Register(nameof(HideByteDeleted), typeof(bool), typeof(HexEditor),
-                 new FrameworkPropertyMetadata(true, Control_DeletePropertyChanged));
+                 new FrameworkPropertyMetadata(false, Control_DeletePropertyChanged));
 
         private static void Control_DeletePropertyChanged(DependencyObject d,
             DependencyPropertyChangedEventArgs e)

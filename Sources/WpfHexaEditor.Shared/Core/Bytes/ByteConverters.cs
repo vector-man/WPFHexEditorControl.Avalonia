@@ -76,8 +76,6 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Convert a byte to char[2].
         /// </summary>
-        /// <param name="val"></param>
-        /// <returns></returns>
         public static char[] ByteToHexCharArray(byte val)
         {
             var hexbyteArray = new char[2];
@@ -88,7 +86,6 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Fill the <paramref name="charArr"/> with hex char;
         /// </summary>
-        /// <param name="val"></param>
         /// <param name="charArr">The length of this value should be 2.</param>
         public static void ByteToHexCharArray(byte val, char[] charArr)
         {
@@ -102,7 +99,9 @@ namespace WpfHexaEditor.Core.Bytes
             charArr[1] = ByteToHexChar(val - ((val >> 4) << 4));
         }
 
-        //Convert a byte to Hex char,i.e,10 = 'A'
+        /// <summary>
+        /// Convert a byte to Hex char,i.e,10 = 'A'
+        /// </summary>
         public static char ByteToHexChar(int val) =>
             val < 10
                 ? (char)(48 + val)
@@ -176,11 +175,21 @@ namespace WpfHexaEditor.Core.Bytes
         public static (bool success, byte val) HexToUniqueByte(string hex) =>
             (byte.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var val), val);
 
+        /// <summary>
+        /// Convert a hex string to long. 
+        /// </summary>
+        /// <return>
+        /// Return (true, [position])
+        /// Return (false, -1) on error
+        /// </return>
         public static (bool success, long position) HexLiteralToLong(string hex)
         {
             if (string.IsNullOrEmpty(hex)) return (false, -1);
 
-            var i = hex.Length > 1 && hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X') ? 2 : 0;
+            var i = hex.Length > 1 && hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X') 
+                ? 2 
+                : 0;
+            
             long value = 0;
 
             while (i < hex.Length)
@@ -190,13 +199,13 @@ namespace WpfHexaEditor.Core.Bytes
                 int x = hex[i++];
 
                 if
-                    (x >= '0' && x <= '9') x = x - '0';
+                    (x >= '0' && x <= '9') x -= '0';
                 else if
-                    (x >= 'A' && x <= 'F') x = x - 'A' + 10;
+                    (x >= 'A' && x <= 'F') x -= 'A' + 10;
                 else if
-                    (x >= 'a' && x <= 'f') x = x - 'a' + 10;
+                    (x >= 'a' && x <= 'f') x -= 'a' + 10;
                 else
-                    throw new ArgumentOutOfRangeException(nameof(hex));
+                    return (false, -1);
 
                 value = 16 * value + x;
 
@@ -205,11 +214,6 @@ namespace WpfHexaEditor.Core.Bytes
 
             return (true, value);
         }
-
-        public static long DecimalLiteralToLong(string hex) =>
-            long.TryParse(hex, out var value)
-                ? value
-                : throw new ArgumentException($"{Properties.Resources.ThisStringAreNotHexString} : {nameof(hex)}");
 
         /// <summary>
         /// Check if is an hexa string
@@ -220,7 +224,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// Check if is an hexa byte string
         /// </summary>
         public static (bool success, byte[] value) IsHexaByteStringValue(string hexastring) => 
-            HexToByte(hexastring) == null ? (false, null) : (true, byteArray: HexToByte(hexastring));
+            HexToByte(hexastring) == null 
+                ? (false, null) 
+                : (true, byteArray: HexToByte(hexastring));
 
         /// <summary>
         /// Convert string to byte array
@@ -230,25 +236,6 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Convert String to hex string For example: "barn" = "62 61 72 6e"
         /// </summary>
-        public static string StringToHex(string str) => ByteToHex(StringToByte(str));
-
-        /// <summary>
-        /// Convert decimal to binary representation
-        /// </summary>
-        public static string ToBinary(long decimalNumber)
-        {
-            var result = string.Empty;
-
-            while (decimalNumber > 0)
-            {
-                var remainder = decimalNumber % 2;
-                decimalNumber /= 2;
-                result = remainder + result;
-            }
-
-            return result;
-        }
-
-        public static string ToBinary(byte b) => Convert.ToString(b, 2).PadLeft(8, '0');
+        public static string StringToHex(string str) => ByteToHex(StringToByte(str));        
     }
 }
