@@ -1407,10 +1407,8 @@ namespace WpfHexaEditor
         public byte[] GetAllBytes(bool copyChange)
         {
             if (!CheckIsOpen(_provider)) return null;
-
-            using var cstream = new MemoryStream();
-            CopyToStream(cstream, 0, Length - 1, copyChange);
-            return cstream.ToArray();
+                        
+            return _provider.GetAllBytes(copyChange);
         }
 
         /// <summary>
@@ -3111,6 +3109,8 @@ namespace WpfHexaEditor
             if (data == null) return -1;
             if (!CheckIsOpen(_provider)) return -1;
 
+            UnHighLightAll();
+
             try
             {
                 var position = _provider.FindIndexOf(data, startPosition).ToList().First();
@@ -3123,14 +3123,14 @@ namespace WpfHexaEditor
 
                 SetScrollMarker(position, ScrollMarker.SearchHighLight);
 
-                UnSelectAll();
+                SelectionStart = position;
                 UpdateHighLight();
-
                 return position;
             }
             catch
             {
                 UnSelectAll();
+                UnHighLightAll();
                 return -1;
             }
         }
@@ -3148,6 +3148,8 @@ namespace WpfHexaEditor
             if (data == null) return -1;
             if (!CheckIsOpen(_provider)) return -1;
 
+            UnHighLightAll();
+
             try
             {
                 var position = _provider.FindIndexOf(data, SelectionStart + 1).ToList().First();
@@ -3160,7 +3162,7 @@ namespace WpfHexaEditor
 
                 SetScrollMarker(position, ScrollMarker.SearchHighLight);
 
-                UnSelectAll();
+                SelectionStart = position;
                 UpdateHighLight();
 
                 return position;
@@ -3168,6 +3170,7 @@ namespace WpfHexaEditor
             catch
             {
                 UnSelectAll();
+                UnHighLightAll();
                 return -1;
             }
         }
@@ -3186,6 +3189,8 @@ namespace WpfHexaEditor
             if (data == null) return -1;
             if (!CheckIsOpen(_provider)) return -1;
 
+            UnHighLightAll();
+
             try
             {
                 var position = _provider.FindIndexOf(data, SelectionStart + 1).ToList().Last();
@@ -3198,14 +3203,14 @@ namespace WpfHexaEditor
 
                 SetScrollMarker(position, ScrollMarker.SearchHighLight);
 
-                UnSelectAll();
+                SelectionStart = position;
                 UpdateHighLight();
-
                 return position;
             }
             catch
             {
                 UnSelectAll();
+                UnHighLightAll();
                 return -1;
             }
         }

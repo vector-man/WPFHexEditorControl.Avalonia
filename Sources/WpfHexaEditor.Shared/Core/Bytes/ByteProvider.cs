@@ -804,8 +804,8 @@ namespace WpfHexaEditor.Core.Bytes
         public byte[] GetCopyData(long selectionStart, long selectionStop, bool copyChange)
         {
             //Validation
-            if (!CanCopy(selectionStart, selectionStop)) return new byte[0];
-            if (selectionStart == -1 || selectionStop == -1) return new byte[0];
+            if (!CanCopy(selectionStart, selectionStop)) return Array.Empty<byte>();
+            if (selectionStart == -1 || selectionStop == -1) return Array.Empty<byte>();
 
             //Variable
             var bufferList = new List<byte>();
@@ -1110,6 +1110,11 @@ namespace WpfHexaEditor.Core.Bytes
             DataCopiedToStream?.Invoke(this, new EventArgs());
         }
 
+        /// <summary>
+        /// Get all byte from byte provider...
+        /// </summary>
+        public byte[] GetAllBytes(bool copyChange = true) => GetCopyData(0, Length - 1, copyChange);
+               
         /// <summary>
         /// Paste the string at position with posibility to expend and append at end of file
         /// </summary>

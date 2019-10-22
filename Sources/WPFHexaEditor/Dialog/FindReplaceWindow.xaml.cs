@@ -8,8 +8,6 @@ namespace WpfHexaEditor.Dialog
     /// </summary>
     public partial class FindReplaceWindow
     {
-        private MemoryStream _findMs;
-        private MemoryStream _replaceMs;
         private readonly HexEditor _parent;
 
         public FindReplaceWindow(HexEditor parent, byte[] findData = null)
@@ -19,13 +17,13 @@ namespace WpfHexaEditor.Dialog
             //Parent hexeditor for "binding" search
             _parent = parent;
 
-            InitializeMStream(FindHexEdit, _findMs, findData);
-            InitializeMStream(ReplaceHexEdit, _replaceMs);
+            InitializeMStream(FindHexEdit, findData);
+            InitializeMStream(ReplaceHexEdit);
         }
 
         #region Events
-        private void ClearButton_Click(object sender, RoutedEventArgs e) => InitializeMStream(FindHexEdit, _findMs);
-        private void ClearReplaceButton_Click(object sender, RoutedEventArgs e) => InitializeMStream(ReplaceHexEdit, _replaceMs);
+        private void ClearButton_Click(object sender, RoutedEventArgs e) => InitializeMStream(FindHexEdit);
+        private void ClearReplaceButton_Click(object sender, RoutedEventArgs e) => InitializeMStream(ReplaceHexEdit);
         private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
 
         private void FindAllButton_Click(object sender, RoutedEventArgs e) =>
@@ -53,27 +51,25 @@ namespace WpfHexaEditor.Dialog
                 TrimMenuItem.IsChecked, HighlightMenuItem.IsChecked);
 
         private void ReplaceHexEdit_BytesDeleted(object sender, System.EventArgs e) => 
-            InitializeMStream(ReplaceHexEdit, _replaceMs, ReplaceHexEdit.GetAllBytes());
+            InitializeMStream(ReplaceHexEdit, ReplaceHexEdit.GetAllBytes());
 
-        private void FindHexEdit_BytesDeleted(object sender, System.EventArgs e) =>
-            InitializeMStream(FindHexEdit, _findMs, FindHexEdit.GetAllBytes());
+        private void FindHexEdit_BytesDeleted(object sender, System.EventArgs e) => 
+            InitializeMStream(FindHexEdit, FindHexEdit.GetAllBytes());
 
-        private void SettingButton_Click(object sender, RoutedEventArgs e) =>
-            SettingPopup.IsOpen = true;
+        private void SettingButton_Click(object sender, RoutedEventArgs e) => SettingPopup.IsOpen = true;
 
-        private void SettingMenuItem_Click(object sender, RoutedEventArgs e) =>
-            SettingPopup.IsOpen = false;
+        private void SettingMenuItem_Click(object sender, RoutedEventArgs e) => SettingPopup.IsOpen = false;
         #endregion
 
         #region Methods
         /// <summary>
         /// Initialize stream and hexeditor
         /// </summary>
-        private void InitializeMStream(HexEditor hexeditor, MemoryStream ms, byte[] findData = null)
+        private void InitializeMStream(HexEditor hexeditor, byte[] findData = null)
         {
             hexeditor.CloseProvider();
 
-            ms = new MemoryStream(1);
+            var ms = new MemoryStream(1);
 
             if (findData != null && findData.Length > 0)
                 foreach (byte b in findData) 
