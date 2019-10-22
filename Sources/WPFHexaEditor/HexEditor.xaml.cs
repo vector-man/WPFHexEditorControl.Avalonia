@@ -3138,42 +3138,14 @@ namespace WpfHexaEditor
         /// <summary>
         /// Find next occurence of string in stream search start at SelectionStart.
         /// </summary>
-        public long FindNext(string text) => FindNext(StringToByte(text));
+        public long FindNext(string text) => 
+            FindNext(StringToByte(text));
 
         /// <summary>
         /// Find next occurence of byte[] in stream search start at SelectionStart.
         /// </summary>
-        public long FindNext(byte[] data, bool highLight = false)
-        {
-            if (data == null) return -1;
-            if (!CheckIsOpen(_provider)) return -1;
-
-            UnHighLightAll();
-
-            try
-            {
-                var position = _provider.FindIndexOf(data, SelectionStart + 1).ToList().First();
-
-                SetPosition(position, data.Length);
-
-                if (!highLight) return position;
-
-                AddHighLight(position, data.Length, false);
-
-                SetScrollMarker(position, ScrollMarker.SearchHighLight);
-
-                SelectionStart = position;
-                UpdateHighLight();
-
-                return position;
-            }
-            catch
-            {
-                UnSelectAll();
-                UnHighLightAll();
-                return -1;
-            }
-        }
+        public long FindNext(byte[] data, bool highLight = false) =>
+            FindFirst(data, SelectionStart + 1, highLight);
 
         /// <summary>
         /// Find last occurence of string in stream search start at SelectionStart.
