@@ -63,6 +63,7 @@
             BytePerLine="8"
             ByteSpacerPositioning="Nothing"
             BytesDeleted="FindHexEdit_BytesDeleted"
+            HideByteDeleted="False"
             StatusBarVisibility="Collapsed" />
 
         <Label

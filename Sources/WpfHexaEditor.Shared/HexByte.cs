@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2018
+// Apache 2.0  - 2016-2019
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 // Contributor: Janus Tida
 //////////////////////////////////////////////
@@ -174,8 +174,6 @@ namespace WpfHexaEditor
 
             base.OnGotFocus(e);
         }
-
-        //private void UserControl_GotFocus(object sender, RoutedEventArgs e) => UpdateCaret();
 
         private void UpdateCaret()
         {

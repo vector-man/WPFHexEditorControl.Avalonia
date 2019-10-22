@@ -11,14 +11,14 @@ namespace WpfHexaEditor.Dialog
         private MemoryStream _findMs = new MemoryStream(1);
         private readonly HexEditor _parent;
 
-        public FindWindow(HexEditor parent)
+        public FindWindow(HexEditor parent, byte[] findData = null)
         {
             InitializeComponent();
 
             //Parent hexeditor for "binding" search
             _parent = parent;
 
-            InitializeMStream();
+            InitializeMStream(findData);
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();

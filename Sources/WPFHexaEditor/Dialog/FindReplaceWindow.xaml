@@ -88,6 +88,7 @@
             BytePerLine="8"
             ByteSpacerPositioning="Nothing"
             BytesDeleted="FindHexEdit_BytesDeleted"
+            HideByteDeleted="False"
             StatusBarVisibility="Collapsed" />
 
         <Label
@@ -133,6 +134,7 @@
             BytePerLine="8"
             ByteSpacerPositioning="Nothing"
             BytesDeleted="ReplaceHexEdit_BytesDeleted"
+            HideByteDeleted="False"
             StatusBarVisibility="Collapsed" />
 
         <Label

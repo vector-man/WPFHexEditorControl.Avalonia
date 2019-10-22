@@ -1395,7 +1395,7 @@ namespace WpfHexaEditor.Core.Bytes
             //var
             Position = startPosition;
             var buffer = new byte[ConstantReadOnly.Findblocksize];
-            var indexList = new List<long>();
+            //var indexList = new List<long>();
             var cancel = false;
 
             //Launch event at process strated
@@ -1416,39 +1416,29 @@ namespace WpfHexaEditor.Core.Bytes
                     break;
                 }
 
-                try
+                if ((byte)ReadByte() == bytesTofind[0])
                 {
-                    if ((byte)ReadByte() == bytesTofind[0])
-                    {
-                        //position correction after read one byte
-                        Position--;
-                        i--;
+                    //position correction after read one byte
+                    Position--;
+                    i--;
 
-                        if (buffer.Length > Length - Position)
-                            buffer = new byte[Length - Position];
+                    //buffer length corection
+                    if (buffer.Length > Length - Position)
+                        buffer = new byte[Length - Position];
 
-                        //read buffer and find
-                        _stream.Read(buffer, 0, buffer.Length);
-                        var findindex = buffer.FindIndexOf(bytesTofind).ToList();
+                    //read buffer and find
+                    _stream.Read(buffer, 0, buffer.Length);
+                    var findindex = buffer.FindIndexOf(bytesTofind).ToList();
 
-                        //if byte if find add to list
-                        if (findindex.Any())
-                            foreach (var index in findindex)
-                                indexList.Add(index + i + 1);
+                    //if byte if find add to Yield return finded occurence
+                    if (findindex.Any())
+                        foreach (var index in findindex)
+                            yield return index + i + 1;
 
-                        //position correction
-                        i += buffer.Length;
-                    }
-                }
-                catch (IndexOutOfRangeException e)
-                {
-                    Debug.Print(e.Message);
+                    //position correction
+                    i += buffer.Length;
                 }
             }
-
-            //Yield return all finded occurence
-            foreach (var index in indexList)
-                yield return index;
 
             IsOnLongProcess = false;
 

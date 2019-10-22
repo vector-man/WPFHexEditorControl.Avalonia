@@ -208,7 +208,7 @@ namespace WPFHexaEditorExample
         }
 
         private void FindMenu_Click(object sender, RoutedEventArgs e) => 
-            new FindWindow(HexEdit)
+            new FindWindow(HexEdit, HexEdit.SelectionByteArray)
             {
                 Owner = this
             }.Show();
