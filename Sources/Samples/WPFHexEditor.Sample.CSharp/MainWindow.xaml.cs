@@ -208,13 +208,13 @@ namespace WPFHexaEditorExample
         }
 
         private void FindMenu_Click(object sender, RoutedEventArgs e) => 
-            new FindWindow(HexEdit, HexEdit.SelectionByteArray)
+            new FindWindow(HexEdit, HexEdit.GetSelectionByteArray())
             {
                 Owner = this
             }.Show();
 
         private void ReplaceMenu_Click(object sender, RoutedEventArgs e) => 
-            new FindReplaceWindow(HexEdit, HexEdit.SelectionByteArray)
+            new FindReplaceWindow(HexEdit, HexEdit.GetSelectionByteArray())
             {
                 Owner = this
             }.Show();

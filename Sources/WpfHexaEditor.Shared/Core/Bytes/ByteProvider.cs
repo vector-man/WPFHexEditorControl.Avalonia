@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -334,8 +333,7 @@ namespace WpfHexaEditor.Core.Bytes
         {
             _newfilename = string.Empty;
 
-            if (File.Exists(newFileName) && !overwrite)
-                return false;
+            if (File.Exists(newFileName) && !overwrite) return false;
 
             //Save as
             _newfilename = newFileName;
@@ -344,9 +342,11 @@ namespace WpfHexaEditor.Core.Bytes
             return true;
         }
 
+
         /// <summary>
         /// Submit change to files/stream
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Qualité du code", "IDE0068:Utilisez le modèle de suppression recommandé", Justification = "<En attente>")]
         public void SubmitChanges()
         {
             if (!CanWrite)
@@ -557,32 +557,12 @@ namespace WpfHexaEditor.Core.Bytes
         /// Check if the byte in parameter are modified and return original Bytemodified from list
         /// </summary>
         public (bool success, ByteModified val) CheckIfIsByteModified(long bytePositionInStream,
-            ByteAction action = ByteAction.Modified)
-        {
-            //if (action != ByteAction.Deleted)
-            //{
-                return _byteModifiedDictionary.TryGetValue(bytePositionInStream, out var byteModified)
-                       && byteModified.IsValid && (byteModified.Action == action || action == ByteAction.All)
-                    ? (true, byteModified)
-                    : (false, null);
-            //}
-            //else //checkup is deleted
-            //{
-            //    var find = false;
-            //    ByteModified byteModified = null;
-            //    foreach (var bm in _byteModifiedDictionary.Where(bm => bm.Value.Action == ByteAction.Deleted))
-            //        if (bm.Value.BytePositionInStream >= bytePositionInStream &&
-            //            bm.Value.BytePositionInStream <= bytePositionInStream)
-            //        {
-            //            find = true;
-            //            byteModified = bm.Value;
-            //        }
-                
-            //    return find
-            //        ? (true, byteModified)
-            //        : (false, null);
-            //}
-        }
+                                                                      ByteAction action = ByteAction.Modified) =>
+            _byteModifiedDictionary.TryGetValue(bytePositionInStream, out var byteModified)
+                    && byteModified.IsValid 
+                    && (byteModified.Action == action || action == ByteAction.All)
+                        ? (true, byteModified)
+                        : (false, null);
 
         /// <summary>
         /// Add/Modifiy a ByteModifed in the list of byte have changed
@@ -864,8 +844,11 @@ namespace WpfHexaEditor.Core.Bytes
         /// Copy selection of byte to clipboard
         /// </summary>
         /// <param name="copyChange">Set to true if you want onclude change in your copy. Set to false to copy directly from source</param>
-        public void CopyToClipboard(CopyPasteMode copypastemode, long selectionStart, long selectionStop,
-            bool copyChange = true, TblStream tbl = null)
+        public void CopyToClipboard(CopyPasteMode copypastemode,
+                                    long selectionStart,
+                                    long selectionStop,
+                                    bool copyChange = true,
+                                    TblStream tbl = null)
         {
             if (!CanCopy(selectionStart, selectionStop)) return;
 
@@ -935,7 +918,7 @@ namespace WpfHexaEditor.Core.Bytes
 
             var sb = new StringBuilder();
 
-#region define header
+            #region define header
 
             switch (language)
             {
@@ -959,12 +942,12 @@ namespace WpfHexaEditor.Core.Bytes
                     break;
             }
 
-#endregion
+            #endregion
 
             sb.AppendLine();
             sb.AppendLine();
 
-#region define string representation of copied data
+            #region define string representation of copied data
 
             switch (language)
             {
@@ -1036,31 +1019,25 @@ namespace WpfHexaEditor.Core.Bytes
                     break;
             }
 
-#endregion
+            #endregion
 
-#region Build data array
+            #region Build data array
 
             foreach (var b in buffer)
             {
                 i++;
                 if (language == CodeLanguage.Java) sb.Append("(byte)");
 
-#region Append byte
-                string byteStr;
-                switch (language)
+                #region Append byte
+                var byteStr = language switch
                 {
-                    case CodeLanguage.Vbnet:
-                        byteStr = $"&H{ByteConverters.ByteToHex(b)}, ";
-                        break;
-                    case CodeLanguage.Pascal:
-                        byteStr = $"${ByteConverters.ByteToHex(b)}, ";
-                        break;
-                    default:
-                        byteStr = $"0x{ByteConverters.ByteToHex(b)}{delimiter} ";
-                        break;
-                }
+                    CodeLanguage.Vbnet => $"&H{ByteConverters.ByteToHex(b)}, ",
+                    CodeLanguage.Pascal => $"${ByteConverters.ByteToHex(b)}, ",
+                    _ => $"0x{ByteConverters.ByteToHex(b)}{delimiter} ",
+                };
+
                 sb.Append(byteStr);
-#endregion
+                #endregion
 
                 if (i == (language == CodeLanguage.Java ? 6 : 12))
                 {
@@ -1072,26 +1049,20 @@ namespace WpfHexaEditor.Core.Bytes
             }
             if (language == CodeLanguage.Vbnet) sb.Append("_");
             sb.AppendLine();
-#endregion
 
-#region End of block
-            string sByteEnd;
-            switch (language)
+            #region End of block
+            var sByteEnd = language switch
             {
-                case CodeLanguage.FSharp:
-                    sByteEnd = "|]";
-                    break;
-                case CodeLanguage.Pascal:
-                    sByteEnd = ");";
-                    break;
-                default:
-                    sByteEnd = "};";
-                    break;
-            }
+                CodeLanguage.FSharp => "|]",
+                CodeLanguage.Pascal => ");",
+                _ => "};",
+            };
             sb.Append(sByteEnd);
-#endregion
+            #endregion
 
             da.SetText(sb.ToString(), TextDataFormat.Text);
+
+            #endregion
         }
 
         /// <summary>
@@ -1225,9 +1196,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// <param name="pasteBytes">The bytes array to paste</param>
         public void PasteNotInsert(byte[] pasteBytes) => Paste(Position, pasteBytes, false);
 
-#endregion Copy/Paste/Cut Methods
+        #endregion Copy/Paste/Cut Methods
 
-#region Undo / Redo
+        #region Undo / Redo
 
         /// <summary>
         /// Undo last byteaction
@@ -1287,7 +1258,7 @@ namespace WpfHexaEditor.Core.Bytes
                 Redone?.Invoke(bytePositionList, new EventArgs());
             }
 
-#region local fonction
+            #region local fonction
             void addUndo(ByteModified last)
             {
                 //add undo...
@@ -1301,7 +1272,7 @@ namespace WpfHexaEditor.Core.Bytes
                         break;
                 }
             }
-#endregion
+             #endregion
         }
 
         /// <summary>
@@ -1358,9 +1329,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public bool CanRedo => IsRedoEnabled && RedoStack.Count > 0;
 
-#endregion Undo / Redo
+        #endregion Undo / Redo
 
-#region Various can do property...
+        #region Various can do property...
 
         /// <summary>
         /// Return true if Copy method could be invoked.
@@ -1383,9 +1354,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public bool CanSeek => _stream != null && _stream.CanSeek;
 
-#endregion Can do property...
+        #endregion Can do property...
 
-#region Find methods
+        #region Find methods
 
         /// <summary>
         /// Find all occurance of string in stream and return an IEnumerable contening index when is find.
@@ -1405,7 +1376,6 @@ namespace WpfHexaEditor.Core.Bytes
             //var
             Position = startPosition;
             var buffer = new byte[ConstantReadOnly.Findblocksize];
-            //var indexList = new List<long>();
             var cancel = false;
 
             //Launch event at process strated
@@ -1459,9 +1429,9 @@ namespace WpfHexaEditor.Core.Bytes
                 LongProcessCompleted?.Invoke(this, new EventArgs());
         }
 
-#endregion Find methods
+        #endregion Find methods
 
-#region Long process progress
+        #region Long process progress
 
         /// <summary>
         /// Get if byteprovider is on a long process. Set to false to cancel all process.
@@ -1502,11 +1472,15 @@ namespace WpfHexaEditor.Core.Bytes
             _disposedValue = true;
         }
 
-        public void Dispose() => Dispose(true);
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-#endregion IDisposable Support
+        #endregion IDisposable Support
 
-#region Computing count byte methods...
+        #region Computing count byte methods...
 
         /// <summary>
         /// Get an array of long computing the total of each byte in the file. 
@@ -1522,57 +1496,54 @@ namespace WpfHexaEditor.Core.Bytes
         /// </remarks>
         public long[] GetByteCount()
         {
-            if (IsOpen)
+            if (!IsOpen) return null;
+
+            //Launch event at process strated
+            IsOnLongProcess = true;
+            LongProcessStarted?.Invoke(this, new EventArgs());
+
+            const int copyBufferSize = 1024 * 1024;
+            var cancel = false;
+            var buffer = new byte[copyBufferSize];
+            var storedCnt = new long[256];
+            int count;
+
+            Position = 0;
+
+            while ((count = Read(buffer, 0, copyBufferSize)) > 0)
             {
-                //Launch event at process strated
-                IsOnLongProcess = true;
-                LongProcessStarted?.Invoke(this, new EventArgs());
+                for (var i = 0; i < count; i++)
+                    storedCnt[buffer[i]]++;
 
-                const int copyBufferSize = 1024 * 1024;
-                var cancel = false;
-                var buffer = new byte[copyBufferSize];
-                var storedCnt = new long[256];
-                int count;
+                //Do not freeze UI...
+                if (Position % 2000 == 0)
+                    LongProcessProgress = (double)Position / Length;
 
-                Position = 0;
-
-                while ((count = Read(buffer, 0, copyBufferSize)) > 0)
+                //Break long process if needed
+                if (!IsOnLongProcess)
                 {
-                    for (var i = 0; i < count; i++)
-                        storedCnt[buffer[i]]++;
-
-                    //Do not freeze UI...
-                    if (Position % 2000 == 0)
-                        LongProcessProgress = (double)Position / Length;
-
-                    //Break long process if needed
-                    if (!IsOnLongProcess)
-                    {
-                        cancel = true;
-                        break;
-                    }
+                    cancel = true;
+                    break;
                 }
-
-                IsOnLongProcess = false;
-
-                //Launch event at process completed
-                if (cancel)
-                {
-                    LongProcessCanceled?.Invoke(this, new EventArgs());
-                    return null;
-                }
-
-                LongProcessCompleted?.Invoke(this, new EventArgs());
-
-                return storedCnt;
             }
 
-            return null;
+            IsOnLongProcess = false;
+
+            //Launch event at process completed
+            if (cancel)
+            {
+                LongProcessCanceled?.Invoke(this, new EventArgs());
+                return null;
+            }
+
+            LongProcessCompleted?.Invoke(this, new EventArgs());
+
+            return storedCnt;
         }
 
-#endregion
+        #endregion
 
-#region Append byte at end of file
+        #region Append byte at end of file
 
         /// <summary>
         /// Append byte at end of file

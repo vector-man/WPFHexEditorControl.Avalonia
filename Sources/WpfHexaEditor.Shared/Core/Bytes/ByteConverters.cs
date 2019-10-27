@@ -175,6 +175,7 @@ namespace WpfHexaEditor.Core.Bytes
         public static (bool success, byte val) HexToUniqueByte(string hex) =>
             (byte.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var val), val);
 
+
         /// <summary>
         /// Convert a hex string to long. 
         /// </summary>
@@ -182,6 +183,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// Return (true, [position])
         /// Return (false, -1) on error
         /// </return>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0054:Utiliser une attribution composée", Justification = "<En attente>")]
         public static (bool success, long position) HexLiteralToLong(string hex)
         {
             if (string.IsNullOrEmpty(hex)) return (false, -1);

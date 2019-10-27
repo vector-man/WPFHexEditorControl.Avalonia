@@ -272,13 +272,22 @@ namespace WpfHexaEditor.Core.CharacterTable
         /// <summary>
         /// Add a DTE/MTE in TBL
         /// </summary>
-        public void Add(Dte dte) => _dteList.Add(dte.Entry, dte);
+        public void Add(Dte dte)
+        {
+            if (dte is null) return;
+
+            _dteList.Add(dte.Entry, dte);
+        }
 
         /// <summary>
         /// Remove TBL entry
         /// </summary>
-        /// <param name="dte"></param>
-        public void Remove(Dte dte) => _dteList.Remove(dte.Entry);
+        public void Remove(Dte dte)
+        {
+            if (dte is null) return;
+
+            _dteList.Remove(dte.Entry);
+        }
 
         #endregion
 
@@ -390,16 +399,17 @@ namespace WpfHexaEditor.Core.CharacterTable
         {
             if (!_disposedValue)
             {
-                if (disposing)
-                {
-                    _dteList = null;
-                }
+                if (disposing) _dteList = null;
 
                 _disposedValue = true;
             }
         }
 
-        public void Dispose() => Dispose(true);
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         #endregion
     }

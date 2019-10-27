@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2018
+// Apache 2.0  - 2016-2019
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
@@ -17,6 +17,8 @@ namespace WpfHexaEditor.Core.MethodExtention
 
         public static void DoEvents(this Application app, DispatcherPriority priority = DispatcherPriority.Background)
         {
+            if (app is null) throw new System.ArgumentNullException(nameof(app));
+
             var nestedFrame = new DispatcherFrame();
             var exitOperation = Dispatcher.CurrentDispatcher.BeginInvoke(priority, ExitFrameCallback, nestedFrame);
 

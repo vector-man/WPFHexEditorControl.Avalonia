@@ -1222,14 +1222,11 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get byte array from current selection
         /// </summary>
-        public byte[] SelectionByteArray
+        public byte[] GetSelectionByteArray()
         {
-            get
-            {
-                using var ms = new MemoryStream();
-                CopyToStream(ms, true);
-                return ms.ToArray();
-            }
+            using var ms = new MemoryStream();
+            CopyToStream(ms, true);
+            return (byte[])ms.ToArray().Clone();
         }
 
         /// <summary>
@@ -3262,7 +3259,7 @@ namespace WpfHexaEditor
         /// <returns>Return null if no occurence found</returns>
         public IEnumerable<long> FindAllSelection(bool highLight) =>
             SelectionLength > 0
-                ? FindAll(SelectionByteArray, highLight)
+                ? FindAll(GetSelectionByteArray(), highLight)
                 : null;
 
         /// <summary>
@@ -3491,7 +3488,7 @@ namespace WpfHexaEditor
                 {
                     #region Show length  TODO:REFRESH ONLY WHEN NEEDED
 
-                    var mb = false;
+                    var isMegabByte= false;
                     long deletedBytesCount = _provider.GetByteModifieds(ByteAction.Deleted).Count;
                     long addedBytesCount = _provider.GetByteModifieds(ByteAction.Added).Count;
 
@@ -3500,15 +3497,14 @@ namespace WpfHexaEditor
 
                     if (length > 1024)
                     {
-                        length = length / 1024;
-                        mb = true;
+                        length /= 1024;
+                        isMegabByte = true;
                     }
 
                     FileLengthKbLabel.Content = Math.Round(length, 2) +
-                                                (mb
+                                                (isMegabByte
                                                     ? $" {Properties.Resources.MBTagString}"
                                                     : $" {Properties.Resources.KBTagString}");
-                    //FileLengthKbLabel.ToolTip = $" {_provider.Length - deletedBytesCount} {Properties.Resources.ByteString}";
 
                     #endregion
 
@@ -3821,7 +3817,7 @@ namespace WpfHexaEditor
             }
         }
 
-        private void FindAllCMenu_Click(object sender, RoutedEventArgs e) => FindAll(SelectionByteArray, true);
+        private void FindAllCMenu_Click(object sender, RoutedEventArgs e) => FindAll(GetSelectionByteArray(), true);
 
         private void CopyToClipBoardCMenu_Click(object sender, RoutedEventArgs e)
         {
@@ -4154,7 +4150,11 @@ namespace WpfHexaEditor
             _disposedValue = true;
         }
 
-        public void Dispose() => Dispose(true);
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         #endregion
 
@@ -4882,7 +4882,7 @@ namespace WpfHexaEditor
             ctrl.RefreshView();
         }
 
-        private List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
+        private readonly List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
 
         internal CustomBackgroundBlock GetCustomBackgroundBlock(long BytePositionInStream) =>
             _cbbList?.FirstOrDefault(cbb => BytePositionInStream >= cbb.StartOffset &&
