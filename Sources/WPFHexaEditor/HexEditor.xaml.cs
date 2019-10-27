@@ -3483,53 +3483,51 @@ namespace WpfHexaEditor
         /// </summary>
         private void UpdateStatusBar()
         {
-            if (StatusBarVisibility == Visibility.Visible)
-                if (CheckIsOpen(_provider))
-                {
-                    #region Show length  TODO:REFRESH ONLY WHEN NEEDED
+            if (StatusBarVisibility != Visibility.Visible) return;
 
-                    var isMegabByte= false;
-                    long deletedBytesCount = _provider.GetByteModifieds(ByteAction.Deleted).Count;
-                    long addedBytesCount = _provider.GetByteModifieds(ByteAction.Added).Count;
+            if (!CheckIsOpen(_provider))
+            {
+                FileLengthKbLabel.Content = 0;
+                CountOfByteLabel.Content = 0;
+                return;
+            }
+            
+            #region Show length  TODO:REFRESH ONLY WHEN NEEDED
 
-                    //is mega bytes ?
-                    double length = (_provider.Length - deletedBytesCount + addedBytesCount) / 1024;
+            var isMegabByte = false;
 
-                    if (length > 1024)
-                    {
-                        length /= 1024;
-                        isMegabByte = true;
-                    }
+            //is mega bytes ?
+            double length = _provider.LengthAjusted / 1024;
 
-                    FileLengthKbLabel.Content = Math.Round(length, 2) +
-                                                (isMegabByte
-                                                    ? $" {Properties.Resources.MBTagString}"
-                                                    : $" {Properties.Resources.KBTagString}");
+            if (length > 1024)
+            {
+                length /= 1024;
+                isMegabByte = true;
+            }
 
-                    #endregion
+            FileLengthKbLabel.Content = Math.Round(length, 2) +
+                                        (isMegabByte
+                                            ? $" {Properties.Resources.MBTagString}"
+                                            : $" {Properties.Resources.KBTagString}");
 
-                    #region Byte count of selectionStart
+            #endregion
 
-                    if (AllowByteCount && _bytecount != null && SelectionStart > -1)
-                    {
-                        ByteCountPanel.Visibility = Visibility.Visible;
+            #region Byte count of selectionStart
 
-                        var val = _provider.GetByte(SelectionStart).singleByte.Value;
-                        CountOfByteSumLabel.Content = _bytecount[val];
-                        CountOfByteLabel.Content = $"0x{LongToHex(val)}";
-                    }
-                    else
-                        ByteCountPanel.Visibility = Visibility.Collapsed;
+            if (AllowByteCount && _bytecount != null && SelectionStart > -1)
+            {
+                ByteCountPanel.Visibility = Visibility.Visible;
 
-                    #endregion
-                }
-                else
-                {
-                    FileLengthKbLabel.Content = 0;
-                    CountOfByteLabel.Content = 0;
-                }
+                var val = _provider.GetByte(SelectionStart).singleByte.Value;
+                CountOfByteSumLabel.Content = _bytecount[val];
+                CountOfByteLabel.Content = $"0x{LongToHex(val)}";
+            }
+            else
+                ByteCountPanel.Visibility = Visibility.Collapsed;
+
+            #endregion
+
         }
-
         #endregion Statusbar
 
         #region Bookmark and other scrollmarker
