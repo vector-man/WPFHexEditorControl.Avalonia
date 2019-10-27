@@ -153,38 +153,29 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public void OpenFile()
         {
-            if (File.Exists(FileName))
+            if (!File.Exists(FileName)) return;
+
+            Close();
+
+            try
             {
-                Close();
-
-                var readOnlyMode = false;
-
-                try
+                _stream = File.Open(FileName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            }
+            catch
+            {
+                //TODO: Localize string...
+                if (MessageBox.Show("The file is locked. Do you want to open it in read-only mode?", string.Empty,
+                        MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                    _stream = File.Open(FileName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
-                }
-                catch
-                {
-                    if (MessageBox.Show("The file is locked. Do you want to open it in read-only mode?", string.Empty,
-                            MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                    {
-                        _stream = File.Open(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    _stream = File.Open(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-                        readOnlyMode = true;
-                    }
-                }
-
-                if (readOnlyMode)
                     ReadOnlyMode = true;
-
-                StreamType = ByteProviderStreamType.File;
-
-                StreamOpened?.Invoke(this, new EventArgs());
+                }
             }
-            else
-            {
-                throw new FileNotFoundException();
-            }
+
+            StreamType = ByteProviderStreamType.File;
+
+            StreamOpened?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -208,20 +199,19 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public void Close()
         {
-            if (IsOpen)
-            {
-                _stream.Close();
-                _stream = null;
-                _newfilename = string.Empty;
-                ReadOnlyMode = false;
-                IsOnLongProcess = false;
-                LongProcessProgress = 0;
+            if (!IsOpen) return;
 
-                ClearUndoChange();
-                StreamType = ByteProviderStreamType.Nothing;
+            _stream.Close();
+            _stream = null;
+            _newfilename = string.Empty;
+            ReadOnlyMode = false;
+            IsOnLongProcess = false;
+            LongProcessProgress = 0;
 
-                Closed?.Invoke(this, new EventArgs());
-            }
+            ClearUndoChange();
+            StreamType = ByteProviderStreamType.Nothing;
+
+            Closed?.Invoke(this, new EventArgs());
         }
 
         #endregion Open/close stream property/methods
