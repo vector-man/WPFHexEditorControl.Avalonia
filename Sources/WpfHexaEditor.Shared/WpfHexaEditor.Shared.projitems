@@ -12,7 +12,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)BaseByte.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Converters\PathToFilenameConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\GenericStaticInstance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BookMark.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteConverters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Bytes\ByteModified.cs" />

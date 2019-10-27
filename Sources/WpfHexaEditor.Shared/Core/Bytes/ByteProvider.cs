@@ -804,8 +804,14 @@ namespace WpfHexaEditor.Core.Bytes
         public byte[] GetCopyData(long selectionStart, long selectionStop, bool copyChange)
         {
             //Validation
+#if NET451
             if (!CanCopy(selectionStart, selectionStop)) return new byte[0];
             if (selectionStart == -1 || selectionStop == -1) return new byte[0];
+#endif
+#if NET47
+            if (!CanCopy(selectionStart, selectionStop)) return Array.Empty<byte>();
+            if (selectionStart == -1 || selectionStop == -1) return Array.Empty<byte>();
+#endif
 
             //Variable
             var bufferList = new List<byte>();
@@ -819,8 +825,7 @@ namespace WpfHexaEditor.Core.Bytes
                 : selectionStart;
 
             #endregion
-
-
+            
             //Exclude byte deleted from copy
             if (!copyChange)
             {
@@ -930,7 +935,7 @@ namespace WpfHexaEditor.Core.Bytes
 
             var sb = new StringBuilder();
 
-            #region define header
+#region define header
 
             switch (language)
             {
@@ -954,12 +959,12 @@ namespace WpfHexaEditor.Core.Bytes
                     break;
             }
 
-            #endregion
+#endregion
 
             sb.AppendLine();
             sb.AppendLine();
 
-            #region define string representation of copied data
+#region define string representation of copied data
 
             switch (language)
             {
@@ -1031,16 +1036,16 @@ namespace WpfHexaEditor.Core.Bytes
                     break;
             }
 
-            #endregion
+#endregion
 
-            #region Build data array
+#region Build data array
 
             foreach (var b in buffer)
             {
                 i++;
                 if (language == CodeLanguage.Java) sb.Append("(byte)");
 
-                #region Append byte
+#region Append byte
                 string byteStr;
                 switch (language)
                 {
@@ -1055,7 +1060,7 @@ namespace WpfHexaEditor.Core.Bytes
                         break;
                 }
                 sb.Append(byteStr);
-                #endregion
+#endregion
 
                 if (i == (language == CodeLanguage.Java ? 6 : 12))
                 {
@@ -1067,9 +1072,9 @@ namespace WpfHexaEditor.Core.Bytes
             }
             if (language == CodeLanguage.Vbnet) sb.Append("_");
             sb.AppendLine();
-            #endregion
+#endregion
 
-            #region End of block
+#region End of block
             string sByteEnd;
             switch (language)
             {
@@ -1084,7 +1089,7 @@ namespace WpfHexaEditor.Core.Bytes
                     break;
             }
             sb.Append(sByteEnd);
-            #endregion
+#endregion
 
             da.SetText(sb.ToString(), TextDataFormat.Text);
         }
@@ -1220,9 +1225,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// <param name="pasteBytes">The bytes array to paste</param>
         public void PasteNotInsert(byte[] pasteBytes) => Paste(Position, pasteBytes, false);
 
-        #endregion Copy/Paste/Cut Methods
+#endregion Copy/Paste/Cut Methods
 
-        #region Undo / Redo
+#region Undo / Redo
 
         /// <summary>
         /// Undo last byteaction
@@ -1282,7 +1287,7 @@ namespace WpfHexaEditor.Core.Bytes
                 Redone?.Invoke(bytePositionList, new EventArgs());
             }
 
-            #region local fonction
+#region local fonction
             void addUndo(ByteModified last)
             {
                 //add undo...
@@ -1296,7 +1301,7 @@ namespace WpfHexaEditor.Core.Bytes
                         break;
                 }
             }
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -1353,9 +1358,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public bool CanRedo => IsRedoEnabled && RedoStack.Count > 0;
 
-        #endregion Undo / Redo
+#endregion Undo / Redo
 
-        #region Various can do property...
+#region Various can do property...
 
         /// <summary>
         /// Return true if Copy method could be invoked.
@@ -1378,9 +1383,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public bool CanSeek => _stream != null && _stream.CanSeek;
 
-        #endregion Can do property...
+#endregion Can do property...
 
-        #region Find methods
+#region Find methods
 
         /// <summary>
         /// Find all occurance of string in stream and return an IEnumerable contening index when is find.
@@ -1454,9 +1459,9 @@ namespace WpfHexaEditor.Core.Bytes
                 LongProcessCompleted?.Invoke(this, new EventArgs());
         }
 
-        #endregion Find methods
+#endregion Find methods
 
-        #region Long process progress
+#region Long process progress
 
         /// <summary>
         /// Get if byteprovider is on a long process. Set to false to cancel all process.
@@ -1478,9 +1483,9 @@ namespace WpfHexaEditor.Core.Bytes
             }
         }
 
-        #endregion Long process progress
+#endregion Long process progress
 
-        #region IDisposable Support
+#region IDisposable Support
 
         private bool _disposedValue; // Pour détecter les appels redondants
 
@@ -1499,9 +1504,9 @@ namespace WpfHexaEditor.Core.Bytes
 
         public void Dispose() => Dispose(true);
 
-        #endregion IDisposable Support
+#endregion IDisposable Support
 
-        #region Computing count byte methods...
+#region Computing count byte methods...
 
         /// <summary>
         /// Get an array of long computing the total of each byte in the file. 
@@ -1565,9 +1570,9 @@ namespace WpfHexaEditor.Core.Bytes
             return null;
         }
 
-        #endregion
+#endregion
 
-        #region Append byte at end of file
+#region Append byte at end of file
 
         /// <summary>
         /// Append byte at end of file
@@ -1599,9 +1604,9 @@ namespace WpfHexaEditor.Core.Bytes
             BytesAppendCompleted?.Invoke(this, new EventArgs());
         }
 
-        #endregion Append byte at end of file
+#endregion Append byte at end of file
 
-        #region Serialize (save/load) current state
+#region Serialize (save/load) current state
 
         /// <summary>
         /// Serialize current state of provider
@@ -1659,7 +1664,7 @@ namespace WpfHexaEditor.Core.Bytes
                     {
                         case "Action":
 
-                            #region Set action
+#region Set action
 
                             switch (at.Value)
                             {
@@ -1671,7 +1676,7 @@ namespace WpfHexaEditor.Core.Bytes
                                     break;
                             }
 
-                            #endregion
+#endregion
 
                             break;
                         case "HexByte":
@@ -1682,7 +1687,7 @@ namespace WpfHexaEditor.Core.Bytes
                             break;
                     }
 
-                #region Add bytemodified to dictionary
+#region Add bytemodified to dictionary
                 switch (bm.Action)
                 {
                     case ByteAction.Deleted:
@@ -1692,12 +1697,12 @@ namespace WpfHexaEditor.Core.Bytes
                         AddByteModified(bm.Byte, bm.BytePositionInStream);
                         break;
                 }
-                #endregion
+#endregion
             }
         }
-        #endregion Serialize (save/load) current state
+#endregion Serialize (save/load) current state
 
-        #region Reverse bytes selection
+#region Reverse bytes selection
 
         /// <summary>
         /// Reverse bytes array like this {AA, FF, EE, DC} => {DC, EE, FF, AA}
@@ -1706,18 +1711,18 @@ namespace WpfHexaEditor.Core.Bytes
         {
             var data = GetCopyData(selectionStart, selectionStop, true);
 
-            #region Set start position
+#region Set start position
 
             var startPosition = (selectionStart != selectionStop
                 ? (selectionStart > selectionStop ? selectionStop : selectionStart)
                 : selectionStart) + data.Length;
 
-            #endregion
+#endregion
 
             foreach (byte b in data)
                 AddByteModified(b, --startPosition, data.Length);
         }
 
-        #endregion
+#endregion
     }
 }

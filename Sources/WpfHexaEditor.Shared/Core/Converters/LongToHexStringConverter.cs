@@ -12,7 +12,7 @@ namespace WpfHexaEditor.Core.Converters
     /// <summary>
     /// Used to convert long value to hexadecimal string like this 0xFFFFFFFF.
     /// </summary>
-    public sealed class LongToHexStringConverter : GenericStaticInstance<LongToHexStringConverter>,IValueConverter
+    public sealed class LongToHexStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
             value != null

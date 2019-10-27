@@ -13,7 +13,7 @@ namespace WpfHexaEditor.Core.Converters
     /// <summary>
     /// Used to convert hexadecimal to Long value.
     /// </summary>
-    public sealed class HexToLongStringConverter : GenericStaticInstance<HexToLongStringConverter> ,IValueConverter
+    public sealed class HexToLongStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

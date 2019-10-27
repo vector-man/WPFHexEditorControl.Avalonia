@@ -199,11 +199,11 @@ namespace WpfHexaEditor.Core.Bytes
                 int x = hex[i++];
 
                 if
-                    (x >= '0' && x <= '9') x -= '0';
+                    (x >= '0' && x <= '9') x = x - '0';
                 else if
-                    (x >= 'A' && x <= 'F') x -= 'A' + 10;
+                    (x >= 'A' && x <= 'F') x = x - 'A' + 10;
                 else if
-                    (x >= 'a' && x <= 'f') x -= 'a' + 10;
+                    (x >= 'a' && x <= 'f') x = x - 'a' + 10;
                 else
                     return (false, -1);
 

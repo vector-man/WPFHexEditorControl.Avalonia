@@ -911,18 +911,27 @@ namespace WpfHexaEditor
             DependencyProperty.Register(nameof(SelectionLine), typeof(long), typeof(HexEditor),
                 new FrameworkPropertyMetadata(0L));
 
-        private void LinesOffSetLabel_MouseMove(object sender, MouseEventArgs e)
+        private void LinesInfoLabel_MouseMove(object sender, MouseEventArgs e)
         {
-            if (sender is FastTextLine line && e.LeftButton == MouseButtonState.Pressed)
-                SelectionStop = HexLiteralToLong((string)line.Tag).position + BytePerLine - 1;
+            if (!(sender is FastTextLine line) || e.LeftButton != MouseButtonState.Pressed) return;
+
+            var position = HexLiteralToLong((string)line.Tag).position;
+            var deleted = CheckIsOpen(_provider)
+                ? _provider.GetByteModifieds(ByteAction.Deleted).Where(b => 
+                    b.Value.BytePositionInStream >= SelectionStart && 
+                    b.Value.BytePositionInStream <= SelectionStop).Count()
+                : 0;
+            SelectionStop = GetValidPositionFrom(position + deleted, BytePerLine) - 1;
         }
 
-        private void LinesOffSetLabel_MouseDown(object sender, MouseButtonEventArgs e)
+        private void LinesInfoLabel_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (!(sender is FastTextLine line)) return;
 
             SelectionStart = HexLiteralToLong((string)line.Tag).position;
-            SelectionStop = SelectionStart + BytePerLine - 1 - GetColumnNumber(SelectionStart);
+            SelectionStop = SelectionStart + BytePerLine - 1 - (HideByteDeleted 
+                                                                   ? 0 //TODO: add fix here...
+                                                                   : GetColumnNumber(SelectionStart));
 
             HideCaret();
         }
@@ -2851,8 +2860,8 @@ namespace WpfHexaEditor
                     };
 
                     //Events
-                    lineInfoLabel.MouseDown += LinesOffSetLabel_MouseDown;
-                    lineInfoLabel.MouseMove += LinesOffSetLabel_MouseMove;
+                    lineInfoLabel.MouseDown += LinesInfoLabel_MouseDown;
+                    lineInfoLabel.MouseMove += LinesInfoLabel_MouseMove;
 
                     LinesInfoStackPanel.Children.Add(lineInfoLabel);
                 }
@@ -3544,15 +3553,13 @@ namespace WpfHexaEditor
                         bmList.Add(bm);
                 });
 
-                foreach (var bm in bmList)
-                    yield return bm;
+                return bmList.Select(bm => bm);
             }
         }
 
         /// <summary>
         /// Set bookmark at specified position
         /// </summary>
-        /// <param name="position"></param>
         public void SetBookMark(long position) => SetScrollMarker(position, ScrollMarker.Bookmark);
 
         /// <summary>
@@ -3572,126 +3579,127 @@ namespace WpfHexaEditor
         /// </summary>
         private void SetScrollMarker(long position, ScrollMarker marker, string description = "")
         {
-            if (CheckIsOpen(_provider))
+            if (!CheckIsOpen(_provider)) return;
+
+            double rightPosition = 0;
+            var exit = false;
+
+            //create bookmark
+            var bookMark = new BookMark
             {
-                double rightPosition = 0;
-                var exit = false;
+                Marker = marker,
+                BytePositionInStream = position,
+                Description = description
+            };
 
-                //create bookmark
-                var bookMark = new BookMark
+            #region Remove selection start marker and set position
+
+            if (marker == ScrollMarker.SelectionStart)
+            {
+                TraverseScrollMarker(sm =>
                 {
-                    Marker = marker,
-                    BytePositionInStream = position,
-                    Description = description
-                };
-
-                #region Remove selection start marker and set position
-
-                if (marker == ScrollMarker.SelectionStart)
-                {
-                    TraverseScrollMarker(sm =>
+                    if (sm.Tag is BookMark mark && mark.Marker == ScrollMarker.SelectionStart)
                     {
-                        if (sm.Tag is BookMark mark && mark.Marker == ScrollMarker.SelectionStart)
-                        {
-                            MarkerGrid.Children.Remove(sm);
-                            exit = true;
-                        }
-                    }, ref exit);
+                        MarkerGrid.Children.Remove(sm);
+                        exit = true;
+                    }
+                }, ref exit);
 
-                    bookMark.BytePositionInStream = SelectionStart;
-                }
-
-                #endregion
-
-                #region Set position in scrollbar
-
-                var topPosition =
-                    (GetLineNumber(bookMark.BytePositionInStream) * VerticalScrollBar.Track.TickHeight(MaxLine) - 1).Round(1);
-
-                if (double.IsNaN(topPosition))
-                    topPosition = 0;
-
-                #endregion
-
-                #region Check if position already exist and exit if exist                
-
-                if (marker != ScrollMarker.SelectionStart)
-                {
-                    exit = false;
-
-                    TraverseScrollMarker(sm =>
-                    {
-                        if (sm.Tag is BookMark mark && mark.Marker == marker &&
-                            (int)sm.Margin.Top == (int)topPosition)
-                            exit = true;
-                    }, ref exit);
-
-                    if (exit) return;
-                }
-
-                #endregion
-
-                #region Build rectangle
-
-                var rect = new Rectangle
-                {
-                    VerticalAlignment = VerticalAlignment.Top,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Tag = bookMark,
-                    Width = 5,
-                    Height = 3,
-                    DataContext = bookMark
-                };
-
-                #endregion
-
-                #region Set somes properties for different marker
-
-                switch (marker)
-                {
-                    case ScrollMarker.TblBookmark:
-                    case ScrollMarker.Bookmark:
-                        rect.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
-                        rect.Fill = (SolidColorBrush)TryFindResource("BookMarkColor");
-                        break;
-                    case ScrollMarker.SearchHighLight:
-                        rect.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
-                        rect.Fill = (SolidColorBrush)TryFindResource("SearchBookMarkColor");
-                        rect.HorizontalAlignment = HorizontalAlignment.Center;
-                        break;
-                    case ScrollMarker.SelectionStart:
-                        rect.Fill = (SolidColorBrush)TryFindResource("SelectionStartBookMarkColor");
-                        rect.Width = VerticalScrollBar.ActualWidth;
-                        rect.Height = 3;
-                        break;
-                    case ScrollMarker.ByteModified:
-                        rect.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
-                        rect.Fill = (SolidColorBrush)TryFindResource("ByteModifiedMarkColor");
-                        rect.HorizontalAlignment = HorizontalAlignment.Right;
-                        break;
-                    case ScrollMarker.ByteDeleted:
-                        rect.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
-                        rect.Fill = (SolidColorBrush)TryFindResource("ByteDeletedMarkColor");
-                        rect.HorizontalAlignment = HorizontalAlignment.Right;
-                        rightPosition = 4;
-                        break;
-                }
-
-                rect.MouseDown += Rect_MouseDown;
-                //rect.DataContext = new ByteModified {BytePositionInStream = position};
-                rect.Margin = new Thickness(0, topPosition, rightPosition, 0);
-
-                #endregion
-
-                //Add to grid
-                MarkerGrid.Children.Add(rect);
+                bookMark.BytePositionInStream = SelectionStart;
             }
+
+            #endregion
+
+            #region Set position in scrollbar
+
+            var topPosition =
+                (GetLineNumber(bookMark.BytePositionInStream) * VerticalScrollBar.Track.TickHeight(MaxLine) - 1).Round(1);
+
+            if (double.IsNaN(topPosition))
+                topPosition = 0;
+
+            #endregion
+
+            #region Check if position already exist and exit if exist                
+
+            if (marker != ScrollMarker.SelectionStart)
+            {
+                exit = false;
+
+                TraverseScrollMarker(sm =>
+                {
+                    if (sm.Tag is BookMark mark && mark.Marker == marker &&
+                        (int)sm.Margin.Top == (int)topPosition)
+                        exit = true;
+                }, ref exit);
+
+                if (exit) return;
+            }
+
+            #endregion
+
+            #region Build rectangle
+
+            var rect = new Rectangle
+            {
+                VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Tag = bookMark,
+                Width = 5,
+                Height = 3,
+                DataContext = bookMark
+            };
+
+            #endregion
+
+            #region Set somes properties for different marker
+
+            switch (marker)
+            {
+                case ScrollMarker.TblBookmark:
+                case ScrollMarker.Bookmark:
+                    rect.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
+                    rect.Fill = (SolidColorBrush)TryFindResource("BookMarkColor");
+                    break;
+                case ScrollMarker.SearchHighLight:
+                    rect.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
+                    rect.Fill = (SolidColorBrush)TryFindResource("SearchBookMarkColor");
+                    rect.HorizontalAlignment = HorizontalAlignment.Center;
+                    break;
+                case ScrollMarker.SelectionStart:
+                    rect.Fill = (SolidColorBrush)TryFindResource("SelectionStartBookMarkColor");
+                    rect.Width = VerticalScrollBar.ActualWidth;
+                    rect.Height = 3;
+                    break;
+                case ScrollMarker.ByteModified:
+                    rect.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
+                    rect.Fill = (SolidColorBrush)TryFindResource("ByteModifiedMarkColor");
+                    rect.HorizontalAlignment = HorizontalAlignment.Right;
+                    break;
+                case ScrollMarker.ByteDeleted:
+                    rect.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
+                    rect.Fill = (SolidColorBrush)TryFindResource("ByteDeletedMarkColor");
+                    rect.HorizontalAlignment = HorizontalAlignment.Right;
+                    rightPosition = 4;
+                    break;
+            }
+
+            rect.MouseDown += Rect_MouseDown;
+            //rect.DataContext = new ByteModified {BytePositionInStream = position};
+            rect.Margin = new Thickness(0, topPosition, rightPosition, 0);
+
+            #endregion
+
+            //Add to grid
+            MarkerGrid.Children.Add(rect);
         }
 
         private void Rect_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is Rectangle rect && rect.Tag is BookMark bm)
-                SetPosition(bm.Marker != ScrollMarker.SelectionStart ? bm.BytePositionInStream : SelectionStart, 1);
+            if (!(sender is Rectangle rect) || !(rect.Tag is BookMark bm)) return;
+
+            //Set position at the scrollmark...
+            SetPosition(bm.Marker != ScrollMarker.SelectionStart ? bm.BytePositionInStream : SelectionStart, 1);
         }
 
         /// <summary>

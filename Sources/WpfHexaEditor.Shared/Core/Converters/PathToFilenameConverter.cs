@@ -13,7 +13,7 @@ namespace WpfHexaEditor.Core.Converters
     /// <summary>
     /// Used to get the filename with extention.
     /// </summary>
-    public sealed class PathToFilenameConverter : GenericStaticInstance<PathToFilenameConverter> ,IValueConverter
+    public sealed class PathToFilenameConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
             (value is string filename)
