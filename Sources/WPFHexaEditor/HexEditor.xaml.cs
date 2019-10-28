@@ -1544,8 +1544,8 @@ namespace WpfHexaEditor
         {
             if (!CheckIsOpen(_provider)) return -1;
 
-            long validPosition = position;
-            long gap = positionCorrection >= 0 ? positionCorrection : -positionCorrection;
+            var validPosition = position;
+            var gap = positionCorrection >= 0 ? positionCorrection : -positionCorrection;
 
             long cnt = 0;
             for (long i = 0; i < gap; i++)
@@ -1578,10 +1578,9 @@ namespace WpfHexaEditor
         }
 
         public static readonly DependencyProperty HexDataVisibilityProperty =
-            DependencyProperty.Register("HexDataVisibility", typeof(Visibility), typeof(HexEditor),
+            DependencyProperty.Register(nameof(HexDataVisibility), typeof(Visibility), typeof(HexEditor),
                 new FrameworkPropertyMetadata(Visibility.Visible,
-                    HexDataVisibility_PropertyChanged,
-                    Visibility_CoerceValue));
+                    HexDataVisibility_PropertyChanged, Visibility_CoerceValue));
 
         private static object Visibility_CoerceValue(DependencyObject d, object baseValue) =>
             (Visibility)baseValue == Visibility.Hidden ? Visibility.Collapsed : (Visibility)baseValue;
@@ -1616,10 +1615,9 @@ namespace WpfHexaEditor
         }
 
         public static readonly DependencyProperty HeaderVisibilityProperty =
-            DependencyProperty.Register("HeaderVisibility", typeof(Visibility), typeof(HexEditor),
+            DependencyProperty.Register(nameof(HeaderVisibility), typeof(Visibility), typeof(HexEditor),
                 new FrameworkPropertyMetadata(Visibility.Visible,
-                    HeaderVisibility_PropertyChanged,
-                    Visibility_CoerceValue));
+                    HeaderVisibility_PropertyChanged, Visibility_CoerceValue));
 
         private static void HeaderVisibility_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -1652,7 +1650,7 @@ namespace WpfHexaEditor
         }
 
         public static readonly DependencyProperty StringDataVisibilityProperty =
-            DependencyProperty.Register("StringDataVisibility", typeof(Visibility), typeof(HexEditor),
+            DependencyProperty.Register(nameof(StringDataVisibility), typeof(Visibility), typeof(HexEditor),
                 new FrameworkPropertyMetadata(Visibility.Visible,
                     StringDataVisibility_ValidateValue,
                     Visibility_CoerceValue));
@@ -1661,15 +1659,11 @@ namespace WpfHexaEditor
         {
             if (!(d is HexEditor ctrl)) return;
 
-            switch ((Visibility)e.NewValue)
-            {
-                case Visibility.Visible:
-                    ctrl.StringDataStackPanel.Visibility = Visibility.Visible;
-                    break;
-                case Visibility.Collapsed:
-                    ctrl.StringDataStackPanel.Visibility = Visibility.Collapsed;
-                    break;
-            }
+            ctrl.StringDataStackPanel.Visibility = (Visibility)e.NewValue == Visibility.Visible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            ctrl.RefreshView(true);
         }
 
         /// <summary>
@@ -1682,30 +1676,48 @@ namespace WpfHexaEditor
         }
 
         public static readonly DependencyProperty StatusBarVisibilityProperty =
-            DependencyProperty.Register("StatusBarVisibility", typeof(Visibility), typeof(HexEditor),
+            DependencyProperty.Register(nameof(StatusBarVisibility), typeof(Visibility), typeof(HexEditor),
                 new FrameworkPropertyMetadata(Visibility.Visible,
-                    StatusBarVisibility_ValueChange,
-                    Visibility_CoerceValue));
+                    StatusBarVisibility_ValueChange, Visibility_CoerceValue));
 
         private static void StatusBarVisibility_ValueChange(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is HexEditor ctrl)) return;
 
-            switch ((Visibility)e.NewValue)
-            {
-                case Visibility.Visible:
-                    ctrl.StatusBarGrid.Visibility = Visibility.Visible;
-                    ctrl.BottomRectangle.Visibility = Visibility.Visible;
-                    break;
-
-                case Visibility.Collapsed:
-                    ctrl.StatusBarGrid.Visibility = Visibility.Collapsed;
-                    ctrl.BottomRectangle.Visibility = Visibility.Collapsed;
-                    break;
-            }
+            ctrl.StatusBarGrid.Visibility = ctrl.BottomRectangle.Visibility =
+                (Visibility)e.NewValue == Visibility.Visible
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
 
             ctrl.RefreshView(true);
         }
+
+        /// <summary>
+        /// Set or Get value for change visibility of the lineinfo panel
+        /// </summary>
+        public Visibility LineInfoVisibility
+        {
+            get { return (Visibility)GetValue(LineInfoVisibilityProperty); }
+            set { SetValue(LineInfoVisibilityProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for LineInfoVisibility.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty LineInfoVisibilityProperty =
+            DependencyProperty.Register(nameof(LineInfoVisibility), typeof(Visibility), typeof(HexEditor),
+                new FrameworkPropertyMetadata(Visibility.Visible,
+                    LineInfoVisibility_ValueChange, Visibility_CoerceValue));
+
+        private static void LineInfoVisibility_ValueChange(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is HexEditor ctrl)) return;
+
+            ctrl.LinesInfoStackPanel.Visibility = (Visibility)e.NewValue == Visibility.Visible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            ctrl.RefreshView(true);
+        }
+
 
         #endregion Visibility property
 
