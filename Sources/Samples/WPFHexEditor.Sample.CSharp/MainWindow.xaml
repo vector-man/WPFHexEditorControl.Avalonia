@@ -273,6 +273,7 @@
                         Width="Auto"
                         Height="Auto"
                         AllowByteCount="False"
+                        AllowCustomBackGroudBlock="True"
                         AllowDrop="True"
                         AllowExtend="False"
                         AppendNeedConfirmation="True"
@@ -286,8 +287,7 @@
                         DataStringVisual="Hexadecimal"
                         DefaultCopyToClipboardMode="HexaString"
                         ForegroundSecondColor="Blue"
-                        OffSetStringVisual="Hexadecimal"
-                        UseCustomBackGroudBlock="True" />
+                        OffSetStringVisual="Hexadecimal" />
                 </TabItem>
             </TabControl>
         </DockPanel>

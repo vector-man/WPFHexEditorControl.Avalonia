@@ -192,7 +192,7 @@ Namespace WPFHexaEditorExample
         End Sub
 
         Private Sub ReplaceMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            Call New FindReplaceWindow(HexEdit, HexEdit.SelectionByteArray) With
+            Call New FindReplaceWindow(HexEdit, HexEdit.GetSelectionByteArray()) With
             {
                 .Owner = Me
             }.Show()

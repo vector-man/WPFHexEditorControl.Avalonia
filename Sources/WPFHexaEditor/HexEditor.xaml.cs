@@ -20,7 +20,6 @@ using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.CharacterTable;
 using WpfHexaEditor.Core.Interfaces;
 using WpfHexaEditor.Core.MethodExtention;
-using WpfHexaEditor.Core.Xcbb;
 using WpfHexaEditor.Dialog;
 using static System.Windows.Forms.SystemInformation;
 using static WpfHexaEditor.Core.Bytes.ByteConverters;
