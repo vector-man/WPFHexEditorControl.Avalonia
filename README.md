@@ -13,11 +13,11 @@ Can be used in Wpf or WinForm application.
 
 Localized in English, French, Russian, Polish, Portuguese and Chinese
 
-### You want to say thank or just like project  ?
+### ⭐ You want to say thank or just like project  ?
 
 Hexeditor control is totaly free and can be used in all project you want like open source and commercial applications. I make it in my free time and a few colaborators help me when they can... Please hit the ⭐️ button or fork and I will be very happy ;) I accept help contribution... 
 
-### Screenshots
+### 🖼 Screenshots
 
 Sample with standard ASCII character table
 ![example](Images/Sample11-NOTBL.png?raw=true)
@@ -31,14 +31,14 @@ Sample use ByteShiftLeft and BytePerLine properties with custom TBL for edit fix
 Sample use of find and find/replace dialog...
 ![example](Images/Sample15-FindReplaceDialog.png?raw=true)
 
-## What is TBL (custom character table)
+## What is TBL (custom character table) 🧾
 The TBL are small plaintext .tbl files that link every hexadecimal value with a character, which proves most useful when reading and changing text data. Wpf HexEditor support .tbl and you can define your custom character table as you want.
 
 Unicode TBL are supported. For use put value at the right of equal (=) like this (0401=塞西尔) or (42=Д) in you plaintext .tbl file.
 
 ![example](Images/TBLExplain.png?raw=true)
 
-### Somes features
+### 🛒 Somes features
 - Find and Find/Replace dialog
 - Append byte at end of file
 - Include HexBox, an Hexadecimal TextBox with spinner
@@ -59,7 +59,7 @@ Unicode TBL are supported. For use put value at the right of equal (=) like this
 - Customize the color of bytes, TBL, background, header, and much more ...
 - ...
 
-### How to use
+### 👏 How to use
 Add a reference to `WPFHexaEditor.dll` from your project, then add the following namespace to your XAML:
 
 ```xaml
