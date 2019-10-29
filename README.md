@@ -66,7 +66,7 @@ Add a reference to `WPFHexaEditor.dll` from your project, then add the following
 xmlns:control="clr-namespace:WpfHexaEditor;assembly=WPFHexaEditor"
 ```
 
-Insert the control like this:
+Insert the control like this in your XAML...:
 
 ```xaml
 <control:HexEditor/>
