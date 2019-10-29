@@ -2996,7 +2996,11 @@ namespace WpfHexaEditor
             {
                 long lastByte = 0;
 
-                TraverseHexBytes(ctrl => { lastByte = ctrl.BytePositionInStream; });
+                TraverseHexBytes(ctrl => 
+                { 
+                    if (ctrl.BytePositionInStream != -1)
+                        lastByte = ctrl.BytePositionInStream; 
+                });
                 
                 return lastByte;
             }
