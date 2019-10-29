@@ -5,6 +5,8 @@
 [![NetFramework](https://img.shields.io/badge/Language-C%23%207.0-orange.svg)](https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/abbaye/WpfHexEditorControl/blob/master/LICENSE)
 
+## 🎯 ATTENTION : USE VERSION 16.3.7+ OF VISUAL STUDIO 2019 FOR BUILD...
+
 A fast, fully customisable Wpf user control for editing file or stream as hexadecimal. 
 
 Can be used in WPF or WinForm application.
@@ -15,7 +17,7 @@ Localized in English, French, Russian, Polish, Portuguese and Chinese
 
 Hexeditor control is totaly free and can be used in all project you want like open source and commercial applications. I make it in my free time and a few colaborators help me when they can... Please hit the ⭐️ button or fork and I will be very happy ;) I accept help contribution... 
 
-## Screenshots
+### Screenshots
 
 Sample with standard ASCII character table
 ![example](Images/Sample11-NOTBL.png?raw=true)
@@ -36,7 +38,7 @@ Unicode TBL are supported. For use put value at the right of equal (=) like this
 
 ![example](Images/TBLExplain.png?raw=true)
 
-## Somes features
+### Somes features
 - Find and Find/Replace dialog
 - Append byte at end of file
 - Include HexBox, an Hexadecimal TextBox with spinner
@@ -57,7 +59,7 @@ Unicode TBL are supported. For use put value at the right of equal (=) like this
 - Customize the color of bytes, TBL, background, header, and much more ...
 - ...
 
-## How to use
+### How to use
 Add a reference to `WPFHexaEditor.dll` from your project, then add the following namespace to your XAML:
 
 ```xaml
