@@ -7,13 +7,11 @@ using System;
 using System.Windows.Media;
 using WpfHexaEditor.Core.Bytes;
 
-namespace WpfHexaEditor.Core.Xcbb
+namespace WpfHexaEditor.Core
 {
     /// <summary>
-    /// IMPLEMENTATION NOT COMPLETED
     /// Used to create block of custom colors background 
     /// </summary>
-    /// TODO : Add programated positon..
     public class CustomBackgroundBlock
     {
         private long _length;
@@ -37,18 +35,18 @@ namespace WpfHexaEditor.Core.Xcbb
 
         public CustomBackgroundBlock(string start, long length, SolidColorBrush color)
         {
-            var srt = ByteConverters.HexLiteralToLong(start);
+            var (success, position) = ByteConverters.HexLiteralToLong(start);
 
-            StartOffset = srt.success ? srt.position : throw new Exception("Can't convert this string to long");
+            StartOffset = success ? position : throw new Exception("Can't convert this string to long");
             Length = length;
             Color = color;
         }
 
         public CustomBackgroundBlock(string start, long length, SolidColorBrush color, string description)
         {
-            var srt = ByteConverters.HexLiteralToLong(start);
+            var (success, position) = ByteConverters.HexLiteralToLong(start);
 
-            StartOffset = srt.success ? srt.position : throw new Exception("Can't convert this string to long");
+            StartOffset = success ? position : throw new Exception("Can't convert this string to long");
             Length = length;
             Color = color;
             Description = description;

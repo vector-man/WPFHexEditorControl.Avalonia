@@ -34,15 +34,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\MethodExtention\StringExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\MethodExtention\TrackExtention.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Native\NativeMethods.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\CustomBackgroundBlock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\ExeFile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbExpressionParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Xcbb\XcbbFileParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\CustomBackgroundBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FastTextLine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HexByte.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StringByte.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)Core\Xcbb\Exefile.xcbb" />
   </ItemGroup>
 </Project>

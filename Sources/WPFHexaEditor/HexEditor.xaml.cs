@@ -108,6 +108,11 @@ namespace WpfHexaEditor
         private bool _disposedValue;
 
         /// <summary>
+        /// For detect redondants call on SetFocusHexDataPanel and SetFocusStringDataPanel
+        /// </summary>
+        bool _setFocusTest = false;
+
+        /// <summary>
         /// Highlight the header and offset on SelectionStart property
         /// </summary>
         private bool _highLightSelectionStart = true;
@@ -210,9 +215,7 @@ namespace WpfHexaEditor
         /// Occurs on byte double click completed
         /// </summary>
         public event EventHandler ByteDoubleClick;
-
-
-
+        
         #endregion Events
 
         #region Constructor
@@ -641,8 +644,7 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for TypeOfCharacterTable.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TypeOfCharacterTableProperty =
             DependencyProperty.Register(nameof(TypeOfCharacterTable), typeof(CharacterTableType), typeof(HexEditor),
-                new FrameworkPropertyMetadata(CharacterTableType.Ascii,
-                    TypeOfCharacterTable_PropertyChanged));
+                new FrameworkPropertyMetadata(CharacterTableType.Ascii, TypeOfCharacterTable_PropertyChanged));
 
         private static void TypeOfCharacterTable_PropertyChanged(DependencyObject d,
             DependencyPropertyChangedEventArgs e)
@@ -665,8 +667,7 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for TBLShowMTE.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TblShowMteProperty =
             DependencyProperty.Register(nameof(TblShowMte), typeof(bool), typeof(HexEditor),
-                new FrameworkPropertyMetadata(true,
-                    TBLShowMTE_PropetyChanged));
+                new FrameworkPropertyMetadata(true, TBLShowMTE_PropetyChanged));
 
         private static void TBLShowMTE_PropetyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -734,8 +735,7 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for TBLDTEColor.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TbldteColorProperty =
             DependencyProperty.Register(nameof(TbldteColor), typeof(SolidColorBrush), typeof(HexEditor),
-                new FrameworkPropertyMetadata(Brushes.Red,
-                    TBLColor_Changed));
+                new FrameworkPropertyMetadata(Brushes.Red, TBLColor_Changed));
 
         private static void TBLColor_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -755,8 +755,7 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for TBLDTEColor.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TblmteColorProperty =
             DependencyProperty.Register(nameof(TblmteColor), typeof(SolidColorBrush), typeof(HexEditor),
-                new FrameworkPropertyMetadata(Brushes.DarkSlateGray,
-                    TBLColor_Changed));
+                new FrameworkPropertyMetadata(Brushes.DarkSlateGray, TBLColor_Changed));
 
         /// <summary>
         /// Get or set the color of EndBlock in string panel.
@@ -770,8 +769,7 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for TBLDTEColor.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TblEndBlockColorProperty =
             DependencyProperty.Register(nameof(TblEndBlockColor), typeof(SolidColorBrush), typeof(HexEditor),
-                new FrameworkPropertyMetadata(Brushes.Blue,
-                    TBLColor_Changed));
+                new FrameworkPropertyMetadata(Brushes.Blue, TBLColor_Changed));
 
         /// <summary>
         /// Get or set the color of EndBlock in string panel.
@@ -785,8 +783,7 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for TBLDTEColor.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TblEndLineColorProperty =
             DependencyProperty.Register(nameof(TblEndLineColor), typeof(SolidColorBrush), typeof(HexEditor),
-                new FrameworkPropertyMetadata(Brushes.Blue,
-                    TBLColor_Changed));
+                new FrameworkPropertyMetadata(Brushes.Blue, TBLColor_Changed));
 
         /// <summary>
         /// Get or set the color of EndBlock in string panel.
@@ -800,8 +797,7 @@ namespace WpfHexaEditor
         // Using a DependencyProperty as the backing store for TBLDTEColor.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TblDefaultColorProperty =
             DependencyProperty.Register(nameof(TblDefaultColor), typeof(SolidColorBrush), typeof(HexEditor),
-                new FrameworkPropertyMetadata(Brushes.Black,
-                    TBLColor_Changed));
+                new FrameworkPropertyMetadata(Brushes.Black, TBLColor_Changed));
 
         #endregion Characters tables property/methods
 
@@ -841,7 +837,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Stream or file are modified when IsModified are set to true.
         /// </summary>
-        public bool IsModified { get; set; } = false;
+        public bool IsModified { get; internal set; } = false;
         
         private void Control_ByteModified(object sender, EventArgs e)
         {
@@ -921,6 +917,7 @@ namespace WpfHexaEditor
                     b.Value.BytePositionInStream >= SelectionStart && 
                     b.Value.BytePositionInStream <= SelectionStop).Count()
                 : 0;
+
             SelectionStop = GetValidPositionFrom(position + deleted, BytePerLine) - 1;
         }
 
@@ -1024,6 +1021,7 @@ namespace WpfHexaEditor
 
         private void Control_MoveDown(object sender, EventArgs e)
         {
+            //Prevent infinite loop
             _setFocusTest = false;
 
             var newPosition = GetValidPositionFrom(SelectionStart, BytePerLine);
@@ -1078,13 +1076,14 @@ namespace WpfHexaEditor
         {
             //Prevent false mouse selection on file open
             if (SelectionStart == -1) return;
-
             if (!(sender is IByteControl bCtrl)) return;
 
             var focusedControl = Keyboard.FocusedElement;
 
             //update selection
-            SelectionStop = bCtrl.BytePositionInStream != -1 ? bCtrl.BytePositionInStream : LastVisibleBytePosition;
+            SelectionStop = bCtrl.BytePositionInStream != -1 
+                ? bCtrl.BytePositionInStream 
+                : LastVisibleBytePosition;
 
             UpdateSelectionColor(focusedControl is HexByte ? FirstColor.HexByteData : FirstColor.StringByteData);
             UpdateSelection();
@@ -1100,9 +1099,8 @@ namespace WpfHexaEditor
         }
 
         public static readonly DependencyProperty SelectionStartProperty =
-            DependencyProperty.Register("SelectionStart", typeof(long), typeof(HexEditor),
-                new FrameworkPropertyMetadata(-1L, SelectionStart_ChangedCallBack,
-                    SelectionStart_CoerceValueCallBack));
+            DependencyProperty.Register(nameof(SelectionStart), typeof(long), typeof(HexEditor),
+                new FrameworkPropertyMetadata(-1L, SelectionStart_ChangedCallBack, SelectionStart_CoerceValueCallBack));
 
         private static object SelectionStart_CoerceValueCallBack(DependencyObject d, object baseValue)
         {
@@ -1134,7 +1132,7 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// Set the start byte position of selection
+        /// Set the end byte position of selection
         /// </summary>
         public long SelectionStop
         {
@@ -1143,9 +1141,8 @@ namespace WpfHexaEditor
         }
 
         public static readonly DependencyProperty SelectionStopProperty =
-            DependencyProperty.Register("SelectionStop", typeof(long), typeof(HexEditor),
-                new FrameworkPropertyMetadata(-1L, SelectionStop_ChangedCallBack,
-                    SelectionStop_CoerceValueCallBack));
+            DependencyProperty.Register(nameof(SelectionStop), typeof(long), typeof(HexEditor),
+                new FrameworkPropertyMetadata(-1L, SelectionStop_ChangedCallBack, SelectionStop_CoerceValueCallBack));
 
         private static object SelectionStop_CoerceValueCallBack(DependencyObject d, object baseValue)
         {
@@ -1155,7 +1152,9 @@ namespace WpfHexaEditor
 
             if (value < -1 || !CheckIsOpen(ctrl._provider)) return -1L;
 
-            return value >= ctrl._provider.Length ? ctrl._provider.Length : baseValue;
+            return value >= ctrl._provider.Length 
+                ? ctrl._provider.Length 
+                : baseValue;
         }
 
         private static void SelectionStop_ChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -1253,11 +1252,6 @@ namespace WpfHexaEditor
                 CopyToStream(ms, true);
                 return ByteToHex(ms.ToArray());
             }
-        }
-
-        private void Control_Unloaded(object sender, RoutedEventArgs e)
-        {
-            //CloseProvider();
         }
 
         private void Control_MoveRight(object sender, EventArgs e)
@@ -1440,8 +1434,8 @@ namespace WpfHexaEditor
         /// <summary>
         /// Copy to clipboard the current selection with actual change in control
         /// </summary>
-        public void CopyToClipboard(CopyPasteMode copypastemode) => CopyToClipboard(copypastemode, SelectionStart,
-            SelectionStop, true, _tblCharacterTable);
+        public void CopyToClipboard(CopyPasteMode copypastemode) => 
+            CopyToClipboard(copypastemode, SelectionStart, SelectionStop, true, _tblCharacterTable);
 
         /// <summary>
         /// Copy to clipboard
@@ -3011,12 +3005,6 @@ namespace WpfHexaEditor
         #endregion First/Last visible byte methods
 
         #region Focus Methods
-
-        /// <summary>
-        /// Prevent infinite loop on SetFocusHexDataPanel and SetFocusStringDataPanel
-        /// </summary>
-        bool _setFocusTest = false;
-        
         /// <summary>
         /// Update the focus to selection start
         /// </summary>
@@ -4872,20 +4860,19 @@ namespace WpfHexaEditor
 
         /// <summary>
         /// Use CustomBackgroundBlock in the control
-        /// ONLY DETECT EXE FILE FOR NOW... NOT POSSIBLE TO CREATE OWN CBB (WILL BE POSSIBLE SOON)
         /// </summary>
-        public bool UseCustomBackGroudBlock
+        public bool AllowCustomBackGroudBlock
         {
-            get => (bool)GetValue(UseCustomBackGroudBlockProperty);
-            set => SetValue(UseCustomBackGroudBlockProperty, value);
+            get => (bool)GetValue(AllowCustomBackGroudBlockProperty);
+            set => SetValue(AllowCustomBackGroudBlockProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for UseCustomBackGroudBlock.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty UseCustomBackGroudBlockProperty =
-            DependencyProperty.Register(nameof(UseCustomBackGroudBlock), typeof(bool), typeof(HexEditor),
-                new FrameworkPropertyMetadata(false, Control_UseCustomBackGroudBlockPropertyChanged));
+        public static readonly DependencyProperty AllowCustomBackGroudBlockProperty =
+            DependencyProperty.Register(nameof(AllowCustomBackGroudBlock), typeof(bool), typeof(HexEditor),
+                new FrameworkPropertyMetadata(false, Control_AllowCustomBackGroudBlockPropertyChanged));
 
-        private static void Control_UseCustomBackGroudBlockPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void Control_AllowCustomBackGroudBlockPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
 
