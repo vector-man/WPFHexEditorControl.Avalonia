@@ -4888,10 +4888,10 @@ namespace WpfHexaEditor
         }
         #endregion
 
-        #region WORK IN PROGRESS // CustomBackgroundBlock implementation
+        #region Custom Background Block implementation
 
         /// <summary>
-        /// Use CustomBackgroundBlock in the control
+        /// Get or set if Custom Background Block are allowed
         /// </summary>
         public bool AllowCustomBackGroudBlock
         {
@@ -4910,11 +4910,20 @@ namespace WpfHexaEditor
             ctrl.RefreshView();
         }
 
-        private readonly List<CustomBackgroundBlock> _cbbList = new List<CustomBackgroundBlock>();
+        /// <summary>
+        /// Add of remove CustomBackgroundBlock in this list to use in hexeditor
+        /// </summary>
+        public List<CustomBackgroundBlock> CustomBackgroundBlockItems { get; set; } = new List<CustomBackgroundBlock>();
 
         internal CustomBackgroundBlock GetCustomBackgroundBlock(long BytePositionInStream) =>
-            _cbbList?.FirstOrDefault(cbb => BytePositionInStream >= cbb.StartOffset &&
-                                            BytePositionInStream <= cbb.StopOffset);
+            CustomBackgroundBlockItems?.FirstOrDefault(cbb => 
+                BytePositionInStream >= cbb.StartOffset &&
+                BytePositionInStream <= cbb.StopOffset);
+
+        /// <summary>
+        /// Clear the list of custom background block
+        /// </summary>
+        public void ClearCustomBackgroundBlock() => CustomBackgroundBlockItems.Clear();
 
         #endregion
 
