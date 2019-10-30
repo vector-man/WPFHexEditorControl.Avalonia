@@ -88,15 +88,20 @@ namespace WpfHexaEditor
 
         #region Properties
 
+        /// <summary>
+        /// Get or set if the width are auto or fixed
+        /// </summary>
         public bool AutoWidth { get; set; } = true;
         
+        /// <summary>
+        /// Get or set the render point
+        /// </summary>
         public Point RenderPoint
         {
             get => (Point)GetValue(RenderPointProperty);
             set => SetValue(RenderPointProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for RenderPoint.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty RenderPointProperty =
             DependencyProperty.Register(nameof(RenderPoint), typeof(Point), typeof(FastTextLine),
                 new FrameworkPropertyMetadata(new Point(0, 0), FrameworkPropertyMetadataOptions.AffectsMeasure));
