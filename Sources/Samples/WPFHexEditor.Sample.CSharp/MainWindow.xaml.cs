@@ -170,5 +170,10 @@ namespace WPFHexaEditorExample
             {
                 Owner = this
             }.Show();
+
+        private void Image_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //TODO: Add close button code
+        }
     }
 }

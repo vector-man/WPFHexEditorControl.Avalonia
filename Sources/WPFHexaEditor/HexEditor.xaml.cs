@@ -32,8 +32,8 @@ namespace WpfHexaEditor
     /// Wpf HexEditor control implementation
     /// </summary>
     /// <remarks>
-    /// A fast, fully customisable Wpf user control for editing file or stream as hexadecimal. 
-    /// Can be used in Wpf or WinForm application.
+    /// Wpf Hexeditor is a fast and fully customisable user control for editing file or stream as hexadecimal. 
+    /// Can be used in Wpf or WinForm application
     /// </remarks>
     public partial class HexEditor : IDisposable
     {
@@ -548,9 +548,9 @@ namespace WpfHexaEditor
             set { SetValue(ApplicationNameProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for ApplicationName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ApplicationNameProperty =
-            DependencyProperty.Register(nameof(ApplicationName), typeof(string), typeof(HexEditor), new PropertyMetadata("Wpf HexEditor"));
+            DependencyProperty.Register(nameof(ApplicationName), typeof(string), typeof(HexEditor), 
+                new PropertyMetadata("Wpf HexEditor"));
                
         /// <summary>
         /// Height of data line. 
@@ -4901,17 +4901,17 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get or set if Custom Background Block are allowed
         /// </summary>
-        public bool AllowCustomBackGroudBlock
+        public bool AllowCustomBackgroundBlock
         {
-            get => (bool)GetValue(AllowCustomBackGroudBlockProperty);
-            set => SetValue(AllowCustomBackGroudBlockProperty, value);
+            get => (bool)GetValue(AllowCustomBackgroundBlockProperty);
+            set => SetValue(AllowCustomBackgroundBlockProperty, value);
         }
 
-        public static readonly DependencyProperty AllowCustomBackGroudBlockProperty =
-            DependencyProperty.Register(nameof(AllowCustomBackGroudBlock), typeof(bool), typeof(HexEditor),
-                new FrameworkPropertyMetadata(false, Control_AllowCustomBackGroudBlockPropertyChanged));
+        public static readonly DependencyProperty AllowCustomBackgroundBlockProperty =
+            DependencyProperty.Register(nameof(AllowCustomBackgroundBlock), typeof(bool), typeof(HexEditor),
+                new FrameworkPropertyMetadata(false, Control_AllowCustomBackgroundBlockPropertyChanged));
 
-        private static void Control_AllowCustomBackGroudBlockPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void Control_AllowCustomBackgroundBlockPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
 

@@ -204,6 +204,9 @@
                         Header="Status bar"
                         IsCheckable="True"
                         IsChecked="{Binding ElementName=HexEdit, Path=StatusBarVisibility, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityToBoolConverter}}" />
+                    <!--<MenuItem Header="Byte spacer visual">
+                        
+                    </MenuItem>-->
                 </MenuItem>
                 <MenuItem x:Name="OptionMenu" Header="Options">
                     <MenuItem
@@ -223,9 +226,22 @@
                         IsCheckable="True"
                         IsChecked="{Binding ElementName=HexEdit, Path=AllowAutoSelectSameByteAtDoubleClick, UpdateSourceTrigger=PropertyChanged}" />
                     <MenuItem
+                        Header="Allow context menu"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowContextMenu, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem
                         Header="Count the number of the selected byte"
                         IsCheckable="True"
                         IsChecked="{Binding ElementName=HexEdit, Path=AllowByteCount, UpdateSourceTrigger=PropertyChanged}" />
+                    <Separator />
+                    <MenuItem
+                        Header="Allow text dropping"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowTextDrop, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem
+                        Header="Allow file dropping"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowFileDrop, UpdateSourceTrigger=PropertyChanged}" />
                     <Separator />
                     <MenuItem
                         Header="Hide byte are deleted"
@@ -235,6 +251,11 @@
                         Header="Allow the possibility to delete byte"
                         IsCheckable="True"
                         IsChecked="{Binding ElementName=HexEdit, Path=AllowDeleteByte, UpdateSourceTrigger=PropertyChanged}" />
+                    <Separator />
+                    <MenuItem
+                        Header="Expend need confirmation"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AppendNeedConfirmation, UpdateSourceTrigger=PropertyChanged}" />
                     <MenuItem
                         Header="Allow expend at end of file"
                         IsCheckable="True"
@@ -280,7 +301,7 @@
                         Width="Auto"
                         Height="Auto"
                         AllowByteCount="False"
-                        AllowCustomBackGroudBlock="True"
+                        AllowCustomBackgroundBlock="True"
                         AllowDrop="True"
                         AllowExtend="False"
                         AppendNeedConfirmation="True"
