@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BaseByte.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Converters\VisibilityToBooleanConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Converters\PathToFilenameConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\BookMark.cs" />

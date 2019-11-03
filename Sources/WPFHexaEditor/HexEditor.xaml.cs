@@ -542,8 +542,16 @@ namespace WpfHexaEditor
         /// <summary>
         /// The name of your application to be showing in messagebox title
         /// </summary>
-        public string ApplicationName { get; set; } = "Wpf HexEditor";
+        public string ApplicationName
+        {
+            get { return (string)GetValue(ApplicationNameProperty); }
+            set { SetValue(ApplicationNameProperty, value); }
+        }
 
+        // Using a DependencyProperty as the backing store for ApplicationName.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ApplicationNameProperty =
+            DependencyProperty.Register(nameof(ApplicationName), typeof(string), typeof(HexEditor), new PropertyMetadata("Wpf HexEditor"));
+               
         /// <summary>
         /// Height of data line. 
         /// </summary>

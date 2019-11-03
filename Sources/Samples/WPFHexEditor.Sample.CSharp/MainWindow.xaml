@@ -85,10 +85,8 @@
                     <Separator />
                     <MenuItem
                         x:Name="SetReadOnlyMenu"
-                        Click="SetReadOnlyMenu_Click"
                         Header="Read only"
-                        IsCheckable="True"
-                        IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=ReadOnly, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        IsCheckable="True" />
                     <Separator />
                     <MenuItem
                         x:Name="CopyHexaMenu"
@@ -187,16 +185,25 @@
 
                 <MenuItem x:Name="ViewMenu" Header="View">
                     <MenuItem
-                        x:Name="ShowHeaderMenu"
-                        Click="ShowHeaderMenu_Click"
-                        Header="Header visibility"
+                        Header="Header"
                         IsCheckable="True"
-                        IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=HeaderVisibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        IsChecked="{Binding ElementName=HexEdit, Path=HeaderVisibility, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityToBoolConverter}}" />
                     <MenuItem
-                        Click="StatusBarVisibility_Click"
-                        Header="Statusbar visibility"
+                        Header="Hex data panel"
                         IsCheckable="True"
-                        IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=StatusBarVisibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        IsChecked="{Binding ElementName=HexEdit, Path=HexDataVisibility, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityToBoolConverter}}" />
+                    <MenuItem
+                        Header="String data panel"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=StringDataVisibility, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityToBoolConverter}}" />
+                    <MenuItem
+                        Header="Line info panel"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=LineInfoVisibility, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityToBoolConverter}}" />
+                    <MenuItem
+                        Header="Status bar"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=StatusBarVisibility, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityToBoolConverter}}" />
                 </MenuItem>
                 <MenuItem x:Name="OptionMenu" Header="Options">
                     <MenuItem
@@ -277,7 +284,7 @@
                         AllowDrop="True"
                         AllowExtend="False"
                         AppendNeedConfirmation="True"
-                        ApplicationName="Wpf Hexeditor control sample"
+                        ApplicationName="{Binding Source={x:Static properties:Settings.Default}, Path=ReadOnly, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                         BorderThickness="1"
                         ByteGrouping="FourByte"
                         ByteShiftLeft="{Binding LongValue, ElementName=HbBsl, UpdateSourceTrigger=PropertyChanged}"

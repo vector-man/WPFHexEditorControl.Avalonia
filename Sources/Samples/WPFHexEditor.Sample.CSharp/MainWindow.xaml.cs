@@ -20,22 +20,13 @@ namespace WPFHexaEditorExample
 {
     public partial class MainWindow
     {
-        private enum SettingEnum
-        {
-            HeaderVisibility,
-            ReadOnly,
-            ScrollVisibility,
-            StatusBarVisibility
-        }
 
         public MainWindow()
         {
             //FORCE CULTURE
             //System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo("en");
 
-            InitializeComponent();
-          
-            UpdateAllSettings();
+            InitializeComponent();          
         }
 
         private void OpenMenu_Click(object sender, RoutedEventArgs e)
@@ -61,45 +52,6 @@ namespace WPFHexaEditorExample
         }
 
         private void CloseFileMenu_Click(object sender, RoutedEventArgs e) => HexEdit.CloseProvider();
-
-        private void SetReadOnlyMenu_Click(object sender, RoutedEventArgs e) => UpdateSetting(SettingEnum.ReadOnly);
-
-        private void ShowHeaderMenu_Click(object sender, RoutedEventArgs e) => UpdateSetting(SettingEnum.HeaderVisibility);
-
-        private void StatusBarVisibility_Click(object sender, RoutedEventArgs e) => UpdateSetting(SettingEnum.StatusBarVisibility);
-
-        private void UpdateSetting(SettingEnum setting)
-        {
-            switch (setting)
-            {
-                case SettingEnum.HeaderVisibility:
-                    HexEdit.HeaderVisibility = !Settings.Default.HeaderVisibility 
-                        ? Visibility.Collapsed 
-                        : Visibility.Visible;
-                    Settings.Default.HeaderVisibility = HexEdit.HeaderVisibility == Visibility.Visible;
-                    break;
-                case SettingEnum.ReadOnly:
-                    HexEdit.ReadOnlyMode = Settings.Default.ReadOnly;
-
-                    HexEdit.ClearAllChange();
-                    HexEdit.RefreshView();
-                    break;
-                case SettingEnum.StatusBarVisibility:
-                    HexEdit.StatusBarVisibility = !Settings.Default.StatusBarVisibility
-                        ? Visibility.Collapsed
-                        : Visibility.Visible;
-
-                    Settings.Default.StatusBarVisibility = HexEdit.StatusBarVisibility == Visibility.Visible;
-                    break;
-            }
-        }
-
-        private void UpdateAllSettings()
-        {
-            UpdateSetting(SettingEnum.HeaderVisibility);
-            UpdateSetting(SettingEnum.ReadOnly);
-            UpdateSetting(SettingEnum.ScrollVisibility);
-        }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
