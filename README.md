@@ -5,7 +5,7 @@
 [![NetFramework](https://img.shields.io/badge/Language-C%23%207.0-orange.svg)](https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/abbaye/WpfHexEditorControl/blob/master/LICENSE)
 
-## 🎯 ATTENTION : USE VERSION 16.3.7+ OF VISUAL STUDIO 2019 FOR BUILD...
+## 🎯 ATTENTION : BUILD WITH VISUAL STUDIO 2019 v16.3.7+
 
 Wpf Hexeditor is a fast and fully customisable user control for editing file or stream as hexadecimal. 
 
