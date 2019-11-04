@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppendByteConfirmationString" xml:space="preserve">
-    <value>Вы дошли до конца файла. Вы хотите добавить один байт? Эта операция не может быть отменена, если вы продолжите.</value>
+    <value>Достигнут конец файла. Добавить байт? Эта операция не может быть отменена.</value>
   </data>
   <data name="BookmarksString" xml:space="preserve">
-    <value>закладки</value>
+    <value>Закладки</value>
   </data>
   <data name="ByteActionString" xml:space="preserve">
     <value>Байт действия</value>
@@ -145,7 +145,7 @@
     <value>Очистить</value>
   </data>
   <data name="ClickToGoAtPositionString" xml:space="preserve">
-    <value>Нажмите, чтобы перейти в позицию.</value>
+    <value>Нажмите, чтобы перейти на позицию.</value>
   </data>
   <data name="CloseString" xml:space="preserve">
     <value>Закрыть</value>
@@ -154,16 +154,16 @@
     <value>Скопировать как ASCII</value>
   </data>
   <data name="CopyAsDecimalString" xml:space="preserve">
-    <value>Копировать как десятичную</value>
+    <value>Копировать как десятичное число</value>
   </data>
   <data name="CopyAsHexadecimalString" xml:space="preserve">
-    <value>Копировать как шестнадцатеричный</value>
+    <value>Копировать как шестнадцатеричное число</value>
   </data>
   <data name="CopyAsTBLString" xml:space="preserve">
     <value>TBL (загруженный файл символов)</value>
   </data>
   <data name="CopySelectionAsString" xml:space="preserve">
-    <value>Копировать выбор как ...</value>
+    <value>Копировать выделенное как...</value>
   </data>
   <data name="CountOfString" xml:space="preserve">
     <value>Количество</value>
@@ -181,7 +181,7 @@
     <value>&lt;End&gt;</value>
   </data>
   <data name="EnterHexValueMsgString" xml:space="preserve">
-    <value>Введите шестнадцатеричное значение ...</value>
+    <value>Введите шестнадцатеричное значение...</value>
   </data>
   <data name="FileDroppingConfirmationString" xml:space="preserve">
     <value>Вы хотите закрыть текущий файл и открыть:</value>
@@ -190,7 +190,7 @@
     <value>Заполните выбор байтом</value>
   </data>
   <data name="FillSelectionString" xml:space="preserve">
-    <value>Заполните выбор байтом ...</value>
+    <value>Заполните выбор байтом...</value>
   </data>
   <data name="FindAllString" xml:space="preserve">
     <value>Bce</value>
@@ -202,31 +202,31 @@
     <value>Байт для поиска</value>
   </data>
   <data name="FindFirstString" xml:space="preserve">
-    <value>Первый</value>
+    <value>Найти первый</value>
   </data>
   <data name="FindLastString" xml:space="preserve">
-    <value>Последний</value>
+    <value>Найти последний</value>
   </data>
   <data name="FindNextString" xml:space="preserve">
-    <value>следующий</value>
+    <value>Найти следующий</value>
   </data>
   <data name="FindSelectionString" xml:space="preserve">
     <value>Найти все случаи отбора</value>
   </data>
   <data name="FindString" xml:space="preserve">
-    <value>найти</value>
+    <value>Найти</value>
   </data>
   <data name="FindWhatString" xml:space="preserve">
-    <value>Найти то, что:</value>
+    <value>Найти:</value>
   </data>
   <data name="FirstByteString" xml:space="preserve">
     <value>Первый байт</value>
   </data>
   <data name="HexString" xml:space="preserve">
-    <value>наговор</value>
+    <value>Hex</value>
   </data>
   <data name="HighLightSettingString" xml:space="preserve">
-    <value>Выделите все данные найти</value>
+    <value>Выделить все найденные данные</value>
   </data>
   <data name="KBTagString" xml:space="preserve">
     <value>Kb</value>
@@ -250,7 +250,7 @@
     <value>ОК</value>
   </data>
   <data name="PasteExtendByteConfirmationString" xml:space="preserve">
-    <value>Операция вставки достигла конца файла. Вы хотите расширить файл для полной работы? Эта операция не может быть отменена, если вы продолжите.</value>
+    <value>Операция вставки достигла конца файла. Расширить файл для завершения операции? Эта операция не может быть отменена.</value>
   </data>
   <data name="PasteFromClipboardString" xml:space="preserve">
     <value>Вставить из буфера обмена</value>
@@ -259,19 +259,19 @@
     <value>Вставить без вставки</value>
   </data>
   <data name="PositionString" xml:space="preserve">
-    <value>Должность</value>
+    <value>Позиция</value>
   </data>
   <data name="ReplaceAllString" xml:space="preserve">
-    <value>Заменить bce</value>
+    <value>Заменить всe</value>
   </data>
   <data name="ReplaceByByteString" xml:space="preserve">
     <value>Заменить байтом</value>
   </data>
   <data name="ReplaceNextString" xml:space="preserve">
-    <value>замените следующие</value>
+    <value>Заменить следующие</value>
   </data>
   <data name="ReplaceSelectionString" xml:space="preserve">
-    <value>Заменить байт в выборе ...</value>
+    <value>Заменить байт в выборе...</value>
   </data>
   <data name="ReplaceString" xml:space="preserve">
     <value>Заменить</value>
@@ -286,7 +286,7 @@
     <value>Заменить:</value>
   </data>
   <data name="SelectAllString" xml:space="preserve">
-    <value>Выбор всех</value>
+    <value>Выделить все</value>
   </data>
   <data name="SetBookMarkString" xml:space="preserve">
     <value>Установить закладку</value>
@@ -298,16 +298,16 @@
     <value>Эта строка не является шестнадцатеричной</value>
   </data>
   <data name="UndoString" xml:space="preserve">
-    <value>расстегивать</value>
+    <value>Отменить</value>
   </data>
   <data name="ValueString" xml:space="preserve">
-    <value>значение</value>
+    <value>Значение</value>
   </data>
   <data name="WritingErrorExeptionString" xml:space="preserve">
-    <value>При записи происходит ошибка.</value>
+    <value>При записи произошла ошибка.</value>
   </data>
   <data name="ZoomResetString" xml:space="preserve">
-    <value>Сброс до 100%</value>
+    <value>Сбросить масштаб до 100%</value>
   </data>
   <data name="ZoomString" xml:space="preserve">
     <value>Увеличить</value>
