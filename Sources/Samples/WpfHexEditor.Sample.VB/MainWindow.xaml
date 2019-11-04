@@ -85,10 +85,8 @@
                     <Separator />
                     <MenuItem
                         x:Name="SetReadOnlyMenu"
-                        Click="SetReadOnlyMenu_Click"
                         Header="Read only"
-                        IsCheckable="True"
-                        IsChecked="{Binding Source={x:Static properties:MySettings.Default}, Path=ReadOnly, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        IsCheckable="True" />
                     <Separator />
                     <MenuItem
                         x:Name="CopyHexaMenu"
@@ -187,16 +185,28 @@
 
                 <MenuItem x:Name="ViewMenu" Header="View">
                     <MenuItem
-                        x:Name="ShowHeaderMenu"
-                        Click="ShowHeaderMenu_Click"
-                        Header="Header visibility"
+                        Header="Header"
                         IsCheckable="True"
-                        IsChecked="{Binding Source={x:Static properties:MySettings.Default}, Path=HeaderVisibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        IsChecked="{Binding ElementName=HexEdit, Path=HeaderVisibility, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityToBoolConverter}}" />
                     <MenuItem
-                        Click="StatusBarVisibility_Click"
-                        Header="Statusbar visibility"
+                        Header="Hex data panel"
                         IsCheckable="True"
-                        IsChecked="{Binding Source={x:Static properties:MySettings.Default}, Path=StatusBarVisibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        IsChecked="{Binding ElementName=HexEdit, Path=HexDataVisibility, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityToBoolConverter}}" />
+                    <MenuItem
+                        Header="String data panel"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=StringDataVisibility, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityToBoolConverter}}" />
+                    <MenuItem
+                        Header="Line info panel"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=LineInfoVisibility, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityToBoolConverter}}" />
+                    <MenuItem
+                        Header="Status bar"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=StatusBarVisibility, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityToBoolConverter}}" />
+                    <!--<MenuItem Header="Byte spacer visual">
+                        
+                    </MenuItem>-->
                 </MenuItem>
                 <MenuItem x:Name="OptionMenu" Header="Options">
                     <MenuItem
@@ -216,9 +226,22 @@
                         IsCheckable="True"
                         IsChecked="{Binding ElementName=HexEdit, Path=AllowAutoSelectSameByteAtDoubleClick, UpdateSourceTrigger=PropertyChanged}" />
                     <MenuItem
+                        Header="Allow context menu"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowContextMenu, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem
                         Header="Count the number of the selected byte"
                         IsCheckable="True"
                         IsChecked="{Binding ElementName=HexEdit, Path=AllowByteCount, UpdateSourceTrigger=PropertyChanged}" />
+                    <Separator />
+                    <MenuItem
+                        Header="Allow text dropping"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowTextDrop, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem
+                        Header="Allow file dropping"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AllowFileDrop, UpdateSourceTrigger=PropertyChanged}" />
                     <Separator />
                     <MenuItem
                         Header="Hide byte are deleted"
@@ -228,6 +251,11 @@
                         Header="Allow the possibility to delete byte"
                         IsCheckable="True"
                         IsChecked="{Binding ElementName=HexEdit, Path=AllowDeleteByte, UpdateSourceTrigger=PropertyChanged}" />
+                    <Separator />
+                    <MenuItem
+                        Header="Expend need confirmation"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=AppendNeedConfirmation, UpdateSourceTrigger=PropertyChanged}" />
                     <MenuItem
                         Header="Allow expend at end of file"
                         IsCheckable="True"
@@ -273,10 +301,11 @@
                         Width="Auto"
                         Height="Auto"
                         AllowByteCount="False"
+                        AllowCustomBackgroundBlock="True"
                         AllowDrop="True"
                         AllowExtend="False"
                         AppendNeedConfirmation="True"
-                        ApplicationName="Wpf Hexeditor control sample"
+                        ApplicationName="{Binding Source={x:Static properties:MySettings.Default}, Path=ReadOnly, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                         BorderThickness="1"
                         ByteGrouping="FourByte"
                         ByteShiftLeft="{Binding LongValue, ElementName=HbBsl, UpdateSourceTrigger=PropertyChanged}"
@@ -286,8 +315,7 @@
                         DataStringVisual="Hexadecimal"
                         DefaultCopyToClipboardMode="HexaString"
                         ForegroundSecondColor="Blue"
-                        OffSetStringVisual="Hexadecimal"
-                        AllowCustomBackGroudBlock="True" />
+                        OffSetStringVisual="Hexadecimal" />
                 </TabItem>
             </TabControl>
         </DockPanel>

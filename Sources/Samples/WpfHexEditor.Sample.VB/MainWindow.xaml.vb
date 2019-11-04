@@ -7,16 +7,9 @@ Imports WpfHexEditor.Sample.VB.MySettings
 
 Namespace WPFHexaEditorExample
     Partial Public Class MainWindow
-        Private Enum SettingEnum
-            HeaderVisibility
-            [ReadOnly]
-            ScrollVisibility
-            StatusBarVisibility
-        End Enum
 
         Public Sub New()
             InitializeComponent()
-            UpdateAllSettings()
         End Sub
 
         Private Sub OpenMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
@@ -37,39 +30,6 @@ Namespace WPFHexaEditorExample
 
         Private Sub CloseFileMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
             HexEdit.CloseProvider()
-        End Sub
-
-        Private Sub SetReadOnlyMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            UpdateSetting(SettingEnum.[ReadOnly])
-        End Sub
-
-        Private Sub ShowHeaderMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            UpdateSetting(SettingEnum.HeaderVisibility)
-        End Sub
-
-        Private Sub StatusBarVisibility_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            UpdateSetting(SettingEnum.StatusBarVisibility)
-        End Sub
-
-        Private Sub UpdateSetting(ByVal setting As SettingEnum)
-            Select Case setting
-                Case SettingEnum.HeaderVisibility
-                    HexEdit.HeaderVisibility = If(Not [Default].HeaderVisibility, Visibility.Collapsed, Visibility.Visible)
-                    [Default].HeaderVisibility = HexEdit.HeaderVisibility = Visibility.Visible
-                Case SettingEnum.[ReadOnly]
-                    HexEdit.ReadOnlyMode = [Default].ReadOnlyS
-                    HexEdit.ClearAllChange()
-                    HexEdit.RefreshView()
-                Case SettingEnum.StatusBarVisibility
-                    HexEdit.StatusBarVisibility = If(Not [Default].StatusBarVisibility, Visibility.Collapsed, Visibility.Visible)
-                    [Default].StatusBarVisibility = HexEdit.StatusBarVisibility = Visibility.Visible
-            End Select
-        End Sub
-
-        Private Sub UpdateAllSettings()
-            UpdateSetting(SettingEnum.HeaderVisibility)
-            UpdateSetting(SettingEnum.[ReadOnly])
-            UpdateSetting(SettingEnum.ScrollVisibility)
         End Sub
 
         Private Sub Window_Closing(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs)

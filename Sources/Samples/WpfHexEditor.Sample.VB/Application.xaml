@@ -6,5 +6,6 @@
     StartupUri="MainWindow.xaml">
     <Application.Resources>
         <conv:PathToFilenameConverter x:Key="FilenameConverter" />
+        <conv:VisibilityToBooleanConverter x:Key="VisibilityToBoolConverter" />
     </Application.Resources>
 </Application>
