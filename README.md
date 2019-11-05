@@ -5,6 +5,7 @@
 [![NetFramework](https://img.shields.io/badge/Language-C%23%207.0-orange.svg)](https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/abbaye/WpfHexEditorControl/blob/master/LICENSE)
 
+
 ## 🎯 ATTENTION : BUILD WITH VISUAL STUDIO 2019 v16.3.7+
 
 Wpf Hexeditor is a fast and fully customisable user control for editing file or stream as hexadecimal. 
@@ -15,7 +16,7 @@ Localized in English, French, Russian, Polish, Portuguese and Chinese
 
 ### ⭐ You want to say thank or just like project  ?
 
-Hexeditor control is totaly free and can be used in all project you want like open source and commercial applications. I make it in my free time and a few colaborators help me when they can... Please hit the ⭐️ button or fork and I will be very happy ;) I accept help contribution... 
+Hexeditor control is totaly free and can be used in all project you want like open source and commercial applications. I make it in my free time and a few colaborators help me when they can... Please hit the ⭐️ button or fork and I will be very happy ;) I accept help contribution...  
 
 ### 🖼 Screenshots
 
@@ -74,3 +75,5 @@ Insert the control like this in your XAML...:
 <control:HexEditor Width="Auto" Height="Auto"/>
 <control:HexEditor FileName={Binding FileNamePath} Width="Auto" Height="Auto"/>
 ```
+
+✨ Wpf HexEditor user control, by Derek Tremblay (derektremblay666@gmail.com) coded for your fun! 😊🤟
