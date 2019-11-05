@@ -1521,10 +1521,37 @@ namespace WpfHexaEditor
         #endregion Copy/Paste/Cut Methods
 
         #region Position methods
+        /// <summary>
+        /// Get the line number of position in parameter
+        /// </summary>
+        /// <remarks>
+        /// TODO: Need to be fixed on HideDeletedByte...
+        /// </remarks>
+        public long GetLineNumber(long position) => 
+            (position - ByteShiftLeft - (HideByteDeleted ? 
+                                            GetCountOfByteDeletedBeforePosition(position) 
+                                            : 0)
+            ) / BytePerLine;
+
+        //GetCountOfByteDeletedBeforePosition(position)
+
+        /// <summary>
+        /// Get the column number of the position
+        /// </summary>
+        /// <remarks>
+        /// TODO: Need to be fixed on HideDeletedByte...
+        /// </remarks>
+        public int GetColumnNumber(long position) =>
+            AllowVisualByteAddress
+                ? (int)(position - VisualByteAdressStart - ByteShiftLeft) % BytePerLine
+                : (int)(position - ByteShiftLeft) % BytePerLine;
 
         /// <summary>
         /// Set position of cursor
         /// </summary>
+        /// <remarks>
+        /// TODO: Need to be fixed on HideDeletedByte...
+        /// </remarks>
         public void SetPosition(long position, long byteLength)
         {
             SelectionStart = position;
@@ -1532,19 +1559,6 @@ namespace WpfHexaEditor
 
             VerticalScrollBar.Value = CheckIsOpen(_provider) ? GetLineNumber(position) : 0;
         }
-
-        /// <summary>
-        /// Get the line number of position in parameter
-        /// </summary>
-        public long GetLineNumber(long position) => (position - ByteShiftLeft) / BytePerLine;
-
-        /// <summary>
-        /// Get the column number of the position
-        /// </summary>
-        public int GetColumnNumber(long position) =>
-            AllowVisualByteAddress
-                ? (int)(position - VisualByteAdressStart - ByteShiftLeft) % BytePerLine
-                : (int)(position - ByteShiftLeft) % BytePerLine;
 
         /// <summary>
         /// Set position in control at position in parameter
@@ -2914,11 +2928,10 @@ namespace WpfHexaEditor
             {
                 var lineOffsetLabel = (FastTextLine)LinesInfoStackPanel.Children[i];
 
-                if (i > 0) firstByteInLine += BytePerLine;
+                if (i > 0) firstByteInLine = GetValidPositionFrom(firstByteInLine, BytePerLine);
 
                 #region Set text visual
-                if (!HideByteDeleted &&
-                    HighLightSelectionStart &&
+                if (HighLightSelectionStart &&
                     SelectionStart > -1 &&
                     SelectionStart >= firstByteInLine &&
                     SelectionStart <= firstByteInLine + BytePerLine - 1)
@@ -3001,14 +3014,24 @@ namespace WpfHexaEditor
                     : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
 
                 //Count the byte are deleted before the cibled position
-                if (HideByteDeleted)                    
-                    return cibledPosition + 
+                if (HideByteDeleted)
+                    return cibledPosition +
                         (CheckIsOpen(_provider)
-                            ? _provider.GetByteModifieds(ByteAction.Deleted).Count(b => b.Value.BytePositionInStream < cibledPosition)
+                            ? GetCountOfByteDeletedBeforePosition(cibledPosition)
                             : 0);
                 else
                     return cibledPosition;
             }
+        }
+
+        /// <summary>
+        /// Get the number of byte are deleted before the position in parameter
+        /// </summary>
+        private long GetCountOfByteDeletedBeforePosition(long position)
+        {
+            if (!CheckIsOpen(_provider)) return 0;
+
+            return _provider.GetByteModifieds(ByteAction.Deleted).Count(b => b.Value.BytePositionInStream < position);
         }
 
         /// <summary>
@@ -4805,20 +4828,22 @@ namespace WpfHexaEditor
             if (!CanDelete) return;
             if (!CheckIsOpen(_provider)) return;
 
-            var position = SelectionStart > SelectionStop ? SelectionStop : SelectionStart;
-            var firstbyte = FirstVisibleBytePosition;
+            var position = SelectionStart > SelectionStop 
+                ? SelectionStop 
+                : SelectionStart;
 
-            _provider.AddByteDeleted(position, SelectionLength);
+            var lastPosition = _provider.AddByteDeleted(position, SelectionLength);
 
             SetScrollMarker(position, ScrollMarker.ByteDeleted);
 
             UpdateScrollBar();
             RefreshView(true);
 
-            //Update selection
-            SetPosition(firstbyte);
-            UnSelectAll(true);
-
+            //Update selection and focus
+            SetPosition(FirstVisibleBytePosition);
+            SelectionStart = SelectionStop = GetValidPositionFrom(lastPosition, 0);
+            SetFocusAtSelectionStart();
+            
             //Launch deleted event
             BytesDeleted?.Invoke(this, new EventArgs());
         }

@@ -586,7 +586,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Add/Modifiy a ByteModifed in the list of byte have deleted
         /// </summary>
-        public void AddByteDeleted(long bytePositionInStream, long length)
+        /// <returns>
+        /// Return the last position</returns>
+        public long AddByteDeleted(long bytePositionInStream, long length)
         {
             var position = bytePositionInStream;
 
@@ -612,6 +614,8 @@ namespace WpfHexaEditor.Core.Bytes
 
                 position++;
             }
+
+            return position;
 
             //DEV TEST: ONLY ADD 1 BYTEMODIFIED ALSO OF 1 BY BYTE ARE DELETED...
             ////TODO: CHECK IF BYTE ARE ALREADY DELETED AND IF YES CHECK IF LENGHT FIT THEN AJUST...

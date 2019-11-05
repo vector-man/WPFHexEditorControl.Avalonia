@@ -205,7 +205,7 @@
                         IsCheckable="True"
                         IsChecked="{Binding ElementName=HexEdit, Path=StatusBarVisibility, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityToBoolConverter}}" />
                     <!--<MenuItem Header="Byte spacer visual">
-                        
+
                     </MenuItem>-->
                 </MenuItem>
                 <MenuItem x:Name="OptionMenu" Header="Options">
