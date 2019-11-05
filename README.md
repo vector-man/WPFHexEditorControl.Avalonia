@@ -9,9 +9,7 @@
 ## 🎯 ATTENTION : BUILD WITH VISUAL STUDIO 2019 v16.3.7+
 
 Wpf Hexeditor is a fast and fully customisable user control for editing file or stream as hexadecimal. 
-
 Can be used in Wpf or WinForm application.
-
 Localized in English, French, Russian, Polish, Portuguese and Chinese
 
 ### ⭐ You want to say thank or just like project  ?
