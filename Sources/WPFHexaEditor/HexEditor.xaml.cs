@@ -1524,27 +1524,25 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get the line number of position in parameter
         /// </summary>
-        /// <remarks>
-        /// TODO: Need to be fixed on HideDeletedByte...
-        /// </remarks>
         public long GetLineNumber(long position) => 
             (position - ByteShiftLeft - (HideByteDeleted ? 
                                             GetCountOfByteDeletedBeforePosition(position) 
                                             : 0)
             ) / BytePerLine;
 
-        //GetCountOfByteDeletedBeforePosition(position)
-
         /// <summary>
         /// Get the column number of the position
         /// </summary>
-        /// <remarks>
-        /// TODO: Need to be fixed on HideDeletedByte...
-        /// </remarks>
-        public int GetColumnNumber(long position) =>
-            AllowVisualByteAddress
-                ? (int)(position - VisualByteAdressStart - ByteShiftLeft) % BytePerLine
-                : (int)(position - ByteShiftLeft) % BytePerLine;
+        public long GetColumnNumber(long position)
+        {
+            var correcter = HideByteDeleted 
+                ? GetCountOfByteDeletedBeforePosition(position)
+                : 0;
+
+            return AllowVisualByteAddress
+                ? (position - VisualByteAdressStart - ByteShiftLeft - correcter) % BytePerLine
+                : (position - ByteShiftLeft - correcter) % BytePerLine;
+        }
 
         /// <summary>
         /// Set position of cursor
@@ -2857,8 +2855,8 @@ namespace WpfHexaEditor
                 {
                     Height = LineHeight,
                     AutoWidth = false,
-                    FontWeight = hlHeader && !HideByteDeleted ? FontWeights.Bold : FontWeights.Normal,
-                    Foreground = hlHeader && !HideByteDeleted? ForegroundHighLightOffSetHeaderColor : ForegroundOffSetHeaderColor,
+                    FontWeight = hlHeader ? FontWeights.Bold : FontWeights.Normal,
+                    Foreground = hlHeader ? ForegroundHighLightOffSetHeaderColor : ForegroundOffSetHeaderColor,
                     RenderPoint = new Point(2, 2),
                 };
 
