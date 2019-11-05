@@ -1525,8 +1525,8 @@ namespace WpfHexaEditor
         /// Get the line number of position in parameter
         /// </summary>
         public long GetLineNumber(long position) => 
-            (position - ByteShiftLeft - (HideByteDeleted ? 
-                                            GetCountOfByteDeletedBeforePosition(position) 
+            (position - ByteShiftLeft - (HideByteDeleted 
+                                            ? GetCountOfByteDeletedBeforePosition(position) 
                                             : 0)
             ) / BytePerLine;
 
@@ -3000,7 +3000,7 @@ namespace WpfHexaEditor
         #region First/Last visible byte methods
         /// <summary>
         /// Get first visible byte position in control
-        /// TODO: fix the first visible byte when HideByteDeleted are activated... 90% completed
+        /// TODO: fix the first visible byte when HideByteDeleted are activated... 95% completed
         /// </summary>
         private long FirstVisibleBytePosition
         {
@@ -3012,25 +3012,20 @@ namespace WpfHexaEditor
                     : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
 
                 //Count the byte are deleted before the cibled position
-                if (HideByteDeleted)
-                    return cibledPosition +
-                        (CheckIsOpen(_provider)
-                            ? GetCountOfByteDeletedBeforePosition(cibledPosition)
-                            : 0);
-                else
-                    return cibledPosition;
+                return HideByteDeleted 
+                    ? cibledPosition + GetCountOfByteDeletedBeforePosition(cibledPosition) 
+                    : cibledPosition;
             }
         }
 
         /// <summary>
         /// Get the number of byte are deleted before the position in parameter
         /// </summary>
-        private long GetCountOfByteDeletedBeforePosition(long position)
-        {
-            if (!CheckIsOpen(_provider)) return 0;
-
-            return _provider.GetByteModifieds(ByteAction.Deleted).Count(b => b.Value.BytePositionInStream < position);
-        }
+        private long GetCountOfByteDeletedBeforePosition(long position) =>
+            (!CheckIsOpen(_provider))
+                ? 0 
+                : _provider.GetByteModifieds(ByteAction.Deleted)
+                           .Count(b => b.Value.BytePositionInStream < position);
 
         /// <summary>
         /// Return true if SelectionStart are visible in control
