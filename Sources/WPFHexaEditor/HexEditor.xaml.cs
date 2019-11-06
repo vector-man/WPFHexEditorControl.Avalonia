@@ -121,6 +121,16 @@ namespace WpfHexaEditor
         /// </summary>
         private FirstColor _firstColor = FirstColor.HexByteData;
 
+        /// <summary>
+        /// Get or set the scale transform to work with zoom
+        /// </summary>
+        private ScaleTransform _scaler = null;
+
+        /// <summary>
+        /// Allow or not the zoom in control
+        /// </summary>
+        private bool _allowZoom = true;
+
         #endregion Global Class variables
 
         #region Events
@@ -544,8 +554,8 @@ namespace WpfHexaEditor
         /// </summary>
         public string ApplicationName
         {
-            get { return (string)GetValue(ApplicationNameProperty); }
-            set { SetValue(ApplicationNameProperty, value); }
+            get => (string)GetValue(ApplicationNameProperty);
+            set => SetValue(ApplicationNameProperty, value);
         }
 
         public static readonly DependencyProperty ApplicationNameProperty =
@@ -576,8 +586,8 @@ namespace WpfHexaEditor
         /// </summary>
         public OffSetPanelType OffSetPanelVisual
         {
-            get { return (OffSetPanelType)GetValue(OffSetPanelVisualProperty); }
-            set { SetValue(OffSetPanelVisualProperty, value); }
+            get => (OffSetPanelType)GetValue(OffSetPanelVisualProperty);
+            set => SetValue(OffSetPanelVisualProperty, value);
         }
 
         public static readonly DependencyProperty OffSetPanelVisualProperty =
@@ -595,8 +605,8 @@ namespace WpfHexaEditor
         /// </summary>
         public OffSetPanelFixedWidth OffSetPanelFixedWidthVisual
         {
-            get { return (OffSetPanelFixedWidth)GetValue(OffSetPanelFixedWidthVisualProperty); }
-            set { SetValue(OffSetPanelFixedWidthVisualProperty, value); }
+            get => (OffSetPanelFixedWidth)GetValue(OffSetPanelFixedWidthVisualProperty);
+            set => SetValue(OffSetPanelFixedWidthVisualProperty, value);
         }
 
         public static readonly DependencyProperty OffSetPanelFixedWidthVisualProperty =
@@ -608,10 +618,10 @@ namespace WpfHexaEditor
         /// </summary>
         public bool ShowByteToolTip
         {
-            get { return (bool)GetValue(ShowByteToolTipProperty); }
-            set { SetValue(ShowByteToolTipProperty, value); }
+            get => (bool)GetValue(ShowByteToolTipProperty);
+            set => SetValue(ShowByteToolTipProperty, value);
         }
-        
+
         public static readonly DependencyProperty ShowByteToolTipProperty =
             DependencyProperty.Register(nameof(ShowByteToolTip), typeof(bool), typeof(HexEditor),
                 new PropertyMetadata(false));
@@ -1737,8 +1747,8 @@ namespace WpfHexaEditor
         /// </summary>
         public Visibility LineInfoVisibility
         {
-            get { return (Visibility)GetValue(LineInfoVisibilityProperty); }
-            set { SetValue(LineInfoVisibilityProperty, value); }
+            get => (Visibility)GetValue(LineInfoVisibilityProperty);
+            set => SetValue(LineInfoVisibilityProperty, value);
         }
 
         public static readonly DependencyProperty LineInfoVisibilityProperty =
@@ -3966,8 +3976,7 @@ namespace WpfHexaEditor
         /// </summary>
         /// <param name="readToMove">whether the veticalbar value should be changed</param>
         /// <param name="distance">the value that vertical value move down(negative for up)</param>
-        private void VerticalMoveByTime(Func<bool> readToMove, Func<double> distance)
-        {
+        private void VerticalMoveByTime(Func<bool> readToMove, Func<double> distance) =>
             ThreadPool.QueueUserWorkItem(cb =>
             {
                 while (readToMove())
@@ -3990,7 +3999,6 @@ namespace WpfHexaEditor
                     });
                 }
             });
-        }
 
         private void BottomRectangle_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -4332,13 +4340,12 @@ namespace WpfHexaEditor
         /// </summary>
         private void InitializeCaret()
         {
-            if (!DesignerProperties.GetIsInDesignMode(this))
-            {
-                BaseGrid.Children.Add(_caret);
-                _caret.CaretHeight = LineHeight;
-                _caret.BlinkPeriod = 600;
-                _caret.Hide();
-            }
+            if (DesignerProperties.GetIsInDesignMode(this)) return;
+
+            BaseGrid.Children.Add(_caret);
+            _caret.CaretHeight = LineHeight;
+            _caret.BlinkPeriod = 600;
+            _caret.Hide();
         }
 
         /// <summary>
@@ -4374,7 +4381,7 @@ namespace WpfHexaEditor
 
         #region Append/expend bytes to end of file
         //////////
-        // TODO: Will be updated soon with the possibility to insert byte anywhere :)
+        // TODO: Will be updated soon as possible with the possibility to insert byte anywhere :)
         //////////
 
         /// <summary>
@@ -4576,8 +4583,8 @@ namespace WpfHexaEditor
         #region Configure the start/stop bytes that are loaded visually into the hexadecimal editor
         public bool AllowVisualByteAddress
         {
-            get { return (bool)GetValue(AllowVisualByteAdressProperty); }
-            set { SetValue(AllowVisualByteAdressProperty, value); }
+            get => (bool)GetValue(AllowVisualByteAdressProperty);
+            set => SetValue(AllowVisualByteAdressProperty, value);
         }
 
         public static readonly DependencyProperty AllowVisualByteAdressProperty =
@@ -4586,11 +4593,10 @@ namespace WpfHexaEditor
 
         private static void AllowVisualByteAddress_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is HexEditor ctrl && e.NewValue != e.OldValue)
-            {
-                ctrl.UpdateScrollBar();
-                ctrl.RefreshView(true);
-            }
+            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            
+            ctrl.UpdateScrollBar();
+            ctrl.RefreshView(true);
         }
 
         /// <summary>
@@ -4605,8 +4611,8 @@ namespace WpfHexaEditor
         /// </summary>
         public long VisualByteAdressLength
         {
-            get { return (long)GetValue(VisualByteAdressLengthProperty); }
-            set { SetValue(VisualByteAdressLengthProperty, value); }
+            get => (long)GetValue(VisualByteAdressLengthProperty);
+            set => SetValue(VisualByteAdressLengthProperty, value);
         }
 
         public static readonly DependencyProperty VisualByteAdressLengthProperty =
@@ -4621,16 +4627,17 @@ namespace WpfHexaEditor
 
             if (value < 1 || !CheckIsOpen(ctrl._provider)) return 1L;
 
-            return value >= ctrl._provider.Length ? ctrl._provider.Length : baseValue;
+            return value >= ctrl._provider.Length 
+                ? ctrl._provider.Length 
+                : baseValue;
         }
 
         private static void VisualByteAdressLength_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is HexEditor ctrl && e.NewValue != e.OldValue)
-            {
-                ctrl.UpdateScrollBar();
-                ctrl.RefreshView();
-            }
+            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+
+            ctrl.UpdateScrollBar();
+            ctrl.RefreshView();
         }
 
         /// <summary>
@@ -4655,9 +4662,9 @@ namespace WpfHexaEditor
 
             if (!CheckIsOpen(ctrl._provider)) return 0L;
 
-            return value >= ctrl._provider.Length ? ctrl._provider.Length : baseValue;
-
-            //return (long)baseValue;
+            return value >= ctrl._provider.Length 
+                ? ctrl._provider.Length 
+                : baseValue;
         }
 
         private static void VisualByteAdressStart_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -4684,16 +4691,6 @@ namespace WpfHexaEditor
         #endregion
 
         #region Zoom in/out support
-        /// <summary>
-        /// Get or set the scale transform to work with zoom
-        /// </summary>
-        private ScaleTransform _scaler = null;
-
-        /// <summary>
-        /// Allow or not the zoom in control
-        /// </summary>
-        private bool _allowZoom = true;
-
         /// <summary>
         /// Get or set the zoom scale 
         /// Posible Scale : 0.5 to 2.0 (50% to 200%)
@@ -4784,8 +4781,8 @@ namespace WpfHexaEditor
         /// </summary>
         public bool AllowDeleteByte
         {
-            get { return (bool)GetValue(AllowDeleteByteProperty); }
-            set { SetValue(AllowDeleteByteProperty, value); }
+            get => (bool)GetValue(AllowDeleteByteProperty);
+            set => SetValue(AllowDeleteByteProperty, value);
         }
 
         public static readonly DependencyProperty AllowDeleteByteProperty =
@@ -4798,8 +4795,8 @@ namespace WpfHexaEditor
         /// </summary>
         public bool HideByteDeleted
         {
-            get { return (bool)GetValue(HideByteDeletedProperty); }
-            set { SetValue(HideByteDeletedProperty, value); }
+            get => (bool)GetValue(HideByteDeletedProperty);
+            set => SetValue(HideByteDeletedProperty, value);
         }
 
         public static readonly DependencyProperty HideByteDeletedProperty =
@@ -4850,8 +4847,8 @@ namespace WpfHexaEditor
         /// </summary>
         public bool AllowAutoSelectSameByteAtDoubleClick
         {
-            get { return (bool)GetValue(AllowAutoSelectSameByteAtDoubleClickProperty); }
-            set { SetValue(AllowAutoSelectSameByteAtDoubleClickProperty, value); }
+            get => (bool)GetValue(AllowAutoSelectSameByteAtDoubleClickProperty);
+            set => SetValue(AllowAutoSelectSameByteAtDoubleClickProperty, value);
         }
 
         public static readonly DependencyProperty AllowAutoSelectSameByteAtDoubleClickProperty =
