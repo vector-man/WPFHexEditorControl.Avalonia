@@ -1311,6 +1311,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public IEnumerable<long> FindIndexOf(byte[] bytesTofind, long startPosition = 0)
         {
+            //Validation
+            if (bytesTofind is null || bytesTofind.Length == 0) yield break;
+
             //start position checkup
             if (startPosition > Length) startPosition = Length;
             else if (startPosition < 0) startPosition = 0;
