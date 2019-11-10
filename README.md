@@ -1,4 +1,4 @@
-![example](Images/Logo.png?raw=true)
+<img src="Images/Logo.png?raw=true" width="400" height="100" />
   
 [![NuGet](https://img.shields.io/badge/Nuget-v1.9.1-green.svg)](https://www.nuget.org/packages/WPFHexaEditor/)
 [![NetFramework](https://img.shields.io/badge/.Net%20Framework-4.7/4.5.1-green.svg)](https://www.microsoft.com/net/download/windows)
