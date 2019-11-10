@@ -223,7 +223,11 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public long Position
         {
-            get => IsOpen ? (_stream.Position <= _stream.Length ? _stream.Position : _stream.Length) : -1;
+            get => IsOpen 
+                ? (_stream.Position <= _stream.Length 
+                    ? _stream.Position 
+                    : _stream.Length) 
+                : -1;
             set
             {
                 if (!IsOpen) return;
@@ -281,8 +285,8 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public int Read(byte[] destination, int offset, int count) =>
             IsOpen && _stream.CanRead 
-            ? _stream.Read(destination, offset, count) 
-            : -1;
+                ? _stream.Read(destination, offset, count) 
+                : -1;
                
         #endregion read byte
 
