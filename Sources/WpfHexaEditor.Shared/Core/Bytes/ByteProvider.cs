@@ -1331,7 +1331,7 @@ namespace WpfHexaEditor.Core.Bytes
             for (var i = startPosition; i < Length; i++)
             {
                 //Do not freeze UI...
-                if (i % 2000 == 0)
+                if (i % 200 == 0)
                     LongProcessProgress = (double)Position / Length;
 
                 //Break long process if needed

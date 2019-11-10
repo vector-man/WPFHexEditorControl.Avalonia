@@ -4913,12 +4913,12 @@ namespace WpfHexaEditor
             get => (bool)GetValue(AllowCustomBackgroundBlockProperty);
             set => SetValue(AllowCustomBackgroundBlockProperty, value);
         }
-
+        
         public static readonly DependencyProperty AllowCustomBackgroundBlockProperty =
             DependencyProperty.Register(nameof(AllowCustomBackgroundBlock), typeof(bool), typeof(HexEditor),
-                new FrameworkPropertyMetadata(false, Control_AllowCustomBackgroundBlockPropertyChanged));
+                new FrameworkPropertyMetadata(false, Control_CustomBackgroundBlockPropertyChanged));
 
-        private static void Control_AllowCustomBackgroundBlockPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void Control_CustomBackgroundBlockPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
 
@@ -4928,12 +4928,25 @@ namespace WpfHexaEditor
         /// <summary>
         /// Add of remove CustomBackgroundBlock in this list to use in hexeditor
         /// </summary>
-        public List<CustomBackgroundBlock> CustomBackgroundBlockItems { get; set; } = new List<CustomBackgroundBlock>();
+        public List<CustomBackgroundBlock> CustomBackgroundBlockItems
+        {
+            get => (List<CustomBackgroundBlock>)GetValue(CustomBackgroundBlockItemsProperty);
+            set => SetValue(CustomBackgroundBlockItemsProperty, value);
+        }
 
-        internal CustomBackgroundBlock GetCustomBackgroundBlock(long BytePositionInStream) =>
-            CustomBackgroundBlockItems?.FirstOrDefault(cbb => 
-                BytePositionInStream >= cbb.StartOffset &&
-                BytePositionInStream <= cbb.StopOffset);
+        public static readonly DependencyProperty CustomBackgroundBlockItemsProperty =
+            DependencyProperty.Register(nameof(CustomBackgroundBlockItems), typeof(List<CustomBackgroundBlock>), typeof(HexEditor),
+                new FrameworkPropertyMetadata(new List<CustomBackgroundBlock>(), Control_CustomBackgroundBlockPropertyChanged));
+
+        /// <summary>
+        /// Get the first CustomBackgroundBlock finded in list.
+        /// </summary>
+        internal CustomBackgroundBlock GetCustomBackgroundBlock(long position) =>
+            CustomBackgroundBlockItems?
+                .OrderBy(c => c.StartOffset)
+                .FirstOrDefault(cbb =>
+                    position >= cbb.StartOffset &&
+                    position <= cbb.StopOffset);
 
         /// <summary>
         /// Clear the list of custom background block
