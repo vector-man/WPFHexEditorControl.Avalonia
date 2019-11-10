@@ -1610,13 +1610,17 @@ namespace WpfHexaEditor.Core.Bytes
         {
             var data = GetCopyData(selectionStart, selectionStop, true);
 
-        #region Set start position
+            #region Set start position
 
-            var startPosition = (selectionStart != selectionStop
-                ? (selectionStart > selectionStop ? selectionStop : selectionStart)
-                : selectionStart) + data.Length;
+            var startPosition = 
+                (selectionStart != selectionStop
+                    ? (selectionStart > selectionStop 
+                        ? selectionStop 
+                        : selectionStart)
+                    : selectionStart
+                ) + data.Length;
 
-        #endregion
+            #endregion
 
             foreach (byte b in data)
                 AddByteModified(b, --startPosition, data.Length);

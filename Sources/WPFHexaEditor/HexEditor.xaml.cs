@@ -234,6 +234,7 @@ namespace WpfHexaEditor
             InitializeComponent();
 
             //Refresh view
+            CheckProviderIsOnProgress();
             UpdateScrollBar();
             InitializeCaret();
             RefreshView(true);
@@ -2000,76 +2001,62 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// Open file name
+        /// Open file
         /// </summary>
-        /// <param name="filename"></param>
         private void OpenFile(string filename)
         {
-            if (string.IsNullOrEmpty(FileName))
+            if (string.IsNullOrEmpty(FileName)) return;
+            if (!File.Exists(filename)) return; //throw new FileNotFoundException();
+
+            CloseProvider();
+
+            _provider = new ByteProvider(filename);
+
+            if (_provider.IsEmpty)
             {
                 CloseProvider();
                 return;
             }
 
-            if (File.Exists(filename))
-            {
-                CloseProvider();
+            #region Attach event
+            _provider.ReadOnlyChanged += Provider_ReadOnlyChanged;
+            _provider.DataCopiedToClipboard += Provider_DataCopied;
+            _provider.ChangesSubmited += Provider_ChangesSubmited;
+            _provider.Undone += Provider_Undone;
+            _provider.LongProcessChanged += Provider_LongProcessProgressChanged;
+            _provider.LongProcessStarted += Provider_LongProcessProgressStarted;
+            _provider.LongProcessCompleted += Provider_LongProcessProgressCompleted;
+            _provider.LongProcessCanceled += Provider_LongProcessProgressCompleted;
+            _provider.FillWithByteCompleted += Provider_FillWithByteCompleted;
+            _provider.ReplaceByteCompleted += Provider_ReplaceByteCompleted;
+            _provider.BytesAppendCompleted += Provider_BytesAppendCompleted;
+            #endregion
 
-                _provider = new ByteProvider(filename);
+            UpdateScrollBar();
+            UpdateHeader();
 
-                if (_provider.IsEmpty)
-                {
-                    CloseProvider();
-                    return;
-                }
+            //Load file with ASCII character table;
+            var previousTable = TypeOfCharacterTable;
+            TypeOfCharacterTable = CharacterTableType.Ascii;
 
-                _provider.ReadOnlyChanged += Provider_ReadOnlyChanged;
-                _provider.DataCopiedToClipboard += Provider_DataCopied;
-                _provider.ChangesSubmited += Provider_ChangesSubmited;
-                _provider.Undone += Provider_Undone;
-                _provider.LongProcessChanged += Provider_LongProcessProgressChanged;
-                _provider.LongProcessStarted += Provider_LongProcessProgressStarted;
-                _provider.LongProcessCompleted += Provider_LongProcessProgressCompleted;
-                _provider.LongProcessCanceled += Provider_LongProcessProgressCompleted;
-                _provider.FillWithByteCompleted += Provider_FillWithByteCompleted;
-                _provider.ReplaceByteCompleted += Provider_ReplaceByteCompleted;
-                _provider.BytesAppendCompleted += Provider_BytesAppendCompleted;
+            RefreshView(true);
 
-                UpdateScrollBar();
-                UpdateHeader();
+            //Replace previous character table
+            TypeOfCharacterTable = previousTable;
 
-                //Load file with ASCII character table;
-                var previousTable = TypeOfCharacterTable;
-                TypeOfCharacterTable = CharacterTableType.Ascii;
+            UnSelectAll();
+            UpdateTblBookMark();
+            UpdateSelectionColor(FirstColor.HexByteData);
 
-                ////TEMPS : CUSTOMBACKGROUNDBLOCK (CBB) /////////
-                ////TODO: Add autodetect file type and create external CBB...
-                //if (UseCustomBackGroudBlock)
-                //    _cbbList = new ExeFile().GetCustomBackgroundBlock(_provider);
-                /////////////////////////////////////////////////
+            //Update count of byte on file open
+            UpdateByteCount();
 
-                RefreshView(true);
-
-                //Replace previous character table
-                TypeOfCharacterTable = previousTable;
-
-                UnSelectAll();
-
-                UpdateTblBookMark();
-                UpdateSelectionColor(FirstColor.HexByteData);
-
-                //Update count of byte on file open
-                UpdateByteCount();
-
-                //Debug
-                Debug.Print("FILE OPENED");
-            }
-            else
-                throw new FileNotFoundException();
+            //Debug
+            Debug.Print("FILE OPENED");
         }
 
         /// <summary>
-        /// Open file name
+        /// Open stream
         /// </summary>
         private void OpenStream(MemoryStream stream)
         {
@@ -2085,6 +2072,7 @@ namespace WpfHexaEditor
                 return;
             }
 
+            #region Attach event
             _provider.ReadOnlyChanged += Provider_ReadOnlyChanged;
             _provider.DataCopiedToClipboard += Provider_DataCopied;
             _provider.ChangesSubmited += ProviderStream_ChangesSubmited;
@@ -2096,14 +2084,21 @@ namespace WpfHexaEditor
             _provider.FillWithByteCompleted += Provider_FillWithByteCompleted;
             _provider.ReplaceByteCompleted += Provider_ReplaceByteCompleted;
             _provider.BytesAppendCompleted += Provider_BytesAppendCompleted;
+            #endregion
 
             UpdateScrollBar();
             UpdateHeader();
 
+            //Load file with ASCII character table;
+            var previousTable = TypeOfCharacterTable;
+            TypeOfCharacterTable = CharacterTableType.Ascii;
+
             RefreshView(true);
 
-            UnSelectAll();
+            //Replace previous character table
+            TypeOfCharacterTable = previousTable;
 
+            UnSelectAll();
             UpdateTblBookMark();
             UpdateSelectionColor(FirstColor.HexByteData);
 
@@ -2116,39 +2111,17 @@ namespace WpfHexaEditor
 
         private void Provider_LongProcessProgressCompleted(object sender, EventArgs e)
         {
-            LongProgressProgressBar.Visibility = Visibility.Collapsed;
-            CancelLongProcessButton.Visibility = Visibility.Collapsed;
+            CheckProviderIsOnProgress();
 
-            #region Enable controls
-
-            TraverseHexBytes(ctrl => ctrl.IsEnabled = true);
-            TraverseStringBytes(ctrl => ctrl.IsEnabled = true);
-            TraverseLineInfo(ctrl => ctrl.IsEnabled = true);
-            TraverseHexHeader(ctrl => ctrl.IsEnabled = true);
-            TopRectangle.IsEnabled = BottomRectangle.IsEnabled = true;
-            VerticalScrollBar.IsEnabled = true;
-
-            #endregion
-
+            //Launch event
             LongProcessProgressCompleted?.Invoke(this, new EventArgs());
         }
 
         private void Provider_LongProcessProgressStarted(object sender, EventArgs e)
         {
-            LongProgressProgressBar.Visibility = Visibility.Visible;
-            CancelLongProcessButton.Visibility = Visibility.Visible;
+            CheckProviderIsOnProgress();
 
-            #region Disable controls
-
-            TraverseHexBytes(ctrl => ctrl.IsEnabled = false);
-            TraverseStringBytes(ctrl => ctrl.IsEnabled = false);
-            TraverseLineInfo(ctrl => ctrl.IsEnabled = false);
-            TraverseHexHeader(ctrl => ctrl.IsEnabled = false);
-            TopRectangle.IsEnabled = BottomRectangle.IsEnabled = false;
-            VerticalScrollBar.IsEnabled = false;
-
-            #endregion
-
+            //Launch event
             LongProcessProgressStarted?.Invoke(this, new EventArgs());
         }
 
@@ -2156,8 +2129,11 @@ namespace WpfHexaEditor
         {
             //Update progress bar
             LongProgressProgressBar.Value = (double)sender;
+            
+            //Prevent freezing UI
             Application.Current.DoEvents();
 
+            //Launch event
             LongProcessProgressChanged?.Invoke(this, new EventArgs());
         }
 
@@ -2167,9 +2143,15 @@ namespace WpfHexaEditor
         private void Provider_BytesAppendCompleted(object sender, EventArgs e) =>
             VerticalScrollBar.Maximum = MaxLine - 1;
 
+        /// <summary>
+        /// Invoke ReplaceByteCompleted event
+        /// </summary>
         private void Provider_ReplaceByteCompleted(object sender, EventArgs e) =>
             ReplaceByteCompleted?.Invoke(this, new EventArgs());
 
+        /// <summary>
+        /// Invoke FillWithByteCompleted event
+        /// </summary>
         private void Provider_FillWithByteCompleted(object sender, EventArgs e) =>
             FillWithByteCompleted?.Invoke(this, new EventArgs());
 
@@ -2185,17 +2167,28 @@ namespace WpfHexaEditor
         /// </summary>
         private void CheckProviderIsOnProgress()
         {
-            if (CheckIsOpen(_provider))
+            bool enableCtrl;
+
+            if (CheckIsOpen(_provider) && _provider.IsOnLongProcess)
             {
-                if (_provider.IsOnLongProcess) return;
-                CancelLongProcessButton.Visibility = Visibility.Collapsed;
-                LongProgressProgressBar.Visibility = Visibility.Collapsed;
+                CancelLongProcessButton.Visibility = Visibility.Visible;
+                LongProgressProgressBar.Visibility = Visibility.Visible;
+                enableCtrl = false;
             }
             else
             {
                 CancelLongProcessButton.Visibility = Visibility.Collapsed;
                 LongProgressProgressBar.Visibility = Visibility.Collapsed;
+                enableCtrl = true;
             }
+
+            //Enable/Disable controls
+            TraverseHexBytes(ctrl => ctrl.IsEnabled = enableCtrl);
+            TraverseStringBytes(ctrl => ctrl.IsEnabled = enableCtrl);
+            TraverseLineInfo(ctrl => ctrl.IsEnabled = enableCtrl);
+            TraverseHexHeader(ctrl => ctrl.IsEnabled = enableCtrl);
+            TopRectangle.IsEnabled = BottomRectangle.IsEnabled = enableCtrl;
+            VerticalScrollBar.IsEnabled = enableCtrl;
         }
 
         #endregion Open, Close, Save, byte provider ...
@@ -2430,12 +2423,14 @@ namespace WpfHexaEditor
         /// Clear all IByteControl in hexeditor
         /// </summary>
         /// <param name="force">Set to true for clear all byte visible (set by MaxVisibleLine) or not visible in control.</param>
-        private void ClearAllBytes(bool force = false) => TraverseHexAndStringBytes(ctrl => { ctrl.Clear(); }, force);
+        private void ClearAllBytes(bool force = false) => 
+            TraverseHexAndStringBytes(ctrl => { ctrl.Clear(); }, force);
 
         /// <summary>
-        /// Clear all lines offset...
+        /// Clear all lines infos...
         /// </summary>
-        private void ClearLineInfo() => TraverseLineInfo(ctrl => { ctrl.Tag = ctrl.Text = string.Empty; });
+        private void ClearLineInfo() => 
+            TraverseLineInfo(ctrl => { ctrl.Tag = ctrl.Text = string.Empty; });
 
         /// <summary>
         /// Refresh currentview of hexeditor
@@ -2458,8 +2453,6 @@ namespace WpfHexaEditor
             UpdateStatusBar();
             UpdateVisual();
             UpdateFocus();
-
-            CheckProviderIsOnProgress();
 
             if (controlResize)
             {
@@ -2670,12 +2663,11 @@ namespace WpfHexaEditor
                     {
                         if (!_provider.CheckIfIsByteModified(_provider.Position, ByteAction.Deleted).success)
                         {
-                            if (!_provider.Eof)
-                            {
-                                _viewBuffer[readSize] = (byte)_provider.ReadByte();
-                                _viewBufferBytePosition[readSize] = _provider.Position - 1;
-                                readSize++;
-                            }
+                            if (_provider.Eof) continue;
+
+                            _viewBuffer[readSize] = (byte)_provider.ReadByte();
+                            _viewBufferBytePosition[readSize] = _provider.Position - 1;
+                            readSize++;
                         }
                         else
                         {
