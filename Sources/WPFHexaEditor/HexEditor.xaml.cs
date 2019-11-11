@@ -4424,8 +4424,7 @@ namespace WpfHexaEditor
                 {
                     if (FileDroppingConfirmation && MessageBox.Show(
                             $"{Properties.Resources.FileDroppingConfirmationString} {Path.GetFileName(filename[0])} ?",
-                            ApplicationName,
-                            MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                            ApplicationName, MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                         FileName = filename[0];
                     else
                         FileName = filename[0];

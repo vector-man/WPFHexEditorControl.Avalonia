@@ -235,6 +235,10 @@
                         IsChecked="{Binding ElementName=HexEdit, Path=AllowByteCount, UpdateSourceTrigger=PropertyChanged}" />
                     <Separator />
                     <MenuItem
+                        Header="File dropping need confirmation"
+                        IsCheckable="True"
+                        IsChecked="{Binding ElementName=HexEdit, Path=FileDroppingConfirmation, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem
                         Header="Allow text dropping"
                         IsCheckable="True"
                         IsChecked="{Binding ElementName=HexEdit, Path=AllowTextDrop, UpdateSourceTrigger=PropertyChanged}" />
