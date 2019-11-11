@@ -4377,7 +4377,7 @@ namespace WpfHexaEditor
 
         private void Control_Drop(object sender, DragEventArgs e)
         {
-            #region Text Dropping (Will be supported soon)
+            #region Text Dropping
 
             var textDrop = e.Data.GetData(DataFormats.Text);
             if (textDrop != null && AllowTextDrop)
@@ -4464,9 +4464,11 @@ namespace WpfHexaEditor
 
         /// <summary>
         /// Shift the first visible byte in the view to the left. 
-        /// Very useful for editing fixed-width tables. Use with BytePerLine to create visual tables ...
-        /// The value is the number of byte to shift.
         /// </summary>
+        /// <remarks>
+        /// Very useful for editing fixed-width tables. Use with BytePerLine to create visual tables ...
+        /// The value is the number of byte to shift visualy by the left.
+        /// </remarks>
         public int ByteShiftLeft
         {
             get => (int)GetValue(ByteShiftLeftProperty);

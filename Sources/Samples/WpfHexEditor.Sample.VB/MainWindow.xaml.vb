@@ -157,5 +157,9 @@ Namespace WPFHexaEditorExample
                 .Owner = Me
             }.Show()
         End Sub
+
+        Private Sub ReverseSelection_Click(sender As Object, e As RoutedEventArgs)
+            HexEdit.ReverseSelection()
+        End Sub
     End Class
 End Namespace

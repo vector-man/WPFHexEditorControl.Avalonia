@@ -175,5 +175,7 @@ namespace WPFHexaEditorExample
         {
             //TODO: Add close button code
         }
+
+        private void ReverseSelection_Click(object sender, RoutedEventArgs e) => HexEdit.ReverseSelection();
     }
 }

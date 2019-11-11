@@ -84,6 +84,11 @@
                         Header="Find all occurence of selection" />
                     <Separator />
                     <MenuItem
+                        x:Name="ReverseSelection"
+                        Click="ReverseSelection_Click"
+                        Header="Reverse selection" />
+                    <Separator />
+                    <MenuItem
                         x:Name="SetReadOnlyMenu"
                         Header="Read only"
                         IsCheckable="True" />
