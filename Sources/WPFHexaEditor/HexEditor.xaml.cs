@@ -2875,7 +2875,6 @@ namespace WpfHexaEditor
             var linesCount = LinesInfoStackPanel.Children.Count;
 
             if (linesCount < maxVisibleLine)
-            {
                 for (var i = 0; i < maxVisibleLine - linesCount; i++)
                 {
                     var lineInfoLabel = new FastTextLine(this)
@@ -2893,7 +2892,6 @@ namespace WpfHexaEditor
 
                     LinesInfoStackPanel.Children.Add(lineInfoLabel);
                 }
-            }
 
             #endregion
 
@@ -2988,7 +2986,7 @@ namespace WpfHexaEditor
         {
             get
             {
-                //compute the cibled position for the first visible byte position
+                //Compute the cibled position for the first visible byte position
                 long cibledPosition = AllowVisualByteAddress
                     ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft + VisualByteAdressStart
                     : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
@@ -3057,40 +3055,42 @@ namespace WpfHexaEditor
         /// Set the focus to the selection start
         /// </summary>
         public void SetFocusAtSelectionStart() => SetFocusAt(SelectionStart);
-
+                
         /// <summary>
-        /// Set the focus to the bytePosition
+        /// Set focus at position start
         /// </summary>
-        public void SetFocusAt(long bytePosition)
+        private void SetFocusAt(long bytePositionInStream)
         {
+            if (!CheckIsOpen(_provider)) return;
+            if (bytePositionInStream >= _provider.Length) return;
+
+            var rtn = false;
+
+            #region Set focus in data panel
             switch (_firstColor)
             {
                 case FirstColor.HexByteData:
-                    SetFocusHexDataPanel(bytePosition);
+                    TraverseHexBytes(ctrl =>
+                    {
+                        if (ctrl.BytePositionInStream == bytePositionInStream)
+                        {
+                            ctrl.Focus();
+                            rtn = true;
+                        }
+                    }, ref rtn);
                     break;
                 case FirstColor.StringByteData:
-                    SetFocusStringDataPanel(bytePosition);
+                    TraverseStringBytes(ctrl =>
+                    {
+                        if (ctrl.BytePositionInStream == bytePositionInStream)
+                        {
+                            ctrl.Focus();
+                            rtn = true;
+                        }
+                    }, ref rtn);
                     break;
             }
-        }
-                
-        /// <summary>
-        /// Set focus on byte in the hex panel
-        /// </summary>
-        private void SetFocusHexDataPanel(long bytePositionInStream)
-        {
-            if (!CheckIsOpen(_provider)) return;
-            if (bytePositionInStream >= _provider.Length) return;
-
-            var rtn = false;
-            TraverseHexBytes(ctrl =>
-            {
-                if (ctrl.BytePositionInStream == bytePositionInStream)
-                {
-                    ctrl.Focus();
-                    rtn = true;
-                }
-            }, ref rtn);
+            #endregion
 
             if (rtn) return;
 
@@ -3103,37 +3103,7 @@ namespace WpfHexaEditor
             if (!SelectionStartIsVisible && SelectionLength == 1)
                 SetPosition(SelectionStart, 1);
         }
-
-        /// <summary>
-        /// Set focus on byte in the string panel
-        /// </summary>
-        private void SetFocusStringDataPanel(long bytePositionInStream)
-        {
-            if (!CheckIsOpen(_provider)) return;
-            if (bytePositionInStream >= _provider.Length) return;
-
-            var rtn = false;
-            TraverseStringBytes(ctrl =>
-            {
-                if (ctrl.BytePositionInStream == bytePositionInStream)
-                {
-                    ctrl.Focus();
-                    rtn = true;
-                }
-            }, ref rtn);
-
-            if (rtn) return;
-
-            if (VerticalScrollBar.Value < VerticalScrollBar.Maximum && !_setFocusTest)
-            {
-                _setFocusTest = true;
-                VerticalScrollBar.Value++;
-            }
-
-            if (!SelectionStartIsVisible && SelectionLength == 1)
-                SetPosition(SelectionStart, 1);
-        }
-
+        
         #endregion Focus Methods
 
         #region Find/replace methods
@@ -4763,8 +4733,7 @@ namespace WpfHexaEditor
                 new FrameworkPropertyMetadata(true, Control_DeletePropertyChanged));
 
         /// <summary>
-        /// Hide bytes that are deleted
-        /// TODO: NOT COMPLETED... NEED TO FIX THE FIRST VISIBLE BYTE...
+        /// Hide bytes that are deleted in the viewers
         /// </summary>
         public bool HideByteDeleted
         {
@@ -4774,7 +4743,7 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty HideByteDeletedProperty =
             DependencyProperty.Register(nameof(HideByteDeleted), typeof(bool), typeof(HexEditor),
-                 new FrameworkPropertyMetadata(false, Control_DeletePropertyChanged));
+                 new FrameworkPropertyMetadata(true, Control_DeletePropertyChanged));
 
         private static void Control_DeletePropertyChanged(DependencyObject d,
             DependencyPropertyChangedEventArgs e)

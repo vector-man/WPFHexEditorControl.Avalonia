@@ -146,6 +146,7 @@ namespace WpfHexaEditor.Core
         VeryLarge = 12
     }
 
+    [Flags]
     public enum ByteSpacerGroup
     {
         TwoByte = 2,
