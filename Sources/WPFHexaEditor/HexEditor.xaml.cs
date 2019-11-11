@@ -2122,8 +2122,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Update scrollbar when append are completed
         /// </summary>
-        private void Provider_BytesAppendCompleted(object sender, EventArgs e) =>
-            VerticalScrollBar.Maximum = MaxLine - 1;
+        private void Provider_BytesAppendCompleted(object sender, EventArgs e) => UpdateScrollBar();
 
         /// <summary>
         /// Invoke ReplaceByteCompleted event
@@ -2165,10 +2164,9 @@ namespace WpfHexaEditor
             }
 
             //Enable/Disable controls
-            TraverseHexBytes(ctrl => ctrl.IsEnabled = enableCtrl);
-            TraverseStringBytes(ctrl => ctrl.IsEnabled = enableCtrl);
+            TraverseHexAndStringBytes(ctrl => ctrl.IsEnabled = enableCtrl);
             TraverseLineInfo(ctrl => ctrl.IsEnabled = enableCtrl);
-            TraverseHexHeader(ctrl => ctrl.IsEnabled = enableCtrl);
+            TraverseHeader(ctrl => ctrl.IsEnabled = enableCtrl);
             TopRectangle.IsEnabled = BottomRectangle.IsEnabled = enableCtrl;
             VerticalScrollBar.IsEnabled = enableCtrl;
         }
@@ -2277,7 +2275,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Used to make action on all visible header
         /// </summary>
-        private void TraverseHexHeader(Action<FastTextLine> act)
+        private void TraverseHeader(Action<FastTextLine> act)
         {
             var visibleLine = MaxVisibleLine;
             var cnt = 0;
