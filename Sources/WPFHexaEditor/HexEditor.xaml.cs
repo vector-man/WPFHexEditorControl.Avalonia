@@ -1167,7 +1167,7 @@ namespace WpfHexaEditor
             ctrl.UpdateSelection();
             ctrl.UpdateSelectionLine();
             ctrl.UpdateVisual();
-            ctrl.UpdateStatusBar();
+            ctrl.UpdateStatusBar(false);
             ctrl.UpdateLinesInfo();
             ctrl.UpdateHeader(true);
             ctrl.SetScrollMarker(0, ScrollMarker.SelectionStart);
@@ -2034,19 +2034,10 @@ namespace WpfHexaEditor
 
             UpdateScrollBar();
             UpdateHeader();
-
-            //Load file with ASCII character table;
-            var previousTable = TypeOfCharacterTable;
-            TypeOfCharacterTable = CharacterTableType.Ascii;
-
+            UpdateStatusBar();
             RefreshView(true);
 
-            //Replace previous character table
-            TypeOfCharacterTable = previousTable;
-
-            UnSelectAll();
             UpdateTblBookMark();
-            UpdateSelectionColor(FirstColor.HexByteData);
 
             //Update count of byte on file open
             UpdateByteCount();
@@ -2088,19 +2079,10 @@ namespace WpfHexaEditor
 
             UpdateScrollBar();
             UpdateHeader();
-
-            //Load file with ASCII character table;
-            var previousTable = TypeOfCharacterTable;
-            TypeOfCharacterTable = CharacterTableType.Ascii;
-
+            UpdateStatusBar();
             RefreshView(true);
 
-            //Replace previous character table
-            TypeOfCharacterTable = previousTable;
-
-            UnSelectAll();
             UpdateTblBookMark();
-            UpdateSelectionColor(FirstColor.HexByteData);
 
             //Update count of byte
             UpdateByteCount();
@@ -2450,7 +2432,7 @@ namespace WpfHexaEditor
             UpdateByteModified();
             UpdateSelection();
             UpdateHighLight();
-            UpdateStatusBar();
+            UpdateStatusBar(false);
             UpdateVisual();
             UpdateFocus();
 
@@ -3538,7 +3520,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Update statusbar for somes property dont support dependency property
         /// </summary>
-        private void UpdateStatusBar()
+        private void UpdateStatusBar(bool updateFileLenght = true)
         {
             if (StatusBarVisibility != Visibility.Visible) return;
 
@@ -3548,25 +3530,26 @@ namespace WpfHexaEditor
                 CountOfByteLabel.Content = 0;
                 return;
             }
-            
-            #region Show length  TODO:REFRESH ONLY WHEN NEEDED
 
-            var isMegabByte = false;
-
-            //is mega bytes ?
-            double length = _provider.LengthAjusted / 1024;
-
-            if (length > 1024)
+            #region Show length
+            if (updateFileLenght)
             {
-                length /= 1024;
-                isMegabByte = true;
+                var isMegabByte = false;
+
+                //is mega bytes ?
+                double length = _provider.LengthAjusted / 1024;
+
+                if (length > 1024)
+                {
+                    length /= 1024;
+                    isMegabByte = true;
+                }
+
+                FileLengthKbLabel.Content = Math.Round(length, 2) +
+                                            (isMegabByte
+                                                ? $" {Properties.Resources.MBTagString}"
+                                                : $" {Properties.Resources.KBTagString}");
             }
-
-            FileLengthKbLabel.Content = Math.Round(length, 2) +
-                                        (isMegabByte
-                                            ? $" {Properties.Resources.MBTagString}"
-                                            : $" {Properties.Resources.KBTagString}");
-
             #endregion
 
             #region Byte count of selectionStart
@@ -4820,6 +4803,7 @@ namespace WpfHexaEditor
 
             UpdateScrollBar();
             RefreshView(true);
+            UpdateStatusBar();
 
             //Update selection and focus
             SetPosition(FirstVisibleBytePosition);
