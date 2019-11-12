@@ -1518,9 +1518,26 @@ namespace WpfHexaEditor.Core.Bytes
 
         /// <summary>
         /// Serialize current state of provider
-        /// TODO: include bookmark...
         /// </summary>
         public void SaveState(string fileName)
+        {            
+            try
+            {
+                GetState().Save(fileName, SaveOptions.None);
+            }
+            catch
+            {
+                //Catch save error here
+            }
+        }
+
+        /// <summary>
+        /// Serialize current state of provider        
+        /// </summary>
+        /// <remarks>
+        /// TODO: include bookmark...
+        /// </remarks>
+        public XDocument GetState()
         {
             var doc = new XDocument(new XElement("WpfHexEditor",
                 new XAttribute("Version", "0.1"),
@@ -1538,18 +1555,11 @@ namespace WpfHexaEditor.Core.Bytes
                             : string.Empty),
                     new XAttribute("Position", bm.Value.BytePositionInStream)));
 
-            try
-            {
-                doc.Save(fileName, SaveOptions.None);
-            }
-            catch
-            {
-                //Catch save error here
-            }
+            return doc;
         }
 
         /// <summary>
-        /// Chargement de la liste des clients
+        /// Load xml state file
         /// </summary>
         public void LoadState(string filename)
         {
