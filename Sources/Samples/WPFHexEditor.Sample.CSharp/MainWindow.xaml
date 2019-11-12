@@ -314,7 +314,7 @@
                         AllowDrop="True"
                         AllowExtend="False"
                         AppendNeedConfirmation="True"
-                        ApplicationName="{Binding Source={x:Static properties:Settings.Default}, Path=ReadOnly, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        ApplicationName="{Binding Source={x:Static properties:Settings.Default}, Path=ApplicationName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                         BorderThickness="1"
                         ByteGrouping="FourByte"
                         ByteShiftLeft="{Binding LongValue, ElementName=HbBsl, UpdateSourceTrigger=PropertyChanged}"
