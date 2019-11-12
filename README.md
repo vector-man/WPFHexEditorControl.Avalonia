@@ -2,7 +2,7 @@
   
 [![NuGet](https://img.shields.io/badge/Nuget-v1.9.1-green.svg)](https://www.nuget.org/packages/WPFHexaEditor/)
 [![NetFramework](https://img.shields.io/badge/.Net%20Framework-4.7/4.5.1-green.svg)](https://www.microsoft.com/net/download/windows)
-[![NetFramework](https://img.shields.io/badge/Language-C%23%207.0-orange.svg)](https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/)
+[![NetFramework](https://img.shields.io/badge/Language-C%23%207.0+-orange.svg)](https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/abbaye/WpfHexEditorControl/blob/master/LICENSE)
 
 
@@ -76,4 +76,5 @@ Insert the control like this in your XAML...:
 <control:HexEditor FileName={Binding FileNamePath} Width="Auto" Height="Auto"/>
 ```
 
+---
 ✨ Wpf HexEditor user control, by Derek Tremblay (derektremblay666@gmail.com) coded for your fun! 😊🤟
