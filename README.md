@@ -76,4 +76,5 @@ Insert the control like this in your XAML...:
 <control:HexEditor FileName={Binding FileNamePath} Width="Auto" Height="Auto"/>
 ```
 
+---
 ✨ Wpf HexEditor user control, by Derek Tremblay (derektremblay666@gmail.com) coded for your fun! 😊🤟
