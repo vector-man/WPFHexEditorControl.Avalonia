@@ -1518,26 +1518,14 @@ namespace WpfHexaEditor.Core.Bytes
         #region Serialize (save/load) current state
 
         /// <summary>
-        /// Serialize current state of provider
-        /// </summary>
-        public void SaveState(string fileName)
-        {            
-            try
-            {
-                GetState().Save(fileName, SaveOptions.None);
-            }
-            catch
-            {
-                //Catch save error here
-            }
-        }
-
-        /// <summary>
         /// Serialize current state of provider        
         /// </summary>
         /// <remarks>
         /// TODO: include bookmark...
         /// </remarks>
+        /// <returns>
+        /// Return a XDocument that include all changes in the byte provider
+        /// </returns>
         public XDocument GetState()
         {
             var doc = new XDocument(new XElement("WpfHexEditor",
@@ -1622,6 +1610,21 @@ namespace WpfHexaEditor.Core.Bytes
                         break;
                 }
                 #endregion
+            }
+        }
+
+        /// <summary>
+        /// Serialize current state of provider
+        /// </summary>
+        public void SaveState(string fileName)
+        {
+            try
+            {
+                GetState().Save(fileName, SaveOptions.None);
+            }
+            catch
+            {
+                //Catch save error here
             }
         }
 

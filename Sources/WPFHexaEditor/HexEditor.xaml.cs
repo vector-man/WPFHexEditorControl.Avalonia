@@ -15,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.CharacterTable;
@@ -4458,6 +4459,26 @@ namespace WpfHexaEditor
             RefreshView();
         }
 
+        /// <summary>
+        /// Get the current state of control in a XDocument.
+        /// </summary>
+        public XDocument GetCurrentState() =>
+            CheckIsOpen(_provider)
+                ? _provider.GetState()
+                : null;
+
+        /// <summary>
+        /// Set the state (changes) from a XDocument.
+        /// </summary>
+        /// <remarks>
+        /// TODO: Add validation for catch error from wrong XDocument
+        /// </remarks>
+        public void SetCurrentState(XDocument doc)
+        {
+            if (!CheckIsOpen(_provider)) return;
+            _provider.SetState(doc);
+            RefreshView();
+        }
         #endregion
 
         #region Shift the first visible byte in the views to the left ...
