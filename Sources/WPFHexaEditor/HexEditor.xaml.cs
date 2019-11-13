@@ -4460,24 +4460,22 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// Get the current state of control in a XDocument.
-        /// </summary>
-        public XDocument GetCurrentState() =>
-            CheckIsOpen(_provider)
-                ? _provider.GetState()
-                : null;
-
-        /// <summary>
-        /// Set the state (changes) from a XDocument.
+        /// Set/Get the current state of control from XDocument.
         /// </summary>
         /// <remarks>
         /// TODO: Add validation for catch error from wrong XDocument
         /// </remarks>
-        public void SetCurrentState(XDocument doc)
+        public XDocument CurrentState
         {
-            if (!CheckIsOpen(_provider)) return;
-            _provider.SetState(doc);
-            RefreshView();
+            get => CheckIsOpen(_provider)
+                       ? _provider.GetState()
+                       : null;
+            set
+            {
+                if (!CheckIsOpen(_provider)) return;
+                _provider.SetState(value);
+                RefreshView();
+            }
         }
         #endregion
 
