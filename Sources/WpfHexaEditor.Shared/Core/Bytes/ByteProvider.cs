@@ -1218,12 +1218,13 @@ namespace WpfHexaEditor.Core.Bytes
         }
 
         /// <summary>
-        /// Clear changes and undo
+        /// Clear all changes
         /// </summary>
         public void ClearUndoChange()
         {
             _byteModifiedDictionary?.Clear();
             UndoStack?.Clear();
+            ClearRedoChange();
         }
 
         /// <summary>
@@ -1559,16 +1560,17 @@ namespace WpfHexaEditor.Core.Bytes
         }
 
         /// <summary>
-        /// Load xml state file
+        /// Set the state of byte provider
         /// </summary>
-        public void LoadState(string filename)
+        /// <remarks>
+        /// TODO: include bookmark...
+        /// </remarks>
+        public void SetState(XDocument doc)
         {
-            if (!File.Exists(filename)) return;
+            if (doc is null) return;
 
             //Clear current state
             ClearUndoChange();
-
-            var doc = XDocument.Load(filename);
 
             var bmList = doc.Element("WpfHexEditor").Element("ByteModifieds").Elements().Select(i => i);
 
@@ -1591,6 +1593,9 @@ namespace WpfHexaEditor.Core.Bytes
                                 case "Deleted":
                                     bm.Action = ByteAction.Deleted;
                                     break;
+                                case "Added":
+                                    bm.Action = ByteAction.Added;
+                                    break;
                             }
                             #endregion
 
@@ -1612,9 +1617,24 @@ namespace WpfHexaEditor.Core.Bytes
                     case ByteAction.Modified:
                         AddByteModified(bm.Byte, bm.BytePositionInStream);
                         break;
+                    case ByteAction.Added:
+                        //TODO: Add action when byte added will be supported
+                        break;
                 }
                 #endregion
             }
+        }
+
+        /// <summary>
+        /// Load xml state file
+        /// </summary>
+        public void LoadState(string filename)
+        {
+            if (!File.Exists(filename)) return;
+            
+            var doc = XDocument.Load(filename);
+
+            SetState(doc);
         }
         #endregion Serialize (save/load) current state
 
