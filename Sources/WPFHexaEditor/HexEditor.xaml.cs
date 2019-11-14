@@ -2031,6 +2031,7 @@ namespace WpfHexaEditor
             _provider.FillWithByteCompleted += Provider_FillWithByteCompleted;
             _provider.ReplaceByteCompleted += Provider_ReplaceByteCompleted;
             _provider.BytesAppendCompleted += Provider_BytesAppendCompleted;
+            _provider.SetStateByteModifiedAdded += Provider_SetStateByteModifiedAdded;
             #endregion
 
             UpdateScrollBar();
@@ -4468,15 +4469,39 @@ namespace WpfHexaEditor
         public XDocument CurrentState
         {
             get => CheckIsOpen(_provider)
-                       ? _provider.GetState()
-                       : null;
+                ? _provider.GetState()
+                : null;
             set
             {
                 if (!CheckIsOpen(_provider)) return;
+                
+                ClearAllScrollMarker();
                 _provider.SetState(value);
                 RefreshView();
             }
         }
+        
+        /// <summary>
+        /// Event for update the scroll marker modify the CurrentState
+        /// </summary>
+        private void Provider_SetStateByteModifiedAdded(object sender, EventArgs e)
+        {
+            if (!(sender is ByteModified bm)) return;
+
+            switch (bm.Action)
+            {
+                case ByteAction.Deleted:
+                    SetScrollMarker(bm.BytePositionInStream, ScrollMarker.ByteDeleted);
+                    break;
+                case ByteAction.Modified:
+                    SetScrollMarker(bm.BytePositionInStream, ScrollMarker.ByteModified);
+                    break;
+                case ByteAction.Added:
+                    //TODO: Add action when byte added will be supported
+                    break;
+            }
+        }
+
         #endregion
 
         #region Shift the first visible byte in the views to the left ...

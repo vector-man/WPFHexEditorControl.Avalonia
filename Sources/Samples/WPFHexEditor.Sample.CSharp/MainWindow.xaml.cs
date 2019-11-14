@@ -179,5 +179,19 @@ namespace WPFHexaEditorExample
 
         private void ReverseSelection_Click(object sender, RoutedEventArgs e) => HexEdit.ReverseSelection();
 
+
+
+        ///////// TEST OF CURRENTSTATE... //////
+        /// WILL BE DELETED AFTER COMPLETED
+        XDocument _stateTest = null;
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            _stateTest = HexEdit.CurrentState;
+        }
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            HexEdit.CurrentState = _stateTest;
+        }
     }
 }

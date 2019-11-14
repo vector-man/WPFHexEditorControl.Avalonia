@@ -56,6 +56,7 @@ namespace WpfHexaEditor.Core.Bytes
         public event EventHandler FillWithByteCompleted;
         public event EventHandler ReplaceByteCompleted;
         public event EventHandler BytesAppendCompleted;
+        public event EventHandler SetStateByteModifiedAdded;
 
         #endregion Events
 
@@ -1610,6 +1611,9 @@ namespace WpfHexaEditor.Core.Bytes
                         break;
                 }
                 #endregion
+
+                //Invoke event
+                SetStateByteModifiedAdded?.Invoke(bm, new EventArgs());
             }
         }
 
