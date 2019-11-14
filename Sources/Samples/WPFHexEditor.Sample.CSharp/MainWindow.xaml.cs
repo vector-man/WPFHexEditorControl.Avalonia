@@ -11,6 +11,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Xml.Linq;
 using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.CharacterTable;
 using WpfHexaEditor.Dialog;
@@ -177,5 +178,6 @@ namespace WPFHexaEditorExample
         }
 
         private void ReverseSelection_Click(object sender, RoutedEventArgs e) => HexEdit.ReverseSelection();
+
     }
 }
