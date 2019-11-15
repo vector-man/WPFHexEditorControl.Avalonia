@@ -7,6 +7,7 @@
 //////////////////////////////////////////////
 
 using Microsoft.Win32;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,7 +22,6 @@ namespace WPFHexaEditorExample
 {
     public partial class MainWindow
     {
-
         public MainWindow()
         {
             //FORCE CULTURE
@@ -38,6 +38,15 @@ namespace WPFHexaEditorExample
             {
                 Application.Current.MainWindow.Cursor = Cursors.Wait;
 
+                var tabFile = new TabItem
+                {
+                    Header = Path.GetFileName(fileDialog.FileName),
+                    ToolTip = fileDialog.FileName
+                };
+
+                FileTab.Items.Add(tabFile);
+                FileTab.SelectedIndex = FileTab.Items.Count -1;
+
                 HexEdit.FileName = fileDialog.FileName;
 
                 Application.Current.MainWindow.Cursor = null;
@@ -52,7 +61,15 @@ namespace WPFHexaEditorExample
             Application.Current.MainWindow.Cursor = null;
         }
 
-        private void CloseFileMenu_Click(object sender, RoutedEventArgs e) => HexEdit.CloseProvider();
+        private void CloseFileMenu_Click(object sender, RoutedEventArgs e)
+        {
+            if (FileTab.SelectedIndex == -1) return;
+
+            HexEdit.CloseProvider();
+            FileTab.Items.RemoveAt(FileTab.SelectedIndex);
+            //FileTab.SelectedIndex = FileTab.Items.Count;
+            
+        }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -172,26 +189,15 @@ namespace WPFHexaEditorExample
                 Owner = this
             }.Show();
 
-        private void Image_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            //TODO: Add close button code
-        }
-
         private void ReverseSelection_Click(object sender, RoutedEventArgs e) => HexEdit.ReverseSelection();
-
-
-
-        ///////// TEST OF CURRENTSTATE... //////
-        /// WILL BE DELETED AFTER COMPLETED
-        XDocument _stateTest = null;
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+               
+        private void FileTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _stateTest = HexEdit.CurrentState;
+            if (!(sender is TabControl tc)) return;
+            if (tc.SelectedValue is null) return;
+            
+            HexEdit.FileName = ((TabItem)tc.SelectedValue).ToolTip.ToString(); 
         }
 
-        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
-        {
-            HexEdit.CurrentState = _stateTest;
-        }
     }
 }

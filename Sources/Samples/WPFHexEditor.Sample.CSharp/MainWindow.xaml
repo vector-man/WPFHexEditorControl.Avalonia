@@ -296,39 +296,44 @@
                         ToolTip="Zoom editor (50% to 200%)"
                         Value="{Binding ElementName=HexEdit, Path=ZoomScale}" />
                 </MenuItem>
-                <MenuItem Header="GET TEST" Click="MenuItem_Click"/>
-                <MenuItem Header="SET TEST" Click="MenuItem_Click_1"/>
             </Menu>
 
-            <TabControl>
-                <TabItem
-                    Height="20"
-                    Margin="0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Header="{Binding ElementName=HexEdit, Path=FileName, Converter={StaticResource FilenameConverter}}">
-                    <control:HexEditor
-                        x:Name="HexEdit"
-                        Width="Auto"
-                        Height="Auto"
-                        AllowByteCount="False"
-                        AllowCustomBackgroundBlock="True"
-                        AllowDrop="True"
-                        AllowExtend="False"
-                        AppendNeedConfirmation="True"
-                        ApplicationName="{Binding Source={x:Static properties:Settings.Default}, Path=ApplicationName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                        BorderThickness="1"
-                        ByteGrouping="FourByte"
-                        ByteShiftLeft="{Binding LongValue, ElementName=HbBsl, UpdateSourceTrigger=PropertyChanged}"
-                        ByteSpacerPositioning="HexBytePanel"
-                        ByteSpacerVisualStyle="Dash"
-                        ByteSpacerWidthTickness="Normal"
-                        DataStringVisual="Hexadecimal"
-                        DefaultCopyToClipboardMode="HexaString"
-                        ForegroundSecondColor="Blue"
-                        OffSetStringVisual="Hexadecimal" />
-                </TabItem>
-            </TabControl>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TabControl
+                    x:Name="FileTab"
+                    Grid.Row="0"
+                    SelectionChanged="FileTab_SelectionChanged" />
+
+                <control:HexEditor
+                    x:Name="HexEdit"
+                    Grid.Row="1"
+                    Width="Auto"
+                    Height="Auto"
+                    Margin="2"
+                    AllowByteCount="False"
+                    AllowCustomBackgroundBlock="True"
+                    AllowDrop="True"
+                    AllowExtend="False"
+                    AppendNeedConfirmation="True"
+                    ApplicationName="{Binding Source={x:Static properties:Settings.Default}, Path=ApplicationName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    BorderThickness="1"
+                    ByteGrouping="FourByte"
+                    ByteShiftLeft="{Binding LongValue, ElementName=HbBsl, UpdateSourceTrigger=PropertyChanged}"
+                    ByteSpacerPositioning="HexBytePanel"
+                    ByteSpacerVisualStyle="Dash"
+                    ByteSpacerWidthTickness="Normal"
+                    DataStringVisual="Hexadecimal"
+                    DefaultCopyToClipboardMode="HexaString"
+                    ForegroundSecondColor="Blue"
+                    OffSetStringVisual="Hexadecimal" />
+
+            </Grid>
+
         </DockPanel>
     </Grid>
 </Window>

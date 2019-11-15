@@ -225,7 +225,6 @@ namespace WpfHexaEditor
         /// Occurs on byte double click completed
         /// </summary>
         public event EventHandler ByteDoubleClick;
-        
         #endregion Events
 
         #region Constructor
@@ -916,8 +915,8 @@ namespace WpfHexaEditor
                     byteDeletedCount = _provider.GetByteModifieds(ByteAction.Deleted).Count;
 
                 return AllowVisualByteAddress
-                          ? CheckIsOpen(_provider) ? (VisualByteAdressLength - byteDeletedCount) / BytePerLine : 0
-                          : CheckIsOpen(_provider) ? (_provider.Length - byteDeletedCount) / BytePerLine : 0;
+                          ? CheckIsOpen(_provider) ? ((VisualByteAdressLength - byteDeletedCount) / BytePerLine) + 1 : 0
+                          : CheckIsOpen(_provider) ? ((_provider.Length - byteDeletedCount) / BytePerLine) + 1 : 0;
             }
         }
 
@@ -4439,7 +4438,7 @@ namespace WpfHexaEditor
 
         #endregion
 
-        #region Save/Load control state
+        #region Save/Load control state (Can be used to implement multi-file support in client editor... ;)
 
         /// <summary>
         /// Save the current state of ByteProvider in a xml text file.
@@ -4447,7 +4446,7 @@ namespace WpfHexaEditor
         public void SaveCurrentState(string filename)
         {
             if (!CheckIsOpen(_provider)) return;
-            _provider.SaveState(filename);
+            _provider.SaveState(filename, SelectionStart, SelectionStop);
         }
 
         /// <summary>
@@ -4461,7 +4460,7 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// Set/Get the current state of control from XDocument.
+        /// Set or Get the current state of control from XDocument.
         /// </summary>
         /// <remarks>
         /// TODO: Add validation for catch error from wrong XDocument
@@ -4469,7 +4468,7 @@ namespace WpfHexaEditor
         public XDocument CurrentState
         {
             get => CheckIsOpen(_provider)
-                ? _provider.GetState()
+                ? _provider.GetState(SelectionStart, SelectionStop)
                 : null;
             set
             {
@@ -4482,12 +4481,12 @@ namespace WpfHexaEditor
         }
         
         /// <summary>
-        /// Event for update the scroll marker modify the CurrentState
+        /// Event for update ScrollMarker when modify the CurrentState
         /// </summary>
         private void Provider_SetStateByteModifiedAdded(object sender, EventArgs e)
         {
             if (!(sender is ByteModified bm)) return;
-
+            
             switch (bm.Action)
             {
                 case ByteAction.Deleted:

@@ -241,7 +241,7 @@ namespace WpfHexaEditor.Core.Bytes
 
         #endregion Stream position
 
-        #region isOpen property/methods
+        #region IsOpen property/methods
 
         /// <summary>
         /// Get if file is open
@@ -249,7 +249,7 @@ namespace WpfHexaEditor.Core.Bytes
         public bool IsOpen => _stream != null;
 
         /// <summary>
-        /// Get if file is open
+        /// Get if the provider is open
         /// </summary>
         public static bool CheckIsOpen(ByteProvider provider) => provider?.IsOpen == true;
 
@@ -1527,10 +1527,12 @@ namespace WpfHexaEditor.Core.Bytes
         /// <returns>
         /// Return a XDocument that include all changes in the byte provider
         /// </returns>
-        public XDocument GetState()
+        public XDocument GetState(long selectionStart = -1, long selectionStop = -1)
         {
             var doc = new XDocument(new XElement("WpfHexEditor",
                 new XAttribute("Version", "0.1"),
+                new XAttribute("SelectionStart", selectionStart),
+                new XAttribute("SelectionStart", selectionStop),
                 new XElement("ByteModifieds", new XAttribute("Count", _byteModifiedDictionary.Count))));
 
             var bmRoot = doc.Element("WpfHexEditor").Element("ByteModifieds");
@@ -1554,9 +1556,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// <remarks>
         /// TODO: include bookmark...
         /// </remarks>
-        public void SetState(XDocument doc)
+        public (long selectionStart, long SelectionStop) SetState(XDocument doc)
         {
-            if (doc is null) return;
+            if (doc is null) return (-1, -1);
 
             //Clear current state
             ClearUndoChange();
@@ -1615,16 +1617,19 @@ namespace WpfHexaEditor.Core.Bytes
                 //Invoke event
                 SetStateByteModifiedAdded?.Invoke(bm, new EventArgs());
             }
+
+            //TODO: Add selection start/stop...
+            return (-1, -1);
         }
 
         /// <summary>
         /// Serialize current state of provider
         /// </summary>
-        public void SaveState(string fileName)
+        public void SaveState(string fileName, long selectionStart = -1, long selectionStop = -1)
         {
             try
             {
-                GetState().Save(fileName, SaveOptions.None);
+                GetState(selectionStart, selectionStop).Save(fileName, SaveOptions.None);
             }
             catch
             {
