@@ -1532,7 +1532,7 @@ namespace WpfHexaEditor.Core.Bytes
             var doc = new XDocument(new XElement("WpfHexEditor",
                 new XAttribute("Version", "0.1"),
                 new XAttribute("SelectionStart", selectionStart),
-                new XAttribute("SelectionStart", selectionStop),
+                new XAttribute("SelectionStop", selectionStop),
                 new XElement("ByteModifieds", new XAttribute("Count", _byteModifiedDictionary.Count))));
 
             var bmRoot = doc.Element("WpfHexEditor").Element("ByteModifieds");

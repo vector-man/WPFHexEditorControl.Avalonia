@@ -296,6 +296,7 @@
                         ToolTip="Zoom editor (50% to 200%)"
                         Value="{Binding ElementName=HexEdit, Path=ZoomScale}" />
                 </MenuItem>
+
             </Menu>
 
             <Grid>
