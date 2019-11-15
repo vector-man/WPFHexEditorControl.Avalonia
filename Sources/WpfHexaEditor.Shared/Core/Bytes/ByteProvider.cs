@@ -1556,12 +1556,16 @@ namespace WpfHexaEditor.Core.Bytes
         /// <remarks>
         /// TODO: include bookmark...
         /// </remarks>
-        public (long selectionStart, long SelectionStop) SetState(XDocument doc)
+        public (long selectionStart, long selectionStop) SetState(XDocument doc)
         {
             if (doc is null) return (-1, -1);
 
             //Clear current state
             ClearUndoChange();
+
+            //TODO: use tryparse...
+            var selectionStart = long.Parse(doc.Element("WpfHexEditor").Attribute("SelectionStart").Value);
+            var selectionStop = long.Parse(doc.Element("WpfHexEditor").Attribute("SelectionStop").Value);
 
             var bmList = doc.Element("WpfHexEditor").Element("ByteModifieds").Elements().Select(i => i);
 
@@ -1619,7 +1623,7 @@ namespace WpfHexaEditor.Core.Bytes
             }
 
             //TODO: Add selection start/stop...
-            return (-1, -1);
+            return (selectionStart, selectionStop);
         }
 
         /// <summary>

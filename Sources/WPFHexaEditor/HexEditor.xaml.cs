@@ -4475,7 +4475,11 @@ namespace WpfHexaEditor
                 if (!CheckIsOpen(_provider)) return;
                 
                 ClearAllScrollMarker();
-                _provider.SetState(value);
+                var (selectionStart, selectionStop) = _provider.SetState(value);
+
+                SelectionStart = selectionStart;
+                SelectionStop = selectionStop;
+
                 RefreshView();
             }
         }
