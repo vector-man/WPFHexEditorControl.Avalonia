@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2018
+// Apache 2.0  - 2016-2019
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //
 //
@@ -7,7 +7,6 @@
 //////////////////////////////////////////////
 
 using Microsoft.Win32;
-using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -53,6 +52,8 @@ namespace WPFHexaEditorExample
                 Header = Path.GetFileName(fileDialog.FileName),
                 ToolTip = fileDialog.FileName
             };
+
+            
 
             FileTab.Items.Add(tabFile);
             FileTab.SelectedIndex = FileTab.Items.Count - 1;
@@ -201,9 +202,14 @@ namespace WPFHexaEditorExample
         {
             if (!(sender is TabControl tc)) return;
             if (!(tc.SelectedValue is TabItem ti)) return;
-                        
-            var filename = ti.ToolTip.ToString();
 
+            //Set the tag of last selected ta to currentstate
+            if (e.RemovedItems.Count > 0)
+                if (e.RemovedItems[0] is TabItem lastSelectedTabItem)
+                    lastSelectedTabItem.Tag = HexEdit.CurrentState;
+
+            //Change loaded file and update the current state
+            var filename = ti.ToolTip.ToString();
             if (!File.Exists(filename)) return;
 
             HexEdit.FileName = filename;
@@ -211,14 +217,6 @@ namespace WPFHexaEditorExample
             //Setstate 
             if (ti.Tag is XDocument doc)
                 HexEdit.CurrentState = doc;
-        }
-
-        private void FileTab_Unselected(object sender, RoutedEventArgs e)
-        {
-            if (!(sender is TabControl tc)) return;
-            if (!(tc.SelectedValue is TabItem ti)) return;
-
-            ti.Tag = HexEdit.CurrentState;
         }
     }
 }
