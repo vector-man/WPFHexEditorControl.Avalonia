@@ -307,7 +307,7 @@
                 <TabControl
                     x:Name="FileTab"
                     Grid.Row="0"
-                    Margin="2,0"
+                    Margin="2,0"                    
                     SelectionChanged="FileTab_SelectionChanged" />
 
                 <control:HexEditor

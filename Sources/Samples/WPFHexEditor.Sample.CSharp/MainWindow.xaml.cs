@@ -36,15 +36,16 @@ namespace WPFHexaEditorExample
 
             if (fileDialog.ShowDialog() == null || !File.Exists(fileDialog.FileName)) return;
 
-            //if file already open do not open against
+            #region if file already open do not open against
             foreach (TabItem ti in FileTab.Items)
                 if (ti.ToolTip.ToString() == fileDialog.FileName)
                 {
                     ti.IsSelected = true;
                     return;
                 }
+            #endregion
 
-            //open file and add tab
+            #region open file and add tab
             Application.Current.MainWindow.Cursor = Cursors.Wait;
 
             var tabFile = new TabItem
@@ -57,6 +58,7 @@ namespace WPFHexaEditorExample
             FileTab.SelectedIndex = FileTab.Items.Count - 1;
 
             HexEdit.FileName = fileDialog.FileName;
+            #endregion
 
             Application.Current.MainWindow.Cursor = null;
         }
@@ -198,9 +200,25 @@ namespace WPFHexaEditorExample
         private void FileTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!(sender is TabControl tc)) return;
-            if (tc.SelectedValue is null) return;
-            
-            HexEdit.FileName = ((TabItem)tc.SelectedValue).ToolTip.ToString(); 
+            if (!(tc.SelectedValue is TabItem ti)) return;
+                        
+            var filename = ti.ToolTip.ToString();
+
+            if (!File.Exists(filename)) return;
+
+            HexEdit.FileName = filename;
+
+            //Setstate 
+            if (ti.Tag is XDocument doc)
+                HexEdit.CurrentState = doc;
+        }
+
+        private void FileTab_Unselected(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is TabControl tc)) return;
+            if (!(tc.SelectedValue is TabItem ti)) return;
+
+            ti.Tag = HexEdit.CurrentState;
         }
     }
 }

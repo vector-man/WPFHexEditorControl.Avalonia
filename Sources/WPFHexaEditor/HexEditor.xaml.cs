@@ -4423,10 +4423,12 @@ namespace WpfHexaEditor
                 else
                 {
                     if (FileDroppingConfirmation)
-                        if(MessageBox.Show(
+                    {
+                        if (MessageBox.Show(
                             $"{Properties.Resources.FileDroppingConfirmationString} {Path.GetFileName(filename[0])} ?",
                                 ApplicationName, MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        FileName = filename[0];
+                            FileName = filename[0];
+                    }
                     else
                         FileName = filename[0];
                 }
@@ -4507,7 +4509,7 @@ namespace WpfHexaEditor
 
             var bmRoot = doc.Element("WpfHexEditor").Element("ByteModifieds");
 
-            //Create bytemodified tag
+            #region Create bytemodified tag
             foreach (var bm in _provider.GetByteModifieds(ByteAction.All))
                 bmRoot.Add(new XElement("ByteModified",
                     new XAttribute("Action", bm.Value.Action),
@@ -4516,6 +4518,7 @@ namespace WpfHexaEditor
                             ? new string(ByteToHexCharArray((byte)bm.Value.Byte))
                             : string.Empty),
                     new XAttribute("Position", bm.Value.BytePositionInStream)));
+            #endregion
 
             return doc;
         }
@@ -4526,7 +4529,7 @@ namespace WpfHexaEditor
         /// <remarks>
         /// TODO: include bookmark...
         /// </remarks>
-        public void SetState(XDocument doc)
+        private void SetState(XDocument doc)
         {
             if (doc is null) return;
             if (!CheckIsOpen(_provider)) return;
@@ -4564,7 +4567,7 @@ namespace WpfHexaEditor
 
                             break;
                         case "HexByte":
-                            bm.Byte = ByteConverters.IsHexaByteStringValue(at.Value).value[0];
+                            bm.Byte = IsHexaByteStringValue(at.Value).value[0];
                             break;
                         case "Position":
                             bm.BytePositionInStream = long.Parse(at.Value);
