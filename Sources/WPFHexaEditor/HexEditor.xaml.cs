@@ -2030,7 +2030,6 @@ namespace WpfHexaEditor
             _provider.FillWithByteCompleted += Provider_FillWithByteCompleted;
             _provider.ReplaceByteCompleted += Provider_ReplaceByteCompleted;
             _provider.BytesAppendCompleted += Provider_BytesAppendCompleted;
-            _provider.SetStateByteModifiedAdded += Provider_SetStateByteModifiedAdded;
             #endregion
 
             UpdateScrollBar();
@@ -4446,7 +4445,7 @@ namespace WpfHexaEditor
         public void SaveCurrentState(string filename)
         {
             if (!CheckIsOpen(_provider)) return;
-            _provider.SaveState(filename, SelectionStart, SelectionStop);
+            GetState().Save(filename, SaveOptions.None);
         }
 
         /// <summary>
@@ -4455,8 +4454,11 @@ namespace WpfHexaEditor
         public void LoadCurrentState(string filename)
         {
             if (!CheckIsOpen(_provider)) return;
-            _provider.LoadState(filename);
-            RefreshView();
+            if (!File.Exists(filename)) return;
+
+            var doc = XDocument.Load(filename);
+
+            SetState(doc);
         }
 
         /// <summary>
@@ -4468,43 +4470,142 @@ namespace WpfHexaEditor
         public XDocument CurrentState
         {
             get => CheckIsOpen(_provider)
-                ? _provider.GetState(SelectionStart, SelectionStop)
+                ? GetState()
                 : null;
             set
             {
                 if (!CheckIsOpen(_provider)) return;
-                
-                ClearAllScrollMarker();
-                var (selectionStart, selectionStop) = _provider.SetState(value);
 
-                SelectionStart = selectionStart;
-                SelectionStop = selectionStop;
+                //Clear aller scroll marker and will be updated by Provider_SetStateByteModifiedAdded()
+                ClearAllScrollMarker();
+
+                SetState(value);
 
                 RefreshView();
             }
         }
         
         /// <summary>
-        /// Event for update ScrollMarker when modify the CurrentState
+        /// Get the current state of hexeditor
         /// </summary>
-        private void Provider_SetStateByteModifiedAdded(object sender, EventArgs e)
+        /// <remarks>
+        /// TODO: include bookmark...
+        /// </remarks>
+        /// <returns>
+        /// Return a XDocument that include all changes in the byte provider, Selecton Start/Stop, position ...
+        /// </returns>
+        private XDocument GetState()
         {
-            if (!(sender is ByteModified bm)) return;
-            
-            switch (bm.Action)
-            {
-                case ByteAction.Deleted:
-                    SetScrollMarker(bm.BytePositionInStream, ScrollMarker.ByteDeleted);
-                    break;
-                case ByteAction.Modified:
-                    SetScrollMarker(bm.BytePositionInStream, ScrollMarker.ByteModified);
-                    break;
-                case ByteAction.Added:
-                    //TODO: Add action when byte added will be supported
-                    break;
-            }
+            if (!CheckIsOpen(_provider)) return null;
+
+            var doc = new XDocument(new XElement("WpfHexEditor",
+                new XAttribute("Version", "0.1"),
+                new XAttribute("SelectionStart", SelectionStart),
+                new XAttribute("SelectionStop", SelectionStop),
+                new XAttribute("Position", FirstVisibleBytePosition),
+                    new XElement("ByteModifieds", new XAttribute("Count", _provider.GetByteModifieds(ByteAction.All).Count))));
+
+            var bmRoot = doc.Element("WpfHexEditor").Element("ByteModifieds");
+
+            //Create bytemodified tag
+            foreach (var bm in _provider.GetByteModifieds(ByteAction.All))
+                bmRoot.Add(new XElement("ByteModified",
+                    new XAttribute("Action", bm.Value.Action),
+                    new XAttribute("HexByte",
+                        bm.Value.Byte.HasValue
+                            ? new string(ByteToHexCharArray((byte)bm.Value.Byte))
+                            : string.Empty),
+                    new XAttribute("Position", bm.Value.BytePositionInStream)));
+
+            return doc;
         }
 
+        /// <summary>
+        /// Set the state of hexeditor and update the visual...
+        /// </summary>
+        /// <remarks>
+        /// TODO: include bookmark...
+        /// </remarks>
+        public void SetState(XDocument doc)
+        {
+            if (doc is null) return;
+            if (!CheckIsOpen(_provider)) return;
+
+            //Clear current state
+            _provider.ClearUndoChange();
+            
+            var bmList = doc.Element("WpfHexEditor").Element("ByteModifieds").Elements().Select(i => i);
+
+            //Load ByteModifieds list
+            foreach (var element in bmList)
+            {
+                var bm = new ByteModified();
+
+                foreach (var at in element.Attributes())
+                    switch (at.Name.ToString())
+                    {
+                        case "Action":
+
+                            #region Set action
+                            switch (at.Value)
+                            {
+                                case "Modified":
+                                    bm.Action = ByteAction.Modified;
+                                    break;
+                                case "Deleted":
+                                    bm.Action = ByteAction.Deleted;
+                                    break;
+                                case "Added":
+                                    bm.Action = ByteAction.Added;
+                                    break;
+                            }
+                            #endregion
+
+                            break;
+                        case "HexByte":
+                            bm.Byte = ByteConverters.IsHexaByteStringValue(at.Value).value[0];
+                            break;
+                        case "Position":
+                            bm.BytePositionInStream = long.Parse(at.Value);
+                            break;
+                    }
+
+                #region Add bytemodified to dictionary
+                switch (bm.Action)
+                {
+                    case ByteAction.Deleted:
+                        _provider.AddByteDeleted(bm.BytePositionInStream, 1);
+                        SetScrollMarker(bm.BytePositionInStream, ScrollMarker.ByteDeleted);
+                        break;
+                    case ByteAction.Modified:
+                        _provider.AddByteModified(bm.Byte, bm.BytePositionInStream);
+                        SetScrollMarker(bm.BytePositionInStream, ScrollMarker.ByteModified);
+                        break;
+                    case ByteAction.Added:
+                        //TODO: Add action when byte added will be supported
+                        break;
+                }
+                #endregion
+            }
+
+            //Update position
+            SetPosition(long.TryParse(doc.Element("WpfHexEditor").Attribute("Position").Value, out long position)
+                ? position
+                : 0);
+
+            //Update selection
+            SelectionStart = long.TryParse(doc.Element("WpfHexEditor").Attribute("SelectionStart").Value, out long selectionStart)
+                ? selectionStart
+                : 0;
+
+            SelectionStop = long.TryParse(doc.Element("WpfHexEditor").Attribute("SelectionStop").Value, out long selectionStop)
+                ? selectionStop
+                : 0;
+
+            //Refresh
+            RefreshView(true);
+        }
+        
         #endregion
 
         #region Shift the first visible byte in the views to the left ...

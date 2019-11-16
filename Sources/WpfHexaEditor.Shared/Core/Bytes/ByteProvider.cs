@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Xml.Linq;
 using WpfHexaEditor.Core.CharacterTable;
 using WpfHexaEditor.Core.MethodExtention;
 using Application = System.Windows.Application;
@@ -56,7 +55,6 @@ namespace WpfHexaEditor.Core.Bytes
         public event EventHandler FillWithByteCompleted;
         public event EventHandler ReplaceByteCompleted;
         public event EventHandler BytesAppendCompleted;
-        public event EventHandler SetStateByteModifiedAdded;
 
         #endregion Events
 
@@ -1516,143 +1514,143 @@ namespace WpfHexaEditor.Core.Bytes
 
         #endregion Append byte at end of file
 
-        #region Serialize (save/load) current state
+        //#region Serialize (save/load) current state
 
-        /// <summary>
-        /// Serialize current state of provider        
-        /// </summary>
-        /// <remarks>
-        /// TODO: include bookmark...
-        /// </remarks>
-        /// <returns>
-        /// Return a XDocument that include all changes in the byte provider
-        /// </returns>
-        public XDocument GetState(long selectionStart = -1, long selectionStop = -1)
-        {
-            var doc = new XDocument(new XElement("WpfHexEditor",
-                new XAttribute("Version", "0.1"),
-                new XAttribute("SelectionStart", selectionStart),
-                new XAttribute("SelectionStop", selectionStop),
-                new XElement("ByteModifieds", new XAttribute("Count", _byteModifiedDictionary.Count))));
+        ///// <summary>
+        ///// Serialize current state of provider        
+        ///// </summary>
+        ///// <remarks>
+        ///// TODO: include bookmark...
+        ///// </remarks>
+        ///// <returns>
+        ///// Return a XDocument that include all changes in the byte provider
+        ///// </returns>
+        //public XDocument GetState(long selectionStart = -1, long selectionStop = -1)
+        //{
+        //    var doc = new XDocument(new XElement("WpfHexEditor",
+        //        new XAttribute("Version", "0.1"),
+        //        new XAttribute("SelectionStart", selectionStart),
+        //        new XAttribute("SelectionStop", selectionStop),
+        //        new XElement("ByteModifieds", new XAttribute("Count", _byteModifiedDictionary.Count))));
 
-            var bmRoot = doc.Element("WpfHexEditor").Element("ByteModifieds");
+        //    var bmRoot = doc.Element("WpfHexEditor").Element("ByteModifieds");
 
-            //Create bytemodified tag
-            foreach (var bm in _byteModifiedDictionary)
-                bmRoot.Add(new XElement("ByteModified",
-                    new XAttribute("Action", bm.Value.Action),
-                    new XAttribute("HexByte",
-                        bm.Value.Byte.HasValue
-                            ? new string(ByteConverters.ByteToHexCharArray((byte)bm.Value.Byte))
-                            : string.Empty),
-                    new XAttribute("Position", bm.Value.BytePositionInStream)));
+        //    //Create bytemodified tag
+        //    foreach (var bm in _byteModifiedDictionary)
+        //        bmRoot.Add(new XElement("ByteModified",
+        //            new XAttribute("Action", bm.Value.Action),
+        //            new XAttribute("HexByte",
+        //                bm.Value.Byte.HasValue
+        //                    ? new string(ByteConverters.ByteToHexCharArray((byte)bm.Value.Byte))
+        //                    : string.Empty),
+        //            new XAttribute("Position", bm.Value.BytePositionInStream)));
 
-            return doc;
-        }
+        //    return doc;
+        //}
 
-        /// <summary>
-        /// Set the state of byte provider
-        /// </summary>
-        /// <remarks>
-        /// TODO: include bookmark...
-        /// </remarks>
-        public (long selectionStart, long selectionStop) SetState(XDocument doc)
-        {
-            if (doc is null) return (-1, -1);
+        ///// <summary>
+        ///// Set the state of byte provider
+        ///// </summary>
+        ///// <remarks>
+        ///// TODO: include bookmark...
+        ///// </remarks>
+        //public (long selectionStart, long selectionStop) SetState(XDocument doc)
+        //{
+        //    if (doc is null) return (-1, -1);
 
-            //Clear current state
-            ClearUndoChange();
+        //    //Clear current state
+        //    ClearUndoChange();
 
-            //TODO: use tryparse...
-            var selectionStart = long.Parse(doc.Element("WpfHexEditor").Attribute("SelectionStart").Value);
-            var selectionStop = long.Parse(doc.Element("WpfHexEditor").Attribute("SelectionStop").Value);
+        //    //TODO: use tryparse...
+        //    var selectionStart = long.Parse(doc.Element("WpfHexEditor").Attribute("SelectionStart").Value);
+        //    var selectionStop = long.Parse(doc.Element("WpfHexEditor").Attribute("SelectionStop").Value);
 
-            var bmList = doc.Element("WpfHexEditor").Element("ByteModifieds").Elements().Select(i => i);
+        //    var bmList = doc.Element("WpfHexEditor").Element("ByteModifieds").Elements().Select(i => i);
 
-            //Load ByteModifieds list
-            foreach (var element in bmList)
-            {
-                var bm = new ByteModified();
+        //    //Load ByteModifieds list
+        //    foreach (var element in bmList)
+        //    {
+        //        var bm = new ByteModified();
 
-                foreach (var at in element.Attributes())
-                    switch (at.Name.ToString())
-                    {
-                        case "Action":
+        //        foreach (var at in element.Attributes())
+        //            switch (at.Name.ToString())
+        //            {
+        //                case "Action":
 
-                            #region Set action
-                            switch (at.Value)
-                            {
-                                case "Modified":
-                                    bm.Action = ByteAction.Modified;
-                                    break;
-                                case "Deleted":
-                                    bm.Action = ByteAction.Deleted;
-                                    break;
-                                case "Added":
-                                    bm.Action = ByteAction.Added;
-                                    break;
-                            }
-                            #endregion
+        //                    #region Set action
+        //                    switch (at.Value)
+        //                    {
+        //                        case "Modified":
+        //                            bm.Action = ByteAction.Modified;
+        //                            break;
+        //                        case "Deleted":
+        //                            bm.Action = ByteAction.Deleted;
+        //                            break;
+        //                        case "Added":
+        //                            bm.Action = ByteAction.Added;
+        //                            break;
+        //                    }
+        //                    #endregion
 
-                            break;
-                        case "HexByte":
-                            bm.Byte = ByteConverters.IsHexaByteStringValue(at.Value).value[0];
-                            break;
-                        case "Position":
-                            bm.BytePositionInStream = long.Parse(at.Value);
-                            break;
-                    }
+        //                    break;
+        //                case "HexByte":
+        //                    bm.Byte = ByteConverters.IsHexaByteStringValue(at.Value).value[0];
+        //                    break;
+        //                case "Position":
+        //                    bm.BytePositionInStream = long.Parse(at.Value);
+        //                    break;
+        //            }
 
-                #region Add bytemodified to dictionary
-                switch (bm.Action)
-                {
-                    case ByteAction.Deleted:
-                        AddByteDeleted(bm.BytePositionInStream, 1);
-                        break;
-                    case ByteAction.Modified:
-                        AddByteModified(bm.Byte, bm.BytePositionInStream);
-                        break;
-                    case ByteAction.Added:
-                        //TODO: Add action when byte added will be supported
-                        break;
-                }
-                #endregion
+        //        #region Add bytemodified to dictionary
+        //        switch (bm.Action)
+        //        {
+        //            case ByteAction.Deleted:
+        //                AddByteDeleted(bm.BytePositionInStream, 1);
+        //                break;
+        //            case ByteAction.Modified:
+        //                AddByteModified(bm.Byte, bm.BytePositionInStream);
+        //                break;
+        //            case ByteAction.Added:
+        //                //TODO: Add action when byte added will be supported
+        //                break;
+        //        }
+        //        #endregion
 
-                //Invoke event
-                SetStateByteModifiedAdded?.Invoke(bm, new EventArgs());
-            }
+        //        //Invoke event
+        //        SetStateByteModifiedAdded?.Invoke(bm, new EventArgs());
+        //    }
 
-            //TODO: Add selection start/stop...
-            return (selectionStart, selectionStop);
-        }
+        //    //TODO: Add selection start/stop...
+        //    return (selectionStart, selectionStop);
+        //}
 
-        /// <summary>
-        /// Serialize current state of provider
-        /// </summary>
-        public void SaveState(string fileName, long selectionStart = -1, long selectionStop = -1)
-        {
-            try
-            {
-                GetState(selectionStart, selectionStop).Save(fileName, SaveOptions.None);
-            }
-            catch
-            {
-                //Catch save error here
-            }
-        }
+        ///// <summary>
+        ///// Serialize current state of provider
+        ///// </summary>
+        //public void SaveState(string fileName, long selectionStart = -1, long selectionStop = -1)
+        //{
+        //    try
+        //    {
+        //        GetState(selectionStart, selectionStop).Save(fileName, SaveOptions.None);
+        //    }
+        //    catch
+        //    {
+        //        //Catch save error here
+        //    }
+        //}
 
-        /// <summary>
-        /// Load xml state file
-        /// </summary>
-        public void LoadState(string filename)
-        {
-            if (!File.Exists(filename)) return;
+        ///// <summary>
+        ///// Load xml state file
+        ///// </summary>
+        //public void LoadState(string filename)
+        //{
+        //    if (!File.Exists(filename)) return;
             
-            var doc = XDocument.Load(filename);
+        //    var doc = XDocument.Load(filename);
 
-            SetState(doc);
-        }
-        #endregion Serialize (save/load) current state
+        //    SetState(doc);
+        //}
+        //#endregion Serialize (save/load) current state
 
         #region Reverse bytes selection
 
