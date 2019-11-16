@@ -4541,6 +4541,7 @@ namespace WpfHexaEditor
             {
                 var bm = new ByteModified();
 
+                #region Set attribute of bytemodified...
                 foreach (var at in element.Attributes())
                     switch (at.Name.ToString())
                     {
@@ -4569,6 +4570,7 @@ namespace WpfHexaEditor
                             bm.BytePositionInStream = long.Parse(at.Value);
                             break;
                     }
+                #endregion
 
                 #region Add bytemodified to dictionary
                 switch (bm.Action)
@@ -4588,6 +4590,7 @@ namespace WpfHexaEditor
                 #endregion
             }
 
+            #region Update the visual
             //Update position
             SetPosition(long.TryParse(doc.Element("WpfHexEditor").Attribute("Position").Value, out long position)
                 ? position
@@ -4604,8 +4607,10 @@ namespace WpfHexaEditor
 
             //Refresh
             RefreshView(true);
+            #endregion
+
         }
-        
+
         #endregion
 
         #region Shift the first visible byte in the views to the left ...

@@ -34,30 +34,39 @@ namespace WPFHexaEditorExample
         {
             var fileDialog = new OpenFileDialog();
 
-            if (fileDialog.ShowDialog() != null && File.Exists(fileDialog.FileName))
-            {
-                Application.Current.MainWindow.Cursor = Cursors.Wait;
+            if (fileDialog.ShowDialog() == null || !File.Exists(fileDialog.FileName)) return;
 
-                var tabFile = new TabItem
+            //if file already open do not open against
+            foreach (TabItem ti in FileTab.Items)
+                if (ti.ToolTip.ToString() == fileDialog.FileName)
                 {
-                    Header = Path.GetFileName(fileDialog.FileName),
-                    ToolTip = fileDialog.FileName
-                };
+                    ti.IsSelected = true;
+                    return;
+                }
 
-                FileTab.Items.Add(tabFile);
-                FileTab.SelectedIndex = FileTab.Items.Count -1;
+            //open file and add tab
+            Application.Current.MainWindow.Cursor = Cursors.Wait;
 
-                HexEdit.FileName = fileDialog.FileName;
+            var tabFile = new TabItem
+            {
+                Header = Path.GetFileName(fileDialog.FileName),
+                ToolTip = fileDialog.FileName
+            };
 
-                Application.Current.MainWindow.Cursor = null;
-            }
+            FileTab.Items.Add(tabFile);
+            FileTab.SelectedIndex = FileTab.Items.Count - 1;
+
+            HexEdit.FileName = fileDialog.FileName;
+
+            Application.Current.MainWindow.Cursor = null;
         }
 
         private void SaveMenu_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.MainWindow.Cursor = Cursors.Wait;
-            //HexEdit.SaveTBLFile();
+            
             HexEdit.SubmitChanges();
+
             Application.Current.MainWindow.Cursor = null;
         }
 
@@ -66,9 +75,7 @@ namespace WPFHexaEditorExample
             if (FileTab.SelectedIndex == -1) return;
 
             HexEdit.CloseProvider();
-            FileTab.Items.RemoveAt(FileTab.SelectedIndex);
-            //FileTab.SelectedIndex = FileTab.Items.Count;
-            
+            FileTab.Items.RemoveAt(FileTab.SelectedIndex);            
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -122,21 +129,18 @@ namespace WPFHexaEditorExample
         {
             var fileDialog = new OpenFileDialog();
 
-            if (fileDialog.ShowDialog() != null)
-            {
-                if (File.Exists(fileDialog.FileName))
-                {
-                    Application.Current.MainWindow.Cursor = Cursors.Wait;
+            if (fileDialog.ShowDialog() == null) return;
+            if (!File.Exists(fileDialog.FileName)) return;
 
-                    HexEdit.LoadTblFile(fileDialog.FileName);
-                    HexEdit.TypeOfCharacterTable = CharacterTableType.TblFile;
-                    CTableAsciiButton.IsChecked = false;
-                    CTableTblButton.IsChecked = true;
-                    CTableTblDefaultAsciiButton.IsChecked = false;
+            Application.Current.MainWindow.Cursor = Cursors.Wait;
 
-                    Application.Current.MainWindow.Cursor = null;
-                }
-            }
+            HexEdit.LoadTblFile(fileDialog.FileName);
+            HexEdit.TypeOfCharacterTable = CharacterTableType.TblFile;
+            CTableAsciiButton.IsChecked = false;
+            CTableTblButton.IsChecked = true;
+            CTableTblDefaultAsciiButton.IsChecked = false;
+
+            Application.Current.MainWindow.Cursor = null;
         }
 
         private void CTableTBLDefaultASCIIButton_Click(object sender, RoutedEventArgs e)
@@ -191,20 +195,6 @@ namespace WPFHexaEditorExample
 
         private void ReverseSelection_Click(object sender, RoutedEventArgs e) => HexEdit.ReverseSelection();
                
-
-        ///////// TEST OF CURRENTSTATE... //////
-        /// WILL BE DELETED AFTER COMPLETED
-        XDocument _stateTest = null;
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            _stateTest = HexEdit.CurrentState;
-        }
-
-        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
-        {
-            HexEdit.CurrentState = _stateTest;
-        }
-
         private void FileTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!(sender is TabControl tc)) return;
@@ -212,6 +202,5 @@ namespace WPFHexaEditorExample
             
             HexEdit.FileName = ((TabItem)tc.SelectedValue).ToolTip.ToString(); 
         }
-
     }
 }
