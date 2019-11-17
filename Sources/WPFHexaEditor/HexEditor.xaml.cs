@@ -4075,6 +4075,8 @@ namespace WpfHexaEditor
         /// <param name="updateVisual">Set to true for update the visual after adding</param>
         public void AddHighLight(long startPosition, long length, bool updateVisual = true)
         {
+            if (startPosition < 0) return;
+
             for (var i = startPosition; i < startPosition + length; i++)
                 if (!_markedPositionList.ContainsValue(i))
                     _markedPositionList.Add(i, i);
@@ -4486,12 +4488,12 @@ namespace WpfHexaEditor
                 RefreshView();
             }
         }
-        
+
         /// <summary>
         /// Get the current state of hexeditor
         /// </summary>
         /// <remarks>
-        /// TODO: include bookmark...
+        /// TODO: include bookmark, highlight...
         /// </remarks>
         /// <returns>
         /// Return a XDocument that include all changes in the byte provider, Selecton Start/Stop, position ...
@@ -4505,19 +4507,29 @@ namespace WpfHexaEditor
                 new XAttribute("SelectionStart", SelectionStart),
                 new XAttribute("SelectionStop", SelectionStop),
                 new XAttribute("Position", FirstVisibleBytePosition),
-                    new XElement("ByteModifieds", new XAttribute("Count", _provider.GetByteModifieds(ByteAction.All).Count))));
+                    new XElement("ByteModifieds", new XAttribute("Count", _provider.GetByteModifieds(ByteAction.All).Count)),
+                    new XElement("HighLights", new XAttribute("Count", _markedPositionList.Count))));
 
-            var bmRoot = doc.Element("WpfHexEditor").Element("ByteModifieds");
+            #region Create ByteModifieds tag
 
-            #region Create bytemodified tag
+            var bmRootBM = doc.Element("WpfHexEditor").Element("ByteModifieds");
+
             foreach (var bm in _provider.GetByteModifieds(ByteAction.All))
-                bmRoot.Add(new XElement("ByteModified",
+                bmRootBM.Add(new XElement("ByteModified",
                     new XAttribute("Action", bm.Value.Action),
                     new XAttribute("HexByte",
                         bm.Value.Byte.HasValue
                             ? new string(ByteToHexCharArray((byte)bm.Value.Byte))
                             : string.Empty),
                     new XAttribute("Position", bm.Value.BytePositionInStream)));
+            #endregion
+
+            #region Create hightlight tag
+
+            var bmRootHL = doc.Element("WpfHexEditor").Element("HighLights");
+
+            foreach (var bm in _markedPositionList)
+                bmRootHL.Add(new XElement("HighLight", new XAttribute("Position", bm.Value)));
             #endregion
 
             return doc;
@@ -4536,10 +4548,10 @@ namespace WpfHexaEditor
 
             //Clear current state
             _provider.ClearUndoChange();
-            
+
+            #region Load ByteModifieds
             var bmList = doc.Element("WpfHexEditor").Element("ByteModifieds").Elements().Select(i => i);
 
-            //Load ByteModifieds list
             foreach (var element in bmList)
             {
                 var bm = new ByteModified();
@@ -4591,7 +4603,21 @@ namespace WpfHexaEditor
                         break;
                 }
                 #endregion
+
             }
+            #endregion
+
+            #region Load highlight            
+            UnHighLightAll();
+            
+            var hlList = doc.Element("WpfHexEditor").Element("HighLights").Elements().Select(i => i);
+
+            foreach (var element in hlList)            
+                AddHighLight(long.TryParse(element.Attribute("Position").Value, out long pos)
+                    ? pos
+                    : -1, 1);            
+
+            #endregion
 
             #region Update the visual
             //Update position
