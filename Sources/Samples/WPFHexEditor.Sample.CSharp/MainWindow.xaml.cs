@@ -31,9 +31,15 @@ namespace WPFHexaEditorExample
 
         private void OpenMenu_Click(object sender, RoutedEventArgs e)
         {
-            var fileDialog = new OpenFileDialog();
+            #region Create file fialog
+            var fileDialog = new OpenFileDialog
+            {
+                Multiselect = true,
+                CheckFileExists = true
+            };
 
             if (fileDialog.ShowDialog() == null || !File.Exists(fileDialog.FileName)) return;
+            #endregion
 
             #region if file already open do not open against
             foreach (TabItem ti in FileTab.Items)
@@ -44,21 +50,21 @@ namespace WPFHexaEditorExample
                 }
             #endregion
 
-            #region open file and add tab
+            #region open multiple file and add tabs
             Application.Current.MainWindow.Cursor = Cursors.Wait;
 
-            var tabFile = new TabItem
+            foreach (string file in fileDialog.FileNames)
             {
-                Header = Path.GetFileName(fileDialog.FileName),
-                ToolTip = fileDialog.FileName
-            };
+                var tabFile = new TabItem
+                {
+                    Header = Path.GetFileName(file),
+                    ToolTip = file
+                };
 
+                FileTab.Items.Add(tabFile);
+            }
             
-
-            FileTab.Items.Add(tabFile);
             FileTab.SelectedIndex = FileTab.Items.Count - 1;
-
-            HexEdit.FileName = fileDialog.FileName;
             #endregion
 
             Application.Current.MainWindow.Cursor = null;
@@ -220,6 +226,12 @@ namespace WPFHexaEditorExample
             
             HexEdit.CloseProvider();
             FileTab.Items.RemoveAt(FileTab.SelectedIndex);
+        }
+
+        private void CloseAllFileMenu_Click(object sender, RoutedEventArgs e)
+        {
+            FileTab.Items.Clear();
+            HexEdit.CloseProvider();
         }
     }
 }

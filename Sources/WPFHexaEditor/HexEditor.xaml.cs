@@ -4493,7 +4493,7 @@ namespace WpfHexaEditor
         /// Get the current state of hexeditor
         /// </summary>
         /// <remarks>
-        /// TODO: include bookmark, highlight...
+        /// TODO: include bookmark, tbl...
         /// </remarks>
         /// <returns>
         /// Return a XDocument that include all changes in the byte provider, Selecton Start/Stop, position ...
@@ -4539,7 +4539,7 @@ namespace WpfHexaEditor
         /// Set the state of hexeditor and update the visual...
         /// </summary>
         /// <remarks>
-        /// TODO: include bookmark...
+        /// TODO: include bookmark, tbl ...
         /// </remarks>
         private void SetState(XDocument doc)
         {
@@ -4634,7 +4634,7 @@ namespace WpfHexaEditor
                 ? selectionStop
                 : 0;
 
-            //Refresh
+            //Refresh view
             RefreshView(true);
             #endregion
 
