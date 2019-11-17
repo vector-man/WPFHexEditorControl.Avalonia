@@ -103,7 +103,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Icon\Close-Icon.ico" />
     <Resource Include="Resources\Icon\Save-Icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +119,9 @@
       <Project>{cf6ac02d-02fa-4ee9-a507-bd94f489972e}</Project>
       <Name>WpfHexaEditor.NET47</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icon\Close-Icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

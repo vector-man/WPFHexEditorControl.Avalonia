@@ -73,14 +73,8 @@ namespace WPFHexaEditorExample
             Application.Current.MainWindow.Cursor = null;
         }
 
-        private void CloseFileMenu_Click(object sender, RoutedEventArgs e)
-        {
-            if (FileTab.SelectedIndex == -1) return;
-
-            HexEdit.CloseProvider();
-            FileTab.Items.RemoveAt(FileTab.SelectedIndex);            
-        }
-
+        private void CloseFileMenu_Click(object sender, RoutedEventArgs e) => CloseFile();
+               
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             HexEdit.CloseProvider();
@@ -204,9 +198,8 @@ namespace WPFHexaEditorExample
             if (!(tc.SelectedValue is TabItem ti)) return;
 
             //Set the tag of last selected ta to currentstate
-            if (e.RemovedItems.Count > 0)
-                if (e.RemovedItems[0] is TabItem lastSelectedTabItem)
-                    lastSelectedTabItem.Tag = HexEdit.CurrentState;
+            if (e.RemovedItems.Count > 0 && e.RemovedItems[0] is TabItem lastSelectedTabItem)
+                lastSelectedTabItem.Tag = HexEdit.CurrentState;
 
             //Change loaded file and update the current state
             var filename = ti.ToolTip.ToString();
@@ -217,6 +210,16 @@ namespace WPFHexaEditorExample
             //Setstate 
             if (ti.Tag is XDocument doc)
                 HexEdit.CurrentState = doc;
+        }
+
+        private void Image_MouseUp(object sender, MouseButtonEventArgs e) => CloseFile();
+
+        private void CloseFile()
+        {
+            if (FileTab.SelectedIndex == -1) return;
+            
+            HexEdit.CloseProvider();
+            FileTab.Items.RemoveAt(FileTab.SelectedIndex);
         }
     }
 }
