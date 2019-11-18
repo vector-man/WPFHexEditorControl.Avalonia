@@ -279,6 +279,9 @@ namespace WpfHexaEditor
                     case ByteAction.Deleted:
                         Background = _parent.ByteDeletedColor;
                         break;
+                    case ByteAction.Added:
+                        Background = _parent.ByteAddedColor;
+                        break;
                 }
             }
             else

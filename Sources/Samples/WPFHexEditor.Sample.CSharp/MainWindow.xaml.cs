@@ -54,15 +54,11 @@ namespace WPFHexaEditorExample
             Application.Current.MainWindow.Cursor = Cursors.Wait;
 
             foreach (string file in fileDialog.FileNames)
-            {
-                var tabFile = new TabItem
+                FileTab.Items.Add(new TabItem
                 {
                     Header = Path.GetFileName(file),
                     ToolTip = file
-                };
-
-                FileTab.Items.Add(tabFile);
-            }
+                });
             
             FileTab.SelectedIndex = FileTab.Items.Count - 1;
             #endregion

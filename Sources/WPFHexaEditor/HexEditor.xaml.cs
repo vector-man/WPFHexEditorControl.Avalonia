@@ -409,6 +409,20 @@ namespace WpfHexaEditor
         public static readonly DependencyProperty ByteDeletedColorProperty =
             DependencyProperty.Register(nameof(ByteDeletedColor), typeof(Brush), typeof(HexEditor),
                 new FrameworkPropertyMetadata(Brushes.Red, Control_ColorPropertyChanged));
+        
+        /// <summary>
+        /// Get or set the byte added colors
+        /// </summary>
+        public Brush ByteAddedColor
+        {
+            get => (Brush)GetValue(ByteAddedColorProperty);
+            set => SetValue(ByteAddedColorProperty, value);
+        }
+
+        public static readonly DependencyProperty ByteAddedColorProperty =
+            DependencyProperty.Register(nameof(ByteAddedColor), typeof(Brush), typeof(HexEditor),
+                new FrameworkPropertyMetadata(Brushes.Transparent, Control_ColorPropertyChanged));
+        
 
         /// <summary>
         /// Get or set the Highlight color
