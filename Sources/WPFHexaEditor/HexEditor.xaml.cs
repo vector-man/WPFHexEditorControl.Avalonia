@@ -4964,6 +4964,9 @@ namespace WpfHexaEditor
 
             var lastPosition = _provider.AddByteDeleted(position, SelectionLength);
 
+            //Prevent to move down the scrollbar
+            _setFocusTest = true;
+
             SetScrollMarker(position, ScrollMarker.ByteDeleted);
 
             UpdateScrollBar();
@@ -4974,9 +4977,12 @@ namespace WpfHexaEditor
             SetPosition(FirstVisibleBytePosition);
             SelectionStart = SelectionStop = GetValidPositionFrom(lastPosition, 0);
             SetFocusAtSelectionStart();
-            
+
             //Launch deleted event
             BytesDeleted?.Invoke(this, new EventArgs());
+
+            //Prevent to move down the scrollbar
+            _setFocusTest = false;
         }
 
         #endregion
