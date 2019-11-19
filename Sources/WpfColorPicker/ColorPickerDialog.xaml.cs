@@ -1,93 +1,62 @@
+//////////////////////////////////////////////
+// 2006 - Microsoft 
+//        https://blogs.msdn.microsoft.com/wpfsdk/2006/10/26/uncommon-dialogs-font-chooser-color-picker-dialogs/ 
+//
+// 2019 - Modified and adapted by Derek Tremblay (derektremblay666@gmail.com)
+//////////////////////////////////////////////
 
-using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Data;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 
 namespace Microsoft.Samples.CustomControls
 {
     /// <summary>
-    /// Interaction logic for ColorPickerDialog.xaml
+    /// ColorPickerDialog used to pick colors
     /// </summary>
-
     public partial class ColorPickerDialog : Window
     {
+        private Color _color = new Color();
+        private Color _startingColor = new Color();
 
+        public ColorPickerDialog() => InitializeComponent();
 
-        public ColorPickerDialog()
+        private void OkButtonClicked(object sender, RoutedEventArgs e)
         {
-            InitializeComponent();
-        }
-
-        private void okButtonClicked(object sender, RoutedEventArgs e)
-        {
-
             OKButton.IsEnabled = false;
-            m_color = cPicker.SelectedColor;
+            _color = cPicker.SelectedColor;
             DialogResult = true;
             Hide();
-
         }
 
-
-        private void cancelButtonClicked(object sender, RoutedEventArgs e)
+        private void CancelButtonClicked(object sender, RoutedEventArgs e)
         {
-
             OKButton.IsEnabled = false;
             DialogResult = false;
-
         }
 
         private void onSelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
         {
+            if (e.NewValue == _color) return;
 
-            if (e.NewValue != m_color)
-            {
-
-                OKButton.IsEnabled = true;
-            }
+            OKButton.IsEnabled = true;
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-
             OKButton.IsEnabled = false;
             base.OnClosing(e);
         }
 
+        public Color SelectedColor => _color;
 
-        private Color m_color = new Color();
-        private Color startingColor = new Color();
-
-        public Color SelectedColor
-        {
-            get
-            {
-                return m_color;
-            }
-
-        }
-        
         public Color StartingColor
         {
-            get
-            {
-                return startingColor;
-            }
+            get => _startingColor;
             set
             {
                 cPicker.SelectedColor = value;
                 OKButton.IsEnabled = false;
-                
             }
-
-        }        
-
-
+        }
     }
 }

@@ -16,12 +16,12 @@
                 x:Name="OKButton"
                 Width="60"
                 Height="26"
-                Click="okButtonClicked"
+                Click="OkButtonClicked"
                 Content="OK"
                 IsEnabled="False" />
             <Button
                 Width="60"
-                Click="cancelButtonClicked"
+                Click="CancelButtonClicked"
                 Content="Cancel" />
         </StackPanel>
 
