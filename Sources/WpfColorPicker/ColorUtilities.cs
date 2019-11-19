@@ -43,10 +43,12 @@ namespace Microsoft.Samples.CustomControls
                     h += 360;
             }
 
-            HsvColor hsvColor = new HsvColor();
-            hsvColor.H = h;
-            hsvColor.S = s;
-            hsvColor.V = v / 255;
+            HsvColor hsvColor = new HsvColor
+            {
+                H = h,
+                S = s,
+                V = v / 255
+            };
 
             return hsvColor;
         }
@@ -56,16 +58,10 @@ namespace Microsoft.Samples.CustomControls
         /// </summary>
         public static Color ConvertHsvToRgb(double h, double s, double v)
         {
-            double r;
-            double g;
-            double b;
+            double r, g, b;
 
             if (s == 0)
-            {
-                r = v;
-                g = v;
-                b = v;
-            }
+                r = g = b = v;
             else
             {
                 int i;
@@ -126,7 +122,8 @@ namespace Microsoft.Samples.CustomControls
             List<Color> colorsList = new List<Color>(8);
 
             for (int i = 0; i < 29; i++)
-                colorsList.Add(
+                colorsList.Add
+                (
                     ConvertHsvToRgb(i * 12, 1, 1)
                 );
 

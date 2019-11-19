@@ -34,7 +34,7 @@ namespace Microsoft.Samples.CustomControls
             DialogResult = false;
         }
 
-        private void onSelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        private void OnSelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
         {
             if (e.NewValue == _color) return;
 

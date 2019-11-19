@@ -127,6 +127,10 @@
     <Resource Include="Resources\Icon\Logo-Icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\WpfColorPicker\WpfColorPicker.csproj">
+      <Project>{99e90579-62fc-4898-b168-24f7dbd3a34d}</Project>
+      <Name>WpfColorPicker</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\WPFHexaEditor\WpfHexaEditor.NET451.csproj">
       <Project>{0e5330e9-a789-4271-96d4-e8a34d8156c5}</Project>
       <Name>WpfHexaEditor.NET451</Name>

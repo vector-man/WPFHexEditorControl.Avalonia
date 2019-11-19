@@ -56,7 +56,7 @@ namespace Microsoft.Samples.CustomControls
         protected override void OnValueChanged(double oldValue, double newValue)
         {
             base.OnValueChanged(oldValue, newValue);
-            Color theColor = ColorUtilities.ConvertHsvToRgb(360 - newValue, 1, 1);
+            var theColor = ColorUtilities.ConvertHsvToRgb(360 - newValue, 1, 1);
             SetValue(SelectedColorProperty, theColor);
         }
         #endregion
@@ -71,10 +71,12 @@ namespace Microsoft.Samples.CustomControls
                
         private void CreateSpectrum()
         {
-            _pickerBrush = new LinearGradientBrush();
-            _pickerBrush.StartPoint = new Point(0.5, 0);
-            _pickerBrush.EndPoint = new Point(0.5, 1);
-            _pickerBrush.ColorInterpolationMode = ColorInterpolationMode.SRgbLinearInterpolation;
+            _pickerBrush = new LinearGradientBrush
+            {
+                StartPoint = new Point(0.5, 0),
+                EndPoint = new Point(0.5, 1),
+                ColorInterpolationMode = ColorInterpolationMode.SRgbLinearInterpolation
+            };
 
             var colorsList = ColorUtilities.GenerateHsvSpectrum();
             var stopIncrement = (double)1 / colorsList.Count;
