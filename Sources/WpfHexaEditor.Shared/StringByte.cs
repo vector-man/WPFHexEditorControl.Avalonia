@@ -154,24 +154,14 @@ namespace WpfHexaEditor
                 Foreground = _parent.Foreground;
 
                 if (TypeOfCharacterTable == CharacterTableType.TblFile)
-                    switch (Dte.TypeDte(Text))
+                    Foreground = (Dte.TypeDte(Text)) switch
                     {
-                        case DteType.DualTitleEncoding:
-                            Foreground = _parent.TbldteColor;
-                            break;
-                        case DteType.MultipleTitleEncoding:
-                            Foreground = _parent.TblmteColor;
-                            break;
-                        case DteType.EndLine:
-                            Foreground = _parent.TblEndLineColor;
-                            break;
-                        case DteType.EndBlock:
-                            Foreground = _parent.TblEndBlockColor;
-                            break;
-                        default:
-                            Foreground = _parent.TblDefaultColor;
-                            break;
-                    }
+                        DteType.DualTitleEncoding => _parent.TbldteColor,
+                        DteType.MultipleTitleEncoding => _parent.TblmteColor,
+                        DteType.EndLine => _parent.TblEndLineColor,
+                        DteType.EndBlock => _parent.TblEndBlockColor,
+                        _ => _parent.TblDefaultColor,
+                    };
 
                 #endregion
             }
