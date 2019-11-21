@@ -300,13 +300,6 @@
                         ToolTip="Zoom editor (50% to 200%)"
                         Value="{Binding ElementName=HexEdit, Path=ZoomScale}" />
                 </MenuItem>
-
-                <!--  TEMPS TEST - WILL BE DELETED AFTER COMPLETED  -->
-                <Separator Width="15" />
-                <MenuItem
-                    Background="IndianRed"
-                    Click="MenuItem_Click"
-                    Header="TEST / COLOR PROPERTIES" />
             </Menu>
 
             <Grid>

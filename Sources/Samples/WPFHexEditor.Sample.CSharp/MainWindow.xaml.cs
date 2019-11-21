@@ -229,10 +229,5 @@ namespace WPFHexaEditorExample
             FileTab.Items.Clear();
             HexEdit.CloseProvider();
         }
-
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            new ColorPickerWindow(HexEdit).ShowDialog();
-        }
     }
 }
