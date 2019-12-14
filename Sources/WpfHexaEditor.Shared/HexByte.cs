@@ -80,14 +80,11 @@ namespace WpfHexaEditor
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (e.LeftButton == MouseButtonState.Pressed && IsFocused)
             {
-                if (IsFocused)
-                {
-                    //Is focused set editing to second char.
-                    _keyDownLabel = KeyDownLabel.SecondChar;
-                    UpdateCaret();
-                }
+                //Is focused set editing to second char.
+                _keyDownLabel = KeyDownLabel.SecondChar;
+                UpdateCaret();
             }
 
             base.OnMouseDown(e);
@@ -107,8 +104,7 @@ namespace WpfHexaEditor
 
                         #region Edit hexadecimal value 
 
-                        string key;
-                        key = KeyValidator.IsNumericKey(e.Key)
+                        var key = KeyValidator.IsNumericKey(e.Key)
                             ? KeyValidator.GetDigitFromKey(e.Key).ToString()
                             : e.Key.ToString().ToLower();
 
@@ -139,8 +135,6 @@ namespace WpfHexaEditor
                                 }
                                 break;
                             case KeyDownLabel.NextPosition:
-
-                                //byte[] byteToAppend = { (byte)key.ToCharArray()[0] };
                                 _parent.AppendByte(new byte[] { 0 });
 
                                 OnMoveNext(new EventArgs());

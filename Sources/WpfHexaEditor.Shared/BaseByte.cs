@@ -1,9 +1,7 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2018
+// Apache 2.0  - 2016-2019
 // Base author  : Derek Tremblay (derektremblay666@gmail.com)
 // Contributor  : emes30
-// Notice       : The idea to make a base class with common bytecontrol code is taken 
-//                from emes30 fork (https://github.com/emes30/WpfHexEditorControl)
 //////////////////////////////////////////////
 
 using System;
@@ -284,13 +282,14 @@ namespace WpfHexaEditor
                         break;
                 }
             }
-            else
+            else //Aoply a CustomBackgroundBlock over byte if needed
             {
                 var cbb = _parent.GetCustomBackgroundBlock(BytePositionInStream);
 
                 Description = cbb != null ? cbb.Description : "";
 
                 Background = cbb != null ? cbb.Color : Brushes.Transparent;
+
                 Foreground = _parent.GetColumnNumber(BytePositionInStream) % 2 == 0 
                     ? _parent.Foreground 
                     : _parent.ForegroundSecondColor;
@@ -357,17 +356,6 @@ namespace WpfHexaEditor
 #endif
 
             dc.DrawText(formattedText, new Point(2, 2));
-
-//#if DEBUG && NET47
-//            //FOR HELP TO DEBUG HIDEBYTEDELETED ONLY...
-//            if (_parent.HideByteDeleted && BytePositionInStream < 10000 && Core.Bytes.ByteConverters.IsHexValue(Text).success)
-//            {
-//                var formattedText2 = new FormattedText(BytePositionInStream.ToString(), CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-//                    typeface, 8, Brushes.Green, VisualTreeHelper.GetDpi(this).PixelsPerDip);
-
-//                dc.DrawText(formattedText2, new Point(0, 10));
-//            }
-//#endif
 
             //Update properties
             TextFormatted = formattedText;
