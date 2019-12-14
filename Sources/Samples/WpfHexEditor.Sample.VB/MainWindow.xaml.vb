@@ -13,13 +13,31 @@ Namespace WPFHexaEditorExample
         End Sub
 
         Private Sub OpenMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            Dim fileDialog = New OpenFileDialog()
+            Dim fileDialog = New OpenFileDialog With {
+                .Multiselect = True,
+                .CheckFileExists = True
+            }
+            If fileDialog.ShowDialog() Is Nothing OrElse Not File.Exists(fileDialog.FileName) Then Return
 
-            If fileDialog.ShowDialog() IsNot Nothing AndAlso File.Exists(fileDialog.FileName) Then
-                Windows.Application.Current.MainWindow.Cursor = Cursors.Wait
-                HexEdit.FileName = fileDialog.FileName
-                Windows.Application.Current.MainWindow.Cursor = Nothing
-            End If
+            For Each ti As TabItem In FileTab.Items
+
+                If ti.ToolTip.ToString() = fileDialog.FileName Then
+                    ti.IsSelected = True
+                    Return
+                End If
+            Next
+
+            Windows.Application.Current.MainWindow.Cursor = Cursors.Wait
+
+            For Each file As String In fileDialog.FileNames
+                FileTab.Items.Add(New TabItem With {
+                    .Header = Path.GetFileName(file),
+                    .ToolTip = file
+                })
+            Next
+
+            FileTab.SelectedIndex = FileTab.Items.Count - 1
+            Windows.Application.Current.MainWindow.Cursor = Nothing
         End Sub
 
         Private Sub SaveMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
@@ -29,7 +47,7 @@ Namespace WPFHexaEditorExample
         End Sub
 
         Private Sub CloseFileMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            HexEdit.CloseProvider()
+            CloseFile()
         End Sub
 
         Private Sub Window_Closing(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs)
@@ -104,18 +122,16 @@ Namespace WPFHexaEditorExample
         Private Sub CTableTBLButton_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
             Dim fileDialog = New OpenFileDialog()
 
-            If fileDialog.ShowDialog() IsNot Nothing Then
+            If fileDialog.ShowDialog() Is Nothing Then Return
+            If Not File.Exists(fileDialog.FileName) Then Return
 
-                If File.Exists(fileDialog.FileName) Then
-                    Windows.Application.Current.MainWindow.Cursor = Cursors.Wait
-                    HexEdit.LoadTblFile(fileDialog.FileName)
-                    HexEdit.TypeOfCharacterTable = CharacterTableType.TblFile
-                    CTableAsciiButton.IsChecked = False
-                    CTableTblButton.IsChecked = True
-                    CTableTblDefaultAsciiButton.IsChecked = False
-                    Windows.Application.Current.MainWindow.Cursor = Nothing
-                End If
-            End If
+            Windows.Application.Current.MainWindow.Cursor = Cursors.Wait
+            HexEdit.LoadTblFile(fileDialog.FileName)
+            HexEdit.TypeOfCharacterTable = CharacterTableType.TblFile
+            CTableAsciiButton.IsChecked = False
+            CTableTblButton.IsChecked = True
+            CTableTblDefaultAsciiButton.IsChecked = False
+            Windows.Application.Current.MainWindow.Cursor = Nothing
         End Sub
 
         Private Sub CTableTBLDefaultASCIIButton_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
@@ -145,21 +161,63 @@ Namespace WPFHexaEditorExample
         End Sub
 
         Private Sub FindMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            Call New FindWindow(HexEdit) With
-            {
+            Call New FindWindow(HexEdit, HexEdit.GetSelectionByteArray()) With {
                 .Owner = Me
             }.Show()
         End Sub
 
         Private Sub ReplaceMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
-            Call New FindReplaceWindow(HexEdit, HexEdit.GetSelectionByteArray()) With
-            {
+            Call New FindReplaceWindow(HexEdit, HexEdit.GetSelectionByteArray()) With {
                 .Owner = Me
             }.Show()
         End Sub
 
-        Private Sub ReverseSelection_Click(sender As Object, e As RoutedEventArgs)
+        Private Sub ReverseSelection_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
             HexEdit.ReverseSelection()
+        End Sub
+
+        Private Sub FileTab_SelectionChanged(ByVal sender As Object, ByVal e As SelectionChangedEventArgs)
+
+            'Declare variables
+            Dim tc = If(Not (TypeOf sender Is TabControl), Nothing, DirectCast(sender, TabControl))
+            If tc Is Nothing Then Return
+
+            Dim ti = If(Not (TypeOf tc.SelectedValue Is TabItem), Nothing, DirectCast(tc.SelectedValue, TabItem))
+            If ti Is Nothing Then Return
+
+            'Save currentState
+            If e.RemovedItems.Count Then
+                Dim lastSelectedTabItem As TabItem = e.RemovedItems(0)
+
+                If e.RemovedItems.Count > 0 AndAlso lastSelectedTabItem IsNot Nothing Then
+                    lastSelectedTabItem.Tag = HexEdit.CurrentState
+                End If
+            End If
+
+            'Load file
+            If Not File.Exists(ti.ToolTip.ToString()) Then Return
+            HexEdit.FileName = ti.ToolTip.ToString()
+
+            'Update CurrentState
+            If Not TypeOf ti.Tag Is XDocument Then Return
+            HexEdit.CurrentState = ti.Tag
+
+        End Sub
+
+        Private Sub Image_MouseUp(ByVal sender As Object, ByVal e As MouseButtonEventArgs)
+            CloseFile()
+        End Sub
+
+        Private Sub CloseFile()
+            If FileTab.SelectedIndex = -1 Then Return
+
+            HexEdit.CloseProvider()
+            FileTab.Items.RemoveAt(FileTab.SelectedIndex)
+        End Sub
+
+        Private Sub CloseAllFileMenu_Click(ByVal sender As Object, ByVal e As RoutedEventArgs)
+            FileTab.Items.Clear()
+            HexEdit.CloseProvider()
         End Sub
     End Class
 End Namespace
