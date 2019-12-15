@@ -61,7 +61,9 @@ namespace WpfHexaEditor.Core.CharacterTable
         /// </summary>
         public string Entry
         {
-            set => _entry = value != null ? value.ToUpper(): string.Empty;
+            set => _entry = value != null 
+                ? value.ToUpper() 
+                : string.Empty;
             get => _entry;
         }
 
@@ -114,7 +116,7 @@ namespace WpfHexaEditor.Core.CharacterTable
 
                     case @"*":
                         return DteType.EndLine;
-                    //case @"\":
+                        //case @"\":
                 }
             }
             catch (ArgumentOutOfRangeException)

@@ -61,7 +61,7 @@ namespace WpfHexaEditor
         {
             //Parent hexeditor
             _parent = parent ?? throw new ArgumentNullException(nameof(parent));
-            
+
             #region Binding tooltip
 
             LoadDictionary("/WPFHexaEditor;component/Resources/Dictionary/ToolTipDictionary.xaml");
@@ -80,9 +80,9 @@ namespace WpfHexaEditor
             }
 
             SetBinding(ToolTipProperty, txtBinding);
-            
+
             #endregion
-            
+
             //Default properties
             DataContext = this;
             Focusable = true;
@@ -290,8 +290,8 @@ namespace WpfHexaEditor
 
                 Background = cbb != null ? cbb.Color : Brushes.Transparent;
 
-                Foreground = _parent.GetColumnNumber(BytePositionInStream) % 2 == 0 
-                    ? _parent.Foreground 
+                Foreground = _parent.GetColumnNumber(BytePositionInStream) % 2 == 0
+                    ? _parent.Foreground
                     : _parent.ForegroundSecondColor;
 
                 FontWeight = _parent.FontWeight;
@@ -351,8 +351,8 @@ namespace WpfHexaEditor
                 typeface, _parent.FontSize, Foreground, VisualTreeHelper.GetDpi(this).PixelsPerDip);
 #endif
 #if NET451
-               var formattedText = new FormattedText(Text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                typeface, _parent.FontSize, Foreground);
+            var formattedText = new FormattedText(Text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
+             typeface, _parent.FontSize, Foreground);
 #endif
 
             dc.DrawText(formattedText, new Point(2, 2));
@@ -364,7 +364,7 @@ namespace WpfHexaEditor
         protected override void OnMouseEnter(MouseEventArgs e)
         {
             if (Byte != null && !IsSelected && !IsHighLight &&
-                Action != ByteAction.Modified && 
+                Action != ByteAction.Modified &&
                 Action != ByteAction.Deleted &&
                 Action != ByteAction.Added)
                 Background = _parent.MouseOverColor;
@@ -382,7 +382,7 @@ namespace WpfHexaEditor
         protected override void OnMouseLeave(MouseEventArgs e)
         {
             var cbb = _parent.GetCustomBackgroundBlock(BytePositionInStream);
-            
+
             if (Byte != null && !IsSelected && !IsHighLight &&
                 Action != ByteAction.Modified &&
                 Action != ByteAction.Deleted &&
@@ -411,7 +411,7 @@ namespace WpfHexaEditor
 
                 switch (e.ClickCount)
                 {
-                    case 1:                        
+                    case 1:
                         Click?.Invoke(this, e);
                         break;
                     case 2:

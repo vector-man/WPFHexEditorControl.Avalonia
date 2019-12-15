@@ -87,7 +87,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Get the original length of file/stream . Return -1 if file is close.
         /// </summary>
-        public long Length => IsOpen 
+        public long Length => IsOpen
             ? _stream.Length
             : -1;
 
@@ -222,10 +222,10 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public long Position
         {
-            get => IsOpen 
-                ? (_stream.Position <= _stream.Length 
-                    ? _stream.Position 
-                    : _stream.Length) 
+            get => IsOpen
+                ? (_stream.Position <= _stream.Length
+                    ? _stream.Position
+                    : _stream.Length)
                 : -1;
             set
             {
@@ -283,10 +283,10 @@ namespace WpfHexaEditor.Core.Bytes
         /// Read bytes
         /// </summary>
         public int Read(byte[] destination, int offset, int count) =>
-            IsOpen && _stream.CanRead 
-                ? _stream.Read(destination, offset, count) 
+            IsOpen && _stream.CanRead
+                ? _stream.Read(destination, offset, count)
                 : -1;
-               
+
         #endregion read byte
 
         #region SubmitChanges to file/stream
@@ -524,7 +524,7 @@ namespace WpfHexaEditor.Core.Bytes
         public (bool success, ByteModified val) CheckIfIsByteModified(long bytePositionInStream,
                                                                       ByteAction action = ByteAction.Modified) =>
             _byteModifiedDictionary.TryGetValue(bytePositionInStream, out var byteModified)
-                    && byteModified.IsValid 
+                    && byteModified.IsValid
                     && (byteModified.Action == action || action == ByteAction.All)
                         ? (true, byteModified)
                         : (false, null);
@@ -591,9 +591,9 @@ namespace WpfHexaEditor.Core.Bytes
                 position++;
             }
 
-            return position;            
+            return position;
         }
-    
+
 
         /// <summary>
         /// Return an IEnumerable ByteModified have action set to Modified
@@ -747,7 +747,7 @@ namespace WpfHexaEditor.Core.Bytes
                 : selectionStart;
 
             #endregion
-            
+
             //Exclude byte deleted from copy
             if (!copyChange)
             {
@@ -1032,7 +1032,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// Get all byte from byte provider...
         /// </summary>
         public byte[] GetAllBytes(bool copyChange = true) => GetCopyData(0, Length - 1, copyChange);
-               
+
         /// <summary>
         /// Paste the string at position with posibility to expend and append at end of file
         /// </summary>
@@ -1149,7 +1149,7 @@ namespace WpfHexaEditor.Core.Bytes
         public void Undo()
         {
             if (!CanUndo) return;
-            
+
             var last = UndoStack.Pop();
             var bytePositionList = new List<long>();
             var undoLength = last.Action != ByteAction.Deleted ? last.Length : 1;
@@ -1213,7 +1213,7 @@ namespace WpfHexaEditor.Core.Bytes
                         break;
                 }
             }
-             #endregion
+            #endregion
         }
 
         /// <summary>
@@ -1513,7 +1513,7 @@ namespace WpfHexaEditor.Core.Bytes
         }
 
         #endregion Append byte at end of file
-                
+
         #region Reverse bytes selection
 
         /// <summary>
@@ -1525,10 +1525,10 @@ namespace WpfHexaEditor.Core.Bytes
 
             #region Set start position
 
-            var startPosition = 
+            var startPosition =
                 (selectionStart != selectionStop
-                    ? (selectionStart > selectionStop 
-                        ? selectionStop 
+                    ? (selectionStart > selectionStop
+                        ? selectionStop
                         : selectionStart)
                     : selectionStart
                 ) + data.Length;

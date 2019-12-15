@@ -177,7 +177,7 @@ namespace WpfHexaEditor
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
-            
+
             #region Update width of control 
             //It's 8-10 time more fastest to update width on render for TBL string
             switch (TypeOfCharacterTable)
@@ -218,13 +218,13 @@ namespace WpfHexaEditor
 
                 if (Keyboard.GetKeyStates(Key.CapsLock) == KeyStates.Toggled)
                 {
-                    if (Keyboard.Modifiers != ModifierKeys.Shift && Keyboard.Modifiers != ModifierKeys.Control && 
+                    if (Keyboard.Modifiers != ModifierKeys.Shift && Keyboard.Modifiers != ModifierKeys.Control &&
                         e.Key != Key.RightShift && e.Key != Key.LeftShift)
                     {
                         Text = KeyValidator.GetCharFromKey(e.Key).ToString();
                         isok = true;
                     }
-                    else if (Keyboard.Modifiers == ModifierKeys.Shift && Keyboard.Modifiers != ModifierKeys.Control && 
+                    else if (Keyboard.Modifiers == ModifierKeys.Shift && Keyboard.Modifiers != ModifierKeys.Control &&
                              e.Key != Key.RightShift && e.Key != Key.LeftShift)
                     {
                         isok = true;
@@ -239,7 +239,7 @@ namespace WpfHexaEditor
                         Text = KeyValidator.GetCharFromKey(e.Key).ToString().ToLower();
                         isok = true;
                     }
-                    else if (Keyboard.Modifiers == ModifierKeys.Shift && Keyboard.Modifiers != ModifierKeys.Control && 
+                    else if (Keyboard.Modifiers == ModifierKeys.Shift && Keyboard.Modifiers != ModifierKeys.Control &&
                              e.Key != Key.RightShift && e.Key != Key.LeftShift)
                     {
                         isok = true;

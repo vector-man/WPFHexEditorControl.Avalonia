@@ -21,8 +21,8 @@ namespace WpfHexaEditor.Core.Converters
 
             var (success, val) = ByteConverters.IsHexValue(value.ToString());
 
-            return success 
-                ? (object) val 
+            return success
+                ? (object)val
                 : string.Empty;
         }
 

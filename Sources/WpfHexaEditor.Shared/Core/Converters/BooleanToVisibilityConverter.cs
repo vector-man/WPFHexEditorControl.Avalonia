@@ -20,12 +20,12 @@ namespace WpfHexaEditor.Core.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var boolValue = (bool) value;
+            var boolValue = (bool)value;
 
             if (Inverted)
                 boolValue = !boolValue;
 
-            return (string) parameter == "hidden"
+            return (string)parameter == "hidden"
                 ? (boolValue ? Visibility.Visible : Visibility.Hidden)
                 : (boolValue ? Visibility.Visible : Visibility.Collapsed);
         }

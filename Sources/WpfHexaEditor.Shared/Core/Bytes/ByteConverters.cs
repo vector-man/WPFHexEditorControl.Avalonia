@@ -89,11 +89,11 @@ namespace WpfHexaEditor.Core.Bytes
         /// <param name="charArr">The length of this value should be 2.</param>
         public static void ByteToHexCharArray(byte val, char[] charArr)
         {
-            if (charArr == null)            
+            if (charArr == null)
                 throw new ArgumentNullException(nameof(charArr));
-            
-            if (charArr.Length != 2)            
-                throw new ArgumentException($"The length of {charArr} should be 2.");            
+
+            if (charArr.Length != 2)
+                throw new ArgumentException($"The length of {charArr} should be 2.");
 
             charArr[0] = ByteToHexChar(val >> 4);
             charArr[1] = ByteToHexChar(val - ((val >> 4) << 4));
@@ -106,15 +106,15 @@ namespace WpfHexaEditor.Core.Bytes
             val < 10
                 ? (char)(48 + val)
                 : (val switch
-                        {
-                            10 => 'A',
-                            11 => 'B',
-                            12 => 'C',
-                            13 => 'D',
-                            14 => 'E',
-                            15 => 'F',
-                            _ => 's',
-                        });
+                {
+                    10 => 'A',
+                    11 => 'B',
+                    12 => 'C',
+                    13 => 'D',
+                    14 => 'E',
+                    15 => 'F',
+                    _ => 's',
+                });
 
         /// <summary>
         /// Converts the byte to a hex string. For example: "10" = "0A";
@@ -188,10 +188,10 @@ namespace WpfHexaEditor.Core.Bytes
         {
             if (string.IsNullOrEmpty(hex)) return (false, -1);
 
-            var i = hex.Length > 1 && hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X') 
-                ? 2 
+            var i = hex.Length > 1 && hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X')
+                ? 2
                 : 0;
-            
+
             long value = 0;
 
             while (i < hex.Length)
@@ -225,9 +225,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Check if is an hexa byte string
         /// </summary>
-        public static (bool success, byte[] value) IsHexaByteStringValue(string hexastring) => 
-            HexToByte(hexastring) == null 
-                ? (false, null) 
+        public static (bool success, byte[] value) IsHexaByteStringValue(string hexastring) =>
+            HexToByte(hexastring) == null
+                ? (false, null)
                 : (true, byteArray: HexToByte(hexastring));
 
         /// <summary>
@@ -238,6 +238,6 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Convert String to hex string For example: "barn" = "62 61 72 6e"
         /// </summary>
-        public static string StringToHex(string str) => ByteToHex(StringToByte(str));        
+        public static string StringToHex(string str) => ByteToHex(StringToByte(str));
     }
 }

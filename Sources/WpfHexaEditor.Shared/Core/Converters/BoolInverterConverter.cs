@@ -20,7 +20,7 @@ namespace WpfHexaEditor.Core.Converters
 
             try
             {
-                val = value != null && (bool) value;
+                val = value != null && (bool)value;
             }
             catch
             {

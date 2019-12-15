@@ -39,7 +39,7 @@ namespace WpfHexaEditor
         /// </summary>
         public long MaximumValue
         {
-            get => (long) GetValue(MaximumValueProperty);
+            get => (long)GetValue(MaximumValueProperty);
             set => SetValue(MaximumValueProperty, value);
         }
 
@@ -52,7 +52,7 @@ namespace WpfHexaEditor
             if (!(d is HexBox ctrl)) return;
             if (e.NewValue == e.OldValue) return;
             if (ctrl.LongValue <= (long)e.NewValue) return;
-            
+
             ctrl.UpdateValueFrom((long)e.NewValue);
         }
 
@@ -61,7 +61,7 @@ namespace WpfHexaEditor
         /// </summary>
         public long LongValue
         {
-            get => (long) GetValue(LongValueProperty);
+            get => (long)GetValue(LongValueProperty);
             set => SetValue(LongValueProperty, value);
         }
 
@@ -73,7 +73,7 @@ namespace WpfHexaEditor
         {
             var ctrl = d as HexBox;
 
-            var newValue = (long) baseValue;
+            var newValue = (long)baseValue;
 
             if (newValue > ctrl.MaximumValue) newValue = ctrl.MaximumValue;
             if (newValue < 0) newValue = 0;
@@ -85,7 +85,7 @@ namespace WpfHexaEditor
         {
             if (!(d is HexBox ctrl)) return;
             if (e.NewValue == e.OldValue) return;
-            
+
             var val = ByteConverters.LongToHex((long)e.NewValue);
 
             if (val == "00000000")
@@ -156,7 +156,7 @@ namespace WpfHexaEditor
 
         private void DownButton_Click(object sender, RoutedEventArgs e) => SubstractOne();
 
-        private void HexTextBox_TextChanged(object sender, TextChangedEventArgs e) => 
+        private void HexTextBox_TextChanged(object sender, TextChangedEventArgs e) =>
             UpdateValueFrom(HexTextBox.Text);
 
         private void CopyHexaMenuItem_Click(object sender, RoutedEventArgs e) =>

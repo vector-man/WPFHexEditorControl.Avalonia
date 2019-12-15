@@ -46,14 +46,14 @@ namespace WpfHexaEditor.Dialog
             _parent?.ReplaceNext(FindHexEdit.GetAllBytes(), ReplaceHexEdit.GetAllBytes(),
                TrimMenuItem.IsChecked, HighlightMenuItem.IsChecked);
 
-        private void ReplaceAllButton_Click(object sender, RoutedEventArgs e) => 
-            _parent?.ReplaceAll(FindHexEdit.GetAllBytes(), ReplaceHexEdit.GetAllBytes(), 
+        private void ReplaceAllButton_Click(object sender, RoutedEventArgs e) =>
+            _parent?.ReplaceAll(FindHexEdit.GetAllBytes(), ReplaceHexEdit.GetAllBytes(),
                 TrimMenuItem.IsChecked, HighlightMenuItem.IsChecked);
 
-        private void ReplaceHexEdit_BytesDeleted(object sender, System.EventArgs e) => 
+        private void ReplaceHexEdit_BytesDeleted(object sender, System.EventArgs e) =>
             InitializeMStream(ReplaceHexEdit, ReplaceHexEdit.GetAllBytes());
 
-        private void FindHexEdit_BytesDeleted(object sender, System.EventArgs e) => 
+        private void FindHexEdit_BytesDeleted(object sender, System.EventArgs e) =>
             InitializeMStream(FindHexEdit, FindHexEdit.GetAllBytes());
 
         private void SettingButton_Click(object sender, RoutedEventArgs e) => SettingPopup.IsOpen = true;
@@ -72,7 +72,7 @@ namespace WpfHexaEditor.Dialog
             var ms = new MemoryStream(1);
 
             if (findData != null && findData.Length > 0)
-                foreach (byte b in findData) 
+                foreach (byte b in findData)
                     ms.WriteByte(b);
             else
                 ms.WriteByte(0);

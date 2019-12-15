@@ -70,7 +70,7 @@ namespace WpfHexaEditor.Core.CharacterTable
                 if (_dteList.ContainsKey($"*{hex}")) return Properties.Resources.LineTagString; //"<ln>";
             }
 
-            return _dteList.ContainsKey(hex) 
+            return _dteList.ContainsKey(hex)
                 ? _dteList[hex].Value
                 : "#";
         }
@@ -106,7 +106,7 @@ namespace WpfHexaEditor.Core.CharacterTable
 
             return sb.ToString();
         }
-        
+
         /// <summary>
         /// Close the TBL and clear object
         /// </summary>
@@ -122,14 +122,14 @@ namespace WpfHexaEditor.Core.CharacterTable
         private void Load(string tblString)
         {
             //Variables
-            char[] sepEndLine = {'\n'}; //end line char
-            char[] sepEqual = {'='}; //equal separator char
+            char[] sepEndLine = { '\n' }; //end line char
+            char[] sepEqual = { '=' }; //equal separator char
 
             //build strings line
             var textFromString = new StringBuilder(tblString);
             textFromString.Insert(textFromString.Length, new[] { '\r', '\n' });
             var lines = textFromString.ToString().Split(sepEndLine);
-            
+
             //Clear before loading
             _dteList.Clear();
 
@@ -178,7 +178,7 @@ namespace WpfHexaEditor.Core.CharacterTable
                 }
 
                 _dteList.Add(dte.Entry, dte);
-                
+
             }
             #endregion
 
@@ -195,7 +195,7 @@ namespace WpfHexaEditor.Core.CharacterTable
                         fav.Description = lineSplited[1].Substring(0, lineSplited[1].Length - 1);
 
                         lineSplited = line.Split('h');
-                        fav.BytePositionInStream = 
+                        fav.BytePositionInStream =
                             ByteConverters.HexLiteralToLong(lineSplited[0].Substring(1, lineSplited[0].Length - 1)).position;
                         fav.Marker = ScrollMarker.TblBookmark;
                         BookMarks.Add(fav);
@@ -249,7 +249,7 @@ namespace WpfHexaEditor.Core.CharacterTable
             {
                 //Save tbl set
                 foreach (var dte in _dteList)
-                    if (dte.Value.Type != DteType.EndBlock && 
+                    if (dte.Value.Type != DteType.EndBlock &&
                         dte.Value.Type != DteType.EndLine)
                         tblFile.WriteLine(dte.Value.Entry + "=" + dte.Value);
                     else

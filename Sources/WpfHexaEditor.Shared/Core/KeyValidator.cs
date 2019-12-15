@@ -152,10 +152,10 @@ namespace WpfHexaEditor.Core
             var keyboardState = new byte[256];
             NativeMethods.GetKeyboardState(keyboardState);
 
-            var scanCode = NativeMethods.MapVirtualKey((uint) virtualKey, NativeMethods.MapType.MapvkVkToVsc);
+            var scanCode = NativeMethods.MapVirtualKey((uint)virtualKey, NativeMethods.MapType.MapvkVkToVsc);
             var stringBuilder = new StringBuilder(2);
 
-            var result = NativeMethods.ToUnicode((uint) virtualKey, scanCode, keyboardState, stringBuilder,
+            var result = NativeMethods.ToUnicode((uint)virtualKey, scanCode, keyboardState, stringBuilder,
                 stringBuilder.Capacity, 0);
             switch (result)
             {

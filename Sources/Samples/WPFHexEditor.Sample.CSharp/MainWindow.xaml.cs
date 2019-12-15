@@ -6,12 +6,12 @@
 // NOT A TRUE PROJECT! IT'S JUST FOR TESTING THE HEXEDITOR... DO NOT WATCH THE CODE LOL ;) 
 //////////////////////////////////////////////
 
-using Microsoft.Win32;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml.Linq;
+using Microsoft.Win32;
 using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.CharacterTable;
 using WpfHexaEditor.Dialog;
@@ -26,7 +26,7 @@ namespace WPFHexaEditorExample
             //FORCE CULTURE
             //System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo("en");
 
-            InitializeComponent();          
+            InitializeComponent();
         }
 
         private void OpenMenu_Click(object sender, RoutedEventArgs e)
@@ -41,7 +41,7 @@ namespace WPFHexaEditorExample
             if (fileDialog.ShowDialog() == null || !File.Exists(fileDialog.FileName)) return;
             #endregion
 
-            #region if file already open do not open against
+            #region if file already open do not open again
             foreach (TabItem ti in FileTab.Items)
                 if (ti.ToolTip.ToString() == fileDialog.FileName)
                 {
@@ -50,7 +50,7 @@ namespace WPFHexaEditorExample
                 }
             #endregion
 
-            #region open multiple file and add tabs
+            #region Open multiple file and add tabs
             Application.Current.MainWindow.Cursor = Cursors.Wait;
 
             foreach (string file in fileDialog.FileNames)
@@ -59,7 +59,7 @@ namespace WPFHexaEditorExample
                     Header = Path.GetFileName(file),
                     ToolTip = file
                 });
-            
+
             FileTab.SelectedIndex = FileTab.Items.Count - 1;
             #endregion
 
@@ -69,18 +69,18 @@ namespace WPFHexaEditorExample
         private void SaveMenu_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.MainWindow.Cursor = Cursors.Wait;
-            
+
             HexEdit.SubmitChanges();
 
             Application.Current.MainWindow.Cursor = null;
         }
 
         private void CloseFileMenu_Click(object sender, RoutedEventArgs e) => CloseFile();
-               
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             HexEdit.CloseProvider();
-            Settings.Default.Save();            
+            Settings.Default.Save();
         }
 
         private void ExitMenu_Click(object sender, RoutedEventArgs e) => Close();
@@ -101,7 +101,7 @@ namespace WPFHexaEditorExample
             ViewMenu.IsSubmenuOpen = false;
         }
 
-        private void PositionText_TextChanged(object sender, TextChangedEventArgs e) => 
+        private void PositionText_TextChanged(object sender, TextChangedEventArgs e) =>
             GoPositionButton.IsEnabled = long.TryParse(PositionText.Text, out var _);
 
         private void UndoMenu_Click(object sender, RoutedEventArgs e) => HexEdit.Undo();
@@ -180,20 +180,20 @@ namespace WPFHexaEditorExample
             Application.Current.MainWindow.Cursor = null;
         }
 
-        private void FindMenu_Click(object sender, RoutedEventArgs e) => 
+        private void FindMenu_Click(object sender, RoutedEventArgs e) =>
             new FindWindow(HexEdit, HexEdit.GetSelectionByteArray())
             {
                 Owner = this
             }.Show();
 
-        private void ReplaceMenu_Click(object sender, RoutedEventArgs e) => 
+        private void ReplaceMenu_Click(object sender, RoutedEventArgs e) =>
             new FindReplaceWindow(HexEdit, HexEdit.GetSelectionByteArray())
             {
                 Owner = this
             }.Show();
 
         private void ReverseSelection_Click(object sender, RoutedEventArgs e) => HexEdit.ReverseSelection();
-               
+
         private void FileTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!(sender is TabControl tc)) return;
@@ -219,7 +219,7 @@ namespace WPFHexaEditorExample
         private void CloseFile()
         {
             if (FileTab.SelectedIndex == -1) return;
-            
+
             HexEdit.CloseProvider();
             FileTab.Items.RemoveAt(FileTab.SelectedIndex);
         }

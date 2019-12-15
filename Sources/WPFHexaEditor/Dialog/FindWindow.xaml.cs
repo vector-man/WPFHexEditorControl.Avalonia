@@ -32,13 +32,13 @@ namespace WpfHexaEditor.Dialog
 
         private void FindFirstButton_Click(object sender, RoutedEventArgs e) =>
             _parent?.FindFirst(FindHexEdit.GetAllBytes());
-               
+
         private void FindNextButton_Click(object sender, RoutedEventArgs e) =>
             _parent?.FindNext(FindHexEdit.GetAllBytes());
 
         private void FindLastButton_Click(object sender, RoutedEventArgs e) =>
             _parent?.FindLast(FindHexEdit.GetAllBytes());
-               
+
         /// <summary>
         /// Initialize stream and hexeditor
         /// </summary>
@@ -50,10 +50,10 @@ namespace WpfHexaEditor.Dialog
 
             if (findData != null && findData.Length > 0)
                 foreach (byte b in findData)
-                    _findMs.WriteByte(b);            
-            else            
+                    _findMs.WriteByte(b);
+            else
                 _findMs.WriteByte(0);
-                            
+
             FindHexEdit.Stream = _findMs;
         }
     }

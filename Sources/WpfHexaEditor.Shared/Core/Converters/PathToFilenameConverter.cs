@@ -5,8 +5,8 @@
 
 using System;
 using System.Globalization;
-using System.Windows.Data;
 using System.IO;
+using System.Windows.Data;
 
 namespace WpfHexaEditor.Core.Converters
 {

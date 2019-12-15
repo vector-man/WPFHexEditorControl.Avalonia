@@ -14,7 +14,7 @@ namespace WpfHexaEditor
     /// <summary>
     /// Light Label like control
     /// </summary>
-    internal class FastTextLine: FrameworkElement
+    internal class FastTextLine : FrameworkElement
     {
         private readonly HexEditor _parent;
 
@@ -30,7 +30,7 @@ namespace WpfHexaEditor
         }
 
         #endregion Contructor
-        
+
         #region Base properties
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace WpfHexaEditor
         /// Get or set if the width are auto or fixed
         /// </summary>
         public bool AutoWidth { get; set; } = true;
-        
+
         /// <summary>
         /// Get or set the render point
         /// </summary>
@@ -105,7 +105,7 @@ namespace WpfHexaEditor
         public static readonly DependencyProperty RenderPointProperty =
             DependencyProperty.Register(nameof(RenderPoint), typeof(Point), typeof(FastTextLine),
                 new FrameworkPropertyMetadata(new Point(0, 0), FrameworkPropertyMetadataOptions.AffectsMeasure));
-        
+
         #endregion
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace WpfHexaEditor
 #if NET451
             //Draw text
             var formatedText = new FormattedText(Text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                new Typeface(_parent.FontFamily, _parent.FontStyle, FontWeight, _parent.FontStretch), 
+                new Typeface(_parent.FontFamily, _parent.FontStyle, FontWeight, _parent.FontStretch),
                     _parent.FontSize, Foreground);
 #endif
 
@@ -129,7 +129,7 @@ namespace WpfHexaEditor
                 new Typeface(_parent.FontFamily, _parent.FontStyle, FontWeight, _parent.FontStretch),
                     _parent.FontSize, Foreground, VisualTreeHelper.GetDpi(this).PixelsPerDip);
 #endif
-                                   
+
             dc.DrawText(formatedText, new Point(RenderPoint.X, RenderPoint.Y));
 
             if (AutoWidth)
