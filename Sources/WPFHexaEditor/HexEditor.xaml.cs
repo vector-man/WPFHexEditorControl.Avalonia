@@ -22,7 +22,6 @@ using WpfHexaEditor.Core.CharacterTable;
 using WpfHexaEditor.Core.Interfaces;
 using WpfHexaEditor.Core.MethodExtention;
 using WpfHexaEditor.Dialog;
-using static System.Windows.Forms.SystemInformation;
 using static WpfHexaEditor.Core.Bytes.ByteConverters;
 using static WpfHexaEditor.Core.Bytes.ByteProvider;
 using Path = System.IO.Path;
@@ -4020,13 +4019,13 @@ namespace WpfHexaEditor
                 if (e.Delta > 0) //UP
                     VerticalScrollBar.Value -= e.Delta / 120 *
                         (MouseWheelSpeed == MouseWheelSpeed.System
-                            ? MouseWheelScrollLines
+                            ? SystemParameters.WheelScrollLines
                             : (int)MouseWheelSpeed);
 
                 if (e.Delta < 0) //Down
                     VerticalScrollBar.Value += e.Delta / 120 *
                        -(MouseWheelSpeed == MouseWheelSpeed.System
-                            ? MouseWheelScrollLines
+                            ? SystemParameters.WheelScrollLines
                             : (int)MouseWheelSpeed);
             }
             #endregion
