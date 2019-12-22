@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2018
+// Apache 2.0  - 2016-2019
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
@@ -8,7 +8,7 @@ using WpfHexaEditor.Core.Bytes;
 namespace WpfHexaEditor.Core
 {
     /// <summary>
-    /// BookMark class
+    /// BookMark used in hexeditor
     /// </summary>
     public sealed class BookMark
     {
@@ -34,7 +34,6 @@ namespace WpfHexaEditor.Core
         /// <summary>
         /// String representation
         /// </summary>
-        /// <returns></returns>
         public override string ToString() => $"({ByteConverters.LongToHex(BytePositionInStream)}h){Description}";
     }
 }
