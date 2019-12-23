@@ -5,6 +5,7 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>WpfHexaEditor</RootNamespace>
     <AssemblyName>WPFHexaEditor</AssemblyName>
+    <Title>WPFHexaEditor user control</Title>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Derek Tremblay (derektremblay666@gmail.com)</Authors>
     <Company>Derek Tremblay (derektremblay666@gmail.com)</Company>
@@ -15,10 +16,14 @@
     <Copyright>Apache 2.0</Copyright>
     <AssemblyVersion>2.0.1.0</AssemblyVersion>
     <FileVersion>2.0.1.0</FileVersion>
-    <Version>2.1.0</Version>
+    <Version>2.0.1</Version>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <ApplicationIcon />
     <LangVersion>preview</LangVersion>
+    <PackageProjectUrl>https://github.com/abbaye/WpfHexEditorControl</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
