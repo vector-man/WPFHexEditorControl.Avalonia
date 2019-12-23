@@ -1,9 +1,9 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="WPFHexaEditorExample.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="WpfHexEditor.Sample.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="ApplicationName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Wpf HexaEditor Control</Value>
+      <Value Profile="(Default)">Wpf HexEditor control </Value>
     </Setting>
   </Settings>
 </SettingsFile>

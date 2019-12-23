@@ -726,11 +726,10 @@ namespace WpfHexaEditor.Core.Bytes
         public byte[] GetCopyData(long selectionStart, long selectionStop, bool copyChange)
         {
             //Validation
-#if NET451
+#if NET45
             if (!CanCopy(selectionStart, selectionStop)) return new byte[0];
             if (selectionStart == -1 || selectionStop == -1) return new byte[0];
-#endif
-#if NET47
+#else
             if (!CanCopy(selectionStart, selectionStop)) return Array.Empty<byte>();
             if (selectionStart == -1 || selectionStop == -1) return Array.Empty<byte>();
 #endif

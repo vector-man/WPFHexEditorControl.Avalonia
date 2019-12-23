@@ -34,6 +34,17 @@
     <WarningLevel>4</WarningLevel>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'net47|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\net47\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -89,9 +100,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\WPFHexaEditor\WpfHexaEditor.NET47.csproj">
-      <Project>{cf6ac02d-02fa-4ee9-a507-bd94f489972e}</Project>
-      <Name>WpfHexaEditor.NET47</Name>
+    <ProjectReference Include="..\..\WPFHexaEditor\WpfHexEditorCore.csproj">
+      <Project>{a53b3778-ba1d-4c35-9dc8-7a21e8224872}</Project>
+      <Name>WpfHexEditorCore</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

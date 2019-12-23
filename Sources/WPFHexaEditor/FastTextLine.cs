@@ -116,14 +116,12 @@ namespace WpfHexaEditor
             //Draw background
             if (Background != null)
                 dc.DrawRectangle(Background, null, new Rect(0, 0, RenderSize.Width, RenderSize.Height));
-#if NET451
+#if NET45
             //Draw text
             var formatedText = new FormattedText(Text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
                 new Typeface(_parent.FontFamily, _parent.FontStyle, FontWeight, _parent.FontStretch),
                     _parent.FontSize, Foreground);
-#endif
-
-#if NET47
+#else
             //Draw text
             var formatedText = new FormattedText(Text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
                 new Typeface(_parent.FontFamily, _parent.FontStyle, FontWeight, _parent.FontStretch),

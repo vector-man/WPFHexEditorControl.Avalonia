@@ -15,7 +15,6 @@ using Microsoft.Win32;
 using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.CharacterTable;
 using WpfHexaEditor.Dialog;
-using WPFHexaEditorExample.Properties;
 
 namespace WPFHexaEditorExample
 {
@@ -77,11 +76,7 @@ namespace WPFHexaEditorExample
 
         private void CloseFileMenu_Click(object sender, RoutedEventArgs e) => CloseFile();
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            HexEdit.CloseProvider();
-            Settings.Default.Save();
-        }
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) => HexEdit.CloseProvider();
 
         private void ExitMenu_Click(object sender, RoutedEventArgs e) => Close();
 
