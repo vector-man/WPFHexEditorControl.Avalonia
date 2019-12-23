@@ -24,13 +24,9 @@ namespace WpfHexaEditor.Core.MethodExtention
 
             var typeface = new Typeface(fontFamily, fontStyle, fontWeight, fontStretch);
 
-#if NET45
-            var ft = new FormattedText(text ?? string.Empty, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                typeface, fontSize, foreGround);
-#else
             var ft = new FormattedText(text ?? string.Empty, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
                 typeface, fontSize, foreGround, VisualTreeHelper.GetDpi(Application.Current.MainWindow).PixelsPerDip);
-#endif
+
             return new Size(ft.Width, ft.Height);
         }
     }

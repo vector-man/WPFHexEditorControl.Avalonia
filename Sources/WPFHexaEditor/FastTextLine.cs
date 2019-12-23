@@ -116,17 +116,11 @@ namespace WpfHexaEditor
             //Draw background
             if (Background != null)
                 dc.DrawRectangle(Background, null, new Rect(0, 0, RenderSize.Width, RenderSize.Height));
-#if NET45
-            //Draw text
-            var formatedText = new FormattedText(Text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                new Typeface(_parent.FontFamily, _parent.FontStyle, FontWeight, _parent.FontStretch),
-                    _parent.FontSize, Foreground);
-#else
+
             //Draw text
             var formatedText = new FormattedText(Text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
                 new Typeface(_parent.FontFamily, _parent.FontStyle, FontWeight, _parent.FontStretch),
                     _parent.FontSize, Foreground, VisualTreeHelper.GetDpi(this).PixelsPerDip);
-#endif
 
             dc.DrawText(formatedText, new Point(RenderPoint.X, RenderPoint.Y));
 

@@ -347,13 +347,8 @@ namespace WpfHexaEditor
             //Draw text
             var typeface = new Typeface(_parent.FontFamily, _parent.FontStyle, FontWeight, _parent.FontStretch);
 
-#if NET45
-            var formattedText = new FormattedText(Text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-             typeface, _parent.FontSize, Foreground);
-#else
             var formattedText = new FormattedText(Text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
                 typeface, _parent.FontSize, Foreground, VisualTreeHelper.GetDpi(this).PixelsPerDip);
-#endif
 
             dc.DrawText(formattedText, new Point(2, 2));
 
