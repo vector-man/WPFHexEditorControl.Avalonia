@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.0;net47</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0;net47;net48</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <RootNamespace>WpfHexaEditor</RootNamespace>
     <AssemblyName>WPFHexaEditor</AssemblyName>
@@ -9,21 +9,23 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Derek Tremblay (derektremblay666@gmail.com)</Authors>
     <Company>Derek Tremblay (derektremblay666@gmail.com)</Company>
-    <Description>Wpf Hexeditor is a fast and fully customisable user control for editing file or stream as hexadecimal.</Description>
+    <Description>Wpf Hexeditor is a fast and fully customisable user control for editing file or stream as hexadecimal.
+Support .Net 4.7 and .Net Core 3.0</Description>
     <PackageIcon>Logo-Icon.png</PackageIcon>
     <PackageIconUrl />
     <Product>WpfHexaEditor</Product>
     <Copyright>Apache 2.0</Copyright>
-    <AssemblyVersion>2.0.1.0</AssemblyVersion>
-    <FileVersion>2.0.1.0</FileVersion>
-    <Version>2.0.1</Version>
+    <AssemblyVersion>2.0.2.0</AssemblyVersion>
+    <FileVersion>2.0.2.0</FileVersion>
+    <Version>2.0.2</Version>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PackageTags>character-table;hexadecimal;binary;editor;hexeditor;tbl;hexedit</PackageTags>
     <ApplicationIcon />
     <LangVersion>preview</LangVersion>
     <PackageProjectUrl>https://github.com/abbaye/WpfHexEditorControl</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression></PackageLicenseExpression>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageLicenseFile>license.txt</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
@@ -32,6 +34,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="license.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
     <None Include="Resources\Icon\Logo-Icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
