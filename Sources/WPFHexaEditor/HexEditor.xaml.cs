@@ -4521,6 +4521,7 @@ namespace WpfHexaEditor
                 new XAttribute("SelectionStop", SelectionStop),
                 new XAttribute("Position", FirstVisibleBytePosition),
                     new XElement("ByteModifieds", new XAttribute("Count", _provider.GetByteModifieds(ByteAction.All).Count)),
+                    new XElement("BookMarks", new XAttribute("Count", BookMarks.Count())),
                     new XElement("HighLights", new XAttribute("Count", _markedPositionList.Count))));
 
             #region Create ByteModifieds tag
@@ -4545,6 +4546,16 @@ namespace WpfHexaEditor
                 bmRootHL.Add(new XElement("HighLight", new XAttribute("Position", bm.Value)));
             #endregion
 
+            #region Create bookmarks tag
+
+            var bmRootBMs = doc.Element("WpfHexEditor").Element("BookMarks");
+
+            foreach (var bm in BookMarks)
+                bmRootBMs.Add(new XElement("BookMark",
+                    new XAttribute("Position", bm.BytePositionInStream),
+                    new XAttribute("Description", bm.Description)));
+            #endregion
+
             return doc;
         }
 
@@ -4561,6 +4572,7 @@ namespace WpfHexaEditor
 
             //Clear current state
             _provider.ClearUndoChange();
+            ClearScrollMarker(ScrollMarker.Bookmark);
 
             #region Load ByteModifieds
             var bmList = doc.Element("WpfHexEditor").Element("ByteModifieds").Elements().Select(i => i);
@@ -4630,6 +4642,33 @@ namespace WpfHexaEditor
                     ? pos
                     : -1, 1);
 
+            #endregion
+
+            #region Load bookmarks
+            var bmsList = doc.Element("WpfHexEditor").Element("BookMarks").Elements().Select(i => i);
+
+            foreach (var element in bmsList)
+            {
+                var bm = new BookMark
+                {
+                    Marker = ScrollMarker.Bookmark
+                };
+
+                #region Set attribute of bookmark...
+                foreach (var at in element.Attributes())
+                    switch (at.Name.ToString())
+                    {
+                        case "Description":
+                            bm.Description = at.Value;
+                            break;
+                        case "Position":
+                            bm.BytePositionInStream = long.Parse(at.Value);
+                            break;
+                    }
+                #endregion
+
+                SetScrollMarker(bm);
+            }
             #endregion
 
             #region Update the visual
