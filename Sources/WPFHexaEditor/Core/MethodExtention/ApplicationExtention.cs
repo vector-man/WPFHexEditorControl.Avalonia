@@ -15,10 +15,8 @@ namespace WpfHexaEditor.Core.MethodExtention
     {
         private static readonly DispatcherOperationCallback ExitFrameCallback = ExitFrame;
 
-        public static void DoEvents(this Application app, DispatcherPriority priority = DispatcherPriority.Background)
+        public static void DoEvents(this Application _, DispatcherPriority priority = DispatcherPriority.Background)
         {
-            if (app is null) throw new System.ArgumentNullException(nameof(app));
-
             var nestedFrame = new DispatcherFrame();
             var exitOperation = Dispatcher.CurrentDispatcher.BeginInvoke(priority, ExitFrameCallback, nestedFrame);
 
