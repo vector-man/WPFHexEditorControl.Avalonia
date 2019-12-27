@@ -4505,9 +4505,6 @@ namespace WpfHexaEditor
         /// <summary>
         /// Get the current state of hexeditor
         /// </summary>
-        /// <remarks>
-        /// TODO: include bookmark, tbl...
-        /// </remarks>
         /// <returns>
         /// Return a XDocument that include all changes in the byte provider, Selecton Start/Stop, position ...
         /// </returns>
@@ -4522,6 +4519,7 @@ namespace WpfHexaEditor
                 new XAttribute("Position", FirstVisibleBytePosition),
                     new XElement("ByteModifieds", new XAttribute("Count", _provider.GetByteModifieds(ByteAction.All).Count)),
                     new XElement("BookMarks", new XAttribute("Count", BookMarks.Count())),
+                    new XElement("TBL", new XAttribute("Loaded", _tblCharacterTable != null)),
                     new XElement("HighLights", new XAttribute("Count", _markedPositionList.Count))));
 
             #region Create ByteModifieds tag
@@ -4556,15 +4554,22 @@ namespace WpfHexaEditor
                     new XAttribute("Description", bm.Description)));
             #endregion
 
+            #region Create TBL tag
+
+            if (_tblCharacterTable != null)
+                doc.Element("WpfHexEditor")
+                   .Element("TBL")
+                   .Add(new XElement("TBLData",
+                            new XAttribute("Filename", _tblCharacterTable.FileName),
+                            new XAttribute("Data", _tblCharacterTable.ToString())));
+            #endregion
+                        
             return doc;
         }
 
         /// <summary>
         /// Set the state of hexeditor and update the visual...
         /// </summary>
-        /// <remarks>
-        /// TODO: include bookmark, tbl ...
-        /// </remarks>
         private void SetState(XDocument doc)
         {
             if (doc is null) return;
@@ -4669,6 +4674,25 @@ namespace WpfHexaEditor
 
                 SetScrollMarker(bm);
             }
+            #endregion
+
+            #region Load TBL            
+            var tblList = doc.Element("WpfHexEditor").Element("TBL").Elements().Select(i => i);
+
+            foreach (var element in tblList)
+            {
+                foreach (var at in element.Attributes())
+                    switch (at.Name.ToString())
+                    {
+                        case "Data":
+                            _tblCharacterTable.Load(at.Value);
+                            break;
+                        case "Filename":
+                            //TODO
+                            break;
+                    }
+            }
+
             #endregion
 
             #region Update the visual

@@ -15,7 +15,6 @@ namespace WpfHexaEditor.Core.CharacterTable
     /// <summary>
     /// Used to manage Thingy TBL file (entry=value)
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix", Justification = "<En attente>")]
     public sealed class TblStream : IDisposable
     {
         #region Global class variables        
@@ -119,7 +118,7 @@ namespace WpfHexaEditor.Core.CharacterTable
         /// <summary>
         /// Load the TBL file
         /// </summary>
-        private void Load(string tblString)
+        public void Load(string tblString)
         {
             //Variables
             char[] sepEndLine = { '\n' }; //end line char
@@ -212,7 +211,7 @@ namespace WpfHexaEditor.Core.CharacterTable
         /// <summary>
         /// Load TBL file
         /// </summary>
-        private void Load()
+        public void Load()
         {
             //ouverture du fichier
             if (!File.Exists(_fileName))
@@ -287,6 +286,33 @@ namespace WpfHexaEditor.Core.CharacterTable
             if (dte is null) return;
 
             _dteList.Remove(dte.Entry);
+        }
+
+        /// <summary>
+        /// Get the string representation of the TBL
+        /// </summary>
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+
+            //Save tbl set
+            foreach (var dte in _dteList)
+                if (dte.Value.Type != DteType.EndBlock &&
+                    dte.Value.Type != DteType.EndLine)
+                    sb.AppendLine(dte.Value.Entry + "=" + dte.Value);
+                else
+                    sb.AppendLine(dte.Value.Entry);
+
+            //Save bookmark
+            sb.AppendLine();
+            foreach (var mark in BookMarks)
+                sb.AppendLine(mark.ToString());
+
+            //Add to line at end of file. Needed for some apps that using tbl file
+            sb.AppendLine();
+            sb.AppendLine();
+
+            return sb.ToString();
         }
 
         #endregion
