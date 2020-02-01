@@ -1,6 +1,6 @@
 <img src="Images/Logo.png?raw=true" width="420" height="100" />
   
-[![NuGet](https://img.shields.io/badge/Nuget-v1.9.1-green.svg)](https://www.nuget.org/packages/WPFHexaEditor/)
+[![NuGet](https://img.shields.io/badge/Nuget-v2.0.2-green.svg)](https://www.nuget.org/packages/WPFHexaEditor/)
 [![NetFramework](https://img.shields.io/badge/.Net%20Framework-4.7-green.svg)](https://www.microsoft.com/net/download/windows)
 [![NetFramework](https://img.shields.io/badge/.Net%20Core-3.0-green.svg)](https://www.microsoft.com/net/download/windows)
 [![NetFramework](https://img.shields.io/badge/Language-C%23%207.0+-orange.svg)](https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/)
