@@ -37,7 +37,7 @@ namespace WpfHexaEditor.Core
         {
             var (success, position) = ByteConverters.HexLiteralToLong(start);
 
-            StartOffset = success ? position : throw new Exception("Can't convert this string to long");
+            StartOffset = success ? position : throw new Exception(Properties.Resources.ConvertStringToLongErrorString);
             Length = length;
             Color = color;
         }
@@ -46,7 +46,7 @@ namespace WpfHexaEditor.Core
         {
             var (success, position) = ByteConverters.HexLiteralToLong(start);
 
-            StartOffset = success ? position : throw new Exception("Can't convert this string to long");
+            StartOffset = success ? position : throw new Exception(Properties.Resources.ConvertStringToLongErrorString);
             Length = length;
             Color = color;
             Description = description;

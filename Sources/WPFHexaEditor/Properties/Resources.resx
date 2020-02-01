@@ -319,4 +319,7 @@
   <data name="ZoomString" xml:space="preserve">
     <value>Zoom</value>
   </data>
+  <data name="ConvertStringToLongErrorString" xml:space="preserve">
+    <value>Can't convert this string to long</value>
+  </data>
 </root>

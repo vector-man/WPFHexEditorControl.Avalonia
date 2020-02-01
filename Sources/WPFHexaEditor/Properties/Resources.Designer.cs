@@ -113,6 +113,16 @@ namespace WpfHexaEditor.Properties {
                 return ResourceManager.GetString("CancelLongProcessToolTipString", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Can't convert this string to long..
+        /// </summary>
+        public static string ConvertStringToLongErrorString
+        {
+            get {
+                return ResourceManager.GetString("ConvertStringToLongErrorString", resourceCulture);
+            }
+        }     
         
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Cancel.

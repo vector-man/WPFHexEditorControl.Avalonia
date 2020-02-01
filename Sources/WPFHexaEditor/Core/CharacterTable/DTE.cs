@@ -62,7 +62,7 @@ namespace WpfHexaEditor.Core.CharacterTable
         public string Entry
         {
             set => _entry = value != null 
-                ? value.ToUpper() 
+                ? value.ToUpperInvariant() 
                 : string.Empty;
             get => _entry;
         }

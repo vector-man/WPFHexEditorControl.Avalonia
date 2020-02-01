@@ -93,7 +93,7 @@ namespace WpfHexaEditor
             else if (val.Length >= 3)
                 val = val.TrimStart('0');
 
-            ctrl.HexTextBox.Text = val.ToUpper();
+            ctrl.HexTextBox.Text = val.ToUpperInvariant();
             ctrl.HexTextBox.CaretIndex = ctrl.HexTextBox.Text.Length;
             ctrl.ToolTip = e.NewValue;
 

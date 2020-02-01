@@ -2930,7 +2930,7 @@ namespace WpfHexaEditor
                     lineOffsetLabel.FontWeight = FontWeights.Bold;
                     lineOffsetLabel.Foreground = ForegroundHighLightOffSetHeaderColor;
                     lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {SelectionStart}";
-                    lineOffsetLabel.Tag = $"0x{LongToHex(SelectionStart).ToUpper()}";
+                    lineOffsetLabel.Tag = $"0x{LongToHex(SelectionStart).ToUpperInvariant()}";
                     actualPosition = SelectionStart;
                 }
                 else
@@ -2938,7 +2938,7 @@ namespace WpfHexaEditor
                     lineOffsetLabel.FontWeight = FontWeights.Normal;
                     lineOffsetLabel.Foreground = ForegroundOffSetHeaderColor;
                     lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {firstByteInLine}";
-                    lineOffsetLabel.Tag = $"0x{LongToHex(firstByteInLine).ToUpper()}";
+                    lineOffsetLabel.Tag = $"0x{LongToHex(firstByteInLine).ToUpperInvariant()}";
                     actualPosition = firstByteInLine;
                 }
 
@@ -2950,13 +2950,13 @@ namespace WpfHexaEditor
                         switch (OffSetPanelVisual)
                         {
                             case OffSetPanelType.OffsetOnly:
-                                lineOffsetLabel.Text = $"0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpper()}";
+                                lineOffsetLabel.Text = $"0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpperInvariant()}";
                                 break;
                             case OffSetPanelType.LineOnly:
-                                lineOffsetLabel.Text = $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual).ToUpper()}";
+                                lineOffsetLabel.Text = $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual).ToUpperInvariant()}";
                                 break;
                             case OffSetPanelType.Both:
-                                lineOffsetLabel.Text = $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual)} 0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpper()}";
+                                lineOffsetLabel.Text = $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual)} 0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpperInvariant()}";
                                 break;
                         }
                         #endregion
@@ -2964,7 +2964,7 @@ namespace WpfHexaEditor
                     case DataVisualType.Decimal:
 
                         var format = OffSetPanelFixedWidthVisual == OffSetPanelFixedWidth.Dynamic ? "G" : "D8";
-
+                                                
                         #region Decimal
                         switch (OffSetPanelVisual)
                         {
@@ -4472,10 +4472,8 @@ namespace WpfHexaEditor
         {
             if (!CheckIsOpen(_provider)) return;
             if (!File.Exists(filename)) return;
-
-            var doc = XDocument.Load(filename);
-
-            SetState(doc);
+            
+            SetState(XDocument.Load(filename));
         }
 
         /// <summary>
@@ -4940,15 +4938,14 @@ namespace WpfHexaEditor
         /// </summary>
         private void InitialiseZoom()
         {
-            if (_scaler == null)
-            {
-                _scaler = new ScaleTransform(ZoomScale, ZoomScale);
+            if (_scaler != null) return;
 
-                HexHeaderStackPanel.LayoutTransform = _scaler;
-                HexDataStackPanel.LayoutTransform = _scaler;
-                StringDataStackPanel.LayoutTransform = _scaler;
-                LinesInfoStackPanel.LayoutTransform = _scaler;
-            }
+            _scaler = new ScaleTransform(ZoomScale, ZoomScale);
+
+            HexHeaderStackPanel.LayoutTransform = _scaler;
+            HexDataStackPanel.LayoutTransform = _scaler;
+            StringDataStackPanel.LayoutTransform = _scaler;
+            LinesInfoStackPanel.LayoutTransform = _scaler;
         }
 
         /// <summary>
@@ -4956,18 +4953,17 @@ namespace WpfHexaEditor
         /// </summary>
         private void UpdateZoom()
         {
-            if (AllowZoom)
-            {
-                if (_scaler == null) InitialiseZoom();
-                _scaler.ScaleY = ZoomScale;
-                _scaler.ScaleX = ZoomScale;
+            if (!AllowZoom) return;
 
-                //TODO: Update caret size...
+            if (_scaler == null) InitialiseZoom();
+            _scaler.ScaleY = ZoomScale;
+            _scaler.ScaleX = ZoomScale;
 
-                ClearLineInfo();
-                ClearAllBytes(true);
-                RefreshView(true);
-            }
+            //TODO: Update caret size...
+
+            ClearLineInfo();
+            ClearAllBytes(true);
+            RefreshView(true);
         }
 
         /// <summary>

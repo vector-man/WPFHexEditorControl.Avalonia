@@ -20,7 +20,7 @@ namespace WpfHexaEditor.Core.Converters
                     ? (longValue > -1
                         ? "0x" + longValue
                               .ToString(ConstantReadOnly.HexLineInfoStringFormat, CultureInfo.InvariantCulture)
-                              .ToUpper()
+                              .ToUpperInvariant()
                         : ConstantReadOnly.DefaultHex8String)
                     : ConstantReadOnly.DefaultHex8String)
                 : ConstantReadOnly.DefaultHex8String;

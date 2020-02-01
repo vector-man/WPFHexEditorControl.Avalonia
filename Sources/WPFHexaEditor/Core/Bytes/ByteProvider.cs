@@ -95,7 +95,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// Get the length of file/stream included byte added and deleted. Return -1 if file is close.
         /// </summary>
         public long LengthAjusted => IsOpen
-            ? _stream.Length - GetByteModifieds(ByteAction.Deleted).Count() + GetByteModifieds(ByteAction.Added).Count()
+            ? _stream.Length - GetByteModifieds(ByteAction.Deleted).Count + GetByteModifieds(ByteAction.Added).Count
             : -1;
 
         /// <summary>

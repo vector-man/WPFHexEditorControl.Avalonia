@@ -401,7 +401,7 @@ namespace WpfHexaEditor.Core.CharacterTable
             {
                 case DefaultCharacterTableType.Ascii:
                     for (byte i = 0; i < 255; i++)
-                        tbl.Add(new Dte(ByteConverters.ByteToHex(i).ToUpper(), $"{ByteConverters.ByteToChar(i)}"));
+                        tbl.Add(new Dte(ByteConverters.ByteToHex(i).ToUpperInvariant(), $"{ByteConverters.ByteToChar(i)}"));
                     break;
                 case DefaultCharacterTableType.EbcdicWithSpecialChar:
                     tbl.Load(Properties.Resources.EBCDIC);

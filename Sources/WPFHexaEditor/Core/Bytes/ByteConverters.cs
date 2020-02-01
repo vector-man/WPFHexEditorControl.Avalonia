@@ -7,6 +7,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using static System.FormattableString;
 
 namespace WpfHexaEditor.Core.Bytes
 {
@@ -21,12 +22,11 @@ namespace WpfHexaEditor.Core.Bytes
         public static string LongToHex(long val, OffSetPanelFixedWidth offsetwight = OffSetPanelFixedWidth.Dynamic) =>
             val.ToString(offsetwight == OffSetPanelFixedWidth.Dynamic
                 ? ConstantReadOnly.HexStringFormat
-                : ConstantReadOnly.HexLineInfoStringFormat
-                    , CultureInfo.InvariantCulture);
+                : ConstantReadOnly.HexLineInfoStringFormat, CultureInfo.InvariantCulture);
 
         public static string LongToString(long val, int saveBits = -1)
         {
-            if (saveBits == -1) return val.ToString();
+            if (saveBits == -1) return Invariant($"{val}");
 
             //Char[] with fixed size is always
             var chs = new char[saveBits];

@@ -28,6 +28,7 @@ Support .Net 4.7/4.8 and .Net Core 3.0</Description>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
     <IncludeSource>true</IncludeSource>
     <IncludeSymbols>false</IncludeSymbols>
+    <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
