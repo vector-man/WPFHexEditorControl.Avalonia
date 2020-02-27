@@ -2564,10 +2564,9 @@ namespace WpfHexaEditor
             if (reAttachEvents)
                 TraverseHexAndStringBytes(ctrl =>
                 {
-                    #region Detach events
-
                     ctrl.With(c =>
                     {
+                        #region Detach events
                         c.ByteModified -= Control_ByteModified;
                         c.MoveNext -= Control_MoveNext;
                         c.MovePrevious -= Control_MovePrevious;
@@ -2588,12 +2587,9 @@ namespace WpfHexaEditor
                         c.CtrlcKey -= Control_CTRLCKey;
                         c.CtrlvKey -= Control_CTRLVKey;
                         c.CtrlyKey -= Control_CTRLYKey;
-                    });
-                    #endregion
+                        #endregion
 
-                    #region Attach events
-                    ctrl.With(c =>
-                    {
+                        #region Attach events
                         c.ByteModified += Control_ByteModified;
                         c.MoveNext += Control_MoveNext;
                         c.MovePrevious += Control_MovePrevious;
@@ -2614,8 +2610,9 @@ namespace WpfHexaEditor
                         c.CtrlcKey += Control_CTRLCKey;
                         c.CtrlvKey += Control_CTRLVKey;
                         c.CtrlyKey += Control_CTRLYKey;
+
+                        #endregion
                     });
-                    #endregion
 
                 });
 
@@ -2697,12 +2694,9 @@ namespace WpfHexaEditor
 
                 TraverseHexBytes(ctrl =>
                 {
-                    ctrl.With(c =>
-                    {
-                        c.Action = ByteAction.Nothing;
-                        c.ReadOnlyMode = ReadOnlyMode;
-                        c.InternalChange = true;
-                    });
+                    ctrl.Action = ByteAction.Nothing;
+                    ctrl.ReadOnlyMode = ReadOnlyMode;
+                    ctrl.InternalChange = true;
 
                     var nextPos = startPosition + index;
 
@@ -2734,14 +2728,11 @@ namespace WpfHexaEditor
 
                 TraverseStringBytes(ctrl =>
                 {
-                    ctrl.With(c =>
-                    {
-                        c.Action = ByteAction.Nothing;
-                        c.ReadOnlyMode = ReadOnlyMode;
-                        c.InternalChange = true;
-                        c.TblCharacterTable = _tblCharacterTable;
-                        c.TypeOfCharacterTable = TypeOfCharacterTable;
-                    });
+                    ctrl.Action = ByteAction.Nothing;
+                    ctrl.ReadOnlyMode = ReadOnlyMode;
+                    ctrl.InternalChange = true;
+                    ctrl.TblCharacterTable = _tblCharacterTable;
+                    ctrl.TypeOfCharacterTable = TypeOfCharacterTable;
 
                     var nextPos = startPosition + index;
 
@@ -2752,12 +2743,9 @@ namespace WpfHexaEditor
 
                     if (index < readSize)
                     {
-                        ctrl.With(c =>
-                        {
-                            c.Byte = _viewBuffer[index];
-                            c.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
-                            c.ByteNext = index < readSize - 1 ? (byte?)_viewBuffer[index + 1] : null;
-                        });
+                        ctrl.Byte = _viewBuffer[index];
+                        ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
+                        ctrl.ByteNext = index < readSize - 1 ? (byte?)_viewBuffer[index + 1] : null;
 
                         if (AllowVisualByteAddress && nextPos > VisualByteAdressStop)
                             ctrl.Clear();
@@ -2906,25 +2894,20 @@ namespace WpfHexaEditor
 
             if (linesCount < maxVisibleLine)
                 for (var i = 0; i < maxVisibleLine - linesCount; i++)
-                {
-                    var lineInfoLabel = new FastTextLine(this)
+                    new FastTextLine(this).With(l =>
                     {
-                        Height = LineHeight,
-                        Foreground = ForegroundOffSetHeaderColor,
-                        HorizontalAlignment = HorizontalAlignment.Left,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        RenderPoint = new Point(2, 2)
-                    };
+                        l.Height = LineHeight;
+                        l.Foreground = ForegroundOffSetHeaderColor;
+                        l.HorizontalAlignment = HorizontalAlignment.Left;
+                        l.VerticalAlignment = VerticalAlignment.Center;
+                        l.RenderPoint = new Point(2, 2);
 
-                    //Events
-                    lineInfoLabel.With(l =>
-                    {
+                        //Events
                         l.MouseDown += LinesInfoLabel_MouseDown;
                         l.MouseMove += LinesInfoLabel_MouseMove;
-                    });
 
-                    LinesInfoStackPanel.Children.Add(lineInfoLabel);
-                }
+                        LinesInfoStackPanel.Children.Add(l);
+                    });
 
             #endregion
 
