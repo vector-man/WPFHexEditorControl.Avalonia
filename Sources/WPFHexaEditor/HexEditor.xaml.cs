@@ -2025,25 +2025,28 @@ namespace WpfHexaEditor
 
             _provider = new ByteProvider(filename);
 
-            if (_provider.IsEmpty)
+            _provider.With(p =>
             {
-                CloseProvider();
-                return;
-            }
+                if (p.IsEmpty)
+                {
+                    CloseProvider();
+                    return;
+                }
 
-            #region Attach event
-            _provider.ReadOnlyChanged += Provider_ReadOnlyChanged;
-            _provider.DataCopiedToClipboard += Provider_DataCopied;
-            _provider.ChangesSubmited += Provider_ChangesSubmited;
-            _provider.Undone += Provider_Undone;
-            _provider.LongProcessChanged += Provider_LongProcessProgressChanged;
-            _provider.LongProcessStarted += Provider_LongProcessProgressStarted;
-            _provider.LongProcessCompleted += Provider_LongProcessProgressCompleted;
-            _provider.LongProcessCanceled += Provider_LongProcessProgressCompleted;
-            _provider.FillWithByteCompleted += Provider_FillWithByteCompleted;
-            _provider.ReplaceByteCompleted += Provider_ReplaceByteCompleted;
-            _provider.BytesAppendCompleted += Provider_BytesAppendCompleted;
-            #endregion
+                #region Attach event
+                p.ReadOnlyChanged += Provider_ReadOnlyChanged;
+                p.DataCopiedToClipboard += Provider_DataCopied;
+                p.ChangesSubmited += Provider_ChangesSubmited;
+                p.Undone += Provider_Undone;
+                p.LongProcessChanged += Provider_LongProcessProgressChanged;
+                p.LongProcessStarted += Provider_LongProcessProgressStarted;
+                p.LongProcessCompleted += Provider_LongProcessProgressCompleted;
+                p.LongProcessCanceled += Provider_LongProcessProgressCompleted;
+                p.FillWithByteCompleted += Provider_FillWithByteCompleted;
+                p.ReplaceByteCompleted += Provider_ReplaceByteCompleted;
+                p.BytesAppendCompleted += Provider_BytesAppendCompleted;
+                #endregion
+            });
 
             UpdateScrollBar();
             UpdateHeader();
@@ -2070,25 +2073,28 @@ namespace WpfHexaEditor
 
             _provider = new ByteProvider(stream);
 
-            if (_provider.IsEmpty)
+            _provider.With(p =>
             {
-                CloseProvider();
-                return;
-            }
+                if (_provider.IsEmpty)
+                {
+                    CloseProvider();
+                    return;
+                }
 
-            #region Attach event
-            _provider.ReadOnlyChanged += Provider_ReadOnlyChanged;
-            _provider.DataCopiedToClipboard += Provider_DataCopied;
-            _provider.ChangesSubmited += ProviderStream_ChangesSubmited;
-            _provider.Undone += Provider_Undone;
-            _provider.LongProcessChanged += Provider_LongProcessProgressChanged;
-            _provider.LongProcessStarted += Provider_LongProcessProgressStarted;
-            _provider.LongProcessCompleted += Provider_LongProcessProgressCompleted;
-            _provider.LongProcessCanceled += Provider_LongProcessProgressCompleted;
-            _provider.FillWithByteCompleted += Provider_FillWithByteCompleted;
-            _provider.ReplaceByteCompleted += Provider_ReplaceByteCompleted;
-            _provider.BytesAppendCompleted += Provider_BytesAppendCompleted;
-            #endregion
+                #region Attach event
+                p.ReadOnlyChanged += Provider_ReadOnlyChanged;
+                p.DataCopiedToClipboard += Provider_DataCopied;
+                p.ChangesSubmited += ProviderStream_ChangesSubmited;
+                p.Undone += Provider_Undone;
+                p.LongProcessChanged += Provider_LongProcessProgressChanged;
+                p.LongProcessStarted += Provider_LongProcessProgressStarted;
+                p.LongProcessCompleted += Provider_LongProcessProgressCompleted;
+                p.LongProcessCanceled += Provider_LongProcessProgressCompleted;
+                p.FillWithByteCompleted += Provider_FillWithByteCompleted;
+                p.ReplaceByteCompleted += Provider_ReplaceByteCompleted;
+                p.BytesAppendCompleted += Provider_BytesAppendCompleted;
+                #endregion
+            });
 
             UpdateScrollBar();
             UpdateHeader();
@@ -2351,21 +2357,24 @@ namespace WpfHexaEditor
         {
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
 
-            //Get previous state
-            var firstPos = ctrl.FirstVisibleBytePosition;
-            var startPos = ctrl.SelectionStart;
-            var stopPos = ctrl.SelectionStop;
+            ctrl.With(c =>
+            {
+                //Get previous state
+                var firstPos = c.FirstVisibleBytePosition;
+                var startPos = c.SelectionStart;
+                var stopPos = c.SelectionStop;
 
-            //refresh
-            ctrl.UpdateScrollBar();
-            ctrl.BuildDataLines(ctrl.MaxVisibleLine, true);
-            ctrl.RefreshView(true);
-            ctrl.UpdateHeader(true);
+                //refresh
+                c.UpdateScrollBar();
+                c.BuildDataLines(c.MaxVisibleLine, true);
+                c.RefreshView(true);
+                c.UpdateHeader(true);
 
-            //Set previous state
-            ctrl.SetPosition(firstPos);
-            ctrl.SelectionStart = startPos;
-            ctrl.SelectionStop = stopPos;
+                //Set previous state
+                c.SetPosition(firstPos);
+                c.SelectionStart = startPos;
+                c.SelectionStop = stopPos;
+            });
         }
 
         #endregion
@@ -2393,15 +2402,17 @@ namespace WpfHexaEditor
         /// </summary>
         private void UpdateScrollBar()
         {
-            VerticalScrollBar.Visibility = Visibility.Collapsed;
-
-            if (CheckIsOpen(_provider))
+            VerticalScrollBar.With(c =>
             {
-                VerticalScrollBar.Visibility = Visibility.Visible;
-                VerticalScrollBar.SmallChange = 1;
-                VerticalScrollBar.LargeChange = ScrollLargeChange;
-                VerticalScrollBar.Maximum = MaxLine - MaxVisibleLine + 1;
-            }
+                c.Visibility = Visibility.Collapsed;
+
+                if (!CheckIsOpen(_provider)) return;
+                
+                c.Visibility = Visibility.Visible;
+                c.SmallChange = 1;
+                c.LargeChange = ScrollLargeChange;
+                c.Maximum = MaxLine - MaxVisibleLine + 1;
+            });
         }
         #endregion
 
@@ -2555,52 +2566,55 @@ namespace WpfHexaEditor
                 {
                     #region Detach events
 
-                    ctrl.ByteModified -= Control_ByteModified;
-                    ctrl.MoveNext -= Control_MoveNext;
-                    ctrl.MovePrevious -= Control_MovePrevious;
-                    ctrl.MouseSelection -= Control_MouseSelection;
-                    ctrl.Click -= Control_Click;
-                    ctrl.DoubleClick -= Control_DoubleClick;
-                    ctrl.RightClick -= Control_RightClick;
-                    ctrl.MoveUp -= Control_MoveUp;
-                    ctrl.MoveDown -= Control_MoveDown;
-                    ctrl.MoveLeft -= Control_MoveLeft;
-                    ctrl.MoveRight -= Control_MoveRight;
-                    ctrl.MovePageDown -= Control_MovePageDown;
-                    ctrl.MovePageUp -= Control_MovePageUp;
-                    ctrl.ByteDeleted -= Control_ByteDeleted;
-                    ctrl.EscapeKey -= Control_EscapeKey;
-                    ctrl.CtrlaKey -= Control_CTRLAKey;
-                    ctrl.CtrlzKey -= Control_CTRLZKey;
-                    ctrl.CtrlcKey -= Control_CTRLCKey;
-                    ctrl.CtrlvKey -= Control_CTRLVKey;
-                    ctrl.CtrlyKey -= Control_CTRLYKey;
-
+                    ctrl.With(c =>
+                    {
+                        c.ByteModified -= Control_ByteModified;
+                        c.MoveNext -= Control_MoveNext;
+                        c.MovePrevious -= Control_MovePrevious;
+                        c.MouseSelection -= Control_MouseSelection;
+                        c.Click -= Control_Click;
+                        c.DoubleClick -= Control_DoubleClick;
+                        c.RightClick -= Control_RightClick;
+                        c.MoveUp -= Control_MoveUp;
+                        c.MoveDown -= Control_MoveDown;
+                        c.MoveLeft -= Control_MoveLeft;
+                        c.MoveRight -= Control_MoveRight;
+                        c.MovePageDown -= Control_MovePageDown;
+                        c.MovePageUp -= Control_MovePageUp;
+                        c.ByteDeleted -= Control_ByteDeleted;
+                        c.EscapeKey -= Control_EscapeKey;
+                        c.CtrlaKey -= Control_CTRLAKey;
+                        c.CtrlzKey -= Control_CTRLZKey;
+                        c.CtrlcKey -= Control_CTRLCKey;
+                        c.CtrlvKey -= Control_CTRLVKey;
+                        c.CtrlyKey -= Control_CTRLYKey;
+                    });
                     #endregion
 
                     #region Attach events
-
-                    ctrl.ByteModified += Control_ByteModified;
-                    ctrl.MoveNext += Control_MoveNext;
-                    ctrl.MovePrevious += Control_MovePrevious;
-                    ctrl.MouseSelection += Control_MouseSelection;
-                    ctrl.Click += Control_Click;
-                    ctrl.DoubleClick += Control_DoubleClick;
-                    ctrl.RightClick += Control_RightClick;
-                    ctrl.MoveUp += Control_MoveUp;
-                    ctrl.MoveDown += Control_MoveDown;
-                    ctrl.MoveLeft += Control_MoveLeft;
-                    ctrl.MoveRight += Control_MoveRight;
-                    ctrl.MovePageDown += Control_MovePageDown;
-                    ctrl.MovePageUp += Control_MovePageUp;
-                    ctrl.ByteDeleted += Control_ByteDeleted;
-                    ctrl.EscapeKey += Control_EscapeKey;
-                    ctrl.CtrlaKey += Control_CTRLAKey;
-                    ctrl.CtrlzKey += Control_CTRLZKey;
-                    ctrl.CtrlcKey += Control_CTRLCKey;
-                    ctrl.CtrlvKey += Control_CTRLVKey;
-                    ctrl.CtrlyKey += Control_CTRLYKey;
-
+                    ctrl.With(c =>
+                    {
+                        c.ByteModified += Control_ByteModified;
+                        c.MoveNext += Control_MoveNext;
+                        c.MovePrevious += Control_MovePrevious;
+                        c.MouseSelection += Control_MouseSelection;
+                        c.Click += Control_Click;
+                        c.DoubleClick += Control_DoubleClick;
+                        c.RightClick += Control_RightClick;
+                        c.MoveUp += Control_MoveUp;
+                        c.MoveDown += Control_MoveDown;
+                        c.MoveLeft += Control_MoveLeft;
+                        c.MoveRight += Control_MoveRight;
+                        c.MovePageDown += Control_MovePageDown;
+                        c.MovePageUp += Control_MovePageUp;
+                        c.ByteDeleted += Control_ByteDeleted;
+                        c.EscapeKey += Control_EscapeKey;
+                        c.CtrlaKey += Control_CTRLAKey;
+                        c.CtrlzKey += Control_CTRLZKey;
+                        c.CtrlcKey += Control_CTRLCKey;
+                        c.CtrlvKey += Control_CTRLVKey;
+                        c.CtrlyKey += Control_CTRLYKey;
+                    });
                     #endregion
 
                 });
@@ -2672,8 +2686,8 @@ namespace WpfHexaEditor
                 else
                 {
                     readSize = _provider.Read(_viewBuffer, 0, bufferlength <= _viewBuffer.Count()
-                                                                    ? bufferlength
-                                                                    : _viewBuffer.Count());
+                        ? bufferlength
+                        : _viewBuffer.Count());
                 }
                 #endregion
 
@@ -2683,10 +2697,12 @@ namespace WpfHexaEditor
 
                 TraverseHexBytes(ctrl =>
                 {
-                    ctrl.Action = ByteAction.Nothing;
-                    ctrl.ReadOnlyMode = ReadOnlyMode;
-
-                    ctrl.InternalChange = true;
+                    ctrl.With(c =>
+                    {
+                        c.Action = ByteAction.Nothing;
+                        c.ReadOnlyMode = ReadOnlyMode;
+                        c.InternalChange = true;
+                    });
 
                     var nextPos = startPosition + index;
 
@@ -2718,12 +2734,14 @@ namespace WpfHexaEditor
 
                 TraverseStringBytes(ctrl =>
                 {
-                    ctrl.Action = ByteAction.Nothing;
-                    ctrl.ReadOnlyMode = ReadOnlyMode;
-
-                    ctrl.InternalChange = true;
-                    ctrl.TblCharacterTable = _tblCharacterTable;
-                    ctrl.TypeOfCharacterTable = TypeOfCharacterTable;
+                    ctrl.With(c =>
+                    {
+                        c.Action = ByteAction.Nothing;
+                        c.ReadOnlyMode = ReadOnlyMode;
+                        c.InternalChange = true;
+                        c.TblCharacterTable = _tblCharacterTable;
+                        c.TypeOfCharacterTable = TypeOfCharacterTable;
+                    });
 
                     var nextPos = startPosition + index;
 
@@ -2734,10 +2752,12 @@ namespace WpfHexaEditor
 
                     if (index < readSize)
                     {
-                        ctrl.Byte = _viewBuffer[index];
-                        ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
-
-                        ctrl.ByteNext = index < readSize - 1 ? (byte?)_viewBuffer[index + 1] : null;
+                        ctrl.With(c =>
+                        {
+                            c.Byte = _viewBuffer[index];
+                            c.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
+                            c.ByteNext = index < readSize - 1 ? (byte?)_viewBuffer[index + 1] : null;
+                        });
 
                         if (AllowVisualByteAddress && nextPos > VisualByteAdressStop)
                             ctrl.Clear();
@@ -2753,12 +2773,9 @@ namespace WpfHexaEditor
             }
             else
             {
-                #region Clear IByteControl
-
+                //Clear IByteControl
                 _viewBuffer = null;
                 ClearAllBytes();
-
-                #endregion
             }
         }
 
@@ -2900,8 +2917,11 @@ namespace WpfHexaEditor
                     };
 
                     //Events
-                    lineInfoLabel.MouseDown += LinesInfoLabel_MouseDown;
-                    lineInfoLabel.MouseMove += LinesInfoLabel_MouseMove;
+                    lineInfoLabel.With(l =>
+                    {
+                        l.MouseDown += LinesInfoLabel_MouseDown;
+                        l.MouseMove += LinesInfoLabel_MouseMove;
+                    });
 
                     LinesInfoStackPanel.Children.Add(lineInfoLabel);
                 }
@@ -2919,72 +2939,59 @@ namespace WpfHexaEditor
             {
                 var lineOffsetLabel = (FastTextLine)LinesInfoStackPanel.Children[i];
 
-                if (i > 0) firstByteInLine = GetValidPositionFrom(firstByteInLine, BytePerLine);
-
-                #region Set text visual
-                if (HighLightSelectionStart &&
-                    SelectionStart > -1 &&
-                    SelectionStart >= firstByteInLine &&
-                    SelectionStart <= firstByteInLine + BytePerLine - 1)
+                lineOffsetLabel.With(l =>
                 {
-                    lineOffsetLabel.FontWeight = FontWeights.Bold;
-                    lineOffsetLabel.Foreground = ForegroundHighLightOffSetHeaderColor;
-                    lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {SelectionStart}";
-                    lineOffsetLabel.Tag = $"0x{LongToHex(SelectionStart).ToUpperInvariant()}";
-                    actualPosition = SelectionStart;
-                }
-                else
-                {
-                    lineOffsetLabel.FontWeight = FontWeights.Normal;
-                    lineOffsetLabel.Foreground = ForegroundOffSetHeaderColor;
-                    lineOffsetLabel.ToolTip = $"{Properties.Resources.FirstByteString} : {firstByteInLine}";
-                    lineOffsetLabel.Tag = $"0x{LongToHex(firstByteInLine).ToUpperInvariant()}";
-                    actualPosition = firstByteInLine;
-                }
 
-                //update the visual
-                switch (OffSetStringVisual)
-                {
-                    case DataVisualType.Hexadecimal:
-                        #region Hexadecimal
-                        switch (OffSetPanelVisual)
-                        {
-                            case OffSetPanelType.OffsetOnly:
-                                lineOffsetLabel.Text = $"0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpperInvariant()}";
-                                break;
-                            case OffSetPanelType.LineOnly:
-                                lineOffsetLabel.Text = $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual).ToUpperInvariant()}";
-                                break;
-                            case OffSetPanelType.Both:
-                                lineOffsetLabel.Text = $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual)} 0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpperInvariant()}";
-                                break;
-                        }
-                        #endregion
-                        break;
-                    case DataVisualType.Decimal:
+                    if (i > 0) firstByteInLine = GetValidPositionFrom(firstByteInLine, BytePerLine);
 
-                        var format = OffSetPanelFixedWidthVisual == OffSetPanelFixedWidth.Dynamic ? "G" : "D8";
-                                                
-                        #region Decimal
-                        switch (OffSetPanelVisual)
-                        {
-                            case OffSetPanelType.OffsetOnly:
-                                lineOffsetLabel.Text = $"d{actualPosition.ToString(format)}";
-                                break;
-                            case OffSetPanelType.LineOnly:
-                                lineOffsetLabel.Text = $"ln {GetLineNumber(actualPosition).ToString(format)}";
-                                break;
-                            case OffSetPanelType.Both:
-                                lineOffsetLabel.Text = $"ln {GetLineNumber(actualPosition).ToString(format)} d{actualPosition.ToString(format)}";
-                                break;
-                        }
-                        #endregion
-                        break;
-                }
+                    #region Set text visual
+                    if (HighLightSelectionStart &&
+                        SelectionStart > -1 &&
+                        SelectionStart >= firstByteInLine &&
+                        SelectionStart <= firstByteInLine + BytePerLine - 1)
+                    {
+                        l.FontWeight = FontWeights.Bold;
+                        l.Foreground = ForegroundHighLightOffSetHeaderColor;
+                        l.ToolTip = $"{Properties.Resources.FirstByteString} : {SelectionStart}";
+                        l.Tag = $"0x{LongToHex(SelectionStart).ToUpperInvariant()}";
+                        actualPosition = SelectionStart;
+                    }
+                    else
+                    {
+                        l.FontWeight = FontWeights.Normal;
+                        l.Foreground = ForegroundOffSetHeaderColor;
+                        l.ToolTip = $"{Properties.Resources.FirstByteString} : {firstByteInLine}";
+                        l.Tag = $"0x{LongToHex(firstByteInLine).ToUpperInvariant()}";
 
-                if (AllowVisualByteAddress && firstByteInLine > VisualByteAdressStop)
-                    lineOffsetLabel.Tag = lineOffsetLabel.Text = string.Empty;
+                        actualPosition = firstByteInLine;
+                    }
 
+                    //update the visual
+                    switch (OffSetStringVisual)
+                    {
+                        case DataVisualType.Hexadecimal:
+                            l.Text = OffSetPanelVisual switch
+                            {
+                                OffSetPanelType.OffsetOnly => $"0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpperInvariant()}",
+                                OffSetPanelType.LineOnly => $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual).ToUpperInvariant()}",
+                                OffSetPanelType.Both => $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual)} 0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpperInvariant()}"
+                            };
+                            break;
+                        case DataVisualType.Decimal:
+                            var format = OffSetPanelFixedWidthVisual == OffSetPanelFixedWidth.Dynamic ? "G" : "D8";
+
+                            l.Text = OffSetPanelVisual switch
+                            {
+                                OffSetPanelType.OffsetOnly => $"d{actualPosition.ToString(format)}",
+                                OffSetPanelType.LineOnly => $"ln {GetLineNumber(actualPosition).ToString(format)}",
+                                OffSetPanelType.Both => $"ln {GetLineNumber(actualPosition).ToString(format)} d{actualPosition.ToString(format)}"
+                            };
+                            break;
+                    }
+
+                    if (AllowVisualByteAddress && firstByteInLine > VisualByteAdressStop)
+                        l.Tag = l.Text = string.Empty;
+                });
                 #endregion
             }
         }
@@ -3262,8 +3269,7 @@ namespace WpfHexaEditor
 
                     SetScrollMarker(position, ScrollMarker.SearchHighLight);
                 }
-
-
+                
                 UnSelectAll();
                 UpdateHighLight();
 
@@ -3653,60 +3659,56 @@ namespace WpfHexaEditor
 
             #endregion
 
-            #region Build rectangle
-
-            var rect = new Rectangle
-            {
-                VerticalAlignment = VerticalAlignment.Top,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Tag = bookMark,
-                Width = 5,
-                Height = 3,
-                DataContext = bookMark
-            };
-
-            #endregion
 
             #region Set somes properties for different marker
 
-            switch (marker)
+            new Rectangle().With(r =>
             {
-                case ScrollMarker.TblBookmark:
-                case ScrollMarker.Bookmark:
-                    rect.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
-                    rect.Fill = (SolidColorBrush)TryFindResource("BookMarkColor");
-                    break;
-                case ScrollMarker.SearchHighLight:
-                    rect.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
-                    rect.Fill = (SolidColorBrush)TryFindResource("SearchBookMarkColor");
-                    rect.HorizontalAlignment = HorizontalAlignment.Center;
-                    break;
-                case ScrollMarker.SelectionStart:
-                    rect.Fill = (SolidColorBrush)TryFindResource("SelectionStartBookMarkColor");
-                    rect.Width = VerticalScrollBar.ActualWidth;
-                    rect.Height = 3;
-                    break;
-                case ScrollMarker.ByteModified:
-                    rect.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
-                    rect.Fill = (SolidColorBrush)TryFindResource("ByteModifiedMarkColor");
-                    rect.HorizontalAlignment = HorizontalAlignment.Right;
-                    break;
-                case ScrollMarker.ByteDeleted:
-                    rect.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
-                    rect.Fill = (SolidColorBrush)TryFindResource("ByteDeletedMarkColor");
-                    rect.HorizontalAlignment = HorizontalAlignment.Right;
-                    rightPosition = 4;
-                    break;
-            }
+                r.VerticalAlignment = VerticalAlignment.Top;
+                r.HorizontalAlignment = HorizontalAlignment.Left;
+                r.Tag = bookMark;
+                r.Width = 5;
+                r.Height = 3;
+                r.DataContext = bookMark;
 
-            rect.MouseDown += Rect_MouseDown;
-            //rect.DataContext = new ByteModified {BytePositionInStream = position};
-            rect.Margin = new Thickness(0, topPosition, rightPosition, 0);
+                switch (marker)
+                {
+                    case ScrollMarker.TblBookmark:
+                    case ScrollMarker.Bookmark:
+                        r.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
+                        r.Fill = (SolidColorBrush)TryFindResource("BookMarkColor");
+                        break;
+                    case ScrollMarker.SearchHighLight:
+                        r.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
+                        r.Fill = (SolidColorBrush)TryFindResource("SearchBookMarkColor");
+                        r.HorizontalAlignment = HorizontalAlignment.Center;
+                        break;
+                    case ScrollMarker.SelectionStart:
+                        r.Fill = (SolidColorBrush)TryFindResource("SelectionStartBookMarkColor");
+                        r.Width = VerticalScrollBar.ActualWidth;
+                        r.Height = 3;
+                        break;
+                    case ScrollMarker.ByteModified:
+                        r.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
+                        r.Fill = (SolidColorBrush)TryFindResource("ByteModifiedMarkColor");
+                        r.HorizontalAlignment = HorizontalAlignment.Right;
+                        break;
+                    case ScrollMarker.ByteDeleted:
+                        r.ToolTip = TryFindResource("ScrollMarkerSearchToolTip");
+                        r.Fill = (SolidColorBrush)TryFindResource("ByteDeletedMarkColor");
+                        r.HorizontalAlignment = HorizontalAlignment.Right;
+                        rightPosition = 4;
+                        break;
+                }
 
-            #endregion
+                r.MouseDown += Rect_MouseDown;
+                r.Margin = new Thickness(0, topPosition, rightPosition, 0);
 
-            //Add to grid
-            MarkerGrid.Children.Add(rect);
+                #endregion
+
+                //Add to grid
+                MarkerGrid.Children.Add(r);
+            });
         }
 
         private void Rect_MouseDown(object sender, MouseButtonEventArgs e)
@@ -3789,51 +3791,50 @@ namespace WpfHexaEditor
 
         private void Control_RightClick(object sender, EventArgs e)
         {
-            if (AllowContextMenu)
+            if (!AllowContextMenu) return;
+
+            //position                
+            if (sender is IByteControl ctrl)
+                _rightClickBytePosition = ctrl.BytePositionInStream;
+
+            if (SelectionLength <= 1)
             {
-                //position                
-                if (sender is IByteControl ctrl)
-                    _rightClickBytePosition = ctrl.BytePositionInStream;
-
-                if (SelectionLength <= 1)
-                {
-                    SelectionStart = _rightClickBytePosition;
-                    SelectionStop = _rightClickBytePosition;
-                }
-
-                #region Disable ctrl
-
-                CopyAsCMenu.IsEnabled = false;
-                CopyAsciicMenu.IsEnabled = false;
-                FindAllCMenu.IsEnabled = false;
-                CopyHexaCMenu.IsEnabled = false;
-                UndoCMenu.IsEnabled = false;
-                DeleteCMenu.IsEnabled = false;
-                FillByteCMenu.IsEnabled = false;
-                CopyTblcMenu.IsEnabled = false;
-
-                #endregion
-
-                if (SelectionLength > 0)
-                {
-                    CopyAsciicMenu.IsEnabled = true;
-                    CopyAsCMenu.IsEnabled = true;
-                    FindAllCMenu.IsEnabled = true;
-                    CopyHexaCMenu.IsEnabled = true;
-                    DeleteCMenu.IsEnabled = true;
-                    FillByteCMenu.IsEnabled = true;
-
-                    if (_tblCharacterTable != null)
-                        CopyTblcMenu.IsEnabled = true;
-                }
-
-                if (UndoCount > 0)
-                    UndoCMenu.IsEnabled = true;
-
-                //Show context menu
-                Focus();
-                CMenu.Visibility = Visibility.Visible;
+                SelectionStart = _rightClickBytePosition;
+                SelectionStop = _rightClickBytePosition;
             }
+
+            #region Disable ctrl
+
+            CopyAsCMenu.IsEnabled = false;
+            CopyAsciicMenu.IsEnabled = false;
+            FindAllCMenu.IsEnabled = false;
+            CopyHexaCMenu.IsEnabled = false;
+            UndoCMenu.IsEnabled = false;
+            DeleteCMenu.IsEnabled = false;
+            FillByteCMenu.IsEnabled = false;
+            CopyTblcMenu.IsEnabled = false;
+
+            #endregion
+
+            if (SelectionLength > 0)
+            {
+                CopyAsciicMenu.IsEnabled = true;
+                CopyAsCMenu.IsEnabled = true;
+                FindAllCMenu.IsEnabled = true;
+                CopyHexaCMenu.IsEnabled = true;
+                DeleteCMenu.IsEnabled = true;
+                FillByteCMenu.IsEnabled = true;
+
+                if (_tblCharacterTable != null)
+                    CopyTblcMenu.IsEnabled = true;
+            }
+
+            if (UndoCount > 0)
+                UndoCMenu.IsEnabled = true;
+
+            //Show context menu
+            Focus();
+            CMenu.Visibility = Visibility.Visible;
         }
 
         private void FindAllCMenu_Click(object sender, RoutedEventArgs e) => FindAll(GetSelectionByteArray(), true);
@@ -4591,18 +4592,14 @@ namespace WpfHexaEditor
                         case "Action":
 
                             #region Set action
-                            switch (at.Value)
+
+                            bm.Action = at.Value switch 
                             {
-                                case "Modified":
-                                    bm.Action = ByteAction.Modified;
-                                    break;
-                                case "Deleted":
-                                    bm.Action = ByteAction.Deleted;
-                                    break;
-                                case "Added":
-                                    bm.Action = ByteAction.Added;
-                                    break;
-                            }
+                                "Modified" => ByteAction.Modified,
+                                "Deleted" => ByteAction.Deleted,
+                                "Added" => ByteAction.Added
+                            };
+
                             #endregion
 
                             break;
@@ -4933,6 +4930,7 @@ namespace WpfHexaEditor
                 InitialiseZoom();
             }
         }
+
         /// <summary>
         /// Initialize the support of zoom
         /// </summary>
