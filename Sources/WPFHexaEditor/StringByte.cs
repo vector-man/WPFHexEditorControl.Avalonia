@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2019
+// Apache 2.0  - 2016-2020
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 // Contributor: Janus Tida
 //////////////////////////////////////////////
@@ -24,10 +24,7 @@ namespace WpfHexaEditor
 
         #region Contructor
 
-        public StringByte(HexEditor parent) : base(parent)
-        {
-
-        }
+        public StringByte(HexEditor parent) : base(parent) { }
 
         #endregion Contructor
 
@@ -180,15 +177,12 @@ namespace WpfHexaEditor
 
             #region Update width of control 
             //It's 8-10 time more fastest to update width on render for TBL string
-            switch (TypeOfCharacterTable)
+
+            Width = TypeOfCharacterTable switch
             {
-                case CharacterTableType.Ascii:
-                    Width = 12;
-                    break;
-                case CharacterTableType.TblFile:
-                    Width = TextFormatted?.Width > 12 ? TextFormatted.Width : 12;
-                    break;
-            }
+                CharacterTableType.Ascii => 12,
+                CharacterTableType.TblFile => TextFormatted?.Width > 12 ? TextFormatted.Width : 12
+            };
             #endregion
         }
 

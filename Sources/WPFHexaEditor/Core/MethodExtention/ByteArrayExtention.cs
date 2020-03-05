@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2019
+// Apache 2.0  - 2016-2020
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
@@ -16,7 +16,6 @@ namespace WpfHexaEditor.Core.MethodExtention
         /// <summary>
         /// Finds all index of byte find
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "<En attente>")]
         public static IEnumerable<long> FindIndexOf(this byte[] self, byte[] candidate)
         {
             if (!IsEmptyLocate(self, candidate))
@@ -32,7 +31,9 @@ namespace WpfHexaEditor.Core.MethodExtention
         /// <summary>
         /// Check if match is finded
         /// </summary>
-        private static bool IsMatch(byte[] array, long position, byte[] candidate) =>
+        private static bool IsMatch(byte[] array,
+                                    long position,
+                                    byte[] candidate) =>
             candidate.Length <= array.Length - position && !candidate.Where((t, i) => array[position + i] != t).Any();
 
         /// <summary>

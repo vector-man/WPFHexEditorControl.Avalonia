@@ -187,18 +187,17 @@ namespace WpfHexaEditor.Core.CharacterTable
             {
                 try
                 {
-                    if (line.Substring(0, 1) == "(")
-                    {
-                        var fav = new BookMark();
-                        var lineSplited = line.Split(')');
-                        fav.Description = lineSplited[1].Substring(0, lineSplited[1].Length - 1);
+                    if (line.Substring(0, 1) != "(") continue;
+                    
+                    var fav = new BookMark();
+                    var lineSplited = line.Split(')');
+                    fav.Description = lineSplited[1].Substring(0, lineSplited[1].Length - 1);
 
-                        lineSplited = line.Split('h');
-                        fav.BytePositionInStream =
-                            ByteConverters.HexLiteralToLong(lineSplited[0].Substring(1, lineSplited[0].Length - 1)).position;
-                        fav.Marker = ScrollMarker.TblBookmark;
-                        BookMarks.Add(fav);
-                    }
+                    lineSplited = line.Split('h');
+                    fav.BytePositionInStream =
+                        ByteConverters.HexLiteralToLong(lineSplited[0].Substring(1, lineSplited[0].Length - 1)).position;
+                    fav.Marker = ScrollMarker.TblBookmark;
+                    BookMarks.Add(fav);
                 }
                 catch
                 {
@@ -423,12 +422,11 @@ namespace WpfHexaEditor.Core.CharacterTable
 
         void Dispose(bool disposing)
         {
-            if (!_disposedValue)
-            {
-                if (disposing) _dteList = null;
+            if (_disposedValue) return;
+            
+            if (disposing) _dteList = null;
 
-                _disposedValue = true;
-            }
+            _disposedValue = true;
         }
 
         public void Dispose()

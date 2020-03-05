@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Fork 2017 : Derek Tremblay (derektremblay666@gmail.com) 
+// Fork 2017-2020 : Derek Tremblay (derektremblay666@gmail.com) 
 // Part of Wpf HexEditor control : https://github.com/abbaye/WPFHexEditorControl
 // Reference : https://www.codeproject.com/Tips/431000/Caret-for-WPF-User-Controls
 // Reference license : The Code Project Open License (CPOL) 1.02
@@ -35,27 +35,25 @@ namespace WpfHexaEditor.Core
         #region Constructor
         public Caret()
         {
-            if (!DesignerProperties.GetIsInDesignMode(this))
-            {
-                _pen.Freeze();
-                _brush.Opacity = .5;
-                IsHitTestVisible = false;
-                InitializeTimer();
-                Hide();
-            }
+            if (DesignerProperties.GetIsInDesignMode(this)) return;
+            
+            _pen.Freeze();
+            _brush.Opacity = .5;
+            IsHitTestVisible = false;
+            InitializeTimer();
+            Hide();
         }
 
         public Caret(Brush brush)
         {
-            if (!DesignerProperties.GetIsInDesignMode(this))
-            {
-                _pen.Brush = brush;
-                _pen.Freeze();
-                _brush.Opacity = .5;
-                IsHitTestVisible = false;
-                InitializeTimer();
-                Hide();
-            }
+            if (DesignerProperties.GetIsInDesignMode(this)) return;
+            
+            _pen.Brush = brush;
+            _pen.Freeze();
+            _brush.Opacity = .5;
+            IsHitTestVisible = false;
+            InitializeTimer();
+            Hide();
         }
         #endregion
 
@@ -256,16 +254,17 @@ namespace WpfHexaEditor.Core
         /// </summary>
         protected override void OnRender(DrawingContext dc)
         {
-            if (Visible)
-                switch (_caretMode)
-                {
-                    case CaretMode.Insert:
-                        dc.DrawLine(_pen, _position, new Point(Left, _position.Y + CaretHeight));
-                        break;
-                    case CaretMode.Overwrite:
-                        dc.DrawRectangle(_brush, _pen, new Rect(Left, _position.Y, _caretWidth, CaretHeight));
-                        break;
-                }
+            if (!Visible) return;
+
+            switch (_caretMode)
+            {
+                case CaretMode.Insert:
+                    dc.DrawLine(_pen, _position, new Point(Left, _position.Y + CaretHeight));
+                    break;
+                case CaretMode.Overwrite:
+                    dc.DrawRectangle(_brush, _pen, new Rect(Left, _position.Y, _caretWidth, CaretHeight));
+                    break;
+            }
         }
         #endregion
 

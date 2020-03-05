@@ -104,7 +104,6 @@ namespace WpfHexaEditor.Core
     /// <summary>
     /// Type are opened in byteprovider
     /// </summary>
-    ///[Obsolete("The ByteProviderStreamType is low extensible for variety of stream source,and will be removed in next release.")]
     public enum ByteProviderStreamType
     {
         File,

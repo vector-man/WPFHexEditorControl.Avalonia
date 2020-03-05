@@ -1,4 +1,9 @@
-﻿using System.IO;
+﻿//////////////////////////////////////////////
+// Apache 2.0 - 2018-2019
+// Author : Derek Tremblay (derektremblay666@gmail.com)
+//////////////////////////////////////////////
+
+using System.IO;
 using System.Windows;
 
 namespace WpfHexaEditor.Dialog

@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2019
+// Apache 2.0  - 2016-2020
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 // Contributor: Janus Tida
 //////////////////////////////////////////////
@@ -61,18 +61,11 @@ namespace WpfHexaEditor
             _keyDownLabel = KeyDownLabel.FirstChar;
         }
 
-        public void UpdateDataVisualWidth()
+        public void UpdateDataVisualWidth() => Width = _parent.DataStringVisual switch
         {
-            switch (_parent.DataStringVisual)
-            {
-                case DataVisualType.Decimal:
-                    Width = 25;
-                    break;
-                case DataVisualType.Hexadecimal:
-                    Width = 20;
-                    break;
-            }
-        }
+            DataVisualType.Decimal => 25,
+            DataVisualType.Hexadecimal => 20
+        };
 
         #endregion Methods
 

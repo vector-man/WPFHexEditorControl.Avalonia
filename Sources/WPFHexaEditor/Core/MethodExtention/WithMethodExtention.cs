@@ -1,4 +1,9 @@
-﻿using System;
+﻿//////////////////////////////////////////////
+// Apache 2.0 - 2020
+// Author : Derek Tremblay (derektremblay666@gmail.com)
+//////////////////////////////////////////////
+
+using System;
 
 namespace WpfHexaEditor.Core.MethodExtention
 {
