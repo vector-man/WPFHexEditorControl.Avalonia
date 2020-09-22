@@ -683,7 +683,7 @@ namespace WpfHexaEditor
         {
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
 
-            ctrl.UpdateHeader();
+            ctrl.UpdateHeader(true);
 
             ctrl.TraverseHexBytes(hctrl =>
             {

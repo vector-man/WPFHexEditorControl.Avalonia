@@ -95,6 +95,5 @@ namespace WpfHexaEditor.Core.Bytes
         public static bool CheckIsValid(ByteModified byteModified) => byteModified != null && byteModified.IsValid;
 
         #endregion Methods
-
     }
 }

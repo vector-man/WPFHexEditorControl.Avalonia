@@ -14,5 +14,5 @@
     <conv:LongToHexStringConverter x:Key="LongHexConverter" />
     <conv:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <conv:HexToLongStringConverter x:Key="HexToLongConverter" />
-    <conv:PathToFilenameConverter x:Key="FilenameConverter"/>
+    <conv:PathToFilenameConverter x:Key="FilenameConverter" />
 </ResourceDictionary>
