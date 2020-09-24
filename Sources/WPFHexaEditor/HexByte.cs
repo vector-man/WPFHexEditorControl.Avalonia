@@ -5,6 +5,7 @@
 //////////////////////////////////////////////
 
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using WpfHexaEditor.Core;
@@ -140,7 +141,60 @@ namespace WpfHexaEditor
                         break;
                     case DataVisualType.Decimal:
 
-                        //Not editable at this moment, maybe in future
+                        #region Edit decimal value 
+
+                        if (!KeyValidator.IsNumericKey(e.Key))
+                        {
+                            break;
+                        }
+                        key = KeyValidator.IsNumericKey(e.Key)
+                            ? KeyValidator.GetDigitFromKey(e.Key).ToString()
+                            : 0.ToString();
+
+                        //Update byte
+                        Char[] byteValueCharArray_dec = Byte.Value.ToString("d3").ToCharArray();
+                        switch (_keyDownLabel)
+                        {
+                            case KeyDownLabel.FirstChar:
+                                byteValueCharArray_dec[0] = key.ToCharArray()[0];
+                                if (int.Parse(new string(byteValueCharArray_dec)) > 255) break;
+                                _keyDownLabel = KeyDownLabel.SecondChar;
+                                Action = ByteAction.Modified;
+                                Byte = BitConverter.GetBytes(int.Parse(new string(byteValueCharArray_dec)))[0];
+                                break;
+
+                            case KeyDownLabel.SecondChar:
+                                byteValueCharArray_dec[1] = key.ToCharArray()[0];
+                                if (int.Parse(new string(byteValueCharArray_dec)) > 255) break;
+                                _keyDownLabel = KeyDownLabel.ThirdChar;
+                                Action = ByteAction.Modified;
+                                Byte = BitConverter.GetBytes(int.Parse(new string(byteValueCharArray_dec)))[0];
+                                break;
+
+                            case KeyDownLabel.ThirdChar:
+                                byteValueCharArray_dec[2] = key.ToCharArray()[0];
+                                if (int.Parse(new string(byteValueCharArray_dec)) > 255) break;
+                                _keyDownLabel = KeyDownLabel.NextPosition;
+
+                                Action = ByteAction.Modified;
+                                Byte = BitConverter.GetBytes(int.Parse(new string(byteValueCharArray_dec)))[0];
+
+                                //Insert byte at end of file
+                                if (_parent.Length != BytePositionInStream + 1)
+                                {
+                                    _keyDownLabel = KeyDownLabel.NextPosition;
+                                    OnMoveNext(new EventArgs());
+                                }
+                                break;
+                            case KeyDownLabel.NextPosition:
+                                _parent.AppendByte(new byte[] { 0 });
+
+                                OnMoveNext(new EventArgs());
+
+                                break;
+                        }
+
+                        #endregion
 
                         break;
                 }
