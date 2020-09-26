@@ -5,6 +5,7 @@
 //////////////////////////////////////////////
 
 using System;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using WpfHexaEditor.Core;
@@ -68,7 +69,8 @@ namespace WpfHexaEditor
         {
             DataVisualType.Decimal => 25,
             DataVisualType.Hexadecimal => 20
-            , DataVisualType.Binary => 65
+            ,
+            DataVisualType.Binary => 65
         };
 
         #endregion Methods
@@ -201,6 +203,99 @@ namespace WpfHexaEditor
 
                         break;
                     case DataVisualType.Binary:
+
+                        #region Edit Binary value 
+
+                        if (!KeyValidator.IsNumericKey(e.Key)
+                            || KeyValidator.GetDigitFromKey(e.Key) > 1)
+                        {
+                            break;
+                        }
+                        key = KeyValidator.IsNumericKey(e.Key)
+                            ? KeyValidator.GetDigitFromKey(e.Key).ToString()
+                            : 0.ToString();
+
+                        //Update byte
+                        Char[] byteValueCharArray_bin = Convert
+                            .ToString(Byte.Value, 2)
+                            .PadLeft(8, '0')
+                            .ToCharArray();
+                        switch (_keyDownLabel)
+                        {
+                            case KeyDownLabel.FirstChar:
+                                byteValueCharArray_bin[0] = key.ToCharArray()[0];
+                                _keyDownLabel = KeyDownLabel.SecondChar;
+                                Action = ByteAction.Modified;
+                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                break;
+
+                            case KeyDownLabel.SecondChar:
+                                byteValueCharArray_bin[1] = key.ToCharArray()[0];
+                                _keyDownLabel = KeyDownLabel.ThirdChar;
+                                Action = ByteAction.Modified;
+                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                break;
+
+                            case KeyDownLabel.ThirdChar:
+                                byteValueCharArray_bin[2] = key.ToCharArray()[0];
+                                _keyDownLabel = KeyDownLabel.FourthChar;
+                                Action = ByteAction.Modified;
+                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                break;
+
+                            case KeyDownLabel.FourthChar:
+                                byteValueCharArray_bin[3] = key.ToCharArray()[0];
+                                _keyDownLabel = KeyDownLabel.FifthChar;
+                                Action = ByteAction.Modified;
+                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                break;
+
+                            case KeyDownLabel.FifthChar:
+                                byteValueCharArray_bin[4] = key.ToCharArray()[0];
+                                _keyDownLabel = KeyDownLabel.SixthChar;
+                                Action = ByteAction.Modified;
+                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                break;
+
+                            case KeyDownLabel.SixthChar:
+                                byteValueCharArray_bin[5] = key.ToCharArray()[0];
+                                _keyDownLabel = KeyDownLabel.SeventhChar;
+                                Action = ByteAction.Modified;
+                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                break;
+
+                            case KeyDownLabel.SeventhChar:
+                                byteValueCharArray_bin[6] = key.ToCharArray()[0];
+                                _keyDownLabel = KeyDownLabel.EighthChar;
+                                Action = ByteAction.Modified;
+                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                break;
+
+                            case KeyDownLabel.EighthChar:
+                                byteValueCharArray_bin[7] = key.ToCharArray()[0];
+                                _keyDownLabel = KeyDownLabel.NextPosition;
+
+                                Action = ByteAction.Modified;
+                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                
+
+                                //Insert byte at end of file
+                                if (_parent.Length != BytePositionInStream + 1)
+                                {
+                                    _keyDownLabel = KeyDownLabel.NextPosition;
+                                    OnMoveNext(new EventArgs());
+                                }
+                                break;
+                            case KeyDownLabel.NextPosition:
+                                _parent.AppendByte(new byte[] { 0 });
+
+                                OnMoveNext(new EventArgs());
+
+                                break;
+                        }
+
+                        #endregion
+
                         break;
                 }
 

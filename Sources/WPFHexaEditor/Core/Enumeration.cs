@@ -71,6 +71,12 @@ namespace WpfHexaEditor.Core
         SecondChar,
 
         ThirdChar,
+
+        FourthChar,
+        FifthChar,
+        SixthChar,
+        SeventhChar,
+        EighthChar,
         NextPosition
     }
 
