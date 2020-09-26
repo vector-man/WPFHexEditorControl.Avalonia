@@ -2872,6 +2872,10 @@ namespace WpfHexaEditor
                         headerLabel.Text = i.ToString("d3");
                         headerLabel.Width = 25;
                         break;
+                    case DataVisualType.Binary:
+                        headerLabel.Text = Convert.ToString(i, 2).PadLeft(8, '0');
+                        headerLabel.Width = 65;
+                        break;
                 }
 
                 #endregion
@@ -2962,6 +2966,16 @@ namespace WpfHexaEditor
                             break;
                         case DataVisualType.Decimal:
                             var format = OffSetPanelFixedWidthVisual == OffSetPanelFixedWidth.Dynamic ? "G" : "D8";
+
+                            l.Text = OffSetPanelVisual switch
+                            {
+                                OffSetPanelType.OffsetOnly => $"d{actualPosition.ToString(format)}",
+                                OffSetPanelType.LineOnly => $"ln {GetLineNumber(actualPosition).ToString(format)}",
+                                OffSetPanelType.Both => $"ln {GetLineNumber(actualPosition).ToString(format)} d{actualPosition.ToString(format)}"
+                            };
+                            break;
+                        case DataVisualType.Binary:
+                            format = OffSetPanelFixedWidthVisual == OffSetPanelFixedWidth.Dynamic ? "G" : "D8";
 
                             l.Text = OffSetPanelVisual switch
                             {

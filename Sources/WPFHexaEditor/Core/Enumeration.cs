@@ -71,6 +71,12 @@ namespace WpfHexaEditor.Core
         SecondChar,
 
         ThirdChar,
+
+        FourthChar,
+        FifthChar,
+        SixthChar,
+        SeventhChar,
+        EighthChar,
         NextPosition
     }
 
@@ -175,8 +181,8 @@ namespace WpfHexaEditor.Core
     public enum DataVisualType
     {
         Hexadecimal,    //Editable
-        Decimal         //Not editable
-        //Binary        //Editable
+        Decimal         //editable
+        , Binary        //Not Editable
     }
 
     /// <summary>
