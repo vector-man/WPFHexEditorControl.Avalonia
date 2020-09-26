@@ -5,7 +5,6 @@
 //////////////////////////////////////////////
 
 using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using WpfHexaEditor.Core;
@@ -50,6 +49,9 @@ namespace WpfHexaEditor
                     case DataVisualType.Decimal:
                         Text = Byte.Value.ToString("d3");
                         break;
+                    case DataVisualType.Binary:
+                        Text = Convert.ToString(Byte.Value, 2).PadLeft(8, '0');
+                        break;
                 }
             }
             else
@@ -66,6 +68,7 @@ namespace WpfHexaEditor
         {
             DataVisualType.Decimal => 25,
             DataVisualType.Hexadecimal => 20
+            , DataVisualType.Binary => 65
         };
 
         #endregion Methods
@@ -196,6 +199,8 @@ namespace WpfHexaEditor
 
                         #endregion
 
+                        break;
+                    case DataVisualType.Binary:
                         break;
                 }
 
