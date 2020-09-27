@@ -640,6 +640,18 @@ namespace WpfHexaEditor
             DependencyProperty.Register(nameof(ShowByteToolTip), typeof(bool), typeof(HexEditor),
                 new PropertyMetadata(false));
 
+        
+        /// <summary>
+        /// Get all bytes modified of the specified action
+        /// </summary>
+        /// <returns>Return byte modified of specified action. Return null if provider is closed</returns>
+        public IDictionary<long,ByteModified> GetByteModifieds(ByteAction act)
+        {
+            if (!CheckIsOpen(_provider)) return null;
+
+            return _provider.GetByteModifieds(act);
+        }
+
         #endregion Miscellaneous property/methods
 
         #region Data visual type support
