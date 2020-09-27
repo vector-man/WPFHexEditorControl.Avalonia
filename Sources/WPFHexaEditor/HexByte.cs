@@ -328,7 +328,7 @@ namespace WpfHexaEditor
                         _parent.FontStretch, _parent.Foreground, this);
 
                 _parent.SetCaretSize(Width / 2, size.Height);
-                _parent.SetCaretMode(CaretMode.Overwrite);
+                _parent.SetCaretMode(_parent.VisualCaretMode);
 
                 switch (_keyDownLabel)
                 {

@@ -375,7 +375,8 @@
                     DataStringVisual="Hexadecimal"
                     DefaultCopyToClipboardMode="HexaString"
                     ForegroundSecondColor="Blue"
-                    OffSetStringVisual="Hexadecimal" />
+                    OffSetStringVisual="Hexadecimal"
+                    VisualCaretMode="Overwrite" />
 
             </Grid>
 

@@ -4291,6 +4291,25 @@ namespace WpfHexaEditor
 
         #region Caret support
 
+        public CaretMode VisualCaretMode
+        {
+            get { return (CaretMode)GetValue(VisualCaretModeProperty); }
+            set { SetValue(VisualCaretModeProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for VisualCaretMode.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty VisualCaretModeProperty =
+            DependencyProperty.Register(nameof(VisualCaretMode), typeof(CaretMode), typeof(HexEditor),
+                new FrameworkPropertyMetadata(CaretMode.Insert, VisualCaretMode_Changed));
+
+        private static void VisualCaretMode_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is HexEditor ctrl)) return;
+                
+            ctrl.SetCaretMode((CaretMode)e.NewValue);
+            ctrl.RefreshView(true);
+        }
+
         /// <summary>
         /// Initialize the caret
         /// </summary>
