@@ -41,18 +41,66 @@ namespace WpfHexaEditor
         {
             if (Byte != null)
             {
-                switch (_parent.DataStringVisual)
+                byte value;
+                bool sign_positive = true;
+                string prefix = "";
+                switch (_parent.DataStringState)
                 {
-                    case DataVisualType.Hexadecimal:
-                        var chArr = ByteConverters.ByteToHexCharArray(Byte.Value);
-                        Text = new string(chArr);
+                    case DataVisualState.Default:
+                        value = Byte.Value;
                         break;
-                    case DataVisualType.Decimal:
-                        Text = Byte.Value.ToString("d3");
+                    case DataVisualState.Origin:
+                        value = OriginByte.Value;
                         break;
-                    case DataVisualType.Binary:
-                        Text = Convert.ToString(Byte.Value, 2).PadLeft(8, '0');
+                    case DataVisualState.Changes:
+                        if (Byte.Value.CompareTo(OriginByte.Value) < 0)
+                        {
+                            sign_positive = false;
+                            value = ((byte)(OriginByte.Value - Byte.Value));
+                        }
+                        else
+                            value = ((byte)(Byte.Value - OriginByte.Value));
+
                         break;
+                    case DataVisualState.ChangesPercent:
+                        prefix = "%";
+                        if (Byte.Value.CompareTo(OriginByte.Value) < 0)
+                        {
+                            sign_positive = false;
+                            value = (byte)((OriginByte.Value - Byte.Value) * 100 / byte.MaxValue);
+                        }
+                        else
+                            value = (byte)((Byte.Value - OriginByte.Value) * 100 / byte.MaxValue);
+
+                        break;
+                    default:
+                        goto case DataVisualState.Default;
+                }
+
+                if (_parent.DataStringState == DataVisualState.ChangesPercent)
+                {
+                    Text = (sign_positive ? "" : "-") + prefix +
+                                value.ToString("d2");
+                }
+                else
+                {
+
+                    switch (_parent.DataStringVisual)
+                    {
+                        case DataVisualType.Hexadecimal:
+                            var chArr = ByteConverters.ByteToHexCharArray(value);
+                            Text = (sign_positive ? "" : "-") + prefix +
+                                new string(chArr);
+                            break;
+                        case DataVisualType.Decimal:
+                            Text = (sign_positive ? "" : "-") + prefix +
+                                value.ToString("d3");
+                            break;
+                        case DataVisualType.Binary:
+                            Text = (sign_positive ? "" : "-") + prefix +
+                                Convert.ToString(value, 2).PadLeft(8, '0');
+                            break;
+                    }
                 }
             }
             else
@@ -66,12 +114,17 @@ namespace WpfHexaEditor
         }
 
         public void UpdateDataVisualWidth() => Width = _parent.DataStringVisual switch
-        {
-            DataVisualType.Decimal => 25,
-            DataVisualType.Hexadecimal => 20
-            ,
-            DataVisualType.Binary => 65
-        };
+            {
+                DataVisualType.Decimal => 
+                    _parent.DataStringState == DataVisualState.Changes ? 30 :
+                    _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 25,
+                DataVisualType.Hexadecimal => 
+                    _parent.DataStringState == DataVisualState.Changes ? 25 :
+                    _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 20,
+                DataVisualType.Binary => 
+                    _parent.DataStringState == DataVisualState.Changes ? 70 :
+                    _parent.DataStringState == DataVisualState.ChangesPercent ? 65 : 65
+            };
 
         #endregion Methods
 
@@ -226,49 +279,49 @@ namespace WpfHexaEditor
                                 byteValueCharArray_bin[0] = key.ToCharArray()[0];
                                 _keyDownLabel = KeyDownLabel.SecondChar;
                                 Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
                                 break;
 
                             case KeyDownLabel.SecondChar:
                                 byteValueCharArray_bin[1] = key.ToCharArray()[0];
                                 _keyDownLabel = KeyDownLabel.ThirdChar;
                                 Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
                                 break;
 
                             case KeyDownLabel.ThirdChar:
                                 byteValueCharArray_bin[2] = key.ToCharArray()[0];
                                 _keyDownLabel = KeyDownLabel.FourthChar;
                                 Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
                                 break;
 
                             case KeyDownLabel.FourthChar:
                                 byteValueCharArray_bin[3] = key.ToCharArray()[0];
                                 _keyDownLabel = KeyDownLabel.FifthChar;
                                 Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
                                 break;
 
                             case KeyDownLabel.FifthChar:
                                 byteValueCharArray_bin[4] = key.ToCharArray()[0];
                                 _keyDownLabel = KeyDownLabel.SixthChar;
                                 Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
                                 break;
 
                             case KeyDownLabel.SixthChar:
                                 byteValueCharArray_bin[5] = key.ToCharArray()[0];
                                 _keyDownLabel = KeyDownLabel.SeventhChar;
                                 Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
                                 break;
 
                             case KeyDownLabel.SeventhChar:
                                 byteValueCharArray_bin[6] = key.ToCharArray()[0];
                                 _keyDownLabel = KeyDownLabel.EighthChar;
                                 Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
+                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
                                 break;
 
                             case KeyDownLabel.EighthChar:
@@ -276,8 +329,8 @@ namespace WpfHexaEditor
                                 _keyDownLabel = KeyDownLabel.NextPosition;
 
                                 Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string( byteValueCharArray_bin), 2);
-                                
+                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
+
 
                                 //Insert byte at end of file
                                 if (_parent.Length != BytePositionInStream + 1)
