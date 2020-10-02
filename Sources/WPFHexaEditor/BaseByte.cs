@@ -27,6 +27,7 @@ namespace WpfHexaEditor
         private bool _isSelected;
         private ByteAction _action = ByteAction.Nothing;
         private byte? _byte;
+        private byte? _originByte;
         private bool _isHighLight;
         #endregion global class variables
 
@@ -150,6 +151,15 @@ namespace WpfHexaEditor
                 _isHighLight = value;
                 UpdateVisual();
             }
+        }
+
+        public byte? OriginByte {
+            get => _originByte; 
+            set
+            {
+                _originByte = value;
+                Byte = value;
+            } 
         }
 
         /// <summary>
@@ -324,7 +334,7 @@ namespace WpfHexaEditor
         {
             InternalChange = true;
             BytePositionInStream = -1;
-            Byte = null;
+            OriginByte = null;
             Action = ByteAction.Nothing;
             IsSelected = false;
             InternalChange = false;

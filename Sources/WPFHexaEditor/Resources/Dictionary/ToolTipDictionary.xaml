@@ -51,6 +51,7 @@
                     Content="{x:Static p:Resources.ByteActionString}"
                     FontWeight="Bold" />
                 <Label Content="{Binding Action, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Content="{Binding OriginByte, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
             <Separator />
             <StackPanel Orientation="Horizontal">

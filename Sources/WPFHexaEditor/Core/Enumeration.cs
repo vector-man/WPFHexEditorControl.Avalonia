@@ -182,7 +182,19 @@ namespace WpfHexaEditor.Core
     {
         Hexadecimal,    //Editable
         Decimal         //editable
-        , Binary        //Not Editable
+        , Binary        //Editable
+    }
+
+    /// <summary>
+    /// Used with the view mode of HexByte, header or position.
+    /// 
+    /// </summary>
+    public enum DataVisualState
+    {
+        Default,
+        Origin,
+        Changes,
+        ChangesPercent
     }
 
     /// <summary>

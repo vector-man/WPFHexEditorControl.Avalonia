@@ -652,6 +652,7 @@ namespace WpfHexaEditor
             return _provider.GetByteModifieds(act);
         }
 
+        public (byte? singleByte, bool succes) GetByte(long position, bool copyChange = true) => _provider.GetByte(position, copyChange);
         #endregion Miscellaneous property/methods
 
         #region Data visual type support
@@ -675,6 +676,29 @@ namespace WpfHexaEditor
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateLinesInfo();
+        }
+
+        public DataVisualState DataStringState { 
+            get => (DataVisualState)GetValue(OffSetDataStringStateProperty); 
+            set => SetValue(OffSetDataStringStateProperty, value);
+        }
+
+        public static readonly DependencyProperty OffSetDataStringStateProperty =
+           DependencyProperty.Register(nameof(DataStringState), typeof(DataVisualState), typeof(HexEditor),
+               new FrameworkPropertyMetadata(DataVisualState.Default, DataStringVisualStateProperty_PropertyChanged));
+
+        private static void DataStringVisualStateProperty_PropertyChanged(DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+
+            ctrl.UpdateHeader(true);
+
+            ctrl.TraverseHexBytes(hctrl =>
+            {
+                hctrl.UpdateDataVisualWidth();
+                hctrl.UpdateTextRenderFromByte();
+            });
         }
 
         /// <summary>
@@ -2719,7 +2743,7 @@ namespace WpfHexaEditor
 
                     if (index < readSize && _priLevel == curLevel)
                     {
-                        ctrl.Byte = _viewBuffer[index];
+                        ctrl.OriginByte = _viewBuffer[index];
                         ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
 
                         if (AllowVisualByteAddress && nextPos > VisualByteAdressStop)
@@ -2755,7 +2779,7 @@ namespace WpfHexaEditor
 
                     if (index < readSize)
                     {
-                        ctrl.Byte = _viewBuffer[index];
+                        ctrl.OriginByte = _viewBuffer[index];
                         ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
                         ctrl.ByteNext = index < readSize - 1 ? (byte?)_viewBuffer[index + 1] : null;
 
@@ -2878,18 +2902,23 @@ namespace WpfHexaEditor
                 {
                     case DataVisualType.Hexadecimal:
                         headerLabel.Text = ByteToHex((byte)i);
-                        headerLabel.Width = 20;
+                        headerLabel.Width = 
+                            DataStringState == DataVisualState.Changes ? 25 :
+                            DataStringState == DataVisualState.ChangesPercent ? 35 : 20;
                         break;
                     case DataVisualType.Decimal:
                         headerLabel.Text = i.ToString("d3");
-                        headerLabel.Width = 25;
+                        headerLabel.Width =
+                            DataStringState == DataVisualState.Changes ? 30 :
+                            DataStringState == DataVisualState.ChangesPercent ? 35 : 25;
                         break;
                     case DataVisualType.Binary:
                         headerLabel.Text = Convert.ToString(i, 2).PadLeft(8, '0');
-                        headerLabel.Width = 65;
+                        headerLabel.Width =
+                            DataStringState == DataVisualState.Changes ? 70 :
+                            DataStringState == DataVisualState.ChangesPercent ? 65 : 65;
                         break;
                 }
-
                 #endregion
 
                 //Add to stackpanel
