@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2019
+// Apache 2.0  - 2016-2020
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
@@ -640,12 +640,12 @@ namespace WpfHexaEditor
             DependencyProperty.Register(nameof(ShowByteToolTip), typeof(bool), typeof(HexEditor),
                 new PropertyMetadata(false));
 
-        
+
         /// <summary>
         /// Get all bytes modified of the specified action
         /// </summary>
         /// <returns>Return byte modified of specified action. Return null if provider is closed</returns>
-        public IDictionary<long,ByteModified> GetByteModifieds(ByteAction act)
+        public IDictionary<long, ByteModified> GetByteModifieds(ByteAction act)
         {
             if (!CheckIsOpen(_provider)) return null;
 
@@ -670,16 +670,19 @@ namespace WpfHexaEditor
             DependencyProperty.Register(nameof(OffSetStringVisual), typeof(DataVisualType), typeof(HexEditor),
                 new FrameworkPropertyMetadata(DataVisualType.Hexadecimal, DataVisualTypeProperty_PropertyChanged));
 
-        private static void DataVisualTypeProperty_PropertyChanged(DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
+        private static void DataVisualTypeProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateLinesInfo();
         }
 
-        public DataVisualState DataStringState { 
-            get => (DataVisualState)GetValue(OffSetDataStringStateProperty); 
+        /// <summary>
+        /// Visually change de state of the byte
+        /// </summary>
+        public DataVisualState DataStringState
+        {
+            get => (DataVisualState)GetValue(OffSetDataStringStateProperty);
             set => SetValue(OffSetDataStringStateProperty, value);
         }
 
@@ -687,8 +690,7 @@ namespace WpfHexaEditor
            DependencyProperty.Register(nameof(DataStringState), typeof(DataVisualState), typeof(HexEditor),
                new FrameworkPropertyMetadata(DataVisualState.Default, DataStringVisualStateProperty_PropertyChanged));
 
-        private static void DataStringVisualStateProperty_PropertyChanged(DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
+        private static void DataStringVisualStateProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
 
@@ -714,8 +716,7 @@ namespace WpfHexaEditor
             DependencyProperty.Register(nameof(DataStringVisual), typeof(DataVisualType), typeof(HexEditor),
                 new FrameworkPropertyMetadata(DataVisualType.Hexadecimal, DataStringVisualTypeProperty_PropertyChanged));
 
-        private static void DataStringVisualTypeProperty_PropertyChanged(DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
+        private static void DataStringVisualTypeProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
 
@@ -1977,16 +1978,16 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// Set the MemoryStream are used by ByteProvider
+        /// Set the Stream are used by ByteProvider
         /// </summary>
-        public MemoryStream Stream
+        public Stream Stream
         {
-            get => (MemoryStream)GetValue(StreamProperty);
+            get => (Stream)GetValue(StreamProperty);
             set => SetValue(StreamProperty, value);
         }
 
         public static readonly DependencyProperty StreamProperty =
-            DependencyProperty.Register(nameof(Stream), typeof(MemoryStream), typeof(HexEditor),
+            DependencyProperty.Register(nameof(Stream), typeof(Stream), typeof(HexEditor),
                 new FrameworkPropertyMetadata(null,
                     Stream_PropertyChanged));
 
@@ -1995,7 +1996,7 @@ namespace WpfHexaEditor
             if (!(d is HexEditor ctrl)) return;
 
             ctrl.CloseProvider();
-            ctrl.OpenStream((MemoryStream)e.NewValue);
+            ctrl.OpenStream((Stream)e.NewValue);
         }
 
         /// <summary>
@@ -2101,7 +2102,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Open stream
         /// </summary>
-        private void OpenStream(MemoryStream stream)
+        private void OpenStream(Stream stream)
         {
             if (!stream.CanRead) return;
 
@@ -2443,7 +2444,7 @@ namespace WpfHexaEditor
                 c.Visibility = Visibility.Collapsed;
 
                 if (!CheckIsOpen(_provider)) return;
-                
+
                 c.Visibility = Visibility.Visible;
                 c.SmallChange = 1;
                 c.LargeChange = ScrollLargeChange;
@@ -2902,7 +2903,7 @@ namespace WpfHexaEditor
                 {
                     case DataVisualType.Hexadecimal:
                         headerLabel.Text = ByteToHex((byte)i);
-                        headerLabel.Width = 
+                        headerLabel.Width =
                             DataStringState == DataVisualState.Changes ? 25 :
                             DataStringState == DataVisualState.ChangesPercent ? 35 : 20;
                         break;
@@ -3307,7 +3308,7 @@ namespace WpfHexaEditor
 
                     SetScrollMarker(position, ScrollMarker.SearchHighLight);
                 }
-                
+
                 UnSelectAll();
                 UpdateHighLight();
 
@@ -4346,7 +4347,7 @@ namespace WpfHexaEditor
         private static void VisualCaretMode_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is HexEditor ctrl)) return;
-                
+
             ctrl.SetCaretMode((CaretMode)e.NewValue);
             ctrl.RefreshView(true);
         }
@@ -4530,7 +4531,7 @@ namespace WpfHexaEditor
         {
             if (!CheckIsOpen(_provider)) return;
             if (!File.Exists(filename)) return;
-            
+
             SetState(XDocument.Load(filename));
         }
 
@@ -4619,7 +4620,7 @@ namespace WpfHexaEditor
                             new XAttribute("Filename", _tblCharacterTable.FileName),
                             new XAttribute("Data", _tblCharacterTable.ToString())));
             #endregion
-                        
+
             return doc;
         }
 
@@ -4650,7 +4651,7 @@ namespace WpfHexaEditor
 
                             #region Set action
 
-                            bm.Action = at.Value switch 
+                            bm.Action = at.Value switch
                             {
                                 "Modified" => ByteAction.Modified,
                                 "Deleted" => ByteAction.Deleted,

@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2019
+// Apache 2.0  - 2016-2020
 // Base author  : Derek Tremblay (derektremblay666@gmail.com)
 // Contributor  : emes30
 //////////////////////////////////////////////
@@ -153,13 +153,14 @@ namespace WpfHexaEditor
             }
         }
 
-        public byte? OriginByte {
-            get => _originByte; 
+        public byte? OriginByte
+        {
+            get => _originByte;
             set
             {
                 _originByte = value;
                 Byte = value;
-            } 
+            }
         }
 
         /// <summary>

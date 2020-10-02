@@ -187,7 +187,6 @@ namespace WpfHexaEditor.Core
 
     /// <summary>
     /// Used with the view mode of HexByte, header or position.
-    /// 
     /// </summary>
     public enum DataVisualState
     {
