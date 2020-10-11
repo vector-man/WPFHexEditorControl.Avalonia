@@ -376,6 +376,7 @@
                     DefaultCopyToClipboardMode="HexaString"
                     ForegroundSecondColor="Blue"
                     OffSetStringVisual="Hexadecimal"
+                    ReadOnlyMode="{Binding IsChecked, ElementName=SetReadOnlyMenu, UpdateSourceTrigger=PropertyChanged}"
                     VisualCaretMode="Overwrite" />
 
             </Grid>
