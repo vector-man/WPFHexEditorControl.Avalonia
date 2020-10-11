@@ -1489,7 +1489,7 @@ namespace WpfHexaEditor
         /// </summary>
         public void FillWithByte(long startPosition, long length, byte val)
         {
-            if (!CheckIsOpen(_provider) || (startPosition <= -1 || length <= 0)) return;
+            if (!CheckIsOpen(_provider) || startPosition <= -1 || length <= 0) return;
 
             _provider.FillWithByte(startPosition, length, val);
             SetScrollMarker(SelectionStart, ScrollMarker.ByteModified, Properties.Resources.FillSelectionAloneString);

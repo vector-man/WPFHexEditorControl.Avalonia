@@ -42,8 +42,9 @@ namespace WpfHexaEditor
             if (Byte != null)
             {
                 byte value;
-                bool sign_positive = true;
-                string prefix = "";
+                var sign_positive = true;
+                var prefix = "";
+
                 switch (_parent.DataStringState)
                 {
                     case DataVisualState.Default:
@@ -56,10 +57,10 @@ namespace WpfHexaEditor
                         if (Byte.Value.CompareTo(OriginByte.Value) < 0)
                         {
                             sign_positive = false;
-                            value = ((byte)(OriginByte.Value - Byte.Value));
+                            value = (byte)(OriginByte.Value - Byte.Value);
                         }
                         else
-                            value = ((byte)(Byte.Value - OriginByte.Value));
+                            value = (byte)(Byte.Value - OriginByte.Value);
 
                         break;
                     case DataVisualState.ChangesPercent:
@@ -78,27 +79,20 @@ namespace WpfHexaEditor
                 }
 
                 if (_parent.DataStringState == DataVisualState.ChangesPercent)
-                {
-                    Text = (sign_positive ? "" : "-") + prefix +
-                                value.ToString("d2");
-                }
+                    Text = $"{(sign_positive ? "" : "-")}{prefix}{value:d2}";
                 else
                 {
-
                     switch (_parent.DataStringVisual)
                     {
                         case DataVisualType.Hexadecimal:
                             var chArr = ByteConverters.ByteToHexCharArray(value);
-                            Text = (sign_positive ? "" : "-") + prefix +
-                                new string(chArr);
+                            Text = $"{(sign_positive ? "" : "-")}{prefix}{new string(chArr)}";
                             break;
                         case DataVisualType.Decimal:
-                            Text = (sign_positive ? "" : "-") + prefix +
-                                value.ToString("d3");
+                            Text = $"{(sign_positive ? "" : "-")}{prefix}{value:d3}";
                             break;
                         case DataVisualType.Binary:
-                            Text = (sign_positive ? "" : "-") + prefix +
-                                Convert.ToString(value, 2).PadLeft(8, '0');
+                            Text = $"{(sign_positive ? "" : "-")}{prefix}{Convert.ToString(value, 2).PadLeft(8, '0')}";
                             break;
                     }
                 }
@@ -116,14 +110,25 @@ namespace WpfHexaEditor
         public void UpdateDataVisualWidth() => Width = _parent.DataStringVisual switch
             {
                 DataVisualType.Decimal => 
-                    _parent.DataStringState == DataVisualState.Changes ? 30 :
-                    _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 25,
+                    _parent.DataStringState == DataVisualState.Changes 
+                        ? 30 
+                        : _parent.DataStringState == DataVisualState.ChangesPercent 
+                            ? 35 
+                            : 25,
+
                 DataVisualType.Hexadecimal => 
-                    _parent.DataStringState == DataVisualState.Changes ? 25 :
-                    _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 20,
+                    _parent.DataStringState == DataVisualState.Changes 
+                        ? 25 
+                        : _parent.DataStringState == DataVisualState.ChangesPercent 
+                            ? 35 
+                            : 20,
+
                 DataVisualType.Binary => 
-                    _parent.DataStringState == DataVisualState.Changes ? 70 :
-                    _parent.DataStringState == DataVisualState.ChangesPercent ? 65 : 65
+                    _parent.DataStringState == DataVisualState.Changes 
+                        ? 70 
+                        : _parent.DataStringState == DataVisualState.ChangesPercent 
+                            ? 65 
+                            : 65
             };
 
         #endregion Methods
@@ -210,7 +215,7 @@ namespace WpfHexaEditor
                             : 0.ToString();
 
                         //Update byte
-                        Char[] byteValueCharArray_dec = Byte.Value.ToString("d3").ToCharArray();
+                        char[] byteValueCharArray_dec = Byte.Value.ToString("d3").ToCharArray();
                         switch (_keyDownLabel)
                         {
                             case KeyDownLabel.FirstChar:
@@ -259,20 +264,19 @@ namespace WpfHexaEditor
 
                         #region Edit Binary value 
 
-                        if (!KeyValidator.IsNumericKey(e.Key)
-                            || KeyValidator.GetDigitFromKey(e.Key) > 1)
-                        {
+                        if (!KeyValidator.IsNumericKey(e.Key) || KeyValidator.GetDigitFromKey(e.Key) > 1)
                             break;
-                        }
+                        
                         key = KeyValidator.IsNumericKey(e.Key)
                             ? KeyValidator.GetDigitFromKey(e.Key).ToString()
                             : 0.ToString();
 
                         //Update byte
-                        Char[] byteValueCharArray_bin = Convert
+                        char[] byteValueCharArray_bin = Convert
                             .ToString(Byte.Value, 2)
                             .PadLeft(8, '0')
                             .ToCharArray();
+
                         switch (_keyDownLabel)
                         {
                             case KeyDownLabel.FirstChar:
