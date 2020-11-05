@@ -1996,7 +1996,8 @@ namespace WpfHexaEditor
             if (!(d is HexEditor ctrl)) return;
 
             ctrl.CloseProvider();
-            ctrl.OpenStream((Stream)e.NewValue);
+            if (e.NewValue != null)
+                ctrl.OpenStream((Stream)e.NewValue);
         }
 
         /// <summary>
