@@ -3672,7 +3672,7 @@ namespace WpfHexaEditor
 
             #region Set position in scrollbar
 
-            var topPosition =
+            var topPosition = (VerticalScrollBar.Track == null) ? double.NaN :
                 (GetLineNumber(bookMark.BytePositionInStream) * VerticalScrollBar.Track.TickHeight(MaxLine) - 1).Round(1);
 
             if (double.IsNaN(topPosition))
