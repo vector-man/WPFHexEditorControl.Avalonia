@@ -5,6 +5,7 @@
 //////////////////////////////////////////////
 
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -72,12 +73,12 @@ namespace WpfHexaEditor
         /// </summary>
         public override void UpdateTextRenderFromByte()
         {
-            if (Byte != null)
+            if (Byte != null )
             {
                 switch (TypeOfCharacterTable)
                 {
                     case CharacterTableType.Ascii:
-                        Text = ByteConverters.ByteToChar(Byte.Value).ToString();
+                        Text = ByteConverters.ByteToChar(Byte.Byte[0]).ToString();//[change]
                         break;
                     case CharacterTableType.TblFile:
                         if (TblCharacterTable != null)
@@ -87,11 +88,11 @@ namespace WpfHexaEditor
                             var content = "#";
 
                             if (TblShowMte && ByteNext.HasValue)
-                                content = TblCharacterTable.FindMatch(ByteConverters.ByteToHex(Byte.Value) +
+                                content = TblCharacterTable.FindMatch(ByteConverters.ByteToHex(Byte.Byte[0]) + //[change]
                                                                       ByteConverters.ByteToHex(ByteNext.Value), true);
 
                             if (content == "#")
-                                content = TblCharacterTable.FindMatch(ByteConverters.ByteToHex(Byte.Value), true);
+                                content = TblCharacterTable.FindMatch(ByteConverters.ByteToHex(Byte.Byte[0]), true); //[change]
 
                             Text = content;
                         }
@@ -245,7 +246,7 @@ namespace WpfHexaEditor
                 if (isok)
                 {
                     Action = ByteAction.Modified;
-                    Byte = ByteConverters.CharToByte(Text[0]);
+                    Byte.Byte = new List<byte> { ByteConverters.CharToByte(Text[0]) };//[change]
 
                     //Insert byte at end of file
                     if (_parent.Length == BytePositionInStream + 1)

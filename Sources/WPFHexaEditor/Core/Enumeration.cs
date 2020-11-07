@@ -69,14 +69,36 @@ namespace WpfHexaEditor.Core
     {
         FirstChar,
         SecondChar,
-
         ThirdChar,
-
         FourthChar,
         FifthChar,
         SixthChar,
         SeventhChar,
         EighthChar,
+        Ninth,
+        Tenth,
+        Eleventh,
+        Twelfth,
+        Thirteenth,
+        Fourteenth,
+        Fifteenth,
+        Sixteenth,
+        Seventeenth,
+        Eighteenth,
+        Ninteenth,
+        Twentieth,
+        TwentyFirst,
+        TwentySecond,
+        TwentyThird,
+        TwentyFourth,
+        TwentyFifth,
+        TwentySixth,
+        TwentySeventh,
+        TwentyEighth,
+        TwentyNinth,
+        Thirtieth,
+        ThirtyFirst,
+        ThirtySecond,
         NextPosition
     }
 
@@ -195,6 +217,13 @@ namespace WpfHexaEditor.Core
         Origin,
         Changes,
         ChangesPercent
+    }
+
+    public enum ByteSizeType
+    {
+        Bit8,       // editable   
+        Bit16,      // editable
+        Bit32       // not editable
     }
 
     /// <summary>

@@ -5,6 +5,7 @@
 //////////////////////////////////////////////
 
 using System;
+using System.Collections.Generic;
 
 namespace WpfHexaEditor.Core.Interfaces
 {
@@ -17,7 +18,7 @@ namespace WpfHexaEditor.Core.Interfaces
         //Properties
         long BytePositionInStream { get; set; }
         ByteAction Action { get; set; }
-        byte? Byte { get; set; }
+        IByte Byte { get; set; }
         bool IsHighLight { get; set; }
         bool IsSelected { get; set; }
         bool InternalChange { get; set; }
@@ -29,7 +30,7 @@ namespace WpfHexaEditor.Core.Interfaces
         void Clear();
 
         //Events
-        event EventHandler ByteModified;
+        event EventHandler<ByteEventArgs> ByteModified;
         event EventHandler MouseSelection;
         event EventHandler Click;
         event EventHandler DoubleClick;

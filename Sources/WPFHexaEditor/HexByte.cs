@@ -5,6 +5,7 @@
 //////////////////////////////////////////////
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -41,67 +42,7 @@ namespace WpfHexaEditor
         {
             if (Byte != null)
             {
-                byte value;
-                bool sign_positive = true;
-                string prefix = "";
-                switch (_parent.DataStringState)
-                {
-                    case DataVisualState.Default:
-                        value = Byte.Value;
-                        break;
-                    case DataVisualState.Origin:
-                        value = OriginByte.Value;
-                        break;
-                    case DataVisualState.Changes:
-                        if (Byte.Value.CompareTo(OriginByte.Value) < 0)
-                        {
-                            sign_positive = false;
-                            value = ((byte)(OriginByte.Value - Byte.Value));
-                        }
-                        else
-                            value = ((byte)(Byte.Value - OriginByte.Value));
-
-                        break;
-                    case DataVisualState.ChangesPercent:
-                        prefix = "%";
-                        if (Byte.Value.CompareTo(OriginByte.Value) < 0)
-                        {
-                            sign_positive = false;
-                            value = (byte)((OriginByte.Value - Byte.Value) * 100 / byte.MaxValue);
-                        }
-                        else
-                            value = (byte)((Byte.Value - OriginByte.Value) * 100 / byte.MaxValue);
-
-                        break;
-                    default:
-                        goto case DataVisualState.Default;
-                }
-
-                if (_parent.DataStringState == DataVisualState.ChangesPercent)
-                {
-                    Text = (sign_positive ? "" : "-") + prefix +
-                                value.ToString("d2");
-                }
-                else
-                {
-
-                    switch (_parent.DataStringVisual)
-                    {
-                        case DataVisualType.Hexadecimal:
-                            var chArr = ByteConverters.ByteToHexCharArray(value);
-                            Text = (sign_positive ? "" : "-") + prefix +
-                                new string(chArr);
-                            break;
-                        case DataVisualType.Decimal:
-                            Text = (sign_positive ? "" : "-") + prefix +
-                                value.ToString("d3");
-                            break;
-                        case DataVisualType.Binary:
-                            Text = (sign_positive ? "" : "-") + prefix +
-                                Convert.ToString(value, 2).PadLeft(8, '0');
-                            break;
-                    }
-                }
+                Text = Byte.GetText(_parent.DataStringVisual, _parent.DataStringState);
             }
             else
                 Text = string.Empty;
@@ -113,22 +54,85 @@ namespace WpfHexaEditor
             _keyDownLabel = KeyDownLabel.FirstChar;
         }
 
-        public void UpdateDataVisualWidth() => Width = _parent.DataStringVisual switch
+        public void UpdateDataVisualWidth()
+        {
+            Width = CalculateCellWidth(_parent.ByteSize, _parent.DataStringVisual, _parent.DataStringState);
+            // _parent.ByteSize switch
+            //{
+            //    ByteSizeType.Bit8 => _parent.DataStringVisual switch
+            //    {
+            //        DataVisualType.Decimal =>
+            //            _parent.DataStringState == DataVisualState.Changes ? 30 :
+            //            _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 25,
+            //        DataVisualType.Hexadecimal =>
+            //            _parent.DataStringState == DataVisualState.Changes ? 25 :
+            //            _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 20,
+            //        DataVisualType.Binary =>
+            //            _parent.DataStringState == DataVisualState.Changes ? 70 :
+            //            _parent.DataStringState == DataVisualState.ChangesPercent ? 65 : 65
+            //    },
+            //    ByteSizeType.Bit16 => _parent.DataStringVisual switch
+            //    {
+            //        DataVisualType.Decimal =>
+            //            _parent.DataStringState == DataVisualState.Changes ? 30 :
+            //            _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 40,
+            //        DataVisualType.Hexadecimal =>
+            //            _parent.DataStringState == DataVisualState.Changes ? 25 :
+            //            _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 40,
+            //        DataVisualType.Binary =>
+            //            _parent.DataStringState == DataVisualState.Changes ? 70 :
+            //            _parent.DataStringState == DataVisualState.ChangesPercent ? 65 : 100
+            //    },
+            //};
+        }
+        public static int CalculateCellWidth(ByteSizeType byteSize, DataVisualType type, DataVisualState state)
+        { 
+            var Width = byteSize switch
             {
-                DataVisualType.Decimal => 
-                    _parent.DataStringState == DataVisualState.Changes ? 30 :
-                    _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 25,
-                DataVisualType.Hexadecimal => 
-                    _parent.DataStringState == DataVisualState.Changes ? 25 :
-                    _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 20,
-                DataVisualType.Binary => 
-                    _parent.DataStringState == DataVisualState.Changes ? 70 :
-                    _parent.DataStringState == DataVisualState.ChangesPercent ? 65 : 65
+                ByteSizeType.Bit8 => type switch
+                {
+                    DataVisualType.Decimal =>
+                        state == DataVisualState.Changes ? 30 :
+                        state == DataVisualState.ChangesPercent ? 35 : 25,
+                    DataVisualType.Hexadecimal =>
+                        state == DataVisualState.Changes ? 25 :
+                        state == DataVisualState.ChangesPercent ? 35 : 20,
+                    DataVisualType.Binary =>
+                        state == DataVisualState.Changes ? 70 :
+                        state == DataVisualState.ChangesPercent ? 65 : 65
+                },
+                ByteSizeType.Bit16 => type switch
+                {
+                    DataVisualType.Decimal =>
+                        state == DataVisualState.Changes ? 30 :
+                        state == DataVisualState.ChangesPercent ? 35 : 40,
+                    DataVisualType.Hexadecimal =>
+                        state == DataVisualState.Changes ? 40 :
+                        state == DataVisualState.ChangesPercent ? 35 : 40,
+                    DataVisualType.Binary =>
+                        state == DataVisualState.Changes ? 70 :
+                        state == DataVisualState.ChangesPercent ? 65 : 120
+                },
+                ByteSizeType.Bit32 => type switch
+                {
+                    DataVisualType.Decimal =>
+                        state == DataVisualState.Changes ? 80 :
+                        state == DataVisualState.ChangesPercent ? 35 : 80,
+                    DataVisualType.Hexadecimal =>
+                        state == DataVisualState.Changes ? 70 :
+                        state == DataVisualState.ChangesPercent ? 35 : 70,
+                    DataVisualType.Binary =>
+                        state == DataVisualState.Changes ? 220 :
+                        state == DataVisualState.ChangesPercent ? 65 : 220
+                },
             };
+            return Width;
+
+        }
 
         #endregion Methods
 
-        #region Events delegate
+            #region Events delegate
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
@@ -150,208 +154,26 @@ namespace WpfHexaEditor
 
             //MODIFY BYTE
             if (!ReadOnlyMode && KeyValidator.IsHexKey(e.Key))
-                switch (_parent.DataStringVisual)
+            {
+
+                if (_keyDownLabel == KeyDownLabel.NextPosition)
                 {
-                    case DataVisualType.Hexadecimal:
-
-                        #region Edit hexadecimal value 
-
-                        var key = KeyValidator.IsNumericKey(e.Key)
-                            ? KeyValidator.GetDigitFromKey(e.Key).ToString()
-                            : e.Key.ToString().ToLower();
-
-                        //Update byte
-                        var byteValueCharArray = ByteConverters.ByteToHexCharArray(Byte.Value);
-                        switch (_keyDownLabel)
-                        {
-                            case KeyDownLabel.FirstChar:
-                                byteValueCharArray[0] = key.ToCharArray()[0];
-                                _keyDownLabel = KeyDownLabel.SecondChar;
-                                Action = ByteAction.Modified;
-                                Byte = ByteConverters.HexToByte(
-                                    byteValueCharArray[0] + byteValueCharArray[1].ToString())[0];
-                                break;
-                            case KeyDownLabel.SecondChar:
-                                byteValueCharArray[1] = key.ToCharArray()[0];
-                                _keyDownLabel = KeyDownLabel.NextPosition;
-
-                                Action = ByteAction.Modified;
-                                Byte = ByteConverters.HexToByte(
-                                    byteValueCharArray[0] + byteValueCharArray[1].ToString())[0];
-
-                                //Insert byte at end of file
-                                if (_parent.Length != BytePositionInStream + 1)
-                                {
-                                    _keyDownLabel = KeyDownLabel.NextPosition;
-                                    OnMoveNext(new EventArgs());
-                                }
-                                break;
-                            case KeyDownLabel.NextPosition:
-                                _parent.AppendByte(new byte[] { 0 });
-
-                                OnMoveNext(new EventArgs());
-
-                                break;
-                        }
-
-                        #endregion
-
-                        break;
-                    case DataVisualType.Decimal:
-
-                        #region Edit decimal value 
-
-                        if (!KeyValidator.IsNumericKey(e.Key))
-                        {
-                            break;
-                        }
-                        key = KeyValidator.IsNumericKey(e.Key)
-                            ? KeyValidator.GetDigitFromKey(e.Key).ToString()
-                            : 0.ToString();
-
-                        //Update byte
-                        Char[] byteValueCharArray_dec = Byte.Value.ToString("d3").ToCharArray();
-                        switch (_keyDownLabel)
-                        {
-                            case KeyDownLabel.FirstChar:
-                                byteValueCharArray_dec[0] = key.ToCharArray()[0];
-                                if (int.Parse(new string(byteValueCharArray_dec)) > 255) break;
-                                _keyDownLabel = KeyDownLabel.SecondChar;
-                                Action = ByteAction.Modified;
-                                Byte = BitConverter.GetBytes(int.Parse(new string(byteValueCharArray_dec)))[0];
-                                break;
-
-                            case KeyDownLabel.SecondChar:
-                                byteValueCharArray_dec[1] = key.ToCharArray()[0];
-                                if (int.Parse(new string(byteValueCharArray_dec)) > 255) break;
-                                _keyDownLabel = KeyDownLabel.ThirdChar;
-                                Action = ByteAction.Modified;
-                                Byte = BitConverter.GetBytes(int.Parse(new string(byteValueCharArray_dec)))[0];
-                                break;
-
-                            case KeyDownLabel.ThirdChar:
-                                byteValueCharArray_dec[2] = key.ToCharArray()[0];
-                                if (int.Parse(new string(byteValueCharArray_dec)) > 255) break;
-                                _keyDownLabel = KeyDownLabel.NextPosition;
-
-                                Action = ByteAction.Modified;
-                                Byte = BitConverter.GetBytes(int.Parse(new string(byteValueCharArray_dec)))[0];
-
-                                //Insert byte at end of file
-                                if (_parent.Length != BytePositionInStream + 1)
-                                {
-                                    _keyDownLabel = KeyDownLabel.NextPosition;
-                                    OnMoveNext(new EventArgs());
-                                }
-                                break;
-                            case KeyDownLabel.NextPosition:
-                                _parent.AppendByte(new byte[] { 0 });
-
-                                OnMoveNext(new EventArgs());
-
-                                break;
-                        }
-
-                        #endregion
-
-                        break;
-                    case DataVisualType.Binary:
-
-                        #region Edit Binary value 
-
-                        if (!KeyValidator.IsNumericKey(e.Key)
-                            || KeyValidator.GetDigitFromKey(e.Key) > 1)
-                        {
-                            break;
-                        }
-                        key = KeyValidator.IsNumericKey(e.Key)
-                            ? KeyValidator.GetDigitFromKey(e.Key).ToString()
-                            : 0.ToString();
-
-                        //Update byte
-                        Char[] byteValueCharArray_bin = Convert
-                            .ToString(Byte.Value, 2)
-                            .PadLeft(8, '0')
-                            .ToCharArray();
-                        switch (_keyDownLabel)
-                        {
-                            case KeyDownLabel.FirstChar:
-                                byteValueCharArray_bin[0] = key.ToCharArray()[0];
-                                _keyDownLabel = KeyDownLabel.SecondChar;
-                                Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
-                                break;
-
-                            case KeyDownLabel.SecondChar:
-                                byteValueCharArray_bin[1] = key.ToCharArray()[0];
-                                _keyDownLabel = KeyDownLabel.ThirdChar;
-                                Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
-                                break;
-
-                            case KeyDownLabel.ThirdChar:
-                                byteValueCharArray_bin[2] = key.ToCharArray()[0];
-                                _keyDownLabel = KeyDownLabel.FourthChar;
-                                Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
-                                break;
-
-                            case KeyDownLabel.FourthChar:
-                                byteValueCharArray_bin[3] = key.ToCharArray()[0];
-                                _keyDownLabel = KeyDownLabel.FifthChar;
-                                Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
-                                break;
-
-                            case KeyDownLabel.FifthChar:
-                                byteValueCharArray_bin[4] = key.ToCharArray()[0];
-                                _keyDownLabel = KeyDownLabel.SixthChar;
-                                Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
-                                break;
-
-                            case KeyDownLabel.SixthChar:
-                                byteValueCharArray_bin[5] = key.ToCharArray()[0];
-                                _keyDownLabel = KeyDownLabel.SeventhChar;
-                                Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
-                                break;
-
-                            case KeyDownLabel.SeventhChar:
-                                byteValueCharArray_bin[6] = key.ToCharArray()[0];
-                                _keyDownLabel = KeyDownLabel.EighthChar;
-                                Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
-                                break;
-
-                            case KeyDownLabel.EighthChar:
-                                byteValueCharArray_bin[7] = key.ToCharArray()[0];
-                                _keyDownLabel = KeyDownLabel.NextPosition;
-
-                                Action = ByteAction.Modified;
-                                Byte = Convert.ToByte(new string(byteValueCharArray_bin), 2);
-
-
-                                //Insert byte at end of file
-                                if (_parent.Length != BytePositionInStream + 1)
-                                {
-                                    _keyDownLabel = KeyDownLabel.NextPosition;
-                                    OnMoveNext(new EventArgs());
-                                }
-                                break;
-                            case KeyDownLabel.NextPosition:
-                                _parent.AppendByte(new byte[] { 0 });
-
-                                OnMoveNext(new EventArgs());
-
-                                break;
-                        }
-
-                        #endregion
-
-                        break;
+                    _parent.AppendByte(new byte[] { 0 });
+                    OnMoveNext(new EventArgs());
                 }
+                else
+                {
 
+                    bool isEndChar;
+                    (Action, isEndChar) = Byte.Update(_parent.DataStringVisual, e.Key, ref _keyDownLabel);
+                    if (isEndChar && _parent.Length != BytePositionInStream + 1)
+                    {
+                        _keyDownLabel = KeyDownLabel.NextPosition;
+                        OnMoveNext(new EventArgs());
+                    }
+                }
+                UpdateTextRenderFromByte();
+            }
             UpdateCaret();
 
             base.OnKeyDown(e);
