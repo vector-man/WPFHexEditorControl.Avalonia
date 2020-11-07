@@ -78,7 +78,7 @@ namespace WpfHexaEditor
                 switch (TypeOfCharacterTable)
                 {
                     case CharacterTableType.Ascii:
-                        Text = ByteConverters.ByteToChar(Byte.Byte[0]).ToString();//[change]
+                        Text = ByteConverters.ByteToChar(Byte.Byte[0]).ToString();
                         break;
                     case CharacterTableType.TblFile:
                         if (TblCharacterTable != null)
@@ -88,11 +88,11 @@ namespace WpfHexaEditor
                             var content = "#";
 
                             if (TblShowMte && ByteNext.HasValue)
-                                content = TblCharacterTable.FindMatch(ByteConverters.ByteToHex(Byte.Byte[0]) + //[change]
+                                content = TblCharacterTable.FindMatch(ByteConverters.ByteToHex(Byte.Byte[0]) +
                                                                       ByteConverters.ByteToHex(ByteNext.Value), true);
 
                             if (content == "#")
-                                content = TblCharacterTable.FindMatch(ByteConverters.ByteToHex(Byte.Byte[0]), true); //[change]
+                                content = TblCharacterTable.FindMatch(ByteConverters.ByteToHex(Byte.Byte[0]), true);
 
                             Text = content;
                         }
@@ -246,7 +246,7 @@ namespace WpfHexaEditor
                 if (isok)
                 {
                     Action = ByteAction.Modified;
-                    Byte.Byte = new List<byte> { ByteConverters.CharToByte(Text[0]) };//[change]
+                    Byte.Byte = new List<byte> { ByteConverters.CharToByte(Text[0]) };
 
                     //Insert byte at end of file
                     if (_parent.Length == BytePositionInStream + 1)

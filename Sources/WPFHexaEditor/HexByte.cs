@@ -57,33 +57,6 @@ namespace WpfHexaEditor
         public void UpdateDataVisualWidth()
         {
             Width = CalculateCellWidth(_parent.ByteSize, _parent.DataStringVisual, _parent.DataStringState);
-            // _parent.ByteSize switch
-            //{
-            //    ByteSizeType.Bit8 => _parent.DataStringVisual switch
-            //    {
-            //        DataVisualType.Decimal =>
-            //            _parent.DataStringState == DataVisualState.Changes ? 30 :
-            //            _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 25,
-            //        DataVisualType.Hexadecimal =>
-            //            _parent.DataStringState == DataVisualState.Changes ? 25 :
-            //            _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 20,
-            //        DataVisualType.Binary =>
-            //            _parent.DataStringState == DataVisualState.Changes ? 70 :
-            //            _parent.DataStringState == DataVisualState.ChangesPercent ? 65 : 65
-            //    },
-            //    ByteSizeType.Bit16 => _parent.DataStringVisual switch
-            //    {
-            //        DataVisualType.Decimal =>
-            //            _parent.DataStringState == DataVisualState.Changes ? 30 :
-            //            _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 40,
-            //        DataVisualType.Hexadecimal =>
-            //            _parent.DataStringState == DataVisualState.Changes ? 25 :
-            //            _parent.DataStringState == DataVisualState.ChangesPercent ? 35 : 40,
-            //        DataVisualType.Binary =>
-            //            _parent.DataStringState == DataVisualState.Changes ? 70 :
-            //            _parent.DataStringState == DataVisualState.ChangesPercent ? 65 : 100
-            //    },
-            //};
         }
         public static int CalculateCellWidth(ByteSizeType byteSize, DataVisualType type, DataVisualState state)
         { 

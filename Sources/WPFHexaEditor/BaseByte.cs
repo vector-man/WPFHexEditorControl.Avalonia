@@ -163,14 +163,9 @@ namespace WpfHexaEditor
             set
             {                                
                 _byte = value;
-
-                //if (Action != ByteAction.Nothing && InternalChange == false)
-                //    ByteModified?.Invoke(this, new EventArgs());
-
                 UpdateTextRenderFromByte();
 
                 _byte.del_ByteOnChange += onByteChange;
-                //onByteChange(value.Byte);
             }
         }
         void onByteChange(List<byte> bytes, int index)
@@ -320,7 +315,7 @@ namespace WpfHexaEditor
         protected void UpdateAutoHighLiteSelectionByteVisual()
         {
             if (_parent.AllowAutoHighLightSelectionByte && _parent.SelectionByte != null &&
-                Byte != null && Byte.IsEqual(new byte[] { _parent.SelectionByte.Value }) && !IsSelected) //[change]
+                Byte != null && Byte.IsEqual(new byte[] { _parent.SelectionByte.Value }) && !IsSelected)
                 Background = _parent.AutoHighLiteSelectionByteBrush;
         }
 

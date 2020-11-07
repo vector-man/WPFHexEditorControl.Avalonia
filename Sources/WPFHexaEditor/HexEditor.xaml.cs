@@ -2706,7 +2706,6 @@ namespace WpfHexaEditor
             if (CheckIsOpen(_provider))
             {
                 var bufferlength = MaxVisibleLine * (BytePerLine + 1 + ByteShiftLeft) * ByteSizeRatio;
-                // var x = MaxVisibleLine * BytePerLine + 1 + ByteShiftLeft;
 
                 #region Build the buffer lenght if needed
 
@@ -2800,12 +2799,7 @@ namespace WpfHexaEditor
                         ctrl.Clear();
 
                     ctrl.InternalChange = false;
-                    index += ByteSize switch
-                    {
-                        ByteSizeType.Bit8 => 1,
-                        ByteSizeType.Bit16 => 2,
-                        ByteSizeType.Bit32 => 4
-                    };
+                    index += ByteSizeRatio;
                 });
 
                 #endregion
@@ -2831,7 +2825,7 @@ namespace WpfHexaEditor
 
                     if (index < readSize)
                     {
-                        ctrl.Byte = new Byte_8bit(_viewBuffer[index]); // new List<byte>() { _viewBuffer[index] };
+                        ctrl.Byte = new Byte_8bit(_viewBuffer[index]);
                         ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
                         ctrl.ByteNext = index < readSize - 1 ? (byte?)_viewBuffer[index + 1] : null;
 
@@ -2904,28 +2898,6 @@ namespace WpfHexaEditor
                 }
 
             }, ref exit, false);
-
-            //TraverseHexAndStringBytes(ctrl =>
-            //{
-            //    for (int i = 0; i < ByteSizeRatio; i++)
-            //    {
-            //        if (modifiedBytesDictionary.TryGetValue(ctrl.BytePositionInStream + i, out var byteModified))
-            //        {
-            //            ctrl.InternalChange = true;
-            //            if (byteModified.Byte.HasValue)
-            //            {
-            //                ctrl.Byte.ChangeByteValue(byteModified.Byte.Value, ctrl.BytePositionInStream + i);
-            //                //ctrl.Byte.Byte = new List<byte> { byteModified.Byte.Value };
-            //            }
-
-            //            if (byteModified.Action == ByteAction.Modified || byteModified.Action == ByteAction.Deleted)
-            //                ctrl.Action = byteModified.Action;
-
-            //            ctrl.InternalChange = false;
-            //        }
-            //    }
-
-            //});
 
             IsModified = _provider.UndoCount > 0;
         }
@@ -3003,21 +2975,12 @@ namespace WpfHexaEditor
                 {
                     case DataVisualType.Hexadecimal:
                         headerLabel.Text = ByteToHex((byte)i);
-                        //headerLabel.Width =
-                        //    DataStringState == DataVisualState.Changes ? 25 :
-                        //    DataStringState == DataVisualState.ChangesPercent ? 35 : 20;
                         break;
                     case DataVisualType.Decimal:
                         headerLabel.Text = i.ToString("d3");
-                        //headerLabel.Width =
-                        //    DataStringState == DataVisualState.Changes ? 30 :
-                        //    DataStringState == DataVisualState.ChangesPercent ? 35 : 25;
                         break;
                     case DataVisualType.Binary:
                         headerLabel.Text = Convert.ToString(i, 2).PadLeft(8, '0');
-                        //headerLabel.Width =
-                        //    DataStringState == DataVisualState.Changes ? 70 :
-                        //    DataStringState == DataVisualState.ChangesPercent ? 65 : 65;
                         break;
                 }
                 headerLabel.Width = HexByte.CalculateCellWidth(ByteSize, DataStringVisual, DataStringState);
