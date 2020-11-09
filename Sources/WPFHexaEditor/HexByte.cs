@@ -128,7 +128,6 @@ namespace WpfHexaEditor
             //MODIFY BYTE
             if (!ReadOnlyMode && KeyValidator.IsHexKey(e.Key))
             {
-
                 if (_keyDownLabel == KeyDownLabel.NextPosition)
                 {
                     _parent.AppendByte(new byte[] { 0 });

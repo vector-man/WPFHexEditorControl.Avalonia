@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2019
+// Apache 2.0  - 2016-2020
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
@@ -670,14 +670,16 @@ namespace WpfHexaEditor
             DependencyProperty.Register(nameof(OffSetStringVisual), typeof(DataVisualType), typeof(HexEditor),
                 new FrameworkPropertyMetadata(DataVisualType.Hexadecimal, DataVisualTypeProperty_PropertyChanged));
 
-        private static void DataVisualTypeProperty_PropertyChanged(DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
+        private static void DataVisualTypeProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateLinesInfo();
         }
 
+        /// <summary>
+        /// Visually change de state of the byte
+        /// </summary>
         public DataVisualState DataStringState
         {
             get => (DataVisualState)GetValue(OffSetDataStringStateProperty);
@@ -688,8 +690,7 @@ namespace WpfHexaEditor
            DependencyProperty.Register(nameof(DataStringState), typeof(DataVisualState), typeof(HexEditor),
                new FrameworkPropertyMetadata(DataVisualState.Default, DataStringVisualStateProperty_PropertyChanged));
 
-        private static void DataStringVisualStateProperty_PropertyChanged(DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
+        private static void DataStringVisualStateProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
 
@@ -754,8 +755,7 @@ namespace WpfHexaEditor
             DependencyProperty.Register(nameof(DataStringVisual), typeof(DataVisualType), typeof(HexEditor),
                 new FrameworkPropertyMetadata(DataVisualType.Hexadecimal, DataStringVisualTypeProperty_PropertyChanged));
 
-        private static void DataStringVisualTypeProperty_PropertyChanged(DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
+        private static void DataStringVisualTypeProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
 
@@ -1529,7 +1529,7 @@ namespace WpfHexaEditor
         /// </summary>
         public void FillWithByte(long startPosition, long length, byte val)
         {
-            if (!CheckIsOpen(_provider) || (startPosition <= -1 || length <= 0)) return;
+            if (!CheckIsOpen(_provider) || startPosition <= -1 || length <= 0) return;
 
             _provider.FillWithByte(startPosition, length, val);
             SetScrollMarker(SelectionStart, ScrollMarker.ByteModified, Properties.Resources.FillSelectionAloneString);
@@ -2018,16 +2018,16 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// Set the MemoryStream are used by ByteProvider
+        /// Set the Stream are used by ByteProvider
         /// </summary>
-        public MemoryStream Stream
+        public Stream Stream
         {
-            get => (MemoryStream)GetValue(StreamProperty);
+            get => (Stream)GetValue(StreamProperty);
             set => SetValue(StreamProperty, value);
         }
 
         public static readonly DependencyProperty StreamProperty =
-            DependencyProperty.Register(nameof(Stream), typeof(MemoryStream), typeof(HexEditor),
+            DependencyProperty.Register(nameof(Stream), typeof(Stream), typeof(HexEditor),
                 new FrameworkPropertyMetadata(null,
                     Stream_PropertyChanged));
 
@@ -2036,7 +2036,8 @@ namespace WpfHexaEditor
             if (!(d is HexEditor ctrl)) return;
 
             ctrl.CloseProvider();
-            ctrl.OpenStream((MemoryStream)e.NewValue);
+            if (e.NewValue != null)
+                ctrl.OpenStream((Stream)e.NewValue);
         }
 
         /// <summary>
@@ -2142,7 +2143,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Open stream
         /// </summary>
-        private void OpenStream(MemoryStream stream)
+        private void OpenStream(Stream stream)
         {
             if (!stream.CanRead) return;
 
@@ -3736,7 +3737,7 @@ namespace WpfHexaEditor
 
             #region Set position in scrollbar
 
-            var topPosition =
+            var topPosition = (VerticalScrollBar.Track == null) ? double.NaN :
                 (GetLineNumber(bookMark.BytePositionInStream) * VerticalScrollBar.Track.TickHeight(MaxLine) - 1).Round(1);
 
             if (double.IsNaN(topPosition))
