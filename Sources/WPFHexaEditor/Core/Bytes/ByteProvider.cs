@@ -506,9 +506,15 @@ namespace WpfHexaEditor.Core.Bytes
 
             //Launch event at process completed
             if (cancel)
+            {
                 LongProcessCanceled?.Invoke(this, new EventArgs());
+            }
             else
+            {
+                IsOnLongProcess = false;
                 LongProcessCompleted?.Invoke(this, new EventArgs());
+            }
+                
 
             //Launch event
             ChangesSubmited?.Invoke(this, new EventArgs());
