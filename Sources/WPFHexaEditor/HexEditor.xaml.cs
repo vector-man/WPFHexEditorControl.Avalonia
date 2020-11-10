@@ -1510,7 +1510,7 @@ namespace WpfHexaEditor
         /// <param name="expendIfneeded">Set AllowExpend to true for working</param>
         private void Paste(bool expendIfneeded)
         {
-            if (!CheckIsOpen(_provider) || SelectionStart <= -1) return;
+            if (!CheckIsOpen(_provider) || SelectionStart <= -1 || ReadOnlyMode) return;
 
             var clipBoardText = Clipboard.GetText();
             var (success, byteArray) = IsHexaByteStringValue(clipBoardText);
@@ -1554,7 +1554,7 @@ namespace WpfHexaEditor
         /// </summary>
         public void FillWithByte(long startPosition, long length, byte val)
         {
-            if (!CheckIsOpen(_provider) || startPosition <= -1 || length <= 0) return;
+            if (!CheckIsOpen(_provider) || startPosition <= -1 || length <= 0 || ReadOnlyMode) return;
 
             _provider.FillWithByte(startPosition, length, val);
             SetScrollMarker(SelectionStart, ScrollMarker.ByteModified, Properties.Resources.FillSelectionAloneString);
@@ -3429,7 +3429,7 @@ namespace WpfHexaEditor
         /// </summary>
         public void ReplaceByte(long startPosition, long length, byte original, byte replace)
         {
-            if (!CheckIsOpen(_provider) || startPosition <= -1 || length <= 0) return;
+            if (!CheckIsOpen(_provider) || startPosition <= -1 || length <= 0 || ReadOnlyMode) return;
 
             _provider.ReplaceByte(startPosition, length, original, replace);
             SetScrollMarker(SelectionStart, ScrollMarker.ByteModified, Properties.Resources.ReplaceWithByteString);
@@ -3442,8 +3442,7 @@ namespace WpfHexaEditor
         /// <returns>Return the position of replace. Return -1 on error/no replace</returns>
         public long ReplaceFirst(byte[] findData, byte[] replaceData, bool truckLength = true, long startPosition = 0, bool hightlight = false)
         {
-            if (findData == null || replaceData == null) return -1;
-            if (!CheckIsOpen(_provider)) return -1;
+            if (findData == null || replaceData == null || !CheckIsOpen(_provider) || ReadOnlyMode) return -1;
 
             var position = FindFirst(findData, startPosition, hightlight);
 
@@ -3572,8 +3571,7 @@ namespace WpfHexaEditor
         /// <returns>Return the an IEnumerable contains all positions are replaced. Return null on error/no replace</returns>
         public IEnumerable<long> ReplaceAll(byte[] findData, byte[] replaceData, bool truckLength = true, bool hightlight = false)
         {
-            if (findData == null || replaceData == null) return null;
-            if (!CheckIsOpen(_provider)) return null;
+            if (findData == null || replaceData == null || ReadOnlyMode || !CheckIsOpen(_provider)) return null;
 
             var positions = FindAll(findData, hightlight);
 
@@ -3943,6 +3941,8 @@ namespace WpfHexaEditor
             DeleteCMenu.IsEnabled = false;
             FillByteCMenu.IsEnabled = false;
             CopyTblcMenu.IsEnabled = false;
+            PasteMenu.IsEnabled = false;
+            ReplaceByteCMenu.IsEnabled = false;
 
             #endregion
 
@@ -3952,8 +3952,15 @@ namespace WpfHexaEditor
                 CopyAsCMenu.IsEnabled = true;
                 FindAllCMenu.IsEnabled = true;
                 CopyHexaCMenu.IsEnabled = true;
-                DeleteCMenu.IsEnabled = true;
-                FillByteCMenu.IsEnabled = true;
+
+                if (!ReadOnlyMode)
+                {
+                    DeleteCMenu.IsEnabled = true;
+                    FillByteCMenu.IsEnabled = true;
+                    PasteMenu.IsEnabled = true;
+                    ReplaceByteCMenu.IsEnabled = true;
+
+                }
 
                 if (_tblCharacterTable != null)
                     CopyTblcMenu.IsEnabled = true;
@@ -4901,7 +4908,7 @@ namespace WpfHexaEditor
         /// </summary>
         public void ReverseSelection()
         {
-            if (!CheckIsOpen(_provider)) return;
+            if (!CheckIsOpen(_provider) || ReadOnlyMode) return;
 
             _provider.Reverse(SelectionStart, SelectionStop);
 
@@ -5160,8 +5167,7 @@ namespace WpfHexaEditor
         /// </summary>
         public void DeleteSelection()
         {
-            if (!CanDelete) return;
-            if (!CheckIsOpen(_provider)) return;
+            if (!CanDelete || !CheckIsOpen(_provider) || ReadOnlyMode) return;
 
             var position = SelectionStart > SelectionStop
                 ? SelectionStop
