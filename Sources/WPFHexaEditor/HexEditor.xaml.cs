@@ -703,6 +703,31 @@ namespace WpfHexaEditor
             });
         }
 
+        public ByteOrderType ByteOrder
+        {
+            get => (ByteOrderType)GetValue(OffSetByteOrderProperty);
+            set => SetValue(OffSetByteOrderProperty, value);
+        }
+
+        public static readonly DependencyProperty OffSetByteOrderProperty =
+           DependencyProperty.Register(nameof(ByteOrder), typeof(ByteOrderType), typeof(HexEditor),
+               new FrameworkPropertyMetadata(ByteOrderType.LoHi, DataByteOrderProperty_PropertyChanged));
+
+
+        private static void DataByteOrderProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+
+            ctrl.UpdateHeader(true);
+
+            ctrl.TraverseHexBytes(hctrl =>
+            {
+                hctrl.UpdateDataVisualWidth();
+                hctrl.UpdateTextRenderFromByte();
+            });
+        }
+
+
         private int ByteSizeRatio
         {
             get

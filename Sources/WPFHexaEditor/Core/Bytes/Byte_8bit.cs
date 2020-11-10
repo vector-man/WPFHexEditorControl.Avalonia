@@ -43,7 +43,7 @@ namespace WpfHexaEditor.Core.Bytes
 
         public D_ByteListProp del_ByteOnChange { get; set; }
 
-        public string GetText(DataVisualType type, DataVisualState state)
+        public string GetText(DataVisualType type, DataVisualState state, ByteOrderType order)
         {
             string Text = "";
             byte value;

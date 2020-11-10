@@ -222,7 +222,13 @@ namespace WpfHexaEditor.Core
     {
         Bit8,       // editable   
         Bit16,      // editable
-        Bit32       // not editable
+        Bit32       // editable
+    }
+
+    public enum ByteOrderType
+    {
+        LoHi,
+        HiLo //not editable
     }
 
     /// <summary>

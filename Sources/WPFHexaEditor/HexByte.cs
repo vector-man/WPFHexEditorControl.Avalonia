@@ -42,7 +42,7 @@ namespace WpfHexaEditor
         {
             if (Byte != null)
             {
-                Text = Byte.GetText(_parent.DataStringVisual, _parent.DataStringState);
+                Text = Byte.GetText(_parent.DataStringVisual, _parent.DataStringState, _parent.ByteOrder);
             }
             else
                 Text = string.Empty;

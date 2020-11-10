@@ -40,21 +40,23 @@ namespace WpfHexaEditor.Core.Bytes
         }
         public D_ByteListProp del_ByteOnChange { get; set; }
 
-        public string GetText(DataVisualType type, DataVisualState state)
+        public string GetText(DataVisualType type, DataVisualState state, ByteOrderType order)
         {
             string Text = "";
             byte[] value = new byte[4];
             bool sign_positive = true;
             string prefix = "";
-            var ByteInt = BitConverter.ToUInt32(Byte.ToArray(), 0);
-            var OriginInt = BitConverter.ToUInt32(OriginByte.ToArray(), 0);
+            var byteValue = (order == ByteOrderType.HiLo) ? Byte.ToArray().Reverse().ToArray() : Byte.ToArray();
+            var originValue = (order == ByteOrderType.HiLo) ? OriginByte.ToArray().Reverse().ToArray() : OriginByte.ToArray();
+            var ByteInt = BitConverter.ToUInt32(byteValue, 0);
+            var OriginInt = BitConverter.ToUInt32(originValue, 0);
             switch (state)
             {
                 case DataVisualState.Default:
-                    value = Byte.ToArray();
+                    value = byteValue;
                     break;
                 case DataVisualState.Origin:
-                    value = OriginByte.ToArray();
+                    value = originValue;
                     break;
                 case DataVisualState.Changes:
                     if (ByteInt.CompareTo(OriginInt) < 0)
