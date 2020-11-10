@@ -703,6 +703,70 @@ namespace WpfHexaEditor
             });
         }
 
+        public ByteOrderType ByteOrder
+        {
+            get => (ByteOrderType)GetValue(OffSetByteOrderProperty);
+            set => SetValue(OffSetByteOrderProperty, value);
+        }
+
+        public static readonly DependencyProperty OffSetByteOrderProperty =
+           DependencyProperty.Register(nameof(ByteOrder), typeof(ByteOrderType), typeof(HexEditor),
+               new FrameworkPropertyMetadata(ByteOrderType.LoHi, DataByteOrderProperty_PropertyChanged));
+
+
+        private static void DataByteOrderProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+
+            ctrl.UpdateHeader(true);
+
+            ctrl.TraverseHexBytes(hctrl =>
+            {
+                hctrl.UpdateDataVisualWidth();
+                hctrl.UpdateTextRenderFromByte();
+            });
+        }
+
+
+        private int ByteSizeRatio
+        {
+            get
+            {
+                return ByteSize switch
+                {
+                    ByteSizeType.Bit8 => 1,
+                    ByteSizeType.Bit16 => 2,
+                    ByteSizeType.Bit32 => 4
+                };
+            }
+        }
+        public ByteSizeType ByteSize
+        {
+            get => (ByteSizeType)GetValue(OffSetByteSizeProperty);
+            set => SetValue(OffSetByteSizeProperty, value);
+        }
+
+        public static readonly DependencyProperty OffSetByteSizeProperty =
+           DependencyProperty.Register(nameof(ByteSize), typeof(ByteSizeType), typeof(HexEditor),
+               new FrameworkPropertyMetadata(ByteSizeType.Bit8, DataByteSizeProperty_PropertyChanged));
+
+        private static void DataByteSizeProperty_PropertyChanged(DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+
+            ctrl.UpdateViewers(true);
+            ctrl.UpdateHeader(true);
+
+            ctrl.TraverseHexBytes(hctrl =>
+            {
+                hctrl.UpdateDataVisualWidth();
+                hctrl.UpdateTextRenderFromByte();
+            });
+            ctrl.UpdateByteModified();
+            ctrl.UpdateScrollBar();
+        }
+
         /// <summary>
         /// Get or set the visual data format of HexByte 
         /// </summary>
@@ -934,12 +998,13 @@ namespace WpfHexaEditor
         /// </summary>
         public bool IsModified { get; internal set; } = false;
 
-        private void Control_ByteModified(object sender, EventArgs e)
+        private void Control_ByteModified(object sender, ByteEventArgs e)
         {
             if (sender is IByteControl ctrl)
             {
-                _provider.AddByteModified(ctrl.Byte, ctrl.BytePositionInStream);
-                SetScrollMarker(ctrl.BytePositionInStream, ScrollMarker.ByteModified);
+
+                _provider.AddByteModified(ctrl.Byte.Byte[e.Index], ctrl.BytePositionInStream + e.Index);
+                SetScrollMarker(ctrl.BytePositionInStream + e.Index, ScrollMarker.ByteModified);
                 UpdateByteModified();
 
                 BytesModified?.Invoke(this, new EventArgs());
@@ -965,8 +1030,8 @@ namespace WpfHexaEditor
                     byteDeletedCount = _provider.GetByteModifieds(ByteAction.Deleted).Count;
 
                 return AllowVisualByteAddress
-                          ? CheckIsOpen(_provider) ? ((VisualByteAdressLength - byteDeletedCount) / BytePerLine) + 1 : 0
-                          : CheckIsOpen(_provider) ? ((_provider.Length - byteDeletedCount) / BytePerLine) + 1 : 0;
+                          ? CheckIsOpen(_provider) ? ((VisualByteAdressLength - byteDeletedCount) / (BytePerLine * ByteSizeRatio)) + 1 : 0
+                          : CheckIsOpen(_provider) ? ((_provider.Length - byteDeletedCount) / (BytePerLine * ByteSizeRatio)) + 1 : 0;
             }
         }
 
@@ -1589,7 +1654,7 @@ namespace WpfHexaEditor
             (position - ByteShiftLeft - (HideByteDeleted
                                             ? GetCountOfByteDeletedBeforePosition(position)
                                             : 0)
-            ) / BytePerLine;
+            ) / (BytePerLine * ByteSizeRatio);
 
         /// <summary>
         /// Get the column number of the position
@@ -2433,7 +2498,7 @@ namespace WpfHexaEditor
         }
 
         private void VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) =>
-            RefreshView(true);
+            RefreshView();
 
         /// <summary>
         /// Update vertical scrollbar with file info
@@ -2555,7 +2620,7 @@ namespace WpfHexaEditor
                     Orientation = Orientation.Horizontal
                 };
 
-                for (var i = 0; i < BytePerLine; i++)
+                for (var i = 0; i < BytePerLine * ByteSizeRatio; i++)
                 {
                     if (_tblCharacterTable == null && (ByteSpacerPositioning == ByteSpacerPosition.Both ||
                                                        ByteSpacerPositioning == ByteSpacerPosition.StringBytePanel))
@@ -2666,7 +2731,7 @@ namespace WpfHexaEditor
             var curLevel = ++_priLevel;
             if (CheckIsOpen(_provider))
             {
-                var bufferlength = MaxVisibleLine * BytePerLine + 1 + ByteShiftLeft;
+                var bufferlength = MaxVisibleLine * (BytePerLine + 1 + ByteShiftLeft) * ByteSizeRatio;
 
                 #region Build the buffer lenght if needed
 
@@ -2674,9 +2739,9 @@ namespace WpfHexaEditor
                 {
                     if (_viewBuffer != null)
                     {
+                        BuildDataLines(MaxVisibleLine, true);
                         if (_viewBuffer.Length < bufferlength)
                         {
-                            BuildDataLines(MaxVisibleLine);
                             _viewBuffer = new byte[bufferlength];
                             _viewBufferBytePosition = new long[bufferlength];
                         }
@@ -2745,7 +2810,12 @@ namespace WpfHexaEditor
 
                     if (index < readSize && _priLevel == curLevel)
                     {
-                        ctrl.OriginByte = _viewBuffer[index];
+                        ctrl.Byte = ByteSize switch
+                        {
+                            ByteSizeType.Bit8 => new Byte_8bit(_viewBuffer[index]),
+                            ByteSizeType.Bit16 => new Byte_16bit(new byte[] { _viewBuffer[index], _viewBuffer[index + 1] }),
+                            ByteSizeType.Bit32 => new Byte_32bit(new byte[] { _viewBuffer[index], _viewBuffer[index + 1], _viewBuffer[index + 2], _viewBuffer[index + 3] })
+                        };
                         ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
 
                         if (AllowVisualByteAddress && nextPos > VisualByteAdressStop)
@@ -2755,7 +2825,7 @@ namespace WpfHexaEditor
                         ctrl.Clear();
 
                     ctrl.InternalChange = false;
-                    index++;
+                    index += ByteSizeRatio;
                 });
 
                 #endregion
@@ -2781,7 +2851,7 @@ namespace WpfHexaEditor
 
                     if (index < readSize)
                     {
-                        ctrl.OriginByte = _viewBuffer[index];
+                        ctrl.Byte = new Byte_8bit(_viewBuffer[index]);
                         ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
                         ctrl.ByteNext = index < readSize - 1 ? (byte?)_viewBuffer[index + 1] : null;
 
@@ -2815,18 +2885,45 @@ namespace WpfHexaEditor
             var modifiedBytesDictionary =
                 _provider.GetByteModifieds(ByteAction.All);
 
-            TraverseHexAndStringBytes(ctrl =>
+            var exit = false;
+            TraverseStringBytes(ctrl =>
             {
-                if (!modifiedBytesDictionary.TryGetValue(ctrl.BytePositionInStream, out var byteModified)) return;
+                if (modifiedBytesDictionary.TryGetValue(ctrl.BytePositionInStream, out var byteModified))
+                {
+                    ctrl.InternalChange = true;
+                    if (byteModified.Byte.HasValue)
+                    {
+                        ctrl.Byte.ChangeByteValue(byteModified.Byte.Value, ctrl.BytePositionInStream);
+                    }
 
-                ctrl.InternalChange = true;
-                ctrl.Byte = byteModified.Byte;
+                    if (byteModified.Action == ByteAction.Modified || byteModified.Action == ByteAction.Deleted)
+                        ctrl.Action = byteModified.Action;
 
-                if (byteModified.Action == ByteAction.Modified || byteModified.Action == ByteAction.Deleted)
-                    ctrl.Action = byteModified.Action;
+                    ctrl.InternalChange = false;
+                }
+            }, ref exit, false);
 
-                ctrl.InternalChange = false;
-            });
+            TraverseHexBytes(ctrl =>
+            {
+                for (int i = 0; i < ByteSizeRatio; i++)
+                {
+                    if (modifiedBytesDictionary.TryGetValue(ctrl.BytePositionInStream + i, out var byteModified))
+                    {
+                        ctrl.InternalChange = true;
+                        if (byteModified.Byte.HasValue)
+                        {
+                            ctrl.Byte.ChangeByteValue(byteModified.Byte.Value, ctrl.BytePositionInStream + i);
+                            //ctrl.Byte.Byte = new List<byte> { byteModified.Byte.Value };
+                        }
+
+                        if (byteModified.Action == ByteAction.Modified || byteModified.Action == ByteAction.Deleted)
+                            ctrl.Action = byteModified.Action;
+
+                        ctrl.InternalChange = false;
+                    }
+                }
+
+            }, ref exit, false);
 
             IsModified = _provider.UndoCount > 0;
         }
@@ -2904,23 +3001,15 @@ namespace WpfHexaEditor
                 {
                     case DataVisualType.Hexadecimal:
                         headerLabel.Text = ByteToHex((byte)i);
-                        headerLabel.Width =
-                            DataStringState == DataVisualState.Changes ? 25 :
-                            DataStringState == DataVisualState.ChangesPercent ? 35 : 20;
                         break;
                     case DataVisualType.Decimal:
                         headerLabel.Text = i.ToString("d3");
-                        headerLabel.Width =
-                            DataStringState == DataVisualState.Changes ? 30 :
-                            DataStringState == DataVisualState.ChangesPercent ? 35 : 25;
                         break;
                     case DataVisualType.Binary:
                         headerLabel.Text = Convert.ToString(i, 2).PadLeft(8, '0');
-                        headerLabel.Width =
-                            DataStringState == DataVisualState.Changes ? 70 :
-                            DataStringState == DataVisualState.ChangesPercent ? 65 : 65;
                         break;
                 }
+                headerLabel.Width = HexByte.CalculateCellWidth(ByteSize, DataStringVisual, DataStringState);
                 #endregion
 
                 //Add to stackpanel
@@ -2972,13 +3061,13 @@ namespace WpfHexaEditor
                 lineOffsetLabel.With(l =>
                 {
 
-                    if (i > 0) firstByteInLine = GetValidPositionFrom(firstByteInLine, BytePerLine);
-
+                    if (i > 0) firstByteInLine = GetValidPositionFrom(firstByteInLine, BytePerLine * ByteSizeRatio);
+                    var endLine = firstByteInLine + (BytePerLine * ByteSizeRatio) - 1;
                     #region Set text visual
                     if (HighLightSelectionStart &&
                         SelectionStart > -1 &&
                         SelectionStart >= firstByteInLine &&
-                        SelectionStart <= firstByteInLine + BytePerLine - 1)
+                        SelectionStart <= endLine)
                     {
                         l.FontWeight = FontWeights.Bold;
                         l.Foreground = ForegroundHighLightOffSetHeaderColor;
@@ -3048,8 +3137,8 @@ namespace WpfHexaEditor
             {
                 //Compute the cibled position for the first visible byte position
                 long cibledPosition = AllowVisualByteAddress
-                    ? ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft + VisualByteAdressStart
-                    : ((long)VerticalScrollBar.Value) * BytePerLine + ByteShiftLeft;
+                    ? ((long)VerticalScrollBar.Value) * (BytePerLine + ByteShiftLeft + VisualByteAdressStart) * ByteSizeRatio
+                    : ((long)VerticalScrollBar.Value) * (BytePerLine + ByteShiftLeft) * ByteSizeRatio;
 
                 //Count the byte are deleted before the cibled position
                 return HideByteDeleted

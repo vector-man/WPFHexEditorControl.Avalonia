@@ -5,6 +5,7 @@
 //////////////////////////////////////////////
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using WpfHexaEditor.Core;
+using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.Interfaces;
 
 namespace WpfHexaEditor
@@ -26,14 +28,13 @@ namespace WpfHexaEditor
         protected readonly HexEditor _parent;
         private bool _isSelected;
         private ByteAction _action = ByteAction.Nothing;
-        private byte? _byte;
-        private byte? _originByte;
+        private IByte _byte;
         private bool _isHighLight;
         #endregion global class variables
 
         #region Events
 
-        public event EventHandler ByteModified;
+        public event EventHandler<ByteEventArgs> ByteModified;
         public event EventHandler MouseSelection;
         public event EventHandler Click;
         public event EventHandler RightClick;
@@ -153,33 +154,28 @@ namespace WpfHexaEditor
             }
         }
 
-        public byte? OriginByte
-        {
-            get => _originByte;
-            set
-            {
-                _originByte = value;
-                Byte = value;
-            }
-        }
-
         /// <summary>
         /// Byte used for this instance
         /// </summary>
-        public byte? Byte
+        public IByte Byte
         {
             get => _byte;
             set
-            {
+            {                                
                 _byte = value;
-
-                if (Action != ByteAction.Nothing && InternalChange == false)
-                    ByteModified?.Invoke(this, new EventArgs());
-
                 UpdateTextRenderFromByte();
+
+                _byte.del_ByteOnChange += onByteChange;
             }
         }
+        void onByteChange(List<byte> bytes, int index)
+        {
+            if (Action != ByteAction.Nothing && InternalChange == false)
+                ByteModified?.Invoke(this, new ByteEventArgs() { Index = index });
 
+            UpdateTextRenderFromByte();
+
+        }
         /// <summary>
         /// Action with this byte
         /// </summary>
@@ -319,7 +315,7 @@ namespace WpfHexaEditor
         protected void UpdateAutoHighLiteSelectionByteVisual()
         {
             if (_parent.AllowAutoHighLightSelectionByte && _parent.SelectionByte != null &&
-                Byte == _parent.SelectionByte && !IsSelected)
+                Byte != null && Byte.IsEqual(new byte[] { _parent.SelectionByte.Value }) && !IsSelected)
                 Background = _parent.AutoHighLiteSelectionByteBrush;
         }
 
@@ -335,7 +331,6 @@ namespace WpfHexaEditor
         {
             InternalChange = true;
             BytePositionInStream = -1;
-            OriginByte = null;
             Action = ByteAction.Nothing;
             IsSelected = false;
             InternalChange = false;
@@ -556,6 +551,9 @@ namespace WpfHexaEditor
         }
     }
     #endregion
-
+    public class ByteEventArgs : EventArgs
+    {
+        public int Index { get; set; }
+    }
 }
 
