@@ -2149,6 +2149,8 @@ namespace WpfHexaEditor
                 p.FillWithByteCompleted += Provider_FillWithByteCompleted;
                 p.ReplaceByteCompleted += Provider_ReplaceByteCompleted;
                 p.BytesAppendCompleted += Provider_BytesAppendCompleted;
+                p.StreamOpened += Provider_StreamOpened;
+
                 #endregion
             });
 
@@ -2162,10 +2164,13 @@ namespace WpfHexaEditor
             //Update count of byte on file open
             UpdateByteCount();
 
+            //Launch provider stream open event
+            Provider_StreamOpened(_provider, new EventArgs());
+
             //Debug
             Debug.Print("FILE OPENED");
         }
-
+        
         /// <summary>
         /// Open stream
         /// </summary>
@@ -2240,6 +2245,13 @@ namespace WpfHexaEditor
 
             //Launch event
             LongProcessProgressChanged?.Invoke(this, new EventArgs());
+        }
+
+        private void Provider_StreamOpened(object sender, EventArgs e)
+        {
+            if (!CheckIsOpen(_provider)) return;
+
+            ReadOnlyMode = _provider.ReadOnlyMode;
         }
 
         /// <summary>
