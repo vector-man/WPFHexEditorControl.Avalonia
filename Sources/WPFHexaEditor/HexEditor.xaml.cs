@@ -1850,10 +1850,11 @@ namespace WpfHexaEditor
         {
             if (!(d is HexEditor ctrl)) return;
 
+            ctrl.ReadOnlyLabel.Visibility =
             ctrl.StatusBarGrid.Visibility = ctrl.BottomRectangle.Visibility =
                 (Visibility)e.NewValue == Visibility.Visible
                     ? Visibility.Visible
-                    : Visibility.Collapsed;
+                    : Visibility.Collapsed;            
 
             ctrl.RefreshView(true);
         }

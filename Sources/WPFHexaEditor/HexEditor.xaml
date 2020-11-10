@@ -298,6 +298,7 @@
         </Grid>
 
         <Label
+            x:Name="ReadOnlyLabel"
             Grid.Row="2"
             Grid.Column="2"
             Margin="0,1,15,0"
