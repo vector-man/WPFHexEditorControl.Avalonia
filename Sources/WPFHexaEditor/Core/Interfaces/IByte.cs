@@ -13,7 +13,7 @@ namespace WpfHexaEditor.Core.Interfaces
         public List<byte> Byte { get; set; }
         public List<byte> OriginByte { get; set; }
 
-        public String GetText(DataVisualType type, DataVisualState state, ByteOrderType order);
+        public string GetText(DataVisualType type, DataVisualState state, ByteOrderType order);
 
         public D_ByteListProp del_ByteOnChange { get; set; }
 

@@ -9,24 +9,12 @@ namespace WpfHexaEditor.Core.Bytes
 {
     class Byte_16bit : IByte
     {
-        public Byte_16bit(byte[] value)
-        {
-            OriginByte = new List<byte>(value);
-        }
+        public Byte_16bit(byte[] value) => OriginByte = new List<byte>(value);
+
         private List<byte> _originByte;
-        private List<byte> _byte;
-        public List<byte> Byte
-        {
-            get
-            {
-                return _byte;
-            }
-            set
-            {
-                _byte = value;
-                //del_ByteOnChange?.Invoke(value);
-            }
-        }
+
+        public List<byte> Byte { get; set; }
+
         public List<byte> OriginByte
         {
             get
@@ -75,10 +63,10 @@ namespace WpfHexaEditor.Core.Bytes
                     if (ByteInt.CompareTo(OriginInt) < 0)
                     {
                         sign_positive = false;
-                        value = BitConverter.GetBytes((OriginInt - ByteInt) * 100 / UInt16.MaxValue);
+                        value = BitConverter.GetBytes((OriginInt - ByteInt) * 100 / ushort.MaxValue);
                     }
                     else
-                        value = BitConverter.GetBytes((ByteInt - OriginInt) * 100 / UInt16.MaxValue);
+                        value = BitConverter.GetBytes((ByteInt - OriginInt) * 100 / ushort.MaxValue);
 
                     break;
                 default:
@@ -86,13 +74,9 @@ namespace WpfHexaEditor.Core.Bytes
             }
 
             if (state == DataVisualState.ChangesPercent)
-            {
-                Text = (sign_positive ? "" : "-") + prefix +
-                            BitConverter.ToUInt16(value, 0).ToString("d2");
-            }
+                Text = (sign_positive ? "" : "-") + prefix + BitConverter.ToUInt16(value, 0).ToString("d2");
             else
             {
-
                 switch (type)
                 {
                     case DataVisualType.Hexadecimal:
@@ -117,25 +101,17 @@ namespace WpfHexaEditor.Core.Bytes
 
         public bool IsEqual(byte[] bytes)
         {
-            if (bytes == null || bytes.Length != 2)
-            {
-                return false;
-            }
-            if (Byte == null || Byte.Count != 2)
-            {
-                return false;
-            }
-            if (bytes[0] == Byte[0] && bytes[1] == Byte[1])
-            {
-                return true;
-            }
+            if (bytes == null || bytes.Length != 2) return false;
+            if (Byte == null || Byte.Count != 2) return false;
+            if (bytes[0] == Byte[0] && bytes[1] == Byte[1]) return true;
+
             return false;
         }
+
         public void ChangeByte(int index, byte value)
         {
             Byte[index] = value;
             del_ByteOnChange?.Invoke(Byte, index);
-
         }
 
         public (ByteAction, bool) Update(DataVisualType type, Key _key, ref KeyDownLabel _keyDownLabel)
@@ -206,7 +182,7 @@ namespace WpfHexaEditor.Core.Bytes
                         : 0.ToString();
 
                     //Update byte
-                    Char[] byteValueCharArray_dec = BitConverter.ToUInt16(Byte.ToArray(), 0)
+                    char[] byteValueCharArray_dec = BitConverter.ToUInt16(Byte.ToArray(), 0)
                         .ToString("d5").ToCharArray();
                     List<byte> _newByte = new List<byte>();
                     switch (_keyDownLabel)
@@ -282,7 +258,7 @@ namespace WpfHexaEditor.Core.Bytes
                         : 0.ToString();
 
                     //Update byte
-                    Char[] byteValueCharArray_bin = 
+                    char[] byteValueCharArray_bin = 
                         (Convert.ToString(Byte[0], 2).PadLeft(8, '0') + Convert.ToString(Byte[1], 2).PadLeft(8, '0'))
                             .ToCharArray();
                     switch (_keyDownLabel)
@@ -421,7 +397,6 @@ namespace WpfHexaEditor.Core.Bytes
             {
                 Byte[1] = newValue;
                 del_ByteOnChange?.Invoke(Byte, 1);
-
             }
         }
     }

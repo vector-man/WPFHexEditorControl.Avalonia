@@ -9,25 +9,12 @@ namespace WpfHexaEditor.Core.Bytes
 {
     class Byte_8bit : IByte
     {
-        public Byte_8bit(byte value)
-        {
-            OriginByte = new List<byte> { value };
-        }
+        public Byte_8bit(byte value) => OriginByte = new List<byte> { value };
 
         private List<byte> _originByte;
-        private List<byte> _byte;
-        public List<byte> Byte
-        {
-            get
-            {
-                return _byte;
-            }
-            set
-            {
-                _byte = value;
-                //del_ByteOnChange?.Invoke(value, 0);
-            }
-        }
+
+        public List<byte> Byte { get; set; }
+        
         public List<byte> OriginByte
         {
             get
@@ -49,6 +36,7 @@ namespace WpfHexaEditor.Core.Bytes
             byte value;
             bool sign_positive = true;
             string prefix = "";
+            
             switch (state)
             {
                 case DataVisualState.Default:
@@ -61,10 +49,10 @@ namespace WpfHexaEditor.Core.Bytes
                     if (Byte[0].CompareTo(OriginByte[0]) < 0) //[change]
                     {
                         sign_positive = false;
-                        value = ((byte)(OriginByte[0] - Byte[0])); //[change]
+                        value = (byte)(OriginByte[0] - Byte[0]); //[change]
                     }
                     else
-                        value = ((byte)(Byte[0] - OriginByte[0])); //[change]
+                        value = (byte)(Byte[0] - OriginByte[0]); //[change]
 
                     break;
                 case DataVisualState.ChangesPercent:
@@ -83,13 +71,8 @@ namespace WpfHexaEditor.Core.Bytes
             }
 
             if (state == DataVisualState.ChangesPercent)
-            {
-                Text = (sign_positive ? "" : "-") + prefix +
-                            value.ToString("d2");
-            }
+                Text = (sign_positive ? "" : "-") + prefix + value.ToString("d2");
             else
-            {
-
                 switch (type)
                 {
                     case DataVisualType.Hexadecimal:
@@ -106,24 +89,16 @@ namespace WpfHexaEditor.Core.Bytes
                             Convert.ToString(value, 2).PadLeft(8, '0');
                         break;
                 }
-            }
+
             return Text;
         }
 
         public bool IsEqual(byte[] bytes)
         {
-            if (bytes == null || bytes.Length == 0)
-            {
-                return false;
-            }
-            if (Byte == null || Byte.Count != 1)
-            {
-                return false;
-            }
-            if (bytes[0] == Byte[0])
-            {
-                return true;
-            }
+            if (bytes == null || bytes.Length == 0) return false;
+            if (Byte == null || Byte.Count != 1) return false;
+            if (bytes[0] == Byte[0]) return true;
+
             return false;
         }
 
@@ -131,8 +106,8 @@ namespace WpfHexaEditor.Core.Bytes
         {
             Byte[index] = value;
             del_ByteOnChange?.Invoke(Byte, index);
-
         }
+
         public (ByteAction, bool) Update(DataVisualType type, Key _key, ref KeyDownLabel _keyDownLabel)
         {
             ByteAction Action = ByteAction.Nothing;
@@ -143,7 +118,7 @@ namespace WpfHexaEditor.Core.Bytes
 
                     #region Edit hexadecimal value 
 
-                    var key = WpfHexaEditor.Core.KeyValidator.IsNumericKey(_key)
+                    var key = KeyValidator.IsNumericKey(_key)
                         ? KeyValidator.GetDigitFromKey(_key).ToString()
                         : _key.ToString().ToLower();
 
@@ -181,16 +156,14 @@ namespace WpfHexaEditor.Core.Bytes
 
                     #region Edit decimal value 
 
-                    if (!KeyValidator.IsNumericKey(_key))
-                    {
-                        break;
-                    }
+                    if (!KeyValidator.IsNumericKey(_key)) break;
+
                     key = KeyValidator.IsNumericKey(_key)
                         ? KeyValidator.GetDigitFromKey(_key).ToString()
                         : 0.ToString();
 
                     //Update byte
-                    Char[] byteValueCharArray_dec = Byte[0].ToString("d3").ToCharArray(); //[change]
+                    char[] byteValueCharArray_dec = Byte[0].ToString("d3").ToCharArray(); //[change]
                     switch (_keyDownLabel)
                     {
                         case KeyDownLabel.FirstChar:
@@ -230,20 +203,18 @@ namespace WpfHexaEditor.Core.Bytes
 
                     #region Edit Binary value 
 
-                    if (!KeyValidator.IsNumericKey(_key)
-                        || KeyValidator.GetDigitFromKey(_key) > 1)
-                    {
-                        break;
-                    }
+                    if (!KeyValidator.IsNumericKey(_key) || KeyValidator.GetDigitFromKey(_key) > 1) break;
+                    
                     key = KeyValidator.IsNumericKey(_key)
                         ? KeyValidator.GetDigitFromKey(_key).ToString()
                         : 0.ToString();
 
                     //Update byte
-                    Char[] byteValueCharArray_bin = Convert
+                    char[] byteValueCharArray_bin = Convert
                         .ToString(Byte[0], 2) //[change]
                         .PadLeft(8, '0')
                         .ToCharArray();
+
                     switch (_keyDownLabel)
                     {
                         case KeyDownLabel.FirstChar:
@@ -319,7 +290,6 @@ namespace WpfHexaEditor.Core.Bytes
         {
             Byte[0] = newValue;
             del_ByteOnChange?.Invoke(Byte, 0);
-
         }
     }
 }
