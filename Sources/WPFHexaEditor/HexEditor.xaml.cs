@@ -4669,9 +4669,10 @@ namespace WpfHexaEditor
 
             var doc = new XDocument(new XElement("WpfHexEditor",
                 new XAttribute("Version", "0.1"),
-                new XAttribute("SelectionStart", SelectionStart),
-                new XAttribute("SelectionStop", SelectionStop),
-                new XAttribute("Position", FirstVisibleBytePosition),
+                new XAttribute(nameof(SelectionStart), SelectionStart),
+                new XAttribute(nameof(SelectionStop), SelectionStop),
+                new XAttribute(nameof(FirstVisibleBytePosition), FirstVisibleBytePosition),
+                new XAttribute(nameof(ReadOnlyMode), ReadOnlyMode),
                     new XElement("ByteModifieds", new XAttribute("Count", _provider.GetByteModifieds(ByteAction.All).Count)),
                     new XElement("BookMarks", new XAttribute("Count", BookMarks.Count())),
                     new XElement("TBL", new XAttribute("Loaded", _tblCharacterTable != null)),
@@ -4848,16 +4849,16 @@ namespace WpfHexaEditor
 
             #region Update the visual
             //Update position
-            SetPosition(long.TryParse(doc.Element("WpfHexEditor").Attribute("Position").Value, out long position)
+            SetPosition(long.TryParse(doc.Element("WpfHexEditor").Attribute(nameof(FirstVisibleBytePosition)).Value, out long position)
                 ? position
                 : 0);
 
             //Update selection
-            SelectionStart = long.TryParse(doc.Element("WpfHexEditor").Attribute("SelectionStart").Value, out long selectionStart)
+            SelectionStart = long.TryParse(doc.Element("WpfHexEditor").Attribute(nameof(SelectionStart)).Value, out long selectionStart)
                 ? selectionStart
                 : 0;
 
-            SelectionStop = long.TryParse(doc.Element("WpfHexEditor").Attribute("SelectionStop").Value, out long selectionStop)
+            SelectionStop = long.TryParse(doc.Element("WpfHexEditor").Attribute(nameof(SelectionStop)).Value, out long selectionStop)
                 ? selectionStop
                 : 0;
 
@@ -4865,6 +4866,11 @@ namespace WpfHexaEditor
             RefreshView(true);
             #endregion
 
+            #region Set the readonly mode
+            ReadOnlyMode = bool.TryParse(doc.Element("WpfHexEditor").Attribute(nameof(ReadOnlyMode)).Value, out bool readOnlyMode)
+                ? readOnlyMode
+                : false;
+            #endregion
         }
 
         #endregion
