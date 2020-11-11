@@ -713,7 +713,6 @@ namespace WpfHexaEditor
            DependencyProperty.Register(nameof(ByteOrder), typeof(ByteOrderType), typeof(HexEditor),
                new FrameworkPropertyMetadata(ByteOrderType.LoHi, DataByteOrderProperty_PropertyChanged));
 
-
         private static void DataByteOrderProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;

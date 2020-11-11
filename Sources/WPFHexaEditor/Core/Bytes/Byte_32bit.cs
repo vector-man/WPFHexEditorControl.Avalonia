@@ -17,10 +17,7 @@ namespace WpfHexaEditor.Core.Bytes
 
         public List<byte> OriginByte
         {
-            get
-            {
-                return _originByte;
-            }
+            get => _originByte;
             set
             {
                 _originByte = value;
@@ -35,8 +32,12 @@ namespace WpfHexaEditor.Core.Bytes
             byte[] value = new byte[4];
             bool sign_positive = true;
             string prefix = "";
-            var byteValue = (order == ByteOrderType.HiLo) ? Byte.ToArray().Reverse().ToArray() : Byte.ToArray();
-            var originValue = (order == ByteOrderType.HiLo) ? OriginByte.ToArray().Reverse().ToArray() : OriginByte.ToArray();
+            var byteValue = (order == ByteOrderType.HiLo) 
+                ? Byte.ToArray().Reverse().ToArray() 
+                : Byte.ToArray();
+            var originValue = (order == ByteOrderType.HiLo) 
+                ? OriginByte.ToArray().Reverse().ToArray() 
+                : OriginByte.ToArray();
             var ByteInt = BitConverter.ToUInt32(byteValue, 0);
             var OriginInt = BitConverter.ToUInt32(originValue, 0);
 
