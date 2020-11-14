@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+﻿//////////////////////////////////////////////
+// Apache 2.0  - 2020
+// Base author  : ehsan69h
+//////////////////////////////////////////////
+
+using System.Collections.Generic;
 using System.Windows.Input;
 
 namespace WpfHexaEditor.Core.Interfaces

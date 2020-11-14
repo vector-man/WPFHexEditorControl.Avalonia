@@ -1,4 +1,9 @@
-﻿using System;
+﻿//////////////////////////////////////////////
+// Apache 2.0  - 2020
+// Base author  : ehsan69h
+//////////////////////////////////////////////
+
+using System;
 using System.Collections.Generic;
 using WpfHexaEditor.Core.Interfaces;
 using System.Windows.Input;
