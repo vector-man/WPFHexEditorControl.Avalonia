@@ -329,6 +329,7 @@ namespace WpfHexaEditor.Core.Bytes
                     }
 
                     if (_newByte != null && _newByte.Count == 4)
+                    { 
                         for (int i = 0; i < 4; i++)
                         {
                             if (byteOrder == ByteOrderType.LoHi)
