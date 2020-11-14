@@ -19,7 +19,7 @@ namespace WpfHexaEditor.Core.Interfaces
 
         public bool IsEqual(byte[] bytes);
 
-        public (ByteAction, bool) Update(DataVisualType type, Key _key, ref KeyDownLabel _keyDownLabel);
+        public (ByteAction, bool) Update(DataVisualType type, Key _key, ByteOrderType byteOrder, ref KeyDownLabel _keyDownLabel);
 
         public void ChangeByteValue(byte newValue, long position);
 
