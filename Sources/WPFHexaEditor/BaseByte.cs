@@ -551,6 +551,7 @@ namespace WpfHexaEditor
         }
     }
     #endregion
+
     public class ByteEventArgs : EventArgs
     {
         public int Index { get; set; }

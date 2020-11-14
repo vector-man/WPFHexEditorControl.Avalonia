@@ -38,15 +38,10 @@ namespace WpfHexaEditor
         /// <summary>
         /// Update the render of text derived bytecontrol from byte property
         /// </summary>
-        public override void UpdateTextRenderFromByte()
-        {
-            if (Byte != null)
-            {
-                Text = Byte.GetText(_parent.DataStringVisual, _parent.DataStringState, _parent.ByteOrder);
-            }
-            else
-                Text = string.Empty;
-        }
+        public override void UpdateTextRenderFromByte() => 
+            Text = Byte != null 
+                ? Byte.GetText(_parent.DataStringVisual, _parent.DataStringState, _parent.ByteOrder) 
+                : string.Empty;
 
         public override void Clear()
         {
@@ -54,10 +49,9 @@ namespace WpfHexaEditor
             _keyDownLabel = KeyDownLabel.FirstChar;
         }
 
-        public void UpdateDataVisualWidth()
-        {
+        public void UpdateDataVisualWidth() => 
             Width = CalculateCellWidth(_parent.ByteSize, _parent.DataStringVisual, _parent.DataStringState);
-        }
+
         public static int CalculateCellWidth(ByteSizeType byteSize, DataVisualType type, DataVisualState state)
         { 
             var Width = byteSize switch
