@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using WpfHexaEditor.Core.Interfaces;
-using WpfHexaEditor.Core;
 using System.Windows.Input;
 
 namespace WpfHexaEditor.Core.Bytes

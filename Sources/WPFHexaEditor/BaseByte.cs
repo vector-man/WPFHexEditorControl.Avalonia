@@ -14,7 +14,6 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using WpfHexaEditor.Core;
-using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.Interfaces;
 
 namespace WpfHexaEditor

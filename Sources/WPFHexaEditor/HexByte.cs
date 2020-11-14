@@ -5,12 +5,9 @@
 //////////////////////////////////////////////
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using WpfHexaEditor.Core;
-using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.MethodExtention;
 
 namespace WpfHexaEditor
