@@ -133,7 +133,7 @@ namespace WpfHexaEditor.Core.Bytes
             del_ByteOnChange?.Invoke(Byte, index);
 
         }
-        public (ByteAction, bool) Update(DataVisualType type, Key _key, ref KeyDownLabel _keyDownLabel)
+        public (ByteAction, bool) Update(DataVisualType type, Key _key, ByteOrderType byteOrder, ref KeyDownLabel _keyDownLabel)
         {
             ByteAction Action = ByteAction.Nothing;
             bool isLastChar = false;

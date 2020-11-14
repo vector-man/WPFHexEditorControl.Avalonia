@@ -77,13 +77,13 @@ namespace WpfHexaEditor
                 ByteSizeType.Bit16 => type switch
                 {
                     DataVisualType.Decimal =>
-                        state == DataVisualState.Changes ? 30 :
+                        state == DataVisualState.Changes ? 40 :
                         state == DataVisualState.ChangesPercent ? 35 : 40,
                     DataVisualType.Hexadecimal =>
                         state == DataVisualState.Changes ? 40 :
                         state == DataVisualState.ChangesPercent ? 35 : 40,
                     DataVisualType.Binary =>
-                        state == DataVisualState.Changes ? 70 :
+                        state == DataVisualState.Changes ? 120 :
                         state == DataVisualState.ChangesPercent ? 65 : 120
                 },
                 ByteSizeType.Bit32 => type switch
@@ -137,7 +137,7 @@ namespace WpfHexaEditor
                 {
 
                     bool isEndChar;
-                    (Action, isEndChar) = Byte.Update(_parent.DataStringVisual, e.Key, ref _keyDownLabel);
+                    (Action, isEndChar) = Byte.Update(_parent.DataStringVisual, e.Key, byteOrder: _parent.ByteOrder, ref _keyDownLabel);
                     if (isEndChar && _parent.Length != BytePositionInStream + 1)
                     {
                         _keyDownLabel = KeyDownLabel.NextPosition;

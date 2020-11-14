@@ -24,7 +24,6 @@ namespace WpfHexaEditor.Core.Bytes
             set
             {
                 _byte = value;
-                //del_ByteOnChange?.Invoke(value);
             }
         }
         public List<byte> OriginByte
@@ -49,9 +48,9 @@ namespace WpfHexaEditor.Core.Bytes
             string prefix = "";
             var byteValue = (order == ByteOrderType.HiLo) ? Byte.ToArray().Reverse().ToArray() : Byte.ToArray();
             var originValue = (order == ByteOrderType.HiLo) ? OriginByte.ToArray().Reverse().ToArray() : OriginByte.ToArray();
-            var ByteInt = BitConverter.ToUInt16(byteValue.ToArray(), 0);
-            var OriginInt = BitConverter.ToUInt16(originValue.ToArray(), 0);
-            
+            var ByteInt = BitConverter.ToUInt16(byteValue.Reverse().ToArray(), 0);
+            var OriginInt = BitConverter.ToUInt16(originValue.Reverse().ToArray(), 0);
+
             switch (state)
             {
                 case DataVisualState.Default:
@@ -64,10 +63,10 @@ namespace WpfHexaEditor.Core.Bytes
                     if (ByteInt.CompareTo(OriginInt) < 0)
                     {
                         sign_positive = false;
-                        value = BitConverter.GetBytes(OriginInt - ByteInt);
+                        value = BitConverter.GetBytes(OriginInt - ByteInt).Take(2).Reverse().ToArray();
                     }
                     else
-                        value = BitConverter.GetBytes(ByteInt - OriginInt);
+                        value = BitConverter.GetBytes(ByteInt - OriginInt).Take(2).Reverse().ToArray();
 
                     break;
                 case DataVisualState.ChangesPercent:
@@ -102,7 +101,7 @@ namespace WpfHexaEditor.Core.Bytes
                         break;
                     case DataVisualType.Decimal:
                         Text = (sign_positive ? "" : "-") + prefix +
-                            BitConverter.ToUInt16(value, 0).ToString("d5");
+                            BitConverter.ToUInt16(value: value.Reverse().ToArray(), startIndex: 0).ToString("d5");
                         break;
                     case DataVisualType.Binary:
                         Text = (sign_positive ? "" : "-") + prefix +
@@ -131,14 +130,18 @@ namespace WpfHexaEditor.Core.Bytes
             }
             return false;
         }
-        public void ChangeByte(int index, byte value)
+
+        public void ChangeByte(int index, byte value, ByteOrderType byteOrder = ByteOrderType.LoHi)
         {
+            if (byteOrder == ByteOrderType.HiLo)
+            {
+                index = 1 - index;
+            }
             Byte[index] = value;
             del_ByteOnChange?.Invoke(Byte, index);
-
         }
 
-        public (ByteAction, bool) Update(DataVisualType type, Key _key, ref KeyDownLabel _keyDownLabel)
+        public (ByteAction, bool) Update(DataVisualType type, Key _key, ByteOrderType byteOrder, ref KeyDownLabel _keyDownLabel)
         {
             ByteAction Action = ByteAction.Nothing;
             bool isLastChar = false;
@@ -153,16 +156,18 @@ namespace WpfHexaEditor.Core.Bytes
                         : _key.ToString().ToLower();
 
                     //Update byte
-                    var byteValueCharArray = ByteConverters.ByteToHexCharArray(     // reverse
-                        Byte[0]).Concat(ByteConverters.ByteToHexCharArray(Byte[1]))
-                        .ToArray();
+                    var byteValueCharArray = byteOrder == ByteOrderType.LoHi 
+                        ? ByteConverters.ByteToHexCharArray(Byte[0]).Concat(ByteConverters.ByteToHexCharArray(Byte[1])).ToArray()
+                            : ByteConverters.ByteToHexCharArray(Byte[1]).Concat(ByteConverters.ByteToHexCharArray(Byte[0])).ToArray();
+                    
                     switch (_keyDownLabel)
                     {
                         case KeyDownLabel.FirstChar:
                             byteValueCharArray[0] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.SecondChar;
                             Action = ByteAction.Modified;
-                            ChangeByte(0, ByteConverters.HexToByte(byteValueCharArray[0] + byteValueCharArray[1].ToString())[0]);
+                            ChangeByte(0, ByteConverters.HexToByte(byteValueCharArray[0] + byteValueCharArray[1].ToString())[0]
+                                , byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.SecondChar:
@@ -170,20 +175,23 @@ namespace WpfHexaEditor.Core.Bytes
                             _keyDownLabel = KeyDownLabel.ThirdChar;
 
                             Action = ByteAction.Modified;
-                            ChangeByte(0, ByteConverters.HexToByte(byteValueCharArray[0] + byteValueCharArray[1].ToString())[0]);
+                            ChangeByte(0, ByteConverters.HexToByte(byteValueCharArray[0] + byteValueCharArray[1].ToString())[0]
+                                , byteOrder: byteOrder);
                             break;
                         case KeyDownLabel.ThirdChar:
                             byteValueCharArray[2] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.FourthChar;
                             Action = ByteAction.Modified;
-                            ChangeByte(1, ByteConverters.HexToByte(byteValueCharArray[2] + byteValueCharArray[3].ToString())[0]);
+                            ChangeByte(1, ByteConverters.HexToByte(byteValueCharArray[2] + byteValueCharArray[3].ToString())[0]
+                                , byteOrder: byteOrder);
                             break;
                         case KeyDownLabel.FourthChar:
                             byteValueCharArray[3] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.NextPosition;
 
                             Action = ByteAction.Modified;
-                            ChangeByte(1, ByteConverters.HexToByte(byteValueCharArray[2] + byteValueCharArray[3].ToString())[0]);
+                            ChangeByte(1, ByteConverters.HexToByte(byteValueCharArray[2] + byteValueCharArray[3].ToString())[0]
+                                , byteOrder: byteOrder);
                             isLastChar = true;
                             break;
                         case KeyDownLabel.NextPosition:
@@ -206,8 +214,10 @@ namespace WpfHexaEditor.Core.Bytes
                         : 0.ToString();
 
                     //Update byte
-                    Char[] byteValueCharArray_dec = BitConverter.ToUInt16(Byte.ToArray(), 0)
-                        .ToString("d5").ToCharArray();
+                    Char[] byteValueCharArray_dec = 
+                        (byteOrder == ByteOrderType.HiLo) 
+                            ? BitConverter.ToUInt16(Byte.ToArray(), 0).ToString("d5").ToCharArray() 
+                        : BitConverter.ToUInt16(Enumerable.Reverse(Byte.ToArray()).ToArray(), 0).ToString("d5").ToCharArray();
                     List<byte> _newByte = new List<byte>();
                     switch (_keyDownLabel)
                     {
@@ -216,8 +226,8 @@ namespace WpfHexaEditor.Core.Bytes
                             if (uint.Parse(new string(byteValueCharArray_dec)) > uint.MaxValue) break;
                             _keyDownLabel = KeyDownLabel.SecondChar;
                             Action = ByteAction.Modified;
-                            _newByte = new List<byte>(BitConverter.GetBytes(uint.Parse(new string(byteValueCharArray_dec))));
-                           
+                            _newByte = new List<byte>(BitConverter.GetBytes(uint.Parse(new string(byteValueCharArray_dec))).Take(2).Reverse());
+
                             break;
 
                         case KeyDownLabel.SecondChar:
@@ -225,7 +235,7 @@ namespace WpfHexaEditor.Core.Bytes
                             if (uint.Parse(new string(byteValueCharArray_dec)) > uint.MaxValue) break;
                             _keyDownLabel = KeyDownLabel.ThirdChar;
                             Action = ByteAction.Modified;
-                            _newByte = new List<byte>(BitConverter.GetBytes(uint.Parse(new string(byteValueCharArray_dec))));
+                            _newByte = new List<byte>(BitConverter.GetBytes(uint.Parse(new string(byteValueCharArray_dec))).Take(2).Reverse());
                             break;
 
                         case KeyDownLabel.ThirdChar:
@@ -233,7 +243,7 @@ namespace WpfHexaEditor.Core.Bytes
                             if (uint.Parse(new string(byteValueCharArray_dec)) > uint.MaxValue) break;
                             _keyDownLabel = KeyDownLabel.FourthChar;
                             Action = ByteAction.Modified;
-                            _newByte = new List<byte>(BitConverter.GetBytes(uint.Parse(new string(byteValueCharArray_dec))));
+                            _newByte = new List<byte>(BitConverter.GetBytes(uint.Parse(new string(byteValueCharArray_dec))).Take(2).Reverse());
 
                             break;
 
@@ -242,7 +252,7 @@ namespace WpfHexaEditor.Core.Bytes
                             if (uint.Parse(new string(byteValueCharArray_dec)) > uint.MaxValue) break;
                             _keyDownLabel = KeyDownLabel.FifthChar;
                             Action = ByteAction.Modified;
-                            _newByte = new List<byte>(BitConverter.GetBytes(uint.Parse(new string(byteValueCharArray_dec))));
+                            _newByte = new List<byte>(BitConverter.GetBytes(uint.Parse(new string(byteValueCharArray_dec))).Take(2).Reverse());
 
                             break;
 
@@ -251,7 +261,7 @@ namespace WpfHexaEditor.Core.Bytes
                             if (uint.Parse(new string(byteValueCharArray_dec)) > uint.MaxValue) break;
                             _keyDownLabel = KeyDownLabel.NextPosition;
                             Action = ByteAction.Modified;
-                            _newByte = new List<byte>(BitConverter.GetBytes(uint.Parse(new string(byteValueCharArray_dec))));
+                            _newByte = new List<byte>(BitConverter.GetBytes(uint.Parse(new string(byteValueCharArray_dec))).Take(2).Reverse());
 
                             isLastChar = true;
                             break;
@@ -260,10 +270,14 @@ namespace WpfHexaEditor.Core.Bytes
                     }
                     for (int i = 0; i < 2; i++)
                     {
-                        if (Byte[i] != _newByte[i])
+                        if (byteOrder == ByteOrderType.LoHi)
                         {
-                            ChangeByte(i, _newByte[i]);
+                            if (Byte[i] != _newByte[i])
+                                ChangeByte(i, _newByte[i]);
                         }
+                        else
+                            if (Byte[1 - i] != _newByte[i])
+                            ChangeByte(i, _newByte[i], ByteOrderType.HiLo);
                     }
                     #endregion
 
@@ -282,121 +296,121 @@ namespace WpfHexaEditor.Core.Bytes
                         : 0.ToString();
 
                     //Update byte
-                    Char[] byteValueCharArray_bin = 
-                        (Convert.ToString(Byte[0], 2).PadLeft(8, '0') + Convert.ToString(Byte[1], 2).PadLeft(8, '0'))
-                            .ToCharArray();
+                    Char[] byteValueCharArray_bin = (byteOrder == ByteOrderType.LoHi)
+                        ? (Convert.ToString(Byte[0], 2).PadLeft(8, '0') + Convert.ToString(Byte[1], 2).PadLeft(8, '0')).ToCharArray()
+                            : (Convert.ToString(Byte[1], 2).PadLeft(8, '0') + Convert.ToString(Byte[0], 2).PadLeft(8, '0')).ToCharArray();
                     switch (_keyDownLabel)
                     {
                         case KeyDownLabel.FirstChar:
                             byteValueCharArray_bin[0] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.SecondChar;
                             Action = ByteAction.Modified;
-                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2));
+                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.SecondChar:
                             byteValueCharArray_bin[1] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.ThirdChar;
                             Action = ByteAction.Modified;
-                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2));
+                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.ThirdChar:
                             byteValueCharArray_bin[2] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.FourthChar;
                             Action = ByteAction.Modified;
-                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2));
+                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.FourthChar:
                             byteValueCharArray_bin[3] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.FifthChar;
                             Action = ByteAction.Modified;
-                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2));
+                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.FifthChar:
                             byteValueCharArray_bin[4] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.SixthChar;
                             Action = ByteAction.Modified;
-                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2));
+                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.SixthChar:
                             byteValueCharArray_bin[5] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.SeventhChar;
                             Action = ByteAction.Modified;
-                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2));
+                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.SeventhChar:
                             byteValueCharArray_bin[6] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.EighthChar;
                             Action = ByteAction.Modified;
-                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2));
+                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.EighthChar:
                             byteValueCharArray_bin[7] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.Ninth;
                             Action = ByteAction.Modified;
-                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2));
+                            ChangeByte(0, Convert.ToByte(new string(byteValueCharArray_bin, 0, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.Ninth:
                             byteValueCharArray_bin[8] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.Tenth;
                             Action = ByteAction.Modified;
-                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2));
+                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.Tenth:
                             byteValueCharArray_bin[9] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.Eleventh;
                             Action = ByteAction.Modified;
-                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2));
+                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.Eleventh:
                             byteValueCharArray_bin[10] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.Twelfth;
                             Action = ByteAction.Modified;
-                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2));
+                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.Twelfth:
                             byteValueCharArray_bin[11] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.Thirteenth;
                             Action = ByteAction.Modified;
-                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2));
+                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.Thirteenth:
                             byteValueCharArray_bin[12] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.Fourteenth;
                             Action = ByteAction.Modified;
-                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2));
+                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.Fourteenth:
                             byteValueCharArray_bin[13] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.Fifteenth;
                             Action = ByteAction.Modified;
-                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2));
+                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.Fifteenth:
                             byteValueCharArray_bin[14] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.Sixteenth;
                             Action = ByteAction.Modified;
-                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2));
+                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2), byteOrder: byteOrder);
                             break;
 
                         case KeyDownLabel.Sixteenth:
                             byteValueCharArray_bin[15] = key.ToCharArray()[0];
                             _keyDownLabel = KeyDownLabel.NextPosition;
                             Action = ByteAction.Modified;
-                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2));
+                            ChangeByte(1, Convert.ToByte(new string(byteValueCharArray_bin, 8, 8), 2), byteOrder: byteOrder);
                             isLastChar = true;
                             break;
                         case KeyDownLabel.NextPosition:
