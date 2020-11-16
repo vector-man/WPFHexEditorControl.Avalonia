@@ -2523,9 +2523,11 @@ namespace WpfHexaEditor
 
         #region General update methods / Refresh view
 
+        public bool IsAutoRefreshOnResize { get; set; } = true;
+
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (e.HeightChanged) RefreshView(true);
+            if (e.HeightChanged && IsAutoRefreshOnResize) RefreshView(true);
         }
 
         /// <summary>

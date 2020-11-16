@@ -10,7 +10,7 @@
     <Authors>Derek Tremblay (derektremblay666@gmail.com)</Authors>
     <Company>Derek Tremblay (derektremblay666@gmail.com)</Company>
     <Description>Wpf Hexeditor is a fast and fully customisable user control for editing file or stream as hexadecimal, decimal and so much.
-Support .Net 4.7/4.8 and .Net Core 3.0</Description>
+Support .Net 4.7/4.8/5.0-windows .Net Core 3.0</Description>
     <PackageIcon>Logo-Icon.png</PackageIcon>
     <PackageIconUrl />
     <Product>WpfHexaEditor</Product>
@@ -102,5 +102,20 @@ Support .Net 4.7/4.8 and .Net Core 3.0</Description>
     <Resource Include="Resources\Icon\Undo-Icon.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 </Project>
