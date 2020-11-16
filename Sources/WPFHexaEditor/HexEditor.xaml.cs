@@ -4436,8 +4436,8 @@ namespace WpfHexaEditor
 
         public CaretMode VisualCaretMode
         {
-            get { return (CaretMode)GetValue(VisualCaretModeProperty); }
-            set { SetValue(VisualCaretModeProperty, value); }
+            get => (CaretMode)GetValue(VisualCaretModeProperty);
+            set => SetValue(VisualCaretModeProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for VisualCaretMode.  This enables animation, styling, binding, etc...
@@ -5039,7 +5039,7 @@ namespace WpfHexaEditor
         }
         #endregion
 
-        #region Preload iByteControl at control creation
+        #region Preload IByteControl at control creation
 
         /// <summary>
         /// Set to true for preload iByteControls at control creation for maximise the file/stream opening
@@ -5330,5 +5330,34 @@ namespace WpfHexaEditor
 
         #endregion
 
+        #region Commands implementation (In early stage of developpement)
+
+        public static DependencyProperty RefreshViewCommandProperty = 
+            DependencyProperty.Register (
+                "RefreshViewCommand",
+                typeof(ICommand),
+                typeof(HexEditor)
+            );
+
+        public static DependencyProperty SubmitChangesCommandProperty
+            = DependencyProperty.Register(
+                "SubmitChangesCommand",
+                typeof(ICommand),
+                typeof(HexEditor)
+              );
+
+        public ICommand RefreshViewCommand
+        {
+            get => (ICommand)GetValue(RefreshViewCommandProperty);
+            set => SetValue(RefreshViewCommandProperty, value);
+        }
+
+        public ICommand SubmitChangesCommand
+        {
+            get => (ICommand)GetValue(SubmitChangesCommandProperty);
+            set => SetValue(SubmitChangesCommandProperty, value);
+        }
+
+        #endregion
     }
 }
