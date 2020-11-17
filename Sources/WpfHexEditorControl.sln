@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfHexEditorCore", "WPFHexa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfHexEditor.Sample", "Samples\WPFHexEditor.Sample.CSharp\WpfHexEditor.Sample.csproj", "{80EB8D57-296B-4CD3-99D6-C227FD3BA286}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfHexEditor.Sample.AvalonDock", "WpfHexEditor.Sample.AvalonDock\WpfHexEditor.Sample.AvalonDock.csproj", "{6E3E68D0-8C8E-495E-84AC-A0DC9D52F369}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfHexEditor.Sample.AvalonDock", "Samples\WpfHexEditor.Sample.AvalonDock\WpfHexEditor.Sample.AvalonDock.csproj", "{6E3E68D0-8C8E-495E-84AC-A0DC9D52F369}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

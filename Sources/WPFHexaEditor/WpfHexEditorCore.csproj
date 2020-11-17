@@ -15,9 +15,9 @@ Support .Net 4.7/4.8/5.0-windows .Net Core 3.0</Description>
     <PackageIconUrl />
     <Product>WpfHexaEditor</Product>
     <Copyright>Apache 2.0</Copyright>
-    <AssemblyVersion>2.0.3.0</AssemblyVersion>
-    <FileVersion>2.0.3.0</FileVersion>
-    <Version>2.0.3</Version>
+    <AssemblyVersion>2.1.1</AssemblyVersion>
+    <FileVersion>2.1.1</FileVersion>
+    <Version>2.1.1</Version>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PackageTags>character-table;hexadecimal;binary;editor;hexeditor;tbl;hexedit</PackageTags>
     <ApplicationIcon />

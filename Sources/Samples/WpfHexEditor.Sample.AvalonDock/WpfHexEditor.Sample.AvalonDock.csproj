@@ -111,7 +111,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WPFHexaEditor\WpfHexEditorCore.csproj">
+    <ProjectReference Include="..\..\WPFHexaEditor\WpfHexEditorCore.csproj">
       <Project>{a53b3778-ba1d-4c35-9dc8-7a21e8224872}</Project>
       <Name>WpfHexEditorCore</Name>
     </ProjectReference>
