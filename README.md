@@ -42,6 +42,12 @@ Unicode TBL are supported. For use put value at the right of equal (=) like this
 ![example](Images/TBLExplain.png?raw=true)
 
 ### 🛒 Somes features
+
+⭐ = New features
+
+- ⭐ Edit in hexadecimal, decimal, binary 
+- ⭐ Edit in 8bit, 16bit and 32bit
+- ⭐ Edit in LoHi or HiLo
 - Find and Find/Replace dialog
 - Append byte at end of file
 - Include HexBox, an Hexadecimal TextBox with spinner
