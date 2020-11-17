@@ -163,19 +163,22 @@ namespace WpfHexaEditor
             set
             {                                
                 _byte = value;
+
                 UpdateTextRenderFromByte();
 
-                _byte.del_ByteOnChange += onByteChange;
+                if (value != null)
+                    _byte.del_ByteOnChange += OnByteChange;
             }
         }
-        void onByteChange(List<byte> bytes, int index)
+
+        void OnByteChange(List<byte> bytes, int index)
         {
             if (Action != ByteAction.Nothing && InternalChange == false)
                 ByteModified?.Invoke(this, new ByteEventArgs() { Index = index });
 
             UpdateTextRenderFromByte();
-
         }
+
         /// <summary>
         /// Action with this byte
         /// </summary>
@@ -330,11 +333,12 @@ namespace WpfHexaEditor
         public virtual void Clear()
         {
             InternalChange = true;
+            Byte = null;
             BytePositionInStream = -1;
             Action = ByteAction.Nothing;
             IsSelected = false;
-            InternalChange = false;
-            Description = string.Empty;
+            Description = string.Empty;            
+            InternalChange = false; 
         }
 
         #endregion
