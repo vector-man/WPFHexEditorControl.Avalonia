@@ -1,13 +1,14 @@
 <img src="Images/Logo.png?raw=true" width="420" height="100" />
   
-[![NuGet](https://img.shields.io/badge/Nuget-v2.0.2-green.svg)](https://www.nuget.org/packages/WPFHexaEditor/)
+[![NuGet](https://img.shields.io/badge/Nuget-v2.1.0-red.svg)](https://www.nuget.org/packages/WPFHexaEditor/)
 [![NetFramework](https://img.shields.io/badge/.Net%20Framework-4.7-green.svg)](https://www.microsoft.com/net/download/windows)
 [![NetFramework](https://img.shields.io/badge/.Net%20Core-3.0-green.svg)](https://www.microsoft.com/net/download/windows)
+[![NetFramework](https://img.shields.io/badge/.Net%20-5.0%20(test)-green.svg)](https://www.microsoft.com/net/download/windows)
 [![NetFramework](https://img.shields.io/badge/Language-C%23%207.0+-orange.svg)](https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/abbaye/WpfHexEditorControl/blob/master/LICENSE)
 
 
-## 🎯 ATTENTION : BUILD WITH VISUAL STUDIO 2019 v16.3.7+
+## 🎯 ATTENTION : BUILD WITH VISUAL STUDIO 2019 v16.6.0+
 
 Wpf Hexeditor is a fast and fully customisable user control for editing file or stream as hexadecimal or dedimal. 
 
