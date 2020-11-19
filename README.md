@@ -2,7 +2,6 @@
   
 [![NuGet](https://img.shields.io/badge/Nuget-v2.1.1-red.svg)](https://www.nuget.org/packages/WPFHexaEditor/)
 [![NetFramework](https://img.shields.io/badge/.Net%20Framework-4.7/4.8-green.svg)](https://www.microsoft.com/net/download/windows)
-[![NetFramework](https://img.shields.io/badge/.Net%20Core-3.0-green.svg)](https://www.microsoft.com/net/download/windows)
 [![NetFramework](https://img.shields.io/badge/.Net%20-5.0%20(test)-green.svg)](https://www.microsoft.com/net/download/windows)
 [![NetFramework](https://img.shields.io/badge/Language-C%23%207.0+-orange.svg)](https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/abbaye/WpfHexEditorControl/blob/master/LICENSE)
