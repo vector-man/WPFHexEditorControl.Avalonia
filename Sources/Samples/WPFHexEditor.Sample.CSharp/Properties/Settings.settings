@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="ApplicationName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Wpf HexEditor control </Value>
+      <Value Profile="(Default)">Wpf HexEditor control c# sample</Value>
     </Setting>
   </Settings>
 </SettingsFile>
