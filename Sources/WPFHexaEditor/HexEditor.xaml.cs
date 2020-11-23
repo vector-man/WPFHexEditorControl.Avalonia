@@ -2672,7 +2672,7 @@ namespace WpfHexaEditor
 
                 StringDataStackPanel.Children.Clear();
                 HexDataStackPanel.Children.Clear();
-                BarChartStackPanel.Children.Clear(); // NEW
+                BarChartStackPanel.Children.Clear();
             }
 
             for (var lineIndex = StringDataStackPanel.Children.Count; lineIndex < maxline; lineIndex++)
@@ -2701,7 +2701,7 @@ namespace WpfHexaEditor
                 }
                 #endregion
 
-                #region Build BarChart // NEW
+                #region Build BarChart
                 else if (BarChartPanelVisibility == Visibility.Visible)
                 {
                     var barLine = new BarChartLine()
@@ -2712,12 +2712,6 @@ namespace WpfHexaEditor
 
                     for (var i = 0; i < BytePerLine * ByteSizeRatio; i++)
                     {
-                        //if ((ByteSpacerPositioning == ByteSpacerPosition.Both ||
-                        //                                   ByteSpacerPositioning == ByteSpacerPosition.StringBytePanel))
-                        //    AddByteSpacer(dataLineStack, i);
-
-                        //var sbCtrl = new StringByte(this);
-                        //sbCtrl.Clear();
                         var ChartBarItem = new ChartBarItemDefault(height: LineHeight-5);
 
                         barLine.Children.Add(ChartBarItem);

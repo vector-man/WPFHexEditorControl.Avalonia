@@ -5,8 +5,8 @@ using System.Windows.Controls;
 
 namespace WpfHexaEditor.Core.ChartPanel
 {
-    public class BarChartLine : StackPanel, IChartLine
+    public class BarChartLine : StackPanel
     {
-        public List<IChartBarItem> Items { get; set; }
+        public List<ChartBarItemDefault> Items { get; set; }
     }
 }

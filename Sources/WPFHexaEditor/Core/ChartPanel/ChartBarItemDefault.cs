@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace WpfHexaEditor.Core.ChartPanel
 {
-    public class ChartBarItemDefault: FrameworkElement, IChartBarItem
+    public class ChartBarItemDefault: FrameworkElement
     {
         public ChartBarItemDefault(double height)
         {
