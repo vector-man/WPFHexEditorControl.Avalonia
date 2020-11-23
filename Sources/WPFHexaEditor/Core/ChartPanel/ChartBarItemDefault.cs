@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 
 namespace WpfHexaEditor.Core.ChartPanel
@@ -10,17 +7,18 @@ namespace WpfHexaEditor.Core.ChartPanel
     {
         public ChartBarItemDefault(double height)
         {
-            this.Background = new SolidColorBrush(Color.FromArgb(200, 0, 20, 0));
-            this.Value = 50;
-            this.Margin = new Thickness(2);
-            this.Width = 10;
-            this.Height = height;
+            Background = new SolidColorBrush(Color.FromArgb(200, 0, 20, 0));
+            Value = 50;
+            Margin = new Thickness(2);
+            Width = 10;
+            Height = height;
         }
 
 
         public static readonly DependencyProperty BackgroundProperty =
             DependencyProperty.Register("Background", typeof(Brush), typeof(ChartBarItemDefault),
                 new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
+        
         /// <summary>
         /// Defines the background
         /// </summary>
@@ -33,6 +31,7 @@ namespace WpfHexaEditor.Core.ChartPanel
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Value", typeof(int), typeof(ChartBarItemDefault),
                 new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.AffectsRender));
+        
         /// <summary>
         /// Defines the Value
         /// </summary>
@@ -50,15 +49,15 @@ namespace WpfHexaEditor.Core.ChartPanel
             //Draw background
             if (Background != null)
             {
-                int fillHeight = this.Value * (int)this.Height / 100;
-                dc.DrawRectangle(Background, null, new Rect(0, this.Height - fillHeight, this.Width, fillHeight));
+                int fillHeight = Value * (int)Height / 100;
+                dc.DrawRectangle(Background, null, new Rect(0, Height - fillHeight, Width, fillHeight));
 
             }
         }
 
         public void Clear()
         {
-            this.Value = 0;
+            Value = 0;
         }
     }
 }
