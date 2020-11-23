@@ -21,6 +21,7 @@ using System.Xml.Linq;
 using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.CharacterTable;
+using WpfHexaEditor.Core.ChartPanel;
 using WpfHexaEditor.Core.Interfaces;
 using WpfHexaEditor.Core.MethodExtention;
 using WpfHexaEditor.Dialog;
@@ -1829,7 +1830,39 @@ namespace WpfHexaEditor
             ctrl.StringDataStackPanel.Visibility = (Visibility)e.NewValue == Visibility.Visible
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+            if ((Visibility)e.NewValue == Visibility.Visible)
+            {
+                ctrl.BarChartPanelVisibility = Visibility.Collapsed;
+            }
+            ctrl.RefreshView(true);
+        }
 
+        /// <summary>
+        /// Set or Get value for change visibility of bar chart panel
+        /// </summary>
+        public Visibility BarChartPanelVisibility
+        {
+            get => (Visibility)GetValue(BarChartPanelVisibilityProperty);
+            set => SetValue(BarChartPanelVisibilityProperty, value);
+        }
+
+        public static readonly DependencyProperty BarChartPanelVisibilityProperty =
+            DependencyProperty.Register(nameof(BarChartPanelVisibility), typeof(Visibility), typeof(HexEditor),
+                new FrameworkPropertyMetadata(Visibility.Collapsed,
+                    BarChartPanelVisibility_ValidateValue,
+                    Visibility_CoerceValue));
+
+        private static void BarChartPanelVisibility_ValidateValue(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is HexEditor ctrl)) return;
+
+            ctrl.BarChartStackPanel.Visibility = (Visibility)e.NewValue == Visibility.Visible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+            if ((Visibility)e.NewValue == Visibility.Visible)
+            {
+                ctrl.StringDataVisibility = Visibility.Collapsed;
+            }
             ctrl.RefreshView(true);
         }
 
@@ -1855,7 +1888,7 @@ namespace WpfHexaEditor
             ctrl.StatusBarGrid.Visibility = ctrl.BottomRectangle.Visibility =
                 (Visibility)e.NewValue == Visibility.Visible
                     ? Visibility.Visible
-                    : Visibility.Collapsed;            
+                    : Visibility.Collapsed;
 
             ctrl.RefreshView(true);
         }
@@ -2361,6 +2394,37 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
+        /// Used to make action on all visible barchart
+        /// </summary>
+        private void TraverseBarChart(Action<ChartBarItemDefault> act, ref bool exit, bool force = false)
+        {
+            var visibleLine = MaxVisibleLine;
+            var cnt = 0;
+
+            //barchart panel
+            foreach (StackPanel chartPanelStack in BarChartStackPanel.Children)
+            {
+                if (cnt++ == visibleLine && !force)
+                    break;
+
+                foreach (var ctrl in chartPanelStack.Children)
+                    if (ctrl is ChartBarItemDefault sbControl)
+                        act(sbControl);
+
+                if (exit) return;
+            }
+        }
+
+        /// <summary>
+        /// Used to make action on all visible barchart
+        /// </summary>
+        private void TraverseBarChart(Action<ChartBarItemDefault> act)
+        {
+            var exit = false;
+            TraverseBarChart(act, ref exit);
+        }
+
+        /// <summary>
         /// Used to make action on all visible hexbyte and stringbyte.
         /// </summary>
         private void TraverseHexAndStringBytes(Action<IByteControl> act, ref bool exit, bool force = false)
@@ -2612,31 +2676,52 @@ namespace WpfHexaEditor
 
                 StringDataStackPanel.Children.Clear();
                 HexDataStackPanel.Children.Clear();
+                BarChartStackPanel.Children.Clear();
             }
 
             for (var lineIndex = StringDataStackPanel.Children.Count; lineIndex < maxline; lineIndex++)
             {
                 #region Build StringByte
-
-                var dataLineStack = new StackPanel
+                if (StringDataVisibility == Visibility.Visible)
                 {
-                    Height = LineHeight,
-                    Orientation = Orientation.Horizontal
-                };
+                    var dataLineStack = new StackPanel
+                    {
+                        Height = LineHeight,
+                        Orientation = Orientation.Horizontal
+                    };
 
-                for (var i = 0; i < BytePerLine * ByteSizeRatio; i++)
-                {
-                    if (_tblCharacterTable == null && (ByteSpacerPositioning == ByteSpacerPosition.Both ||
-                                                       ByteSpacerPositioning == ByteSpacerPosition.StringBytePanel))
-                        AddByteSpacer(dataLineStack, i);
+                    for (var i = 0; i < BytePerLine * ByteSizeRatio; i++)
+                    {
+                        if (_tblCharacterTable == null && (ByteSpacerPositioning == ByteSpacerPosition.Both ||
+                                                           ByteSpacerPositioning == ByteSpacerPosition.StringBytePanel))
+                            AddByteSpacer(dataLineStack, i);
 
-                    var sbCtrl = new StringByte(this);
-                    sbCtrl.Clear();
+                        var sbCtrl = new StringByte(this);
+                        sbCtrl.Clear();
 
-                    dataLineStack.Children.Add(sbCtrl);
+                        dataLineStack.Children.Add(sbCtrl);
+                    }
+                    StringDataStackPanel.Children.Add(dataLineStack);
                 }
-                StringDataStackPanel.Children.Add(dataLineStack);
+                #endregion
 
+                #region Build BarChart
+                else if (BarChartPanelVisibility == Visibility.Visible)
+                {
+                    var barLine = new BarChartLine()
+                    {
+                        Height = LineHeight,
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    for (var i = 0; i < BytePerLine * ByteSizeRatio; i++)
+                    {
+                        var ChartBarItem = new ChartBarItemDefault(height: LineHeight-5);
+
+                        barLine.Children.Add(ChartBarItem);
+                    }
+                    BarChartStackPanel.Children.Add(barLine);
+                }
                 #endregion
 
                 #region Build HexByte
@@ -2866,6 +2951,37 @@ namespace WpfHexaEditor
                         ctrl.Clear();
 
                     ctrl.InternalChange = false;
+                    index++;
+                });
+
+                #endregion
+
+
+                #region bar chart panel refresh
+
+                TraverseBarChart(ctrl =>
+                {
+                    //ctrl.Action = ByteAction.Nothing;
+                    //ctrl.ReadOnlyMode = ReadOnlyMode;
+                    //ctrl.InternalChange = true;
+                    //ctrl.TblCharacterTable = _tblCharacterTable;
+                    //ctrl.TypeOfCharacterTable = TypeOfCharacterTable;
+
+                    var nextPos = startPosition + index;
+
+                    //Prevent load if byte are deleted from file
+                    if (HideByteDeleted)
+                        while (_provider.CheckIfIsByteModified(nextPos, ByteAction.Deleted).success)
+                            nextPos++;
+
+                    if (index < readSize)
+                    {
+                        var percent = _viewBuffer[index] * 100 / 256;
+                        ctrl.Value = percent;
+                    }
+                    else
+                        ctrl.Clear();
+
                     index++;
                 });
 
