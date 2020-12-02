@@ -33,6 +33,12 @@ Sample use ByteShiftLeft and BytePerLine properties with custom TBL for edit fix
 Sample use of find and find/replace dialog...
 ![example](Images/Sample15-FindReplaceDialog.png?raw=true)
 
+Sample use of find and find/replace dialog...
+![example](Images/Sample15-FindReplaceDialog.png?raw=true)
+
+⭐ Sample use of BarChart representation of the data ...
+![example](Images/Sample12-BarChart.png?raw=true)
+
 ## 🧾 What is TBL (custom character table)
 The TBL are small plaintext .tbl files that link every hexadecimal value with a character, which proves most useful when reading and changing text data. Wpf HexEditor support .tbl and you can define your custom character table as you want.
 
@@ -48,6 +54,7 @@ Unicode TBL are supported. For use put value at the right of equal (=) like this
 - ⭐ Edit in hexadecimal, decimal, binary 
 - ⭐ Edit in 8bit, 16bit and 32bit
 - ⭐ Edit in LoHi or HiLo
+- ⭐ View as BarChart (see in screenshot. will evoluate in future)
 - Find and Find/Replace dialog
 - Append byte at end of file
 - Include HexBox, an Hexadecimal TextBox with spinner
