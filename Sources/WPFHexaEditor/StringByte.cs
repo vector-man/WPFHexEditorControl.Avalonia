@@ -20,12 +20,13 @@ namespace WpfHexaEditor
         #region Global class variables
 
         private bool _tblShowMte = true;
+        private bool _barchart = false;
 
         #endregion Global variable
 
         #region Contructor
 
-        public StringByte(HexEditor parent) : base(parent) { }
+        public StringByte(HexEditor parent, bool barChart) : base(parent) => _barchart = barChart;
 
         #endregion Contructor
 
@@ -174,17 +175,40 @@ namespace WpfHexaEditor
         /// </summary>
         protected override void OnRender(DrawingContext dc)
         {
-            base.OnRender(dc);
-
-            #region Update width of control 
-            //It's 8-10 time more fastest to update width on render for TBL string
-
-            Width = TypeOfCharacterTable switch
+            if (_barchart)
             {
-                CharacterTableType.Ascii => 12,
-                CharacterTableType.TblFile => TextFormatted?.Width > 12 ? TextFormatted.Width : 12
-            };
-            #endregion
+                Width = 12;
+                Margin = new Thickness(2);
+
+                #region Draw control
+                //Draw background
+                if (Background != null)
+                    dc.DrawRectangle(Background, null, new Rect(0, 0, RenderSize.Width, RenderSize.Height));
+                                
+                //Draw chart
+                int fillHeight = PercentValue * (int)_parent.LineHeight / 100;
+
+                dc.DrawRectangle(_parent.BarChartColor, 
+                    null, 
+                    new Rect(0, _parent.LineHeight - fillHeight, Width, fillHeight));
+                #endregion
+            }
+            else
+            {
+                Margin = new Thickness(0);
+
+                base.OnRender(dc);
+
+                #region Update width of control 
+                //It's 8-10 time more fastest to update width on render for TBL string
+
+                Width = TypeOfCharacterTable switch
+                {
+                    CharacterTableType.Ascii => 12,
+                    CharacterTableType.TblFile => TextFormatted?.Width > 12 ? TextFormatted.Width : 12
+                };
+                #endregion
+            }
         }
 
         /// <summary>
@@ -202,8 +226,8 @@ namespace WpfHexaEditor
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
+            if (_barchart) return;
             if (Byte == null) return;
-
             if (KeyValidation(e)) return;
 
             //MODIFY ASCII...
@@ -279,6 +303,24 @@ namespace WpfHexaEditor
 
             base.OnGotFocus(e);
         }
+        #endregion
+
+
+        #region BarChart Support
+
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register(nameof(PercentValue), typeof(int), typeof(StringByte),
+                new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.AffectsRender));
+
+        /// <summary>
+        /// Defines the Value
+        /// </summary>
+        public int PercentValue
+        {
+            get => (int)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
+        }
+
         #endregion
     }
 }

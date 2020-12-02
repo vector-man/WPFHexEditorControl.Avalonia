@@ -213,12 +213,6 @@
             Grid.Row="1"
             Grid.Column="2"
             Margin="5,0,0,0" />
-        <StackPanel
-            x:Name="BarChartStackPanel"
-            Grid.Row="1"
-            Grid.Column="2"
-            Visibility="Collapsed"
-            Margin="5,0,0,0" />
         <!--#endregion-->
 
         <!--#region Statusbar definition-->

@@ -20,14 +20,11 @@ namespace WpfHexaEditor.Core.Bytes
         
         public List<byte> OriginByte
         {
-            get
-            {
-                return _originByte;
-            }
+            get => _originByte;
             set
             {
                 _originByte = value;
-                Byte = new List<byte>( value);
+                Byte = new List<byte>(value);
             }
         }
 

@@ -200,10 +200,17 @@ namespace WpfHexaEditor.Core
         /// <summary>
         /// Method delegate for blink the caret
         /// </summary>
-        private void BlinkCaret(object state) => Dispatcher?.Invoke(() =>
+        private void BlinkCaret(object state)
         {
-            Visible = !Visible && !_hide;
-        });
+            try
+            {
+                Dispatcher?.Invoke(() =>
+                {
+                    Visible = !Visible && !_hide;
+                });
+            }
+            catch { }
+        }
 
         /// <summary>
         /// Initialise the timer
