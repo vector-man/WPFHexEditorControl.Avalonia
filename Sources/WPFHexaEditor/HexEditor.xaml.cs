@@ -3243,7 +3243,11 @@ namespace WpfHexaEditor
             if (SelectionStartIsVisible)
                 SetFocusAtSelectionStart();
             else
-                Focus();
+                try //sometimes crash in AvalonDock
+                {
+                    Focus();
+                }
+                catch { }
         }
 
         /// <summary>
