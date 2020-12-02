@@ -39,6 +39,9 @@ Sample use of find and find/replace dialog...
 ⭐ Sample use of BarChart representation of the data ...
 ![example](Images/Sample12-BarChart.png?raw=true)
 
+⭐ Sample use of control in AvalonDock ...
+![example](Images/Sample11-AvalonDock.png?raw=true)
+
 ## 🧾 What is TBL (custom character table)
 The TBL are small plaintext .tbl files that link every hexadecimal value with a character, which proves most useful when reading and changing text data. Wpf HexEditor support .tbl and you can define your custom character table as you want.
 
