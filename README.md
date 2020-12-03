@@ -37,6 +37,7 @@ Sample use of find and find/replace dialog...
 ![example](Images/Sample12-BarChart.png?raw=true)
 
 ⭐ Sample use of control in AvalonDock ...
+
 ![example](Images/Sample11-AvalonDock.png?raw=true)
 
 ## 🧾 What is TBL (custom character table)
