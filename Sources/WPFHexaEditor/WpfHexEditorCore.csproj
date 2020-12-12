@@ -15,9 +15,9 @@ Support .Net 4.7/4.8 and 5.0-windows</Description>
     <PackageIconUrl />
     <Product>WpfHexaEditor</Product>
     <Copyright>Apache 2.0</Copyright>
-    <AssemblyVersion>2.1.1</AssemblyVersion>
-    <FileVersion>2.1.1</FileVersion>
-    <Version>2.1.1</Version>
+    <AssemblyVersion>2.1.2</AssemblyVersion>
+    <FileVersion>2.1.2</FileVersion>
+    <Version>2.1.2</Version>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PackageTags>character-table;hexadecimal;binary;editor;hexeditor;tbl;hexedit</PackageTags>
     <ApplicationIcon />

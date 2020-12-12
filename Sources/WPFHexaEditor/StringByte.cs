@@ -270,7 +270,8 @@ namespace WpfHexaEditor
                 if (isok)
                 {
                     Action = ByteAction.Modified;
-                    Byte.Byte = new List<byte> { ByteConverters.CharToByte(Text[0]) };
+
+                    Byte.ChangeByteValue(ByteConverters.CharToByte(Text[0]), BytePositionInStream);
 
                     //Insert byte at end of file
                     if (_parent.Length == BytePositionInStream + 1)
