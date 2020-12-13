@@ -89,7 +89,7 @@ Insert the control like this in your XAML...:
 <control:HexEditor/>
 <control:HexEditor Width="NaN" Height="NaN"/>
 <control:HexEditor Width="Auto" Height="Auto"/>
-<control:HexEditor FileName={Binding FileNamePath} Width="Auto" Height="Auto"/>
+<control:HexEditor FileName="{Binding FileNamePath}" Width="Auto" Height="Auto"/>
 ```
 
 ---
