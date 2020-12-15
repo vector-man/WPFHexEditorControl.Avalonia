@@ -368,6 +368,7 @@
                     AppendNeedConfirmation="True"
                     BorderThickness="1"
                     ByteGrouping="FourByte"
+                    PreloadByteInEditorMode="MaxScreenVisibleLine"
                     ByteShiftLeft="{Binding LongValue, ElementName=HbBsl, UpdateSourceTrigger=PropertyChanged}"
                     ByteSpacerPositioning="HexBytePanel"
                     ByteSpacerVisualStyle="Dash"
