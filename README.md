@@ -8,7 +8,7 @@
 
 ## 🎯 ATTENTION : BUILD WITH VISUAL STUDIO 2019 v16.6.0+
 
-Wpf Hexeditor is a powerful and fully customisable user control for editing file or stream as hexadecimal or dedimal. 
+Wpf Hexeditor is a powerful and fully customisable user control for editing file or stream as hexadecimal, decimal and binary. 
 
 You can use it very easily in Wpf or WinForm application. Download the code and test the Wpf (C#, VB.NET) and WinForm (C#) samples.
 
@@ -52,7 +52,7 @@ Unicode TBL are supported. For use put value at the right of equal (=) like this
 ⭐ = New features
 
 - ⭐ AvalonDock support
-- ⭐ Edit in hexadecimal, decimal, binary 
+- ⭐ Edit in hexadecimal, decimal and binary 
 - ⭐ Edit in 8bit, 16bit and 32bit
 - ⭐ Edit in LoHi or HiLo
 - ⭐ View as BarChart (see in screenshot. will evoluate in future)
