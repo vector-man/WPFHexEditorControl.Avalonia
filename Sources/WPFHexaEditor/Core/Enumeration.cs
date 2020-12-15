@@ -203,8 +203,8 @@ namespace WpfHexaEditor.Core
     public enum DataVisualType
     {
         Hexadecimal,    //Editable
-        Decimal         //editable
-        , Binary        //Editable
+        Decimal,        //Editable
+        Binary        //Editable
     }
 
     /// <summary>
