@@ -251,11 +251,22 @@ namespace WpfHexaEditor.Core
     }
 
     /// <summary>
-    /// Use mode of the caret
+    /// Used to set the the caret mode
     /// </summary>
     public enum CaretMode
     {
         Insert,
         Overwrite
+    }
+
+    /// <summary>
+    /// Used to set how many line will be preloaded at control creation
+    /// </summary>
+    public enum PreloadByteInEditor
+    {
+        None,
+        MaxVisibleLine,
+        MaxVisibleLineExtended, //Test: Add 10 lines to maxvisible line
+        MaxScreenVisibleLine
     }
 }

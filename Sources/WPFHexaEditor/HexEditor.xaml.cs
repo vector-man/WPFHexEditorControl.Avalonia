@@ -1064,6 +1064,26 @@ namespace WpfHexaEditor
             }
         }
 
+        /// <summary>
+        /// Obtain the number of line preloaded in the control
+        /// </summary>
+        public int MaxLinePreloaded => StringDataStackPanel.Children.Count;
+
+        /// <summary>
+        /// Get the maximum number of row visible in control
+        /// </summary>
+        private int MaxScreenVisibleLine
+        {
+            get
+            {
+                var actualheight = SystemParameters.PrimaryScreenHeight;
+
+                if (actualheight < 0) actualheight = 0;
+
+                return (int)(actualheight / (LineHeight * ZoomScale)) + 1;
+            }
+        }
+
         #endregion Lines methods
 
         #region Selection Property/Methods/Event
@@ -2782,7 +2802,8 @@ namespace WpfHexaEditor
                 {
                     if (_viewBuffer != null)
                     {
-                        BuildDataLines(MaxVisibleLine, true);
+                        BuildDataLines(MaxVisibleLine, MaxLinePreloaded < MaxVisibleLine);
+
                         if (_viewBuffer.Length < bufferlength)
                         {
                             _viewBuffer = new byte[bufferlength];
@@ -5088,13 +5109,37 @@ namespace WpfHexaEditor
         #region Preload IByteControl at control creation
 
         /// <summary>
+        /// Used to define how many line will be created at control creation
+        /// </summary>
+        public PreloadByteInEditor PreloadByteInEditorMode
+        {
+            get => (PreloadByteInEditor)GetValue(PreloadByteInEditorModeProperty);
+            set => SetValue(PreloadByteInEditorModeProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for PreloadByteInEditorMode.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty PreloadByteInEditorModeProperty =
+            DependencyProperty.Register(nameof(PreloadByteInEditorMode), typeof(PreloadByteInEditor), 
+                typeof(HexEditor), new PropertyMetadata(PreloadByteInEditor.None));
+
+        /// <summary>
         /// Set to true for preload iByteControls at control creation for maximise the file/stream opening
         /// </summary>
         public bool AllowPreloadByteInEditor { get; set; } = false;
 
         private void Control_Loaded(object sender, RoutedEventArgs e)
         {
-            if (AllowPreloadByteInEditor) BuildDataLines(MaxVisibleLine, true);
+            //Set the number of row to preload in the editor at the control creation. 
+            //It will be faster when resizing of control but will be longer to load at first time
+            var nbLine = PreloadByteInEditorMode switch
+            {
+                PreloadByteInEditor.None => 0,
+                PreloadByteInEditor.MaxVisibleLine => MaxVisibleLine,
+                PreloadByteInEditor.MaxVisibleLineExtended => MaxVisibleLine + 10,
+                PreloadByteInEditor.MaxScreenVisibleLine => MaxScreenVisibleLine
+            };
+
+            BuildDataLines(nbLine, true);
         }
 
         #endregion
