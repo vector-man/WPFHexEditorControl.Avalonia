@@ -5122,11 +5122,6 @@ namespace WpfHexaEditor
             DependencyProperty.Register(nameof(PreloadByteInEditorMode), typeof(PreloadByteInEditor), 
                 typeof(HexEditor), new PropertyMetadata(PreloadByteInEditor.None));
 
-        /// <summary>
-        /// Set to true for preload iByteControls at control creation for maximise the file/stream opening
-        /// </summary>
-        public bool AllowPreloadByteInEditor { get; set; } = false;
-
         private void Control_Loaded(object sender, RoutedEventArgs e)
         {
             //Set the number of row to preload in the editor at the control creation. 
