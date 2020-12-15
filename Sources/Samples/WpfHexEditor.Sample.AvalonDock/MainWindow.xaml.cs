@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.MethodExtention;
 using Xceed.Wpf.AvalonDock.Layout;
 

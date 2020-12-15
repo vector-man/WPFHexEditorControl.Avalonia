@@ -368,7 +368,6 @@
                     AppendNeedConfirmation="True"
                     BorderThickness="1"
                     ByteGrouping="FourByte"
-                    PreloadByteInEditorMode="MaxScreenVisibleLine"
                     ByteShiftLeft="{Binding LongValue, ElementName=HbBsl, UpdateSourceTrigger=PropertyChanged}"
                     ByteSpacerPositioning="HexBytePanel"
                     ByteSpacerVisualStyle="Dash"
@@ -377,6 +376,7 @@
                     DefaultCopyToClipboardMode="HexaString"
                     ForegroundSecondColor="Blue"
                     OffSetStringVisual="Hexadecimal"
+                    PreloadByteInEditorMode="MaxScreenVisibleLine"
                     ReadOnlyMode="{Binding IsChecked, ElementName=SetReadOnlyMenu, UpdateSourceTrigger=PropertyChanged}"
                     VisualCaretMode="Overwrite" />
 

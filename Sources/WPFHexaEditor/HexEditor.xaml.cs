@@ -5124,17 +5124,21 @@ namespace WpfHexaEditor
 
         private void Control_Loaded(object sender, RoutedEventArgs e)
         {
+            #region Preload byte or not...
             //Set the number of row to preload in the editor at the control creation. 
             //It will be faster when resizing of control but will be longer to load at first time
             var nbLine = PreloadByteInEditorMode switch
             {
-                PreloadByteInEditor.None => 0,
+                PreloadByteInEditor.None => 0, //Not preload byte
                 PreloadByteInEditor.MaxVisibleLine => MaxVisibleLine,
                 PreloadByteInEditor.MaxVisibleLineExtended => MaxVisibleLine + 10,
                 PreloadByteInEditor.MaxScreenVisibleLine => MaxScreenVisibleLine
             };
 
-            BuildDataLines(nbLine, true);
+            if (PreloadByteInEditorMode != PreloadByteInEditor.None)
+                BuildDataLines(nbLine, true);
+
+            #endregion
         }
 
         #endregion
