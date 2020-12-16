@@ -29,12 +29,13 @@ namespace WpfHexEditor.Sample.AvalonDock
                 d.Closed += Doc_Closed;
                 d.IsSelectedChanged += Doc_IsSelectedChanged;
                                 
-                d.Title = System.IO.Path.GetFileName(filename);
+                d.Title = Path.GetFileName(filename);
                 d.ToolTip = filename;
                 d.IsSelected = true;
 
                 new WpfHexaEditor.HexEditor().With(h => 
                 {
+                    h.PreloadByteInEditorMode = PreloadByteInEditor.MaxVisibleLineExtended;
                     h.FileName = filename;
                     d.Content = h;
                 });

@@ -5122,12 +5122,18 @@ namespace WpfHexaEditor
             DependencyProperty.Register(nameof(PreloadByteInEditorMode), typeof(PreloadByteInEditor), 
                 typeof(HexEditor), new PropertyMetadata(PreloadByteInEditor.None));
 
-        private void Control_Loaded(object sender, RoutedEventArgs e)
+        private void Control_Loaded(object sender, RoutedEventArgs e) =>
+            ForcePreloadByteInEditor(PreloadByteInEditorMode); //Preload byte or not...
+
+        /// <summary>
+        /// Number of line to preload in editor
+        /// </summary>
+        /// <param name="preloadByte">Preload byte precalculated</param>
+        public void ForcePreloadByteInEditor(PreloadByteInEditor preloadByte, bool refreshView = true)
         {
-            #region Preload byte or not...
             //Set the number of row to preload in the editor at the control creation. 
             //It will be faster when resizing of control but will be longer to load at first time
-            var nbLine = PreloadByteInEditorMode switch
+            var nbLine = preloadByte switch
             {
                 PreloadByteInEditor.None => 0, //Not preload byte
                 PreloadByteInEditor.MaxVisibleLine => MaxVisibleLine,
@@ -5138,7 +5144,20 @@ namespace WpfHexaEditor
             if (PreloadByteInEditorMode != PreloadByteInEditor.None)
                 BuildDataLines(nbLine, true);
 
-            #endregion
+            if (refreshView) RefreshView();
+        }
+
+        /// <summary>
+        /// Number of line to preload in editor
+        /// </summary>
+        /// <param name="nbLine">Number of line to preload in control</param>
+        public void ForcePreloadByteInEditor(int nbLine, bool refreshView = true)
+        {
+            if (nbLine <= 0) return;
+
+            BuildDataLines(nbLine, true);
+
+            if (refreshView) RefreshView();
         }
 
         #endregion

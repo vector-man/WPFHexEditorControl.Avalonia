@@ -5,19 +5,21 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>WpfHexaEditor</RootNamespace>
     <AssemblyName>WPFHexaEditor</AssemblyName>
-    <Title>WPFHexaEditor user control</Title>
+    <Title>WpfHexEditor user control</Title>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Derek Tremblay (derektremblay666@gmail.com)</Authors>
     <Company>Derek Tremblay (derektremblay666@gmail.com)</Company>
-    <Description>Wpf Hexeditor is a fast and fully customisable user control for editing file or stream as hexadecimal, decimal and so much.
-Support .Net 4.7/4.8 and 5.0-windows</Description>
+    <Description>
+      Wpf Hexeditor is a powerful and fully customisable user control for editing file or stream as hexadecimal, decimal and binary. Can be used in Wpf or WinForm application.
+      Support .Net 4.7/4.8 and .Net 5.0-windows
+    </Description>
     <PackageIcon>Logo-Icon.png</PackageIcon>
     <PackageIconUrl />
     <Product>WpfHexaEditor</Product>
     <Copyright>Apache 2.0</Copyright>
-    <AssemblyVersion>2.1.2</AssemblyVersion>
-    <FileVersion>2.1.2</FileVersion>
-    <Version>2.1.2</Version>
+    <AssemblyVersion>2.1.3</AssemblyVersion>
+    <FileVersion>2.1.3</FileVersion>
+    <Version>2.1.3</Version>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PackageTags>character-table;hexadecimal;binary;editor;hexeditor;tbl;hexedit</PackageTags>
     <ApplicationIcon />
