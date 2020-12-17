@@ -229,6 +229,7 @@ namespace WpfHexaEditor
             if (_barchart) return;
             if (Byte == null) return;
             if (KeyValidation(e)) return;
+            if (e.Key == Key.CapsLock) return;
 
             //MODIFY ASCII...
             if (!ReadOnlyMode)
