@@ -107,6 +107,7 @@ namespace WpfHexaEditor.Core.Bytes
             Byte[index] = value;
             del_ByteOnChange?.Invoke(Byte, index);
         }
+
         public (ByteAction, bool) Update(DataVisualType type, Key _key, ByteOrderType byteOrder, ref KeyDownLabel _keyDownLabel)
         {
             ByteAction Action = ByteAction.Nothing;
@@ -130,8 +131,6 @@ namespace WpfHexaEditor.Core.Bytes
                             _keyDownLabel = KeyDownLabel.SecondChar;
                             Action = ByteAction.Modified;
                             ChangeByte(0, ByteConverters.HexToByte(byteValueCharArray[0] + byteValueCharArray[1].ToString())[0]);
-                            //Byte = new List<byte>() {  ByteConverters.HexToByte(
-                            //        byteValueCharArray[0] + byteValueCharArray[1].ToString())[0] };
                             break;
                         case KeyDownLabel.SecondChar:
                             byteValueCharArray[1] = key.ToCharArray()[0];
@@ -139,9 +138,6 @@ namespace WpfHexaEditor.Core.Bytes
 
                             Action = ByteAction.Modified;
                             ChangeByte(0, ByteConverters.HexToByte(byteValueCharArray[0] + byteValueCharArray[1].ToString())[0]);
-                            //Byte = new List<byte>() { ByteConverters.HexToByte(
-                            //        byteValueCharArray[0] + byteValueCharArray[1].ToString())[0] };
-
                             isLastChar = true;
                             break;
                         case KeyDownLabel.NextPosition:

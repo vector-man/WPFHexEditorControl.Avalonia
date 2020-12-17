@@ -29,8 +29,8 @@
         <hexedit:HexEditor
             x:Name="HexEditor"
             Grid.Row="1"
-            PreloadByteInEditorMode="MaxScreenVisibleLine"
-            BarChartPanelVisibility="Visible" />
+            BarChartPanelVisibility="Visible"
+            PreloadByteInEditorMode="MaxScreenVisibleLine" />
 
     </Grid>
 </Window>

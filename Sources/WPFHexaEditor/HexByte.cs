@@ -127,17 +127,20 @@ namespace WpfHexaEditor
                 }
                 else
                 {
-
                     bool isEndChar;
+
                     (Action, isEndChar) = Byte.Update(_parent.DataStringVisual, e.Key, byteOrder: _parent.ByteOrder, ref _keyDownLabel);
+
                     if (isEndChar && _parent.Length != BytePositionInStream + 1)
                     {
                         _keyDownLabel = KeyDownLabel.NextPosition;
                         OnMoveNext(new EventArgs());
                     }
                 }
+
                 UpdateTextRenderFromByte();
             }
+
             UpdateCaret();
 
             base.OnKeyDown(e);

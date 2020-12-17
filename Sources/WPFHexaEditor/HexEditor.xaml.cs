@@ -1016,7 +1016,6 @@ namespace WpfHexaEditor
         {
             if (sender is IByteControl ctrl)
             {
-
                 _provider.AddByteModified(ctrl.Byte.Byte[e.Index], ctrl.BytePositionInStream + e.Index);
                 SetScrollMarker(ctrl.BytePositionInStream + e.Index, ScrollMarker.ByteModified);
                 UpdateByteModified();

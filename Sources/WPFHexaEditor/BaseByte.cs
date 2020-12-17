@@ -171,9 +171,10 @@ namespace WpfHexaEditor
             }
         }
 
-        void OnByteChange(List<byte> bytes, int index)
+        internal void OnByteChange(List<byte> bytes, int index)
         {
-            if (Action != ByteAction.Nothing && InternalChange == false)
+            //if (Action != ByteAction.Nothing && InternalChange == false)
+            if (InternalChange == false)
                 ByteModified?.Invoke(this, new ByteEventArgs() { Index = index });
 
             UpdateTextRenderFromByte();
