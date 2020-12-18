@@ -184,7 +184,10 @@ namespace WpfHexaEditor
                 //Draw background
                 if (Background != null)
                     dc.DrawRectangle(Background, null, new Rect(0, 0, RenderSize.Width, RenderSize.Height));
-                                
+
+                //Prevent drawing wrong graph
+                if (Byte is null) return;
+
                 //Draw chart
                 int fillHeight = PercentValue * (int)_parent.LineHeight / 100;
 
