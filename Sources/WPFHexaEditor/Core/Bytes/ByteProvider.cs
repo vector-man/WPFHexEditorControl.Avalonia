@@ -540,6 +540,8 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public void AddByteModified(byte? @byte, long BytePositionInStream, long undoLength = 1)
         {
+            if (ReadOnlyMode) return;
+
             var (success, _) = CheckIfIsByteModified(BytePositionInStream);
 
             if (success)
@@ -572,6 +574,8 @@ namespace WpfHexaEditor.Core.Bytes
         /// </returns>
         public long AddByteDeleted(long bytePositionInStream, long length)
         {
+            if (ReadOnlyMode) return -1;
+
             var position = bytePositionInStream;
 
             for (var i = 0; i < length; i++)
@@ -1488,6 +1492,7 @@ namespace WpfHexaEditor.Core.Bytes
         public void AppendByte(byte[] bytesToAppend)
         {
             if (bytesToAppend == null) return;
+            if (ReadOnlyMode) return;
 
             _stream.Position = _stream.Length;
             _stream.SetLength(Length + bytesToAppend.Length);
@@ -1503,6 +1508,8 @@ namespace WpfHexaEditor.Core.Bytes
         /// </summary>
         public void AppendByte(byte byteToAppend, long count = 1)
         {
+            if (ReadOnlyMode) return;
+
             _stream.Position = _stream.Length;
             _stream.SetLength(Length + count);
 

@@ -986,7 +986,7 @@ namespace WpfHexaEditor
         }
 
         public static readonly DependencyProperty ReadOnlyModeProperty =
-            DependencyProperty.Register("ReadOnlyMode", typeof(bool), typeof(HexEditor),
+            DependencyProperty.Register(nameof(ReadOnlyMode), typeof(bool), typeof(HexEditor),
                 new FrameworkPropertyMetadata(false,
                     ReadOnlyMode_PropertyChanged));
 
