@@ -39,14 +39,14 @@ namespace WpfHexaEditor
         public event EventHandler Click;
         public event EventHandler RightClick;
         public event EventHandler DoubleClick;
-        public event EventHandler MoveNext;
-        public event EventHandler MovePrevious;
-        public event EventHandler MoveRight;
-        public event EventHandler MoveLeft;
-        public event EventHandler MoveUp;
-        public event EventHandler MoveDown;
-        public event EventHandler MovePageDown;
-        public event EventHandler MovePageUp;
+        public event EventHandler<ByteEventArgs> MoveNext;
+        public event EventHandler<ByteEventArgs> MovePrevious;
+        public event EventHandler<ByteEventArgs> MoveRight;
+        public event EventHandler<ByteEventArgs> MoveLeft;
+        public event EventHandler<ByteEventArgs> MoveUp;
+        public event EventHandler<ByteEventArgs> MoveDown;
+        public event EventHandler<ByteEventArgs> MovePageDown;
+        public event EventHandler<ByteEventArgs> MovePageUp;
         public event EventHandler ByteDeleted;
         public event EventHandler EscapeKey;
         public event EventHandler CtrlzKey;
@@ -447,7 +447,7 @@ namespace WpfHexaEditor
             base.OnLostFocus(e);
         }
 
-        protected void OnMoveNext(EventArgs e) => MoveNext?.Invoke(this, e);
+        protected void OnMoveNext(ByteEventArgs e) => MoveNext?.Invoke(this, new ByteEventArgs(BytePositionInStream));
 
         protected bool KeyValidation(KeyEventArgs e)
         {
@@ -456,42 +456,42 @@ namespace WpfHexaEditor
             if (KeyValidator.IsUpKey(e.Key))
             {
                 e.Handled = true;
-                MoveUp?.Invoke(this, new EventArgs());
+                MoveUp?.Invoke(this, new ByteEventArgs(BytePositionInStream));
 
                 return true;
             }
             if (KeyValidator.IsDownKey(e.Key))
             {
                 e.Handled = true;
-                MoveDown?.Invoke(this, new EventArgs());
+                MoveDown?.Invoke(this, new ByteEventArgs(BytePositionInStream));
 
                 return true;
             }
             if (KeyValidator.IsLeftKey(e.Key))
             {
                 e.Handled = true;
-                MoveLeft?.Invoke(this, new EventArgs());
+                MoveLeft?.Invoke(this, new ByteEventArgs(BytePositionInStream));
 
                 return true;
             }
             if (KeyValidator.IsRightKey(e.Key))
             {
                 e.Handled = true;
-                MoveRight?.Invoke(this, new EventArgs());
+                MoveRight?.Invoke(this, new ByteEventArgs(BytePositionInStream));
 
                 return true;
             }
             if (KeyValidator.IsPageDownKey(e.Key))
             {
                 e.Handled = true;
-                MovePageDown?.Invoke(this, new EventArgs());
+                MovePageDown?.Invoke(this, new ByteEventArgs(BytePositionInStream));
 
                 return true;
             }
             if (KeyValidator.IsPageUpKey(e.Key))
             {
                 e.Handled = true;
-                MovePageUp?.Invoke(this, new EventArgs());
+                MovePageUp?.Invoke(this, new ByteEventArgs(BytePositionInStream));
 
                 return true;
             }
@@ -510,7 +510,7 @@ namespace WpfHexaEditor
                 e.Handled = true;
                 ByteDeleted?.Invoke(this, new EventArgs());
 
-                MovePrevious?.Invoke(this, new EventArgs());
+                MovePrevious?.Invoke(this, new ByteEventArgs(BytePositionInStream));
 
                 return true;
             }

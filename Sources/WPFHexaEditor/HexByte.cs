@@ -123,7 +123,7 @@ namespace WpfHexaEditor
                 if (_keyDownLabel == KeyDownLabel.NextPosition)
                 {
                     _parent.AppendByte(new byte[] { 0 });
-                    OnMoveNext(new EventArgs());
+                    OnMoveNext(new ByteEventArgs(BytePositionInStream));
                 }
                 else
                 {
@@ -134,7 +134,7 @@ namespace WpfHexaEditor
                     if (isEndChar && _parent.Length != BytePositionInStream + 1)
                     {
                         _keyDownLabel = KeyDownLabel.NextPosition;
-                        OnMoveNext(new EventArgs());
+                        OnMoveNext(new ByteEventArgs(BytePositionInStream));
                     }
                 }
 

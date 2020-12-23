@@ -1156,7 +1156,7 @@ namespace WpfHexaEditor
             }
         }
 
-        private void Control_MovePageUp(object sender, EventArgs e)
+        private void Control_MovePageUp(object sender, ByteEventArgs e)
         {
             //Prevent infinite loop
             _setFocusTest = false;
@@ -1187,7 +1187,7 @@ namespace WpfHexaEditor
             }
         }
 
-        private void Control_MovePageDown(object sender, EventArgs e)
+        private void Control_MovePageDown(object sender, ByteEventArgs e)
         {
             //Prevent infinite loop
             _setFocusTest = false;
@@ -1218,7 +1218,7 @@ namespace WpfHexaEditor
             }
         }
 
-        private void Control_MoveDown(object sender, EventArgs e)
+        private void Control_MoveDown(object sender, ByteEventArgs e)
         {
             //Prevent infinite loop
             _setFocusTest = false;
@@ -1244,7 +1244,7 @@ namespace WpfHexaEditor
             SetFocusAtSelectionStart();
         }
 
-        private void Control_MoveUp(object sender, EventArgs e)
+        private void Control_MoveUp(object sender, ByteEventArgs e)
         {
             //Prevent infinite loop
             _setFocusTest = false;
@@ -1453,20 +1453,19 @@ namespace WpfHexaEditor
             }
         }
 
-        private void Control_MoveRight(object sender, EventArgs e)
+        private void Control_MoveRight(object sender, ByteEventArgs e)
         {
             //Prevent infinite loop
             _setFocusTest = false;
-
+                        
             //Get the new position from SelectionStart down one page
             var newPosition = GetValidPositionFrom(SelectionStart, 1);
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
             {
-                if (newPosition <= _provider.Length)
-                    SelectionStop = GetValidPositionFrom(SelectionStop, 1);
-                else
-                    SelectionStart = _provider.Length;
+                SelectionStart = newPosition <= _provider.Length 
+                    ? GetValidPositionFrom(SelectionStart, 1) 
+                    : _provider.Length;
             }
             else
             {
@@ -1488,7 +1487,7 @@ namespace WpfHexaEditor
             SetFocusAtSelectionStart();
         }
 
-        private void Control_MoveLeft(object sender, EventArgs e)
+        private void Control_MoveLeft(object sender, ByteEventArgs e)
         {
             //Prevent infinite loop
             _setFocusTest = false;
@@ -1518,20 +1517,20 @@ namespace WpfHexaEditor
             SetFocusAtSelectionStart();
         }
 
-        private void Control_MovePrevious(object sender, EventArgs e)
+        private void Control_MovePrevious(object sender, ByteEventArgs e)
         {
             UpdateByteModified();
 
             //Call move left event
-            Control_MoveLeft(sender, new EventArgs());
+            Control_MoveLeft(sender, e);
         }
 
-        private void Control_MoveNext(object sender, EventArgs e)
+        private void Control_MoveNext(object sender, ByteEventArgs e)
         {
             UpdateByteModified();
 
             //Call moveright event
-            Control_MoveRight(sender, new EventArgs());
+            Control_MoveRight(sender, e);
         }
 
         #endregion Selection Property/Methods/Event

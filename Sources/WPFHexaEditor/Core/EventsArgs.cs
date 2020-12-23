@@ -7,6 +7,12 @@ namespace WpfHexaEditor.Core
     /// </summary>
     public class ByteEventArgs : EventArgs
     {
+        public ByteEventArgs(long position) => BytePositionInStream = position;
+
+        public ByteEventArgs() { }
+
+        public long BytePositionInStream { get; set; }
+
         public int Index { get; set; }
     }
 }

@@ -236,7 +236,6 @@ namespace WpfHexaEditor
 
             //MODIFY ASCII...
             if (!_parent.IsLockedFile && (!ReadOnlyMode || !_parent.ReadOnlyMode))
-            //if (!ReadOnlyMode)
             {
                 var isok = false;
 
@@ -285,7 +284,7 @@ namespace WpfHexaEditor
                         _parent.AppendByte(byteToAppend);
                     }
 
-                    OnMoveNext(new EventArgs());
+                    OnMoveNext(new ByteEventArgs(BytePositionInStream));
                 }
             }
 
