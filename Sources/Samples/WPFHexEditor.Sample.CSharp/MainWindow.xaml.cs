@@ -206,7 +206,10 @@ namespace WPFHexaEditorExample
 
             //Setstate 
             if (ti.Tag is XDocument doc)
+            {
                 HexEdit.CurrentState = doc;
+                SetReadOnlyMenu.IsChecked = HexEdit.ReadOnlyMode;
+            }
         }
 
         private void Image_MouseUp(object sender, MouseButtonEventArgs e) => CloseFile();
@@ -224,5 +227,8 @@ namespace WPFHexaEditorExample
             FileTab.Items.Clear();
             HexEdit.CloseProvider();
         }
+
+        private void SetReadOnlyMenu_Click(object sender, RoutedEventArgs e) => 
+            HexEdit.ReadOnlyMode = SetReadOnlyMenu.IsChecked;
     }
 }

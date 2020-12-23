@@ -118,7 +118,7 @@ namespace WpfHexaEditor
             if (KeyValidation(e)) return;
 
             //MODIFY BYTE
-            if (!ReadOnlyMode && KeyValidator.IsHexKey(e.Key))
+            if (!_parent.IsLockedFile && (!ReadOnlyMode || !_parent.ReadOnlyMode) && KeyValidator.IsHexKey(e.Key))
             {
                 if (_keyDownLabel == KeyDownLabel.NextPosition)
                 {

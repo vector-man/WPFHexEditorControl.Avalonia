@@ -95,6 +95,7 @@
                     <MenuItem
                         x:Name="SetReadOnlyMenu"
                         Header="Read only"
+                        Click="SetReadOnlyMenu_Click"
                         IsCheckable="True" />
                     <Separator />
                     <MenuItem
@@ -377,7 +378,6 @@
                     ForegroundSecondColor="Blue"
                     OffSetStringVisual="Hexadecimal"
                     PreloadByteInEditorMode="MaxScreenVisibleLine"
-                    ReadOnlyMode="{Binding IsChecked, ElementName=SetReadOnlyMenu, UpdateSourceTrigger=PropertyChanged}"
                     VisualCaretMode="Overwrite" />
 
             </Grid>

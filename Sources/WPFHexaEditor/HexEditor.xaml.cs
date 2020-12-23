@@ -975,6 +975,7 @@ namespace WpfHexaEditor
         #endregion Characters tables property/methods
 
         #region ReadOnly property/event
+        public bool IsLockedFile => CheckIsOpen(_provider) ? _provider.IsLockedFile : false;
 
         /// <summary>
         /// Put the control on readonly mode.
@@ -987,21 +988,23 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty ReadOnlyModeProperty =
             DependencyProperty.Register(nameof(ReadOnlyMode), typeof(bool), typeof(HexEditor),
-                new FrameworkPropertyMetadata(false,
-                    ReadOnlyMode_PropertyChanged));
+                new FrameworkPropertyMetadata(false, ReadOnlyMode_PropertyChanged));
 
         private static void ReadOnlyMode_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is HexEditor ctrl && e.NewValue != e.OldValue)
-                ctrl.RefreshView(true);
+            if (!(d is HexEditor ctrl)) return;
+            if (!CheckIsOpen(ctrl._provider)) return;
+            if (e.NewValue == e.OldValue) return;
+                        
+            ctrl._provider.ReadOnlyMode = ctrl._provider.IsLockedFile ? true : (bool)e.NewValue;
+            ctrl.RefreshView(true);
         }
 
         private void Provider_ReadOnlyChanged(object sender, EventArgs e)
         {
             if (!CheckIsOpen(_provider)) return;
 
-            ReadOnlyMode = _provider.ReadOnlyMode;
-            ReadOnlyChanged?.Invoke(this, new EventArgs());
+            ReadOnlyMode = _provider.IsLockedFile ? true : _provider.ReadOnlyMode;
         }
 
         #endregion ReadOnly property/event
@@ -1014,8 +1017,11 @@ namespace WpfHexaEditor
 
         private void Control_ByteModified(object sender, ByteEventArgs e)
         {
+            if (!CheckIsOpen(_provider)) return;
+            if (_provider.ReadOnlyMode) return;
+
             if (sender is IByteControl ctrl)
-            {
+            {                
                 _provider.AddByteModified(ctrl.Byte.Byte[e.Index], ctrl.BytePositionInStream + e.Index);
                 SetScrollMarker(ctrl.BytePositionInStream + e.Index, ScrollMarker.ByteModified);
                 UpdateByteModified();
@@ -2138,7 +2144,7 @@ namespace WpfHexaEditor
             if (CheckIsOpen(_provider))
             {
                 FileName = string.Empty;
-                ReadOnlyMode = false;
+                //ReadOnlyMode = false;
                 VerticalScrollBar.Value = 0;
 
                 _provider.Close();
@@ -2185,7 +2191,7 @@ namespace WpfHexaEditor
 
             CloseProvider();
 
-            _provider = new ByteProvider(filename);
+            _provider = new ByteProvider(filename, ReadOnlyMode);
 
             _provider.With(p =>
             {
@@ -5285,6 +5291,7 @@ namespace WpfHexaEditor
         public void DeleteSelection()
         {
             if (!CanDelete || !CheckIsOpen(_provider) || ReadOnlyMode) return;
+            if (_provider.ReadOnlyMode) return; //ReadOnlyMode is on debugging...
 
             var position = SelectionStart > SelectionStop
                 ? SelectionStop

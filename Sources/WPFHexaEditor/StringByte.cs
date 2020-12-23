@@ -235,7 +235,8 @@ namespace WpfHexaEditor
             if (e.Key == Key.CapsLock) return;
 
             //MODIFY ASCII...
-            if (!ReadOnlyMode)
+            if (!_parent.IsLockedFile && (!ReadOnlyMode || !_parent.ReadOnlyMode))
+            //if (!ReadOnlyMode)
             {
                 var isok = false;
 

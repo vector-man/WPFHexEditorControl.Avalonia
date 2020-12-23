@@ -33,7 +33,6 @@ namespace WpfHexaEditor.Core.Bytes
         private bool _readOnlyMode;
         private double _longProcessProgress;
         private string _newfilename = string.Empty;
-
         #endregion Globals variable
 
         #region Events
@@ -71,6 +70,15 @@ namespace WpfHexaEditor.Core.Bytes
         public ByteProvider(string fileName) => FileName = fileName;
 
         /// <summary>
+        /// Construct new ByteProvider with filename and try to open file
+        /// </summary>
+        public ByteProvider(string fileName, bool readOnlyMode)
+        {
+            ReadOnlyMode = readOnlyMode;
+            FileName = fileName;
+        }
+
+        /// <summary>
         /// Constuct new ByteProvider with stream
         /// </summary>
         public ByteProvider(Stream stream) => Stream = stream;
@@ -78,6 +86,11 @@ namespace WpfHexaEditor.Core.Bytes
         #endregion Constructors
 
         #region Properties
+
+        /// <summary>
+        /// Get if the file is locked / read-only
+        /// </summary>
+        public bool IsLockedFile { get; internal set; } = false;
 
         /// <summary>
         /// Get the type of stream are opened in byteprovider.
@@ -158,11 +171,14 @@ namespace WpfHexaEditor.Core.Bytes
             catch
             {
                 //TODO: Localize string...
-                if (MessageBox.Show("The file is locked. Do you want to open it in read-only mode?", string.Empty,
+
+                if (ReadOnlyMode)
+                    _stream = File.Open(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                else if (MessageBox.Show("The file is locked. Do you want to open it in read-only mode?", string.Empty,
                         MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     _stream = File.Open(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-
+                    IsLockedFile = true;
                     ReadOnlyMode = true;
                 }
             }
@@ -180,7 +196,7 @@ namespace WpfHexaEditor.Core.Bytes
             get => _readOnlyMode;
             set
             {
-                _readOnlyMode = value;
+                _readOnlyMode = IsLockedFile ? true : value;
 
                 //Launch event
                 ReadOnlyChanged?.Invoke(this, new EventArgs());
@@ -199,6 +215,7 @@ namespace WpfHexaEditor.Core.Bytes
             _stream = null;
             _newfilename = string.Empty;
             ReadOnlyMode = false;
+            IsLockedFile = false;
             IsOnLongProcess = false;
             LongProcessProgress = 0;
 
@@ -1401,6 +1418,7 @@ namespace WpfHexaEditor.Core.Bytes
                 LongProcessChanged?.Invoke(value, new EventArgs());
             }
         }
+               
 
         #endregion Long process progress
 
