@@ -3,7 +3,7 @@
 namespace WpfHexaEditor.Core
 {
     /// <summary>
-    /// Custom event arguments used for ByteModified
+    /// Custom event arguments used for pass somes informations to delegate
     /// </summary>
     public class ByteEventArgs : EventArgs
     {
