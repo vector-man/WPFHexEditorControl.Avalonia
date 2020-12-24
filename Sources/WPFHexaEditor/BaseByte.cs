@@ -424,7 +424,6 @@ namespace WpfHexaEditor
                         DoubleClick?.Invoke(this, e);
                         break;
                 }
-
             }
 
             if (e.RightButton == MouseButtonState.Pressed)
