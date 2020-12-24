@@ -16,9 +16,7 @@ namespace WpfHexaEditor.Core.Converters
     public sealed class VisibilityToBooleanConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
-            (Visibility)value == Visibility.Visible
-                ? true
-                : false;
+            (Visibility)value == Visibility.Visible;
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
             (bool)value == true

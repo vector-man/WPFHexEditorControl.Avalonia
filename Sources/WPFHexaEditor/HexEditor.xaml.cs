@@ -976,7 +976,7 @@ namespace WpfHexaEditor
         #endregion Characters tables property/methods
 
         #region ReadOnly property/event
-        public bool IsLockedFile => CheckIsOpen(_provider) ? _provider.IsLockedFile : false;
+        public bool IsLockedFile => CheckIsOpen(_provider) && _provider.IsLockedFile;
 
         /// <summary>
         /// Put the control on readonly mode.
@@ -997,7 +997,7 @@ namespace WpfHexaEditor
             if (!CheckIsOpen(ctrl._provider)) return;
             if (e.NewValue == e.OldValue) return;
                         
-            ctrl._provider.ReadOnlyMode = ctrl._provider.IsLockedFile ? true : (bool)e.NewValue;
+            ctrl._provider.ReadOnlyMode = ctrl._provider.IsLockedFile || (bool)e.NewValue;
             ctrl.RefreshView(true);
         }
 
@@ -1005,7 +1005,7 @@ namespace WpfHexaEditor
         {
             if (!CheckIsOpen(_provider)) return;
 
-            ReadOnlyMode = _provider.IsLockedFile ? true : _provider.ReadOnlyMode;
+            ReadOnlyMode = _provider.IsLockedFile || _provider.ReadOnlyMode;
         }
 
         #endregion ReadOnly property/event
@@ -2835,7 +2835,7 @@ namespace WpfHexaEditor
                 _provider.Position = startPosition;
                 var readSize = 0;
                 if (HideByteDeleted)
-                    for (int i = 0; i < _viewBuffer.Count(); i++)
+                    for (int i = 0; i < _viewBuffer.Length; i++)
                     {
                         if (!_provider.CheckIfIsByteModified(_provider.Position, ByteAction.Deleted).success)
                         {
@@ -2854,9 +2854,9 @@ namespace WpfHexaEditor
                     }
                 else
                 {
-                    readSize = _provider.Read(_viewBuffer, 0, bufferlength <= _viewBuffer.Count()
+                    readSize = _provider.Read(_viewBuffer, 0, bufferlength <= _viewBuffer.Length
                         ? bufferlength
-                        : _viewBuffer.Count());
+                        : _viewBuffer.Length);
                 }
                 #endregion
 
@@ -3014,8 +3014,7 @@ namespace WpfHexaEditor
                 ctrl.IsSelected = ctrl.BytePositionInStream >= minSelect &&
                                   ctrl.BytePositionInStream <= maxSelect &&
                                   ctrl.BytePositionInStream != -1
-                    ? ctrl.Action != ByteAction.Deleted
-                    : false;
+&& ctrl.Action != ByteAction.Deleted;
             });
         }
         /// <summary>
@@ -4948,8 +4947,7 @@ namespace WpfHexaEditor
 
             #region Set the readonly mode
             ReadOnlyMode = bool.TryParse(doc.Element("WpfHexEditor").Attribute(nameof(ReadOnlyMode)).Value, out bool readOnlyMode)
-                ? readOnlyMode
-                : false;
+&& readOnlyMode;
             #endregion
         }
 

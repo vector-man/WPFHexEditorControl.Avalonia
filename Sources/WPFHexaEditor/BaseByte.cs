@@ -447,7 +447,7 @@ namespace WpfHexaEditor
             base.OnLostFocus(e);
         }
 
-        protected void OnMoveNext(ByteEventArgs e) => MoveNext?.Invoke(this, new ByteEventArgs(BytePositionInStream));
+        protected void OnMoveNext(ByteEventArgs e) => MoveNext?.Invoke(this, e);
 
         protected bool KeyValidation(KeyEventArgs e)
         {

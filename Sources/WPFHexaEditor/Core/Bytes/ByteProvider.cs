@@ -196,7 +196,7 @@ namespace WpfHexaEditor.Core.Bytes
             get => _readOnlyMode;
             set
             {
-                _readOnlyMode = IsLockedFile ? true : value;
+                _readOnlyMode = IsLockedFile || value;
 
                 //Launch event
                 ReadOnlyChanged?.Invoke(this, new EventArgs());
@@ -327,8 +327,7 @@ namespace WpfHexaEditor.Core.Bytes
 
         /// <summary>
         /// Submit change to files/stream
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Qualité du code", "IDE0068:Utilisez le modèle de suppression recommandé", Justification = "<En attente>")]
+        /// </summary>        
         public void SubmitChanges()
         {
             if (!CanWrite)
@@ -923,7 +922,7 @@ namespace WpfHexaEditor.Core.Bytes
                     sb.AppendLine();
                     sb.Append("byte[] rawData = {");
                     sb.AppendLine();
-                    sb.Append("\t");
+                    sb.Append('\t');
                     break;
                 case CodeLanguage.Java:
                     sb.Append($"String sData =\"{ByteConverters.BytesToString(buffer)}\";");
@@ -934,7 +933,7 @@ namespace WpfHexaEditor.Core.Bytes
                     sb.AppendLine();
                     sb.Append("byte rawData[] = {");
                     sb.AppendLine();
-                    sb.Append("\t");
+                    sb.Append('\t');
                     break;
                 case CodeLanguage.C:
                     sb.Append($"char sData[] =\"{ByteConverters.BytesToString(buffer)}\";");
@@ -945,7 +944,7 @@ namespace WpfHexaEditor.Core.Bytes
                     sb.AppendLine();
                     sb.Append($"unsigned char rawData[{length}] {{");
                     sb.AppendLine();
-                    sb.Append("\t");
+                    sb.Append('\t');
                     break;
                 case CodeLanguage.FSharp:
                     sb.Append($"let sData = @\"{ByteConverters.BytesToString(buffer)}\";");
@@ -967,7 +966,7 @@ namespace WpfHexaEditor.Core.Bytes
                     sb.AppendLine();
                     sb.Append("Dim rawData As Byte() = { _");
                     sb.AppendLine();
-                    sb.Append("\t");
+                    sb.Append('\t');
                     break;
                 case CodeLanguage.Pascal:
                     sb.Append($"sData: string = @\'{ByteConverters.BytesToString(buffer)}\';");
@@ -1005,12 +1004,12 @@ namespace WpfHexaEditor.Core.Bytes
                 if (i == (language == CodeLanguage.Java ? 6 : 12))
                 {
                     i = 0;
-                    if (language == CodeLanguage.Vbnet) sb.Append("_");
+                    if (language == CodeLanguage.Vbnet) sb.Append('_');
                     sb.AppendLine();
                     sb.Append(language != CodeLanguage.FSharp ? "\t" : "    ");
                 }
             }
-            if (language == CodeLanguage.Vbnet) sb.Append("_");
+            if (language == CodeLanguage.Vbnet) sb.Append('_');
             sb.AppendLine();
 
             #region End of block

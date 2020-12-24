@@ -20,7 +20,7 @@ namespace WpfHexaEditor
         #region Global class variables
 
         private bool _tblShowMte = true;
-        private bool _barchart = false;
+        private readonly bool _barchart = false;
 
         #endregion Global variable
 
@@ -208,7 +208,8 @@ namespace WpfHexaEditor
                 Width = TypeOfCharacterTable switch
                 {
                     CharacterTableType.Ascii => 12,
-                    CharacterTableType.TblFile => TextFormatted?.Width > 12 ? TextFormatted.Width : 12
+                    CharacterTableType.TblFile => TextFormatted?.Width > 12 ? TextFormatted.Width : 12,
+                    _ => throw new NotImplementedException()
                 };
                 #endregion
             }
