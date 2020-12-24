@@ -173,12 +173,19 @@ namespace WpfHexaEditor
             else
             {
                 //TODO: clear size and use BaseByte.TextFormatted property...
+                //TODO: Take the scale factor from parent
                 var size = Text[1].ToString()
                     .GetScreenSize(_parent.FontFamily, _parent.FontSize, _parent.FontStyle, FontWeight,
                         _parent.FontStretch, _parent.Foreground, this);
 
-                _parent.SetCaretSize(Width / 2, size.Height);
+                //update site with scale factor
+                //size.Width *= _parent.ZoomScale;
+                //size.Height *= _parent.ZoomScale;
+                
+                _parent.SetCaretSize(size.Width + 2, ActualHeight - 2);
                 _parent.SetCaretMode(_parent.VisualCaretMode);
+
+                //TODO: DEBUG POSITION WHEN THE SCALE FACTOR IS NOT 1
 
                 switch (_keyDownLabel)
                 {
