@@ -191,8 +191,8 @@ namespace WPFHexaEditorExample
 
         private void FileTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!(sender is TabControl tc)) return;
-            if (!(tc.SelectedValue is TabItem ti)) return;
+            if (sender is not TabControl tc) return;
+            if (tc.SelectedValue is not TabItem ti) return;
 
             //Set the tag of last selected ta to currentstate
             if (e.RemovedItems.Count > 0 && e.RemovedItems[0] is TabItem lastSelectedTabItem)

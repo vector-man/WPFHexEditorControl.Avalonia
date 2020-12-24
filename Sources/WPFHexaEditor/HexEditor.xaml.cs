@@ -467,7 +467,7 @@ namespace WpfHexaEditor
         private static void Control_ForegroundOffSetHeaderColorPropertyChanged(DependencyObject d,
             DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateHeader();
             ctrl.UpdateLinesInfo();
@@ -540,14 +540,14 @@ namespace WpfHexaEditor
 
         private static void Control_BackgroundColorPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.BaseGrid.Background = (Brush)e.NewValue;
         }
 
         private static void Control_ColorPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.RefreshView();
         }
@@ -564,7 +564,7 @@ namespace WpfHexaEditor
 
         private static void FontFamily_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.RefreshView(true);
         }
@@ -687,7 +687,7 @@ namespace WpfHexaEditor
 
         private static void DataVisualTypeProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateLinesInfo();
         }
@@ -707,7 +707,7 @@ namespace WpfHexaEditor
 
         private static void DataStringVisualStateProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateHeader(true);
 
@@ -730,7 +730,7 @@ namespace WpfHexaEditor
 
         private static void DataByteOrderProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateHeader(true);
 
@@ -748,7 +748,8 @@ namespace WpfHexaEditor
         {
             ByteSizeType.Bit8 => 1,
             ByteSizeType.Bit16 => 2,
-            ByteSizeType.Bit32 => 4
+            ByteSizeType.Bit32 => 4,
+            _ => throw new NotImplementedException()
         };
 
         /// <summary>
@@ -766,7 +767,7 @@ namespace WpfHexaEditor
 
         private static void DataByteSizeProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateViewers(true);
             ctrl.UpdateHeader(true);
@@ -796,7 +797,7 @@ namespace WpfHexaEditor
 
         private static void DataStringVisualTypeProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateHeader(true);
 
@@ -828,7 +829,7 @@ namespace WpfHexaEditor
         private static void TypeOfCharacterTable_PropertyChanged(DependencyObject d,
             DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl)) return;
+            if (d is not HexEditor ctrl) return;
 
             ctrl.RefreshView(true);
             ctrl.TypeOfCharacterTableChanged?.Invoke(ctrl, new EventArgs());
@@ -992,7 +993,7 @@ namespace WpfHexaEditor
 
         private static void ReadOnlyMode_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl)) return;
+            if (d is not HexEditor ctrl) return;
             if (!CheckIsOpen(ctrl._provider)) return;
             if (e.NewValue == e.OldValue) return;
                         
@@ -1108,7 +1109,7 @@ namespace WpfHexaEditor
 
         private void LinesInfoLabel_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!(sender is FastTextLine line) || e.LeftButton != MouseButtonState.Pressed) return;
+            if (sender is not FastTextLine line || e.LeftButton != MouseButtonState.Pressed) return;
 
             var position = HexLiteralToLong((string)line.Tag).position;
             var deleted = CheckIsOpen(_provider)
@@ -1122,7 +1123,7 @@ namespace WpfHexaEditor
 
         private void LinesInfoLabel_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (!(sender is FastTextLine line)) return;
+            if (sender is not FastTextLine line) return;
 
             SelectionStart = HexLiteralToLong((string)line.Tag).position;
             SelectionStop = SelectionStart + BytePerLine - 1 - (HideByteDeleted
@@ -1275,7 +1276,7 @@ namespace WpfHexaEditor
         {
             //Prevent false mouse selection on file open
             if (SelectionStart == -1) return;
-            if (!(sender is IByteControl bCtrl)) return;
+            if (sender is not IByteControl bCtrl) return;
 
             var focusedControl = Keyboard.FocusedElement;
 
@@ -1303,7 +1304,7 @@ namespace WpfHexaEditor
 
         private static object SelectionStart_CoerceValueCallBack(DependencyObject d, object baseValue)
         {
-            if (!(d is HexEditor ctrl)) return -1L;
+            if (d is not HexEditor ctrl) return -1L;
             if (!CheckIsOpen(ctrl._provider)) return -1L;
             if ((long)baseValue < -1) return -1L;
 
@@ -1312,7 +1313,7 @@ namespace WpfHexaEditor
 
         private static void SelectionStart_ChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl)) return;
+            if (d is not HexEditor ctrl) return;
             if (e.NewValue == e.OldValue) return;
             if (!CheckIsOpen(ctrl._provider)) return;
 
@@ -1345,7 +1346,7 @@ namespace WpfHexaEditor
 
         private static object SelectionStop_CoerceValueCallBack(DependencyObject d, object baseValue)
         {
-            if (!(d is HexEditor ctrl)) return baseValue;
+            if (d is not HexEditor ctrl) return baseValue;
 
             var value = (long)baseValue;
 
@@ -1358,7 +1359,7 @@ namespace WpfHexaEditor
 
         private static void SelectionStop_ChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateSelection();
             ctrl.UpdateSelectionLine();
@@ -1791,7 +1792,7 @@ namespace WpfHexaEditor
 
         private static void HexDataVisibility_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl)) return;
+            if (d is not HexEditor ctrl) return;
 
             switch ((Visibility)e.NewValue)
             {
@@ -1825,7 +1826,7 @@ namespace WpfHexaEditor
 
         private static void HeaderVisibility_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl)) return;
+            if (d is not HexEditor ctrl) return;
 
             switch ((Visibility)e.NewValue)
             {
@@ -1861,7 +1862,7 @@ namespace WpfHexaEditor
 
         private static void StringDataVisibility_ValidateValue(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl)) return;
+            if (d is not HexEditor ctrl) return;
 
             ctrl.StringDataStackPanel.Visibility = (Visibility)e.NewValue == Visibility.Visible
                 ? Visibility.Visible
@@ -1889,7 +1890,7 @@ namespace WpfHexaEditor
 
         private static void BarChartPanelVisibility_ValidateValue(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl)) return;
+            if (d is not HexEditor ctrl) return;
 
             if ((Visibility)e.NewValue != (Visibility)e.OldValue)
                 ctrl.RefreshView(true);
@@ -1911,7 +1912,7 @@ namespace WpfHexaEditor
 
         private static void StatusBarVisibility_ValueChange(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl)) return;
+            if (d is not HexEditor ctrl) return;
 
             ctrl.ReadOnlyLabel.Visibility =
             ctrl.StatusBarGrid.Visibility = ctrl.BottomRectangle.Visibility =
@@ -1938,7 +1939,7 @@ namespace WpfHexaEditor
 
         private static void LineInfoVisibility_ValueChange(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl)) return;
+            if (d is not HexEditor ctrl) return;
 
             ctrl.LinesInfoStackPanel.Visibility = (Visibility)e.NewValue == Visibility.Visible
                 ? Visibility.Visible
@@ -2059,7 +2060,7 @@ namespace WpfHexaEditor
 
         private void Provider_ChangesSubmited(object sender, EventArgs e)
         {
-            if (!(sender is ByteProvider bp)) return;
+            if (sender is not ByteProvider bp) return;
 
             //Refresh filename
             var filename = bp.FileName;
@@ -2122,7 +2123,7 @@ namespace WpfHexaEditor
 
         private static void Stream_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl)) return;
+            if (d is not HexEditor ctrl) return;
 
             ctrl.CloseProvider();
             if (e.NewValue != null)
@@ -2522,7 +2523,7 @@ namespace WpfHexaEditor
 
         private static void BytePerLine_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.With(c =>
             {
@@ -2882,7 +2883,8 @@ namespace WpfHexaEditor
                         {
                             ByteSizeType.Bit8 => new Byte_8bit(_viewBuffer[index]),
                             ByteSizeType.Bit16 => new Byte_16bit(new byte[] { _viewBuffer[index], _viewBuffer[index + 1] }),
-                            ByteSizeType.Bit32 => new Byte_32bit(new byte[] { _viewBuffer[index], _viewBuffer[index + 1], _viewBuffer[index + 2], _viewBuffer[index + 3] })
+                            ByteSizeType.Bit32 => new Byte_32bit(new byte[] { _viewBuffer[index], _viewBuffer[index + 1], _viewBuffer[index + 2], _viewBuffer[index + 3] }),
+                            _ => throw new NotImplementedException()
                         };
                         ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
 
@@ -3164,7 +3166,8 @@ namespace WpfHexaEditor
                             {
                                 OffSetPanelType.OffsetOnly => $"0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpperInvariant()}",
                                 OffSetPanelType.LineOnly => $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual).ToUpperInvariant()}",
-                                OffSetPanelType.Both => $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual)} 0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpperInvariant()}"
+                                OffSetPanelType.Both => $"ln {LongToHex(GetLineNumber(actualPosition), OffSetPanelFixedWidthVisual)} 0x{LongToHex(actualPosition, OffSetPanelFixedWidthVisual).ToUpperInvariant()}",
+                                _ => throw new NotImplementedException()
                             };
                             break;
                         case DataVisualType.Decimal:
@@ -3174,7 +3177,8 @@ namespace WpfHexaEditor
                             {
                                 OffSetPanelType.OffsetOnly => $"d{actualPosition.ToString(format)}",
                                 OffSetPanelType.LineOnly => $"ln {GetLineNumber(actualPosition).ToString(format)}",
-                                OffSetPanelType.Both => $"ln {GetLineNumber(actualPosition).ToString(format)} d{actualPosition.ToString(format)}"
+                                OffSetPanelType.Both => $"ln {GetLineNumber(actualPosition).ToString(format)} d{actualPosition.ToString(format)}",
+                                _ => throw new NotImplementedException()
                             };
                             break;
                         case DataVisualType.Binary:
@@ -3184,7 +3188,8 @@ namespace WpfHexaEditor
                             {
                                 OffSetPanelType.OffsetOnly => $"d{actualPosition.ToString(format)}",
                                 OffSetPanelType.LineOnly => $"ln {GetLineNumber(actualPosition).ToString(format)}",
-                                OffSetPanelType.Both => $"ln {GetLineNumber(actualPosition).ToString(format)} d{actualPosition.ToString(format)}"
+                                OffSetPanelType.Both => $"ln {GetLineNumber(actualPosition).ToString(format)} d{actualPosition.ToString(format)}",
+                                _ => throw new NotImplementedException()
                             };
                             break;
                     }
@@ -3915,7 +3920,7 @@ namespace WpfHexaEditor
 
         private void Rect_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (!(sender is Rectangle rect) || !(rect.Tag is BookMark bm)) return;
+            if (sender is not Rectangle rect || rect.Tag is not BookMark bm) return;
 
             //Set position at the scrollmark...
             SetPosition(bm.Marker != ScrollMarker.SelectionStart ? bm.BytePositionInStream : SelectionStart, 1);
@@ -3927,7 +3932,7 @@ namespace WpfHexaEditor
         private void UpdateScrollMarkerPosition() =>
             TraverseScrollMarker(ctrl =>
             {
-                if (!(ctrl.Tag is BookMark bm)) return;
+                if (ctrl.Tag is not BookMark bm) return;
 
                 try
                 {
@@ -4342,7 +4347,7 @@ namespace WpfHexaEditor
 
         private static void AllowByteCount_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl)) return;
+            if (d is not HexEditor ctrl) return;
 
             if (e.NewValue != e.OldValue)
                 ctrl.UpdateByteCount();
@@ -4518,7 +4523,7 @@ namespace WpfHexaEditor
 
         private static void VisualCaretMode_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl)) return;
+            if (d is not HexEditor ctrl) return;
 
             ctrl.SetCaretMode((CaretMode)e.NewValue);
             ctrl.RefreshView(true);
@@ -4828,7 +4833,8 @@ namespace WpfHexaEditor
                             {
                                 "Modified" => ByteAction.Modified,
                                 "Deleted" => ByteAction.Deleted,
-                                "Added" => ByteAction.Added
+                                "Added" => ByteAction.Added,
+                                _ => throw new NotImplementedException()
                             };
 
                             #endregion
@@ -5027,7 +5033,7 @@ namespace WpfHexaEditor
 
         private static void AllowVisualByteAddress_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateScrollBar();
             ctrl.RefreshView(true);
@@ -5055,7 +5061,7 @@ namespace WpfHexaEditor
 
         private static object VisualByteAdressLength_CoerceValue(DependencyObject d, object baseValue)
         {
-            if (!(d is HexEditor ctrl)) return baseValue;
+            if (d is not HexEditor ctrl) return baseValue;
 
             var value = (long)baseValue;
 
@@ -5068,7 +5074,7 @@ namespace WpfHexaEditor
 
         private static void VisualByteAdressLength_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateScrollBar();
             ctrl.RefreshView();
@@ -5090,7 +5096,7 @@ namespace WpfHexaEditor
 
         private static object VisualByteAdressStart_CoerceValue(DependencyObject d, object baseValue)
         {
-            if (!(d is HexEditor ctrl)) return baseValue;
+            if (d is not HexEditor ctrl) return baseValue;
 
             var value = (long)baseValue;
 
@@ -5103,7 +5109,7 @@ namespace WpfHexaEditor
 
         private static void VisualByteAdressStart_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.UpdateScrollBar();
             ctrl.RefreshView();
@@ -5142,7 +5148,8 @@ namespace WpfHexaEditor
                 PreloadByteInEditor.None => 0, //Not preload byte
                 PreloadByteInEditor.MaxVisibleLine => MaxVisibleLine,
                 PreloadByteInEditor.MaxVisibleLineExtended => MaxVisibleLine + 10,
-                PreloadByteInEditor.MaxScreenVisibleLine => MaxScreenVisibleLine
+                PreloadByteInEditor.MaxScreenVisibleLine => MaxScreenVisibleLine,
+                _ => throw new NotImplementedException()
             };
 
             if (PreloadByteInEditorMode != PreloadByteInEditor.None)
@@ -5188,7 +5195,7 @@ namespace WpfHexaEditor
 
         private static void ZoomScale_ChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl)) return;
+            if (d is not HexEditor ctrl) return;
             if (e.NewValue == e.OldValue) return;
 
             ctrl.UpdateZoom();
@@ -5338,14 +5345,14 @@ namespace WpfHexaEditor
 
         private static void Control_AllowAutoSelectSameByteAtDoubleClick(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.RefreshView();
         }
 
         private void Control_Click(object sender, EventArgs e)
         {
-            if (!(sender is IByteControl ctrl)) return;
+            if (sender is not IByteControl ctrl) return;
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
                 SelectionStop = ctrl.BytePositionInStream;
@@ -5361,7 +5368,7 @@ namespace WpfHexaEditor
 
         private void Control_DoubleClick(object sender, EventArgs e)
         {
-            if (!(sender is IByteControl ctrl)) return;
+            if (sender is not IByteControl ctrl) return;
             if (!CheckIsOpen(_provider)) return;
 
             #region Select all same byte of SelectionStart in rage of selectionStart
@@ -5409,7 +5416,7 @@ namespace WpfHexaEditor
 
         private static void Control_CustomBackgroundBlockPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is HexEditor ctrl) || e.NewValue == e.OldValue) return;
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             ctrl.RefreshView();
         }
