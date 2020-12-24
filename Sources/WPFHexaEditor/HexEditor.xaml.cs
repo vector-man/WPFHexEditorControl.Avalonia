@@ -5227,6 +5227,8 @@ namespace WpfHexaEditor
             HexDataStackPanel.LayoutTransform = _scaler;
             StringDataStackPanel.LayoutTransform = _scaler;
             LinesInfoStackPanel.LayoutTransform = _scaler;
+            
+            _caret.LayoutTransform = _scaler;
         }
 
         /// <summary>

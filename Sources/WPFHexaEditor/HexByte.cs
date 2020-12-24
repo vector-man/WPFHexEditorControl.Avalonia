@@ -199,6 +199,69 @@ namespace WpfHexaEditor
                                 _parent.HideCaret();
 
                         break;
+
+                    //TODO: Caret position for all this folliwing case !!!
+
+                    case KeyDownLabel.ThirdChar:
+                        break;
+                    case KeyDownLabel.FourthChar:
+                        break;
+                    case KeyDownLabel.FifthChar:
+                        break;
+                    case KeyDownLabel.SixthChar:
+                        break;
+                    case KeyDownLabel.SeventhChar:
+                        break;
+                    case KeyDownLabel.EighthChar:
+                        break;
+                    case KeyDownLabel.Ninth:
+                        break;
+                    case KeyDownLabel.Tenth:
+                        break;
+                    case KeyDownLabel.Eleventh:
+                        break;
+                    case KeyDownLabel.Twelfth:
+                        break;
+                    case KeyDownLabel.Thirteenth:
+                        break;
+                    case KeyDownLabel.Fourteenth:
+                        break;
+                    case KeyDownLabel.Fifteenth:
+                        break;
+                    case KeyDownLabel.Sixteenth:
+                        break;
+                    case KeyDownLabel.Seventeenth:
+                        break;
+                    case KeyDownLabel.Eighteenth:
+                        break;
+                    case KeyDownLabel.Ninteenth:
+                        break;
+                    case KeyDownLabel.Twentieth:
+                        break;
+                    case KeyDownLabel.TwentyFirst:
+                        break;
+                    case KeyDownLabel.TwentySecond:
+                        break;
+                    case KeyDownLabel.TwentyThird:
+                        break;
+                    case KeyDownLabel.TwentyFourth:
+                        break;
+                    case KeyDownLabel.TwentyFifth:
+                        break;
+                    case KeyDownLabel.TwentySixth:
+                        break;
+                    case KeyDownLabel.TwentySeventh:
+                        break;
+                    case KeyDownLabel.TwentyEighth:
+                        break;
+                    case KeyDownLabel.TwentyNinth:
+                        break;
+                    case KeyDownLabel.Thirtieth:
+                        break;
+                    case KeyDownLabel.ThirtyFirst:
+                        break;
+                    case KeyDownLabel.ThirtySecond:
+                        break;
                 }
             }
         }
