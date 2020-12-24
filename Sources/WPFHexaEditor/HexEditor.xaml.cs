@@ -205,7 +205,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Occurs when byte as modified in control
         /// </summary>
-        public event EventHandler BytesModified;
+        public event EventHandler<ByteEventArgs> BytesModified;
 
         /// <summary>
         /// Occurs when undo are completed
@@ -220,12 +220,12 @@ namespace WpfHexaEditor
         /// <summary>
         /// Occurs on byte click completed
         /// </summary>
-        public event EventHandler ByteClick;
+        public event EventHandler<ByteEventArgs> ByteClick;
 
         /// <summary>
         /// Occurs on byte double click completed
         /// </summary>
-        public event EventHandler ByteDoubleClick;
+        public event EventHandler<ByteEventArgs> ByteDoubleClick;
         #endregion Events
 
         #region Constructor
@@ -1027,7 +1027,7 @@ namespace WpfHexaEditor
                 SetScrollMarker(ctrl.BytePositionInStream + e.Index, ScrollMarker.ByteModified);
                 UpdateByteModified();
 
-                BytesModified?.Invoke(this, new EventArgs());
+                BytesModified?.Invoke(this, e);
             }
 
             UpdateStatusBar();
@@ -1580,7 +1580,7 @@ namespace WpfHexaEditor
             SetScrollMarker(SelectionStart, ScrollMarker.ByteModified, Properties.Resources.PasteFromClipboardString);
             RefreshView();
 
-            BytesModified?.Invoke(this, new EventArgs());
+            BytesModified?.Invoke(this, new ByteEventArgs(SelectionStart));
         }
 
         /// <summary>
@@ -5361,7 +5361,7 @@ namespace WpfHexaEditor
             UpdateVisual();
 
             //launch click event 
-            ByteClick?.Invoke(sender, e);
+            ByteClick?.Invoke(sender, new ByteEventArgs(SelectionStart));
         }
 
         private void Control_DoubleClick(object sender, EventArgs e)
@@ -5393,7 +5393,7 @@ namespace WpfHexaEditor
             UpdateVisual();
 
             //launch click event 
-            ByteDoubleClick?.Invoke(sender, e);
+            ByteDoubleClick?.Invoke(sender, new ByteEventArgs(SelectionStart));
         }
         #endregion
 
@@ -5453,14 +5453,14 @@ namespace WpfHexaEditor
 
         public static DependencyProperty RefreshViewCommandProperty = 
             DependencyProperty.Register (
-                "RefreshViewCommand",
+                nameof(RefreshViewCommand),
                 typeof(ICommand),
                 typeof(HexEditor)
             );
 
         public static DependencyProperty SubmitChangesCommandProperty
             = DependencyProperty.Register(
-                "SubmitChangesCommand",
+                nameof(SubmitChangesCommand),
                 typeof(ICommand),
                 typeof(HexEditor)
               );
