@@ -377,7 +377,7 @@
                     DefaultCopyToClipboardMode="HexaString"
                     ForegroundSecondColor="Blue"
                     OffSetStringVisual="Hexadecimal"
-                    PreloadByteInEditorMode="MaxScreenVisibleLine"
+                    PreloadByteInEditorMode="MaxScreenVisibleLineAtDataLoad"
                     VisualCaretMode="Overwrite" />
 
             </Grid>

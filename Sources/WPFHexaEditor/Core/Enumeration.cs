@@ -264,9 +264,29 @@ namespace WpfHexaEditor.Core
     /// </summary>
     public enum PreloadByteInEditor
     {
+        /// <summary>
+        /// Load nothing at control start
+        /// </summary>
         None,
+
+        /// <summary>
+        /// Load maximum of visible line in control view
+        /// </summary>
         MaxVisibleLine,
-        MaxVisibleLineExtended, //Test: Add 10 lines to maxvisible line
-        MaxScreenVisibleLine
+
+        /// <summary>
+        /// Add 10 lines to MaxVisible line
+        /// </summary>
+        MaxVisibleLineExtended, 
+        
+        /// <summary>
+        /// Load the maximum of line to fit to the screen
+        /// </summary>
+        MaxScreenVisibleLine,
+
+        /// <summary>
+        /// Load MaxScreenVisibleLine at control creation and the others lines will be loaded at first load of file/stream 
+        /// </summary>
+        MaxScreenVisibleLineAtDataLoad
     }
 }

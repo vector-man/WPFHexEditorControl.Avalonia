@@ -2191,6 +2191,10 @@ namespace WpfHexaEditor
 
             CloseProvider();
 
+            //Preload byte to MaxScreenVisibleLine
+            if (PreloadByteInEditorMode == PreloadByteInEditor.MaxScreenVisibleLineAtDataLoad)
+                BuildDataLines(MaxScreenVisibleLine, false);
+
             _provider = new ByteProvider(filename, ReadOnlyMode);
 
             _provider.With(p =>
@@ -2238,6 +2242,10 @@ namespace WpfHexaEditor
             if (!stream.CanRead) return;
 
             CloseProvider();
+
+            //Preload byte to MaxScreenVisibleLine
+            if (PreloadByteInEditorMode == PreloadByteInEditor.MaxScreenVisibleLineAtDataLoad)
+                BuildDataLines(MaxScreenVisibleLine, false);
 
             _provider = new ByteProvider(stream);
 
@@ -2590,7 +2598,11 @@ namespace WpfHexaEditor
 
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (e.HeightChanged && IsAutoRefreshOnResize) RefreshView(true);
+            if (!e.HeightChanged || !IsAutoRefreshOnResize) return;
+            
+            if (!CheckIsOpen(_provider)) BuildDataLines(MaxVisibleLine);
+            
+            RefreshView(true);
         }
 
         /// <summary>
@@ -5147,6 +5159,7 @@ namespace WpfHexaEditor
                 PreloadByteInEditor.MaxVisibleLine => MaxVisibleLine,
                 PreloadByteInEditor.MaxVisibleLineExtended => MaxVisibleLine + 10,
                 PreloadByteInEditor.MaxScreenVisibleLine => MaxScreenVisibleLine,
+                PreloadByteInEditor.MaxScreenVisibleLineAtDataLoad => MaxVisibleLine, //other line loaded at first file/stream loaded
                 _ => throw new NotImplementedException()
             };
 
