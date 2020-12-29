@@ -1,8 +1,9 @@
 ﻿//////////////////////////////////////////////
 // Apache 2.0  - 2016-2020
-// Base author  : Derek Tremblay (derektremblay666@gmail.com)
-// Contributor  : emes30
-// Contributor  : ehsan69h
+// Base author : Derek Tremblay (derektremblay666@gmail.com)
+// Contributor : emes30
+// Contributor : ehsan69h
+// Contributor : Janus Tida
 //////////////////////////////////////////////
 
 using System;

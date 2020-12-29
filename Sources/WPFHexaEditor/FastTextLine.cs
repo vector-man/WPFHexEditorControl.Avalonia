@@ -37,8 +37,7 @@ namespace WpfHexaEditor
         /// Definie the foreground
         /// </summary>
         public static readonly DependencyProperty ForegroundProperty =
-            TextElement.ForegroundProperty.AddOwner(
-                typeof(FastTextLine));
+            TextElement.ForegroundProperty.AddOwner(typeof(FastTextLine));
 
         public Brush Foreground
         {
@@ -73,7 +72,8 @@ namespace WpfHexaEditor
             set => SetValue(TextProperty, value);
         }
 
-        public static readonly DependencyProperty FontWeightProperty = TextElement.FontWeightProperty.AddOwner(typeof(FastTextLine));
+        public static readonly DependencyProperty FontWeightProperty = 
+            TextElement.FontWeightProperty.AddOwner(typeof(FastTextLine));
 
         /// <summary>
         /// The FontWeight property specifies the weight of the font.
@@ -127,6 +127,5 @@ namespace WpfHexaEditor
             if (AutoWidth)
                 Width = formatedText.Width + RenderPoint.X;
         }
-
     }
 }

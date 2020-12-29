@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2018
+// Apache 2.0  - 2016-2020
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
@@ -30,8 +30,6 @@ namespace WpfHexaEditor.Core
         /// <summary>
         /// Get if key is a Hexakey (alpha)
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
         public static bool IsHexKey(Key key)
         {
             return key == Key.A || key == Key.B || key == Key.C || key == Key.D || key == Key.E || key == Key.F ||

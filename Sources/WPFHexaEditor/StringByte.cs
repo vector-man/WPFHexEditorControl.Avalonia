@@ -1,7 +1,8 @@
 ﻿//////////////////////////////////////////////
 // Apache 2.0  - 2016-2020
-// Author : Derek Tremblay (derektremblay666@gmail.com)
-// Contributor: Janus Tida
+// Author      : Derek Tremblay (derektremblay666@gmail.com)
+// Contributor : Janus Tida
+// Contributor : ehsan69h
 //////////////////////////////////////////////
 
 using System;
