@@ -227,6 +227,11 @@ namespace WpfHexaEditor
         /// Occurs on byte double click completed
         /// </summary>
         public event EventHandler<ByteEventArgs> ByteDoubleClick;
+
+        /// <summary>
+        /// Occurs when the zoom scale is changed
+        /// </summary>
+        public event EventHandler ZoomScaleChanged;
         #endregion Events
 
         #region Constructor
@@ -5261,6 +5266,8 @@ namespace WpfHexaEditor
             ClearLineInfo();
             ClearAllBytes(true);
             RefreshView(true);
+
+            ZoomScaleChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
