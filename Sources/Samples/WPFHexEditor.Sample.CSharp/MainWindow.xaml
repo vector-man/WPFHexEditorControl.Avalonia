@@ -1,5 +1,5 @@
 ﻿<!--
-    Apache 2.0  - 2016-2020
+    Apache 2.0  - 2016-2021
     Author : Derek Tremblay (derektremblay666@gmail.com)
 -->
 
@@ -94,8 +94,8 @@
                     <Separator />
                     <MenuItem
                         x:Name="SetReadOnlyMenu"
-                        Header="Read only"
                         Click="SetReadOnlyMenu_Click"
+                        Header="Read only"
                         IsCheckable="True" />
                     <Separator />
                     <MenuItem

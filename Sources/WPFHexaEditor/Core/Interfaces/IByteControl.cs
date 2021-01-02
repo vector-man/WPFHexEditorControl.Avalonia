@@ -1,10 +1,11 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2017-2019
+// Apache 2.0  - 2017-2021
 // Author       : Janus Tida 
 // Contributor  : Derek Tremblay
 //////////////////////////////////////////////
 
 using System;
+using WpfHexaEditor.Core.EventArguments;
 
 namespace WpfHexaEditor.Core.Interfaces
 {

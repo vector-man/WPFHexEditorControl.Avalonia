@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2020
+// Apache 2.0  - 2016-2021
 // Base author : Derek Tremblay (derektremblay666@gmail.com)
 // Contributor : emes30
 // Contributor : ehsan69h
@@ -16,6 +16,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using WpfHexaEditor.Core;
+using WpfHexaEditor.Core.EventArguments;
 using WpfHexaEditor.Core.Interfaces;
 
 namespace WpfHexaEditor

@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2020
+// Apache 2.0  - 2016-2021
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 // Contributor: ehsan69h
 // Contributor: Janus Tida
@@ -21,6 +21,7 @@ using System.Xml.Linq;
 using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.CharacterTable;
+using WpfHexaEditor.Core.EventArguments;
 using WpfHexaEditor.Core.Interfaces;
 using WpfHexaEditor.Core.MethodExtention;
 using WpfHexaEditor.Dialog;

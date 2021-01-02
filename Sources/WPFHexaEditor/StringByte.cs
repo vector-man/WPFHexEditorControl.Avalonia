@@ -1,18 +1,18 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2020
+// Apache 2.0  - 2016-2021
 // Author      : Derek Tremblay (derektremblay666@gmail.com)
 // Contributor : Janus Tida
 // Contributor : ehsan69h
 //////////////////////////////////////////////
 
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Bytes;
 using WpfHexaEditor.Core.CharacterTable;
+using WpfHexaEditor.Core.EventArguments;
 
 namespace WpfHexaEditor
 {
@@ -311,7 +311,6 @@ namespace WpfHexaEditor
             base.OnGotFocus(e);
         }
         #endregion
-
 
         #region BarChart Support
 
