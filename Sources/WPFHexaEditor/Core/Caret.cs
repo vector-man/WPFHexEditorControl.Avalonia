@@ -86,6 +86,7 @@ namespace WpfHexaEditor.Core
             set
             {
                 if (_caretHeight == value) return;
+                if (value < 0) value = 0;
 
                 _caretHeight = value;
 
@@ -104,6 +105,7 @@ namespace WpfHexaEditor.Core
             set
             {
                 if (_caretWidth == value) return;
+                if (value < 0) value = 0;
 
                 _caretWidth = value;
 

@@ -2561,6 +2561,51 @@ namespace WpfHexaEditor
 
         #endregion
 
+        #region ByteWidth property/methods
+
+        /// <summary>
+        /// Get or set the width of string bytes
+        /// </summary>
+        public double StringByteWidth
+        {
+            get => (double)GetValue(StringByteWidthProperty);
+            set => SetValue(StringByteWidthProperty, value);
+        }
+
+        public static readonly DependencyProperty StringByteWidthProperty =
+            DependencyProperty.Register("StringByteWidth", typeof(double), typeof(HexEditor),
+                new FrameworkPropertyMetadata(12d, StringByteWidth_PropertyChanged,
+                    StringByteWidth_CoerceValue));
+
+        private static object StringByteWidth_CoerceValue(DependencyObject d, object baseValue) =>
+            (double)baseValue < 1 ? 1 : ((double)baseValue > 64 ? 64 : baseValue);
+
+        private static void StringByteWidth_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
+
+            ctrl.With(c =>
+            {
+                //Get previous state
+                var firstPos = c.FirstVisibleBytePosition;
+                var startPos = c.SelectionStart;
+                var stopPos = c.SelectionStop;
+
+                //refresh
+                c.UpdateScrollBar();
+                c.BuildDataLines(c.MaxVisibleLine, true);
+                c.RefreshView(true);
+                c.UpdateHeader(true);
+
+                //Set previous state
+                c.SetPosition(firstPos);
+                c.SelectionStart = startPos;
+                c.SelectionStop = stopPos;
+            });
+        }
+
+        #endregion
+
         #region vertical scrollbar property/methods
 
         /// <summary>
@@ -2711,7 +2756,7 @@ namespace WpfHexaEditor
                                                        ByteSpacerPositioning == ByteSpacerPosition.StringBytePanel))
                         AddByteSpacer(dataLineStack, i);
                     
-                    new StringByte(this, BarChartPanelVisibility == Visibility.Visible).With(c =>
+                    new StringByte(this, BarChartPanelVisibility == Visibility.Visible, StringByteWidth).With(c =>
                     {
                         c.Clear();
                         dataLineStack.Children.Add(c);

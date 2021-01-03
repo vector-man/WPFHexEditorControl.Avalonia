@@ -22,12 +22,16 @@ namespace WpfHexaEditor
 
         private bool _tblShowMte = true;
         private readonly bool _barchart = false;
+        private double _width = 12d;
 
         #endregion Global variable
 
         #region Contructor
 
-        public StringByte(HexEditor parent, bool barChart) : base(parent) => _barchart = barChart;
+        public StringByte(HexEditor parent, bool barChart, double desiredWidth) : base(parent) {
+            _barchart = barChart;
+            _width = desiredWidth;
+        }
 
         #endregion Contructor
 
@@ -178,7 +182,7 @@ namespace WpfHexaEditor
         {
             if (_barchart)
             {
-                Width = 12;
+                Width = _width;
                 Margin = new Thickness(2);
 
                 #region Draw control
@@ -208,8 +212,8 @@ namespace WpfHexaEditor
 
                 Width = TypeOfCharacterTable switch
                 {
-                    CharacterTableType.Ascii => 12,
-                    CharacterTableType.TblFile => TextFormatted?.Width > 12 ? TextFormatted.Width : 12,
+                    CharacterTableType.Ascii => _width,
+                    CharacterTableType.TblFile => TextFormatted?.Width > _width ? TextFormatted.Width : _width,
                     _ => throw new NotImplementedException()
                 };
                 #endregion
