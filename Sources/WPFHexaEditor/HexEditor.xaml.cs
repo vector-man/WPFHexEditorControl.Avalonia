@@ -2528,9 +2528,8 @@ namespace WpfHexaEditor
         }
 
         public static readonly DependencyProperty BytePerLineProperty =
-            DependencyProperty.Register("BytePerLine", typeof(int), typeof(HexEditor),
-                new FrameworkPropertyMetadata(16, BytePerLine_PropertyChanged,
-                    BytePerLine_CoerceValue));
+            DependencyProperty.Register(nameof(BytePerLine), typeof(int), typeof(HexEditor),
+                new FrameworkPropertyMetadata(16, BytePerLine_PropertyChanged, BytePerLine_CoerceValue));
 
         private static object BytePerLine_CoerceValue(DependencyObject d, object baseValue) =>
             (int)baseValue < 1 ? 1 : ((int)baseValue > 64 ? 64 : baseValue);
@@ -2573,9 +2572,8 @@ namespace WpfHexaEditor
         }
 
         public static readonly DependencyProperty StringByteWidthProperty =
-            DependencyProperty.Register("StringByteWidth", typeof(double), typeof(HexEditor),
-                new FrameworkPropertyMetadata(12d, StringByteWidth_PropertyChanged,
-                    StringByteWidth_CoerceValue));
+            DependencyProperty.Register(nameof(StringByteWidth), typeof(double), typeof(HexEditor),
+                new FrameworkPropertyMetadata(10d, StringByteWidth_PropertyChanged, StringByteWidth_CoerceValue));
 
         private static object StringByteWidth_CoerceValue(DependencyObject d, object baseValue) =>
             (double)baseValue < 1 ? 1 : ((double)baseValue > 64 ? 64 : baseValue);
