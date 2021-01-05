@@ -111,7 +111,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                 var firstFileByte = FirstFile.GetByte(i, true);
                 var secondFileByte = SecondFile.GetByte(i, true);
                 var equal = firstFileByte.singleByte == secondFileByte.singleByte;
-
+                
                 if (!equal)
                 {
                     //build CustomBackgroundBlock

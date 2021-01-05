@@ -18,8 +18,8 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
-            <RowDefinition Height="241*" />
-            <RowDefinition Height="153*" />
+            <RowDefinition Height="211*" />
+            <RowDefinition Height="205*" />
         </Grid.RowDefinitions>
 
 
@@ -29,7 +29,7 @@
                 x:Name="FirstFile"
                 Margin="0,26,0,0"
                 AllowAutoHighLightSelectionByte="False"
-                PreloadByteInEditorMode="MaxScreenVisibleLineAtDataLoad"
+                PreloadByteInEditorMode="MaxVisibleLineExtended"
                 ReadOnlyMode="True"
                 VerticalScrollBarChanged="FirstFile_VerticalScrollBarChanged" />
             <Label
@@ -50,7 +50,7 @@
                 x:Name="SecondFile"
                 Margin="0,26,0,0"
                 AllowAutoHighLightSelectionByte="False"
-                PreloadByteInEditorMode="MaxScreenVisibleLineAtDataLoad"
+                PreloadByteInEditorMode="MaxVisibleLineExtended"
                 ReadOnlyMode="True"
                 VerticalScrollBarChanged="SecondFile_VerticalScrollBarChanged" />
         </Grid>
@@ -69,6 +69,7 @@
                 Grid.Column="1"
                 Height="26"
                 Margin="7,0,3,0"
+                Padding="0,5,5,5"
                 VerticalAlignment="Top"
                 Content="List of the different blocks of bytes between the two loaded files"
                 FontWeight="Bold" />
@@ -87,28 +88,22 @@
                 Content="Find the differences" />
 
             <Button
-                Width="120"
                 Height="26"
-                Margin="0,56,5,0"
-                HorizontalAlignment="Right"
+                Margin="5,56,5,0"
                 VerticalAlignment="Top"
                 Content="Save to file"
                 IsEnabled="False" />
 
             <Button
-                Width="120"
                 Height="26"
-                Margin="0,87,5,0"
-                HorizontalAlignment="Right"
+                Margin="5,87,5,0"
                 VerticalAlignment="Top"
                 Content="Patch to first file"
                 IsEnabled="False" />
 
             <Button
-                Width="120"
                 Height="26"
-                Margin="0,118,5,0"
-                HorizontalAlignment="Right"
+                Margin="5,118,5,0"
                 VerticalAlignment="Top"
                 Content="Patch to second file"
                 IsEnabled="False" />
@@ -116,6 +111,7 @@
                 Grid.Column="2"
                 Height="26"
                 Margin="5,0,5,0"
+                Padding="0,5,5,5"
                 VerticalAlignment="Top"
                 Content="List of different bytes in the selected block"
                 FontWeight="Bold" />
@@ -128,6 +124,7 @@
 
         <Button
             x:Name="FirstHexEditor"
+            Width="159"
             Height="26"
             Margin="5,0,0,0"
             HorizontalAlignment="Left"
@@ -138,6 +135,7 @@
         <Button
             x:Name="SecondHexEditor"
             Grid.Column="1"
+            Width="177"
             Height="26"
             Margin="5,0,0,0"
             HorizontalAlignment="Left"

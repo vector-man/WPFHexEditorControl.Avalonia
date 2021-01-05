@@ -27,7 +27,7 @@
         <Label
             Width="40"
             HorizontalContentAlignment="Right"
-            Content="{Binding StartOffset, UpdateSourceTrigger=PropertyChanged}" />
+            Content="{Binding Length, UpdateSourceTrigger=PropertyChanged}" />
         <Label Content="bytes" />
 
     </StackPanel>
