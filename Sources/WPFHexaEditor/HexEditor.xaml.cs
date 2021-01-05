@@ -2115,13 +2115,13 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty FileNameProperty =
             DependencyProperty.Register(nameof(FileName), typeof(string), typeof(HexEditor),
-                new FrameworkPropertyMetadata(string.Empty,
-                    FileName_PropertyChanged));
+                new FrameworkPropertyMetadata(string.Empty, FileName_PropertyChanged));
 
         private static void FileName_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is HexEditor ctrl)
-                ctrl.OpenFile((string)e.NewValue);
+            if (d is not HexEditor ctrl) return;
+
+            ctrl.OpenFile((string)e.NewValue);
         }
 
         /// <summary>
@@ -2135,14 +2135,14 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty StreamProperty =
             DependencyProperty.Register(nameof(Stream), typeof(Stream), typeof(HexEditor),
-                new FrameworkPropertyMetadata(null,
-                    Stream_PropertyChanged));
+                new FrameworkPropertyMetadata(null, Stream_PropertyChanged));
 
         private static void Stream_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is not HexEditor ctrl) return;
 
             ctrl.CloseProvider();
+
             if (e.NewValue != null)
                 ctrl.OpenStream((Stream)e.NewValue);
         }
@@ -2156,15 +2156,15 @@ namespace WpfHexaEditor
         /// Close file and clear control
         /// ReadOnlyMode is reset to false
         /// </summary>
-        public void CloseProvider()
+        public void CloseProvider(bool clearFileName = true)
         {
             if (CheckIsOpen(_provider))
             {
-                FileName = string.Empty;
-                //ReadOnlyMode = false;
-                VerticalScrollBar.Value = 0;
+                if (clearFileName) 
+                    FileName = string.Empty;
 
                 _provider.Close();
+                VerticalScrollBar.Value = 0;
             }
 
             UnHighLightAll();
@@ -2203,10 +2203,10 @@ namespace WpfHexaEditor
         /// </summary>
         private void OpenFile(string filename)
         {
-            if (string.IsNullOrEmpty(FileName)) return;
-            if (!File.Exists(filename)) return; //throw new FileNotFoundException();
+            if (string.IsNullOrEmpty(filename)) return;
+            if (!File.Exists(filename)) return; 
 
-            CloseProvider();
+            CloseProvider(false);
 
             //Preload byte to MaxScreenVisibleLine
             if (PreloadByteInEditorMode == PreloadByteInEditor.MaxScreenVisibleLineAtDataLoad)
@@ -2218,7 +2218,7 @@ namespace WpfHexaEditor
             {
                 if (p.IsEmpty)
                 {
-                    CloseProvider();
+                    CloseProvider(false);
                     return;
                 }
 

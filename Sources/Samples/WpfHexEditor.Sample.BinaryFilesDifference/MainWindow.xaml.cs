@@ -3,14 +3,13 @@
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //
 //
-// NOT A TRUE PROJECT! IT'S JUST FOR TESTING THE HEXEDITOR... DO NOT WATCH THE CODE LOL ;) 
+// NOT A TRUE PROJECT! IT'S JUST A SAMPLE FOR TESTING THE HEXEDITOR IN VARIOUS SITUATIONS... 
 //////////////////////////////////////////////
 
 using Microsoft.Win32;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using WpfHexaEditor;
 using WpfHexaEditor.Core;
 
