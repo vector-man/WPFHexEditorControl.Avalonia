@@ -30,6 +30,7 @@
                 Margin="0,26,0,0"
                 AllowAutoHighLightSelectionByte="False"
                 PreloadByteInEditorMode="MaxScreenVisibleLineAtDataLoad"
+                ReadOnlyMode="True"
                 VerticalScrollBarChanged="FirstFile_VerticalScrollBarChanged" />
             <Label
                 Height="26"
@@ -50,6 +51,7 @@
                 Margin="0,26,0,0"
                 AllowAutoHighLightSelectionByte="False"
                 PreloadByteInEditorMode="MaxScreenVisibleLineAtDataLoad"
+                ReadOnlyMode="True"
                 VerticalScrollBarChanged="SecondFile_VerticalScrollBarChanged" />
         </Grid>
 
@@ -57,47 +59,71 @@
             Grid.Row="2"
             Grid.ColumnSpan="2"
             Margin="0,1,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="128*" />
+                <ColumnDefinition Width="343*" />
+                <ColumnDefinition Width="343*" />
+            </Grid.ColumnDefinitions>
 
             <Label
+                Grid.Column="1"
                 Height="26"
-                Margin="135,0,0,0"
+                Margin="7,0,3,0"
                 VerticalAlignment="Top"
-                Content="List of differences between two loaded files"
+                Content="List of the different blocks of bytes between the two loaded files"
                 FontWeight="Bold" />
 
-            <ListBox x:Name="FileDifferenceList" Margin="135,26,5,5" SelectionChanged="FileDifferenceList_SelectionChanged"/>
+            <ListBox
+                x:Name="FileDiffBlockList"
+                Grid.Column="1"
+                Margin="5,26,5,5"
+                SelectionChanged="FileDiffBlockList_SelectionChanged" />
 
             <Button
                 Height="26"
-                Margin="5,26,0,0"
-                HorizontalAlignment="Left"
+                Margin="5,26,5,0"
                 VerticalAlignment="Top"
                 Click="FindDifferenceButton_Click"
                 Content="Find the differences" />
 
             <Button
+                Width="120"
                 Height="26"
-                Margin="5,56,0,0"
-                HorizontalAlignment="Left"
+                Margin="0,56,5,0"
+                HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                Content="Save to txt file"
+                Content="Save to file"
                 IsEnabled="False" />
 
             <Button
+                Width="120"
                 Height="26"
-                Margin="5,87,0,0"
-                HorizontalAlignment="Left"
+                Margin="0,87,5,0"
+                HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Content="Patch to first file"
                 IsEnabled="False" />
 
             <Button
+                Width="120"
                 Height="26"
-                Margin="5,118,0,0"
-                HorizontalAlignment="Left"
+                Margin="0,118,5,0"
+                HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Content="Patch to second file"
                 IsEnabled="False" />
+            <Label
+                Grid.Column="2"
+                Height="26"
+                Margin="5,0,5,0"
+                VerticalAlignment="Top"
+                Content="List of different bytes in the selected block"
+                FontWeight="Bold" />
+            <ListBox
+                x:Name="FileDiffBytesList"
+                Grid.Column="2"
+                Margin="5,26,5,5"
+                SelectionChanged="FileDiffBytesList_SelectionChanged" />
         </Grid>
 
         <Button

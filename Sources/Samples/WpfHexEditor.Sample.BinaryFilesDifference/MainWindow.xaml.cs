@@ -43,17 +43,22 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             Application.Current.MainWindow.Cursor = null;
         }
 
-        private void FileDifferenceList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void FileDiffBlockList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (_internalChange) return;
-            if (FileDifferenceList.SelectedItem == null) return;
-
-            var position = ((string)FileDifferenceList.SelectedItem).Split("  ")[0];
-
+            if (FileDiffBlockList.SelectedItem is not BlockListItem blockitm) return;
+            
             _internalChange = true;
-            FirstFile.SetPosition(position, 1);
-            SecondFile.SetPosition(position, 1);
+            FirstFile.SetPosition(blockitm.CustomBlock.StartOffset, 1);
+            SecondFile.SetPosition(blockitm.CustomBlock.StartOffset, 1);
             _internalChange = false;
+
+            //LoadByteSelectedList()
+        }
+
+        private void FileDiffBytesList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+
         }
         #endregion
 
@@ -80,7 +85,8 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         /// </summary>
         private void ClearDifference()
         {
-            FileDifferenceList.Items.Clear();
+            FileDiffBytesList.Items.Clear();
+            FileDiffBlockList.Items.Clear();
             FirstFile.CustomBackgroundBlockItems.Clear();
             SecondFile.CustomBackgroundBlockItems.Clear();
         }
@@ -130,10 +136,8 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                         SecondFile.CustomBackgroundBlockItems.Add(cbb);
 
                         //add to list
-                        FileDifferenceList.Items.Add
-                        (
-                            $"0x{cbb.StartOffset:X2}  Lenght: {cbb.Length} bytes  Colors: {cbb.Color}"
-                        );
+                        //TODO: Add better visual presentations
+                        FileDiffBlockList.Items.Add(new BlockListItem(cbb));
 
                         //reset variable
                         j = 0;
@@ -169,5 +173,6 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             _internalChange = false;
         }
         #endregion
+
     }
 }
