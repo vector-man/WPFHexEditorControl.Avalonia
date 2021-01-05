@@ -97,52 +97,43 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
 
             if (FirstFile.FileName == string.Empty || SecondFile.FileName == string.Empty) return;
 
-            //variable
-            var firstFileLength = FirstFile.Length;
-            var secondFileLength = SecondFile.Length;
-            var maxLenght = firstFileLength > secondFileLength ? firstFileLength : secondFileLength;
+            //variables
+            var maxLenght = FirstFile.Length > SecondFile.Length 
+                ? FirstFile.Length 
+                : SecondFile.Length;
+
             var cbb = new CustomBackgroundBlock();
             int j = 0;
-            var rndBrushes = RandomBrushes.PickBrush();
             var ok = false;
             
             for (int i = 0; i < maxLenght; i++)
             {
-                var firstFileByte = FirstFile.GetByte(i, true);
-                var secondFileByte = SecondFile.GetByte(i, true);
-                var equal = firstFileByte.singleByte == secondFileByte.singleByte;
+                var equal = FirstFile.GetByte(i, true).singleByte == SecondFile.GetByte(i, true).singleByte;
                 
                 if (!equal)
                 {
-                    //build CustomBackgroundBlock
+                    ok = true;
+
+                    //Build CustomBackgroundBlock
                     if (j == 0)
-                    {
-                        cbb = new CustomBackgroundBlock(i, ++j, rndBrushes);
-                        ok = true;
-                    }
+                        cbb = new CustomBackgroundBlock(i, ++j, RandomBrushes.PickBrush());                        
                     else
-                    {
                         cbb.Length = ++j;
-                        rndBrushes = RandomBrushes.PickBrush();
-                        ok = true;
-                    }
                 }
                 else
                 {
-                    if (ok)
-                    {
-                        //add to hexeditor
-                        FirstFile.CustomBackgroundBlockItems.Add(cbb);
-                        SecondFile.CustomBackgroundBlockItems.Add(cbb);
+                    if (!ok) continue;
+                    
+                    //add to hexeditor
+                    FirstFile.CustomBackgroundBlockItems.Add(cbb);
+                    SecondFile.CustomBackgroundBlockItems.Add(cbb);
 
-                        //add to list
-                        //TODO: Add better visual presentations
-                        FileDiffBlockList.Items.Add(new BlockListItem(cbb));
+                    //add to list
+                    FileDiffBlockList.Items.Add(new BlockListItem(cbb));
 
-                        //reset variable
-                        j = 0;
-                        ok = false;
-                    }
+                    //reset variable
+                    j = 0;
+                    ok = false;
 
                     continue;
                 }
