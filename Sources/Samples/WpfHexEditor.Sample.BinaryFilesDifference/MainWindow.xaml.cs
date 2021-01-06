@@ -52,12 +52,33 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             SecondFile.SetPosition(blockitm.CustomBlock.StartOffset, 1);
             _internalChange = false;
 
-            //LoadByteSelectedList()
+            LoadByteDifferenceList();
         }
 
         private void FileDiffBytesList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void LoadByteDifferenceList()
+        {
+            //TODO NEED OPTIMISATION
+
+            FileDiffBytesList.Items.Clear();
+
+            if (FileDiffBlockList.SelectedItem is not BlockListItem blockitm) return;
+
+            var cbb = blockitm.CustomBlock;
+
+            for (long position = cbb.StartOffset; position <= cbb.StopOffset; position++)
+            {
+                var origine = FirstFile.GetByte(position, false);
+                var destination = SecondFile.GetByte(position, false);
+
+                var bytediff = new ByteDifference(origine.singleByte.Value, destination.singleByte.Value, position, cbb.Color);
+
+                FileDiffBytesList.Items.Add(new ByteDifferenceListItem(bytediff));
+            }
         }
         #endregion
 
@@ -107,7 +128,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             
             for (int i = 0; i < maxLenght; i++)
             {
-                var equal = FirstFile.GetByte(i, true).singleByte == SecondFile.GetByte(i, true).singleByte;
+                var equal = FirstFile.GetByte(i, false).singleByte == SecondFile.GetByte(i, false).singleByte;
                 
                 if (!equal)
                 {
