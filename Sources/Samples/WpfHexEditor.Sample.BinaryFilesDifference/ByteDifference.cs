@@ -1,8 +1,17 @@
-﻿
+﻿//////////////////////////////////////////////
+// Apache 2.0 - 2021
+// Author : Derek Tremblay (derektremblay666@gmail.com)
+//
+// BINARY FILE DIFFERENCE SAMPLE USING WPF HEXEDITOR
+//////////////////////////////////////////////
+
 using System.Windows.Media;
 
 namespace WpfHexEditor.Sample.BinaryFilesDifference
 {
+    /// <summary>
+    /// Used to trace a byte difference in a file
+    /// </summary>
     public class ByteDifference
     {
         public byte Origine { get; set; } = 0;

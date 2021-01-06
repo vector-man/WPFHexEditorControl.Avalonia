@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2018
+// Apache 2.0  - 2021
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
@@ -10,7 +10,7 @@ using System.Windows.Data;
 namespace WpfHexaEditor.Core.Converters
 {
     /// <summary>
-    /// Used to convert byte value to hexadecimal string like this 0xFFFFFFFF.
+    /// Used to convert byte value to hexadecimal string like this 0xFF.
     /// </summary>
     public sealed class ByteToHexStringConverter : IValueConverter
     {

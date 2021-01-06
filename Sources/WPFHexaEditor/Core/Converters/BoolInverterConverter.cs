@@ -10,7 +10,7 @@ using System.Windows.Data;
 namespace WpfHexaEditor.Core.Converters
 {
     /// <summary>
-    /// Permet d'inverser des bool
+    /// Invert bool
     /// </summary>
     public sealed class BoolInverterConverter : IValueConverter
     {

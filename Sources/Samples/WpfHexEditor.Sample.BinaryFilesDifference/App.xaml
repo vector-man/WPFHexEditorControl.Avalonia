@@ -1,4 +1,11 @@
-﻿<Application
+﻿<!--
+    Apache 2.0 - 2021
+    Author : Derek Tremblay (derektremblay666@gmail.com)
+    
+    BINARY FILE DIFFERENCE SAMPLE USING WPF HEXEDITOR
+-->
+
+<Application
     x:Class="WpfHexEditor.Sample.BinaryFilesDifference.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
