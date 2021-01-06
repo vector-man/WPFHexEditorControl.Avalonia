@@ -14,7 +14,6 @@
         <Border
             Width="16"
             Height="16"
-            
             Margin="5,0,5,0"
             BorderBrush="Black"
             BorderThickness="1">
@@ -22,20 +21,20 @@
         </Border>
 
         <Label Content="0x" FontWeight="Bold" />
-        <Label Width="75" Content="{Binding StartOffset, UpdateSourceTrigger=PropertyChanged}" />
+        <Label Width="95" Content="{Binding StartOffset, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexStringConverter}}" />
 
         <Label Content="|" FontWeight="Bold" />
         <Label Content="0x" FontWeight="Bold" />
         <Label
             Width="40"
             HorizontalContentAlignment="Left"
-            Content="{Binding Origine, UpdateSourceTrigger=PropertyChanged}" />
+            Content="{Binding Origine, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ByteHexStringConverter}}" />
         <Label Content="--&gt;" />
         <Label Content="0x" FontWeight="Bold" />
         <Label
             Width="40"
             HorizontalContentAlignment="Left"
-            Content="{Binding Destination, UpdateSourceTrigger=PropertyChanged}" />
+            Content="{Binding Destination, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ByteHexStringConverter}}" />
 
     </StackPanel>
 

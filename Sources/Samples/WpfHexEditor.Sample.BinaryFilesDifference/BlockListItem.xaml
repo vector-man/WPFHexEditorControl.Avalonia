@@ -21,7 +21,7 @@
         </Border>
 
         <Label Content="0x" FontWeight="Bold" />
-        <Label Width="75" Content="{Binding StartOffset, UpdateSourceTrigger=PropertyChanged}" />
+        <Label Width="85" Content="{Binding StartOffset, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexStringConverter}}" />
 
         <Label Content="Length" FontWeight="Bold" />
         <Label
