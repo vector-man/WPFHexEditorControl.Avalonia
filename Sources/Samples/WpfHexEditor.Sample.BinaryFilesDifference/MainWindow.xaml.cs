@@ -144,12 +144,12 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                 {
                     if (!ok) continue;
                     
+                    //add to list
+                    FileDiffBlockList.Items.Add(new BlockListItem(cbb));
+
                     //add to hexeditor
                     FirstFile.CustomBackgroundBlockItems.Add(cbb);
                     SecondFile.CustomBackgroundBlockItems.Add(cbb);
-
-                    //add to list
-                    FileDiffBlockList.Items.Add(new BlockListItem(cbb));
 
                     //reset variable
                     j = 0;

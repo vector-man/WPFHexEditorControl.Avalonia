@@ -12,7 +12,7 @@ namespace WpfHexaEditor.Core
     /// <summary>
     /// Used to create block of custom colors background 
     /// </summary>
-    public class CustomBackgroundBlock
+    public class CustomBackgroundBlock : ICloneable
     {
         private long _length;
 
@@ -76,6 +76,14 @@ namespace WpfHexaEditor.Core
         /// </summary>
         public string Description { get; set; }
 
+        /// <summary>
+        /// Get or set the color used in the visual
+        /// </summary>
         public SolidColorBrush Color { get; set; } = Brushes.Transparent;
+
+        /// <summary>
+        /// Get clone of this CustomBackgroundBlock
+        /// </summary>
+        public object Clone() => MemberwiseClone();
     }
 }

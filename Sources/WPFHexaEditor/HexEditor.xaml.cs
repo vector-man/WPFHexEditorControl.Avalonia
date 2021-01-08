@@ -5501,20 +5501,12 @@ namespace WpfHexaEditor
         /// <summary>
         /// Add of remove CustomBackgroundBlock in this list to use in hexeditor
         /// </summary>
-        public List<CustomBackgroundBlock> CustomBackgroundBlockItems
-        {
-            get => (List<CustomBackgroundBlock>)GetValue(CustomBackgroundBlockItemsProperty);
-            set => SetValue(CustomBackgroundBlockItemsProperty, value);
-        }
-
-        public static readonly DependencyProperty CustomBackgroundBlockItemsProperty =
-            DependencyProperty.Register(nameof(CustomBackgroundBlockItems), typeof(List<CustomBackgroundBlock>), typeof(HexEditor),
-                new FrameworkPropertyMetadata(new List<CustomBackgroundBlock>(), Control_CustomBackgroundBlockPropertyChanged));
+        public List<CustomBackgroundBlock> CustomBackgroundBlockItems { get; set; } = new List<CustomBackgroundBlock>();
 
         /// <summary>
         /// Get the first CustomBackgroundBlock finded in list.
         /// </summary>
-        internal CustomBackgroundBlock GetCustomBackgroundBlock(long position) =>
+        public CustomBackgroundBlock GetCustomBackgroundBlock(long position) =>
             CustomBackgroundBlockItems?
                 .OrderBy(c => c.StartOffset)
                 .FirstOrDefault(cbb =>
