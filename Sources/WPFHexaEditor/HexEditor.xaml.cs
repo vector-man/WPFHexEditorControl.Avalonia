@@ -2997,8 +2997,15 @@ namespace WpfHexaEditor
                     {
                         ctrl.Byte = new Byte_8bit(_viewBuffer[index]);
                         ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
-                        ctrl.ByteNext = index < readSize - 1 ? (byte?)_viewBuffer[index + 1] : null;
-                                                
+
+                        #region Load ByteNext for TBL MTE matching
+                        if (_tblCharacterTable is not null)
+                        {
+                            var (singleByte, succes) = _provider.GetByte(ctrl.BytePositionInStream + 1);
+                            ctrl.ByteNext = succes ? singleByte : null;
+                        }
+                        #endregion
+
                         //Bar chart value
                         ctrl.PercentValue = _viewBuffer[index] * 100 / 256;
 
