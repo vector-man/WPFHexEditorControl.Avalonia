@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2018-2020
+// Apache 2.0  - 2018-2021
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
@@ -16,6 +16,7 @@ namespace WpfHexaEditor.Core
     {
         private long _length;
 
+        #region Constructors
         public CustomBackgroundBlock() { }
 
         public CustomBackgroundBlock(long start, long length, SolidColorBrush color, string description)
@@ -31,6 +32,13 @@ namespace WpfHexaEditor.Core
             StartOffset = start;
             Length = length;
             Color = color;
+        }
+
+        public CustomBackgroundBlock(long start, long length, bool setRandomBrush = true)
+        {
+            StartOffset = start;
+            Length = length;
+            if (setRandomBrush) Color = RandomBrushes.PickBrush();
         }
 
         public CustomBackgroundBlock(string start, long length, SolidColorBrush color)
@@ -51,7 +59,9 @@ namespace WpfHexaEditor.Core
             Color = color;
             Description = description;
         }
+        #endregion
 
+        #region Property
         /// <summary>
         /// Get or set the start offset
         /// </summary>
@@ -80,10 +90,18 @@ namespace WpfHexaEditor.Core
         /// Get or set the color used in the visual
         /// </summary>
         public SolidColorBrush Color { get; set; } = Brushes.Transparent;
+        #endregion
 
+        #region Methods
         /// <summary>
         /// Get clone of this CustomBackgroundBlock
         /// </summary>
         public object Clone() => MemberwiseClone();
+
+        /// <summary>
+        /// Set a random brush to this instance
+        /// </summary>
+        public void SetRandomColor() => Color = RandomBrushes.PickBrush();
+        #endregion
     }
 }

@@ -238,7 +238,10 @@ namespace WpfHexaEditor
             if (_barchart) return;
             if (Byte == null) return;
             if (KeyValidation(e)) return;
+
+            //Other key exception
             if (e.Key == Key.CapsLock) return;
+            if (e.Key == Key.Tab) return;
 
             //MODIFY ASCII...
             if (!_parent.IsLockedFile && (!ReadOnlyMode || !_parent.ReadOnlyMode))

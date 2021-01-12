@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using WpfHexaEditor.Core.Bytes;
 
 namespace WpfHexEditor.Sample.BinaryFilesDifference
 {

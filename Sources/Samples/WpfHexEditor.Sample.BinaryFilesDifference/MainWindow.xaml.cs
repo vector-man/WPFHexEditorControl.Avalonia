@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using WpfHexaEditor;
 using WpfHexaEditor.Core;
+using WpfHexaEditor.Core.Bytes;
 
 namespace WpfHexEditor.Sample.BinaryFilesDifference
 {

@@ -3366,7 +3366,7 @@ namespace WpfHexaEditor
         public void SetFocusAtSelectionStart() => SetFocusAt(SelectionStart);
 
         /// <summary>
-        /// Set focus at position start
+        /// Set focus at position in parameter
         /// </summary>
         private void SetFocusAt(long bytePositionInStream)
         {
