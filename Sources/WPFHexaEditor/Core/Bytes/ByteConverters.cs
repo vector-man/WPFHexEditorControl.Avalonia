@@ -64,7 +64,7 @@ namespace WpfHexaEditor.Core.Bytes
             {
                 var hex = ByteToHex(b);
                 sb.Append(hex);
-                sb.Append(" ");
+                sb.Append(' ');
             }
 
             if (sb.Length > 0)

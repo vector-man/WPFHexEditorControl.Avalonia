@@ -22,7 +22,7 @@ namespace WpfHexaEditor
 
         private bool _tblShowMte = true;
         private readonly bool _barchart = false;
-        private double _width = 12d;
+        private readonly double _width = 12d;
 
         #endregion Global variable
 
