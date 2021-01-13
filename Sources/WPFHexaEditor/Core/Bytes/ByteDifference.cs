@@ -3,6 +3,7 @@
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
+using System;
 using System.Windows.Media;
 
 namespace WpfHexaEditor.Core.Bytes
@@ -10,7 +11,7 @@ namespace WpfHexaEditor.Core.Bytes
     /// <summary>
     /// Used to track a byte difference in a stream vs another stream
     /// </summary>
-    public class ByteDifference
+    public class ByteDifference: ICloneable
     {
         public byte Origine { get; set; } = 0;
         public byte Destination { get; set; } = 0;
@@ -40,6 +41,18 @@ namespace WpfHexaEditor.Core.Bytes
         public override int GetHashCode() => base.GetHashCode();
 
         public override string ToString() => base.ToString();
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Get clone of this CustomBackgroundBlock
+        /// </summary>
+        public object Clone() => MemberwiseClone();
+
+        /// <summary>
+        /// Set a random brush to this instance
+        /// </summary>
+        public void SetRandomColor() => Color = RandomBrushes.PickBrush();
         #endregion
     }
 }

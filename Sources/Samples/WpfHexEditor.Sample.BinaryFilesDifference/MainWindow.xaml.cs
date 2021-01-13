@@ -61,27 +61,31 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
 
         private void FileDiffBytesList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            if (_internalChange) return;
+            if (FileDiffBytesList.SelectedItem is not ByteDifferenceListItem byteDifferenceItem) return;
 
+            _internalChange = true;
+            FirstFile.SetPosition(byteDifferenceItem.ByteDiff.BytePositionInStream, 1);
+            SecondFile.SetPosition(byteDifferenceItem.ByteDiff.BytePositionInStream, 1);
+            _internalChange = false;
         }
 
         private void LoadByteDifferenceList()
         {
-            //TODO NEED OPTIMISATION
-
+            //Clear UI
             FileDiffBytesList.Items.Clear();
 
+            //Validation
+            if (_differences is null) return;
             if (FileDiffBlockList.SelectedItem is not BlockListItem blockitm) return;
 
-            var cbb = blockitm.CustomBlock;
 
-            for (long position = cbb.StartOffset; position <= cbb.StopOffset; position++)
+            foreach (ByteDifference byteDifference in _differences
+                .Where(c => c.BytePositionInStream >= blockitm.CustomBlock.StartOffset &&
+                            c.BytePositionInStream <= blockitm.CustomBlock.StopOffset))
             {
-                var origine = FirstFile.GetByte(position, false);
-                var destination = SecondFile.GetByte(position, false);
-
-                var bytediff = new ByteDifference(origine.singleByte.Value, destination.singleByte.Value, position, cbb.Color);
-
-                FileDiffBytesList.Items.Add(new ByteDifferenceListItem(bytediff));
+                byteDifference.Color = blockitm.CustomBlock.Color;
+                FileDiffBytesList.Items.Add(new ByteDifferenceListItem(byteDifference));
             }
         }
         #endregion
