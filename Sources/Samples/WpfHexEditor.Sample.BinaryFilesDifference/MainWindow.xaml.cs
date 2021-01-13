@@ -7,7 +7,9 @@
 //////////////////////////////////////////////
 
 using Microsoft.Win32;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using WpfHexaEditor;
@@ -22,6 +24,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         /// Used to catch internal change for cath potential infinite loop
         /// </summary>
         private bool _internalChange = false;
+        IEnumerable<ByteDifference> _differences = null;
 
         public MainWindow() => InitializeComponent();
 
@@ -110,6 +113,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             FileDiffBlockList.Items.Clear();
             FirstFile.CustomBackgroundBlockItems.Clear();
             SecondFile.CustomBackgroundBlockItems.Clear();
+            _differences = null;
         }
 
         private void FindDifference()
@@ -118,46 +122,34 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
 
             if (FirstFile.FileName == string.Empty || SecondFile.FileName == string.Empty) return;
 
-            //variables
-            var maxLenght = FirstFile.Length > SecondFile.Length 
-                ? FirstFile.Length 
-                : SecondFile.Length;
-
             var cbb = new CustomBackgroundBlock();
             int j = 0;
-            var ok = false;
-            
-            for (int i = 0; i < maxLenght; i++)
-            {
-                var equal = FirstFile.GetByte(i, false).singleByte == SecondFile.GetByte(i, false).singleByte;
-                
-                if (!equal)
-                {
-                    ok = true;
 
-                    //Build CustomBackgroundBlock
-                    if (j == 0)
-                        cbb = new CustomBackgroundBlock(i, ++j, RandomBrushes.PickBrush());                        
-                    else
-                        cbb.Length = ++j;
-                }
+            _differences = FirstFile.Compare(SecondFile);
+
+            long previousPosition = _differences.First().BytePositionInStream;
+
+            //Load list of difference
+            foreach (ByteDifference byteDifference in _differences)
+            {
+                if (j == 0)
+                    cbb = new CustomBackgroundBlock(byteDifference.BytePositionInStream, ++j, RandomBrushes.PickBrush());
                 else
+                    cbb.Length = ++j;
+
+                if (byteDifference.BytePositionInStream != previousPosition + 1)
                 {
-                    if (!ok) continue;
-                    
+                    j = 0;
+
                     //add to list
                     FileDiffBlockList.Items.Add(new BlockListItem(cbb));
 
                     //add to hexeditor
                     FirstFile.CustomBackgroundBlockItems.Add(cbb);
                     SecondFile.CustomBackgroundBlockItems.Add(cbb);
-
-                    //reset variable
-                    j = 0;
-                    ok = false;
-
-                    continue;
                 }
+
+                previousPosition = byteDifference.BytePositionInStream;
             }
 
             //refresh editor

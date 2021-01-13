@@ -45,7 +45,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Byte provider for work with file or stream currently loaded in control.
         /// </summary>
-        private ByteProvider _provider;
+        internal ByteProvider _provider;
 
         /// <summary>
         /// The large change of scroll when clicked on scrollbar
@@ -5526,6 +5526,25 @@ namespace WpfHexaEditor
         public void ClearCustomBackgroundBlock() => CustomBackgroundBlockItems.Clear();
 
         #endregion
+
+        #region Compare file and find difference methods
+
+        /// <summary>
+        /// Compare this stream with another and get all bytes difference
+        /// </summary>
+        /// <returns>Return each byte not equal in the two provider</returns>
+        public IEnumerable<ByteDifference> Compare(ByteProvider providerToCompare, bool compareChange = false) => 
+            _provider.Compare(providerToCompare, compareChange);
+
+        /// <summary>
+        /// Compare this stream with another and get all bytes difference
+        /// </summary>
+        /// <returns>Return each byte not equal in the two provider</returns>
+        public IEnumerable<ByteDifference> Compare(HexEditor hexeditor, bool compareChange = false) => 
+            _provider.Compare(hexeditor?._provider, compareChange);
+
+        #endregion
+
 
         #region Commands implementation (In early stage of developpement)
 

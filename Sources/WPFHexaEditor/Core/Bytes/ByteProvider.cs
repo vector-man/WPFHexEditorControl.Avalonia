@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2016-2020
+// Apache 2.0  - 2016-2021
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //////////////////////////////////////////////
 
@@ -1561,6 +1561,35 @@ namespace WpfHexaEditor.Core.Bytes
 
             foreach (byte b in data)
                 AddByteModified(b, --startPosition, data.Length);
+        }
+
+        #endregion
+
+        #region Compare file and find difference methods
+
+        /// <summary>
+        /// Compare this provider with another and get all bytes difference
+        /// </summary>
+        /// <returns>Return each byte not equal in the two provider</returns>
+        public IEnumerable<ByteDifference> Compare(ByteProvider providerToCompare, bool compareChange = false) 
+        {
+            if (!CheckIsOpen(this) || !CheckIsOpen(providerToCompare)) yield return null;
+
+            //get the max lenght
+            var maxLenght = Length > providerToCompare.Length
+                ? Length
+                : providerToCompare.Length;
+
+            for (int i = 0; i < maxLenght; i++)
+            {
+                //NEED TO BE OPTIMISED 
+                var oribineByte = GetByte(i, compareChange).singleByte;
+                var compareByte = providerToCompare.GetByte(i, compareChange).singleByte;
+
+                //Not equal
+                if (oribineByte != compareByte)
+                    yield return new ByteDifference(oribineByte.Value, compareByte.Value, i);                
+            }
         }
 
         #endregion
