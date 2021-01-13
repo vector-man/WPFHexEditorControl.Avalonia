@@ -17,7 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfHexEditor.Sample.AvalonD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfHexEditor.Sample.BarChart", "Samples\WpfHexEditor.Sample.BarChart\WpfHexEditor.Sample.BarChart.csproj", "{61C30859-C234-4AC4-BCCB-1BFE8202C2A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfHexEditor.Sample.BinaryFilesDifference", "Samples\WpfHexEditor.Sample.BinaryFilesDifference\WpfHexEditor.Sample.BinaryFilesDifference.csproj", "{2652120F-9599-44A4-95F2-CBD71F6134F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfHexEditor.Sample.BinaryFilesDifference", "Samples\WpfHexEditor.Sample.BinaryFilesDifference\WpfHexEditor.Sample.BinaryFilesDifference.csproj", "{2652120F-9599-44A4-95F2-CBD71F6134F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfHexEditor.Sample.InsertByteAnywhere", "Samples\WpfHexEditor.Sample.InsertByteAnywhere\WpfHexEditor.Sample.InsertByteAnywhere.csproj", "{3D2FA808-7163-4103-ADBE-9912D28F7ECE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,6 +115,18 @@ Global
 		{2652120F-9599-44A4-95F2-CBD71F6134F6}.Release|x64.Build.0 = Release|Any CPU
 		{2652120F-9599-44A4-95F2-CBD71F6134F6}.Release|x86.ActiveCfg = Release|Any CPU
 		{2652120F-9599-44A4-95F2-CBD71F6134F6}.Release|x86.Build.0 = Release|Any CPU
+		{3D2FA808-7163-4103-ADBE-9912D28F7ECE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D2FA808-7163-4103-ADBE-9912D28F7ECE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D2FA808-7163-4103-ADBE-9912D28F7ECE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3D2FA808-7163-4103-ADBE-9912D28F7ECE}.Debug|x64.Build.0 = Debug|Any CPU
+		{3D2FA808-7163-4103-ADBE-9912D28F7ECE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3D2FA808-7163-4103-ADBE-9912D28F7ECE}.Debug|x86.Build.0 = Debug|Any CPU
+		{3D2FA808-7163-4103-ADBE-9912D28F7ECE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D2FA808-7163-4103-ADBE-9912D28F7ECE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D2FA808-7163-4103-ADBE-9912D28F7ECE}.Release|x64.ActiveCfg = Release|Any CPU
+		{3D2FA808-7163-4103-ADBE-9912D28F7ECE}.Release|x64.Build.0 = Release|Any CPU
+		{3D2FA808-7163-4103-ADBE-9912D28F7ECE}.Release|x86.ActiveCfg = Release|Any CPU
+		{3D2FA808-7163-4103-ADBE-9912D28F7ECE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,6 +138,7 @@ Global
 		{6E3E68D0-8C8E-495E-84AC-A0DC9D52F369} = {E7C58EBD-5476-4A12-83EB-235DE68AF079}
 		{61C30859-C234-4AC4-BCCB-1BFE8202C2A6} = {E7C58EBD-5476-4A12-83EB-235DE68AF079}
 		{2652120F-9599-44A4-95F2-CBD71F6134F6} = {E7C58EBD-5476-4A12-83EB-235DE68AF079}
+		{3D2FA808-7163-4103-ADBE-9912D28F7ECE} = {E7C58EBD-5476-4A12-83EB-235DE68AF079}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5B382CAE-4846-466E-A3D3-0842043B4012}

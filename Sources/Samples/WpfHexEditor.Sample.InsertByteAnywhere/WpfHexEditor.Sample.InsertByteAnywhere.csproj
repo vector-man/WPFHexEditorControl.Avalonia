@@ -2,10 +2,12 @@
     Apache 2.0 - 2021
     Author : Derek Tremblay (derektremblay666@gmail.com)
     
-    BINARY FILE DIFFERENCE SAMPLE USING WPF HEXEDITOR
+    INSERT BYTE ANYWHERE SAMPLE USING WPF HEXEDITOR
+    
+    (WILL BE THE NEXT MAJOR EVOLUTION OF THE HEXEDITOR)
 -->
-
-<Project Sdk="Microsoft.NET.Sdk">
+  
+  <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
