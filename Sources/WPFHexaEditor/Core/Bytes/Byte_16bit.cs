@@ -81,8 +81,7 @@ namespace WpfHexaEditor.Core.Bytes
                 {
                     case DataVisualType.Hexadecimal:
                         var chArr = ByteConverters.ByteToHexCharArray(value[0]).Concat(ByteConverters.ByteToHexCharArray(value[1])).ToArray();
-                        Text = (sign_positive ? "" : "-") + prefix +
-                            new string(chArr);
+                        Text = (sign_positive ? "" : "-") + prefix + new string(chArr);
                         break;
                     case DataVisualType.Decimal:
                         Text = (sign_positive ? "" : "-") + prefix +
@@ -90,8 +89,8 @@ namespace WpfHexaEditor.Core.Bytes
                         break;
                     case DataVisualType.Binary:
                         Text = (sign_positive ? "" : "-") + prefix +
-                            Convert.ToString(value[0], 2).PadLeft(8, '0')
-                            + Convert.ToString(value[1], 2).PadLeft(8, '0');
+                            Convert.ToString(value[0], 2).PadLeft(8, '0') +
+                            Convert.ToString(value[1], 2).PadLeft(8, '0');
                         break;
                 }
             }

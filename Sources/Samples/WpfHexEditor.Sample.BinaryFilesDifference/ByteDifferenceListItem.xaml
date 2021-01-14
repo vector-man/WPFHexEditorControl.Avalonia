@@ -12,11 +12,30 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:WpfHexEditor.Sample.BinaryFilesDifference"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="26"
+    Height="26"
     d:DesignWidth="400"
     mc:Ignorable="d">
 
     <StackPanel Orientation="Horizontal">
+
+        <Button
+            x:Name="PatchSecondFile"
+            Width="20"
+            Height="16"
+            Margin="5,0,5,0"
+            Click="PatchSecondFile_Click"
+            IsEnabled="False"
+            ToolTip="Patch this byte difference">
+            <Path
+                x:Name="CollapsedArrow"
+                Width="6"
+                Height="8"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Data="M 0 0 L 10 10 L 0 20 Z"
+                Fill="Black"
+                Stretch="Fill" />
+        </Button>
 
         <Border
             Width="16"
@@ -28,7 +47,7 @@
         </Border>
 
         <Label Content="0x" FontWeight="Bold" />
-        <Label Width="95" Content="{Binding StartOffset, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexStringConverter}}" />
+        <Label Width="95" Content="{Binding BytePositionInStream, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexStringConverter}}" />
 
         <Label Content="|" FontWeight="Bold" />
         <Label Content="0x" FontWeight="Bold" />

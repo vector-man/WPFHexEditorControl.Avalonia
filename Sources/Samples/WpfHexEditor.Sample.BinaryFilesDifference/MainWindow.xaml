@@ -105,14 +105,7 @@
                 Height="26"
                 Margin="5,87,5,0"
                 VerticalAlignment="Top"
-                Content="Patch to first file"
-                IsEnabled="False" />
-
-            <Button
-                Height="26"
-                Margin="5,118,5,0"
-                VerticalAlignment="Top"
-                Content="Patch to second file"
+                Content="Patch second file"
                 IsEnabled="False" />
             <Label
                 Grid.Column="2"
@@ -137,7 +130,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             Click="FirstHexEditor_Click"
-            Content="Load first file in the hexeditor" />
+            Content="Load first file to compare" />
 
         <Button
             x:Name="SecondHexEditor"
@@ -148,7 +141,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             Click="SecondHexEditor_Click"
-            Content="Load second file in the hexeditor" />
+            Content="Load second file to compare" />
 
     </Grid>
 </Window>

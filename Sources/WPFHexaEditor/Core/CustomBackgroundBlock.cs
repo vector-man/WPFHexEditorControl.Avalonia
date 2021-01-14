@@ -90,6 +90,11 @@ namespace WpfHexaEditor.Core
         /// Get or set the color used in the visual
         /// </summary>
         public SolidColorBrush Color { get; set; } = Brushes.Transparent;
+
+        ///// <summary>
+        ///// Get or set the color used in the visual
+        ///// </summary>
+        //public SolidColorBrush ForeGroundColor { get; set; } = Brushes.Transparent;
         #endregion
 
         #region Methods

@@ -29,5 +29,10 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                 DataContext = value;
             }
         }
+
+        private void PatchBlockButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
     }
 }

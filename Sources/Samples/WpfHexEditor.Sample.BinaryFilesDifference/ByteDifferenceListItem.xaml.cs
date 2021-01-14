@@ -25,5 +25,10 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
 
             ByteDiff = byteDiff;
         }
+
+        private void PatchSecondFile_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
     }
 }

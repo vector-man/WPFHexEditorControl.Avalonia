@@ -144,7 +144,7 @@ namespace WpfHexaEditor.Core.CharacterTable
                     {
                         case 2:
                             dte = info[1].Length == 2
-                                ? new Dte(info[0], info[1].Substring(0, info[1].Length - 1), DteType.Ascii)
+                                ? new Dte(info[0], info[1].Substring(0, info[1].Length - 1), DteType.Ascii)                                
                                 : new Dte(info[0], info[1].Substring(0, info[1].Length - 1),
                                     DteType.DualTitleEncoding);
                             break;
