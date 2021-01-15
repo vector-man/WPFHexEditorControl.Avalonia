@@ -96,7 +96,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         #region Various methods
         private void OpenFile(HexEditor hexEditor)
         {
-            ClearDifference();
+            ClearUI();
 
             #region Create file dialog
             var fileDialog = new OpenFileDialog
@@ -114,7 +114,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         /// <summary>
         /// Clear the difference in various control
         /// </summary>
-        private void ClearDifference()
+        private void ClearUI()
         {
             FileDiffBytesList.Items.Clear();
             FileDiffBlockList.Items.Clear();
@@ -125,18 +125,23 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
 
         private void FindDifference()
         {
-            ClearDifference();
+            ClearUI();
 
             if (FirstFile.FileName == string.Empty || SecondFile.FileName == string.Empty) return;
 
             var cbb = new CustomBackgroundBlock();
             int j = 0;
 
-            _differences = FirstFile.Compare(SecondFile);
-
+            _differences = FirstFile.Compare(SecondFile)
+                                    .ToList()
+                                    .OrderBy(c => c.BytePositionInStream);
+            
             long previousPosition = _differences.First().BytePositionInStream;
 
             //Load list of difference
+
+            ///////////// NOT COMPLETED... IS IN DEBUG....
+
             foreach (ByteDifference byteDifference in _differences)
             {
                 if (j == 0)
@@ -176,9 +181,12 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             if (_differences is null) return;
 
             SecondFile.ReadOnlyMode = false;
-            
-            foreach(ByteDifference byteDiff in _differences.Where(c => c.BytePositionInStream >= itm.CustomBlock.StartOffset && 
-                                                                       c.BytePositionInStream <= itm.CustomBlock.StopOffset + 1))
+
+            var diffList = _differences.Where(c => c.BytePositionInStream >= itm.CustomBlock.StartOffset &&
+                                                   c.BytePositionInStream <= itm.CustomBlock.StopOffset);
+
+
+            foreach (ByteDifference byteDiff in diffList)
                 SecondFile.AddByteModified(byteDiff.Destination, byteDiff.BytePositionInStream);
                         
             SecondFile.ReadOnlyMode = true;
