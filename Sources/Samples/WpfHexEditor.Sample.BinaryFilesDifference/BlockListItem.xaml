@@ -24,7 +24,6 @@
             Height="16"
             Margin="5,0,5,0"
             Click="PatchBlockButton_Click"
-            IsEnabled="False"
             ToolTip="Patch this bytes difference block">
             <Path
                 x:Name="CollapsedArrow"

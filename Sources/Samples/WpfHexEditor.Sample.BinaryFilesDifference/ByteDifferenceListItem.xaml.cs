@@ -1,4 +1,12 @@
-﻿using System.Windows.Controls;
+﻿//////////////////////////////////////////////
+// Apache 2.0  - 2021
+// Author : Derek Tremblay (derektremblay666@gmail.com)
+//
+//
+// NOT A TRUE PROJECT! IT'S JUST A SAMPLE FOR TESTING THE HEXEDITOR IN VARIOUS SITUATIONS... 
+//////////////////////////////////////////////
+
+using System.Windows.Controls;
 using WpfHexaEditor.Core.Bytes;
 
 namespace WpfHexEditor.Sample.BinaryFilesDifference

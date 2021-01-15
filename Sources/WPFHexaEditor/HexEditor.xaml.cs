@@ -1039,18 +1039,28 @@ namespace WpfHexaEditor
             if (_provider.ReadOnlyMode) return;
 
             if (sender is IByteControl ctrl)
-            {                
-                _provider.AddByteModified(ctrl.Byte.Byte[e.Index], ctrl.BytePositionInStream + e.Index);
-                SetScrollMarker(ctrl.BytePositionInStream + e.Index, ScrollMarker.ByteModified);
-                UpdateByteModified();
+                AddByteModified(ctrl.Byte.Byte[e.Index], ctrl.BytePositionInStream + e.Index);
 
-                BytesModified?.Invoke(this, e);
-            }
-
-            UpdateStatusBar();
+            BytesModified?.Invoke(this, e);
         }
 
         private void Control_ByteDeleted(object sender, EventArgs e) => DeleteSelection();
+
+        /// <summary>
+        /// Add a bytemodified to this instance 
+        /// it's not call the ByteModified event
+        /// </summary>
+        public void AddByteModified(byte? @byte, long bytePositionInStream, long undoLength = 1)
+        {
+            if (!CheckIsOpen(_provider)) return;
+            if (_provider.ReadOnlyMode) return;
+
+            _provider.AddByteModified(@byte, bytePositionInStream, undoLength);
+            SetScrollMarker(bytePositionInStream, ScrollMarker.ByteModified);
+            UpdateByteModified();
+
+            UpdateStatusBar();
+        }
 
         #endregion ByteModified methods/event/methods
 

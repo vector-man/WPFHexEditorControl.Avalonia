@@ -7,6 +7,7 @@
 //////////////////////////////////////////////
 
 using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,8 @@ using System.Windows.Input;
 using WpfHexaEditor;
 using WpfHexaEditor.Core;
 using WpfHexaEditor.Core.Bytes;
+using WpfHexaEditor.Core.EventArguments;
+using WpfHexaEditor.Core.MethodExtention;
 
 namespace WpfHexEditor.Sample.BinaryFilesDifference
 {
@@ -145,8 +148,12 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                 {
                     j = 0;
 
-                    //add to list
-                    FileDiffBlockList.Items.Add(new BlockListItem(cbb));
+                    new BlockListItem(cbb).With(c =>
+                    {
+                        c.PatchButtonClick += BlockItem_PatchButtonClick;
+                     
+                        FileDiffBlockList.Items.Add(c);
+                    });
 
                     //add to hexeditor
                     FirstFile.CustomBackgroundBlockItems.Add(cbb);
@@ -160,10 +167,29 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             FirstFile.RefreshView();
             SecondFile.RefreshView();
         }
+
+        private void BlockItem_PatchButtonClick(object sender, EventArgs e)
+        {
+            //NOT COMPLETED, ACTUALLY HAVE SOMES BUG
+
+            if (sender is not BlockListItem itm) return;
+            if (_differences is null) return;
+
+            SecondFile.ReadOnlyMode = false;
+            
+            foreach(ByteDifference byteDiff in _differences.Where(c => c.BytePositionInStream >= itm.CustomBlock.StartOffset && 
+                                                                       c.BytePositionInStream <= itm.CustomBlock.StopOffset + 1))
+                SecondFile.AddByteModified(byteDiff.Destination, byteDiff.BytePositionInStream);
+                        
+            SecondFile.ReadOnlyMode = true;
+            SecondFile.RefreshView();
+
+            itm.PatchBlockButton.IsEnabled = false;
+        }
         #endregion
 
         #region Synchronise the two hexeditor
-        private void FirstFile_VerticalScrollBarChanged(object sender, WpfHexaEditor.Core.EventArguments.ByteEventArgs e)
+        private void FirstFile_VerticalScrollBarChanged(object sender, ByteEventArgs e)
         {
             if (_internalChange) return;
 
@@ -172,7 +198,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             _internalChange = false;
         }
 
-        private void SecondFile_VerticalScrollBarChanged(object sender, WpfHexaEditor.Core.EventArguments.ByteEventArgs e)
+        private void SecondFile_VerticalScrollBarChanged(object sender, ByteEventArgs e)
         {
             if (_internalChange) return;
 

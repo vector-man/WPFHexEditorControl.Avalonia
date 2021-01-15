@@ -1,14 +1,22 @@
-﻿using System.Windows.Controls;
+﻿//////////////////////////////////////////////
+// Apache 2.0  - 2021
+// Author : Derek Tremblay (derektremblay666@gmail.com)
+//
+//
+// NOT A TRUE PROJECT! IT'S JUST A SAMPLE FOR TESTING THE HEXEDITOR IN VARIOUS SITUATIONS... 
+//////////////////////////////////////////////
+
+using System;
+using System.Windows.Controls;
 using WpfHexaEditor.Core;
+using WpfHexaEditor.Core.EventArguments;
 
 namespace WpfHexEditor.Sample.BinaryFilesDifference
 {
-    /// <summary>
-    /// Logique d'interaction pour BlockListItem.xaml
-    /// </summary>
     public partial class BlockListItem : UserControl
     {
         private CustomBackgroundBlock _customBackGroundBlock;
+        public event EventHandler PatchButtonClick;
 
         public BlockListItem() => InitializeComponent();
 
@@ -30,9 +38,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             }
         }
 
-        private void PatchBlockButton_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
+        private void PatchBlockButton_Click(object sender, System.Windows.RoutedEventArgs e) => 
+            PatchButtonClick?.Invoke(this, new EventArgs());
     }
 }
