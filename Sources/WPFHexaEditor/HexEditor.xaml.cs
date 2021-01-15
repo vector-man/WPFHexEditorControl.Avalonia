@@ -5551,7 +5551,7 @@ namespace WpfHexaEditor
         /// </summary>
         /// <returns>Return each byte not equal in the two provider</returns>
         public IEnumerable<ByteDifference> Compare(HexEditor hexeditor, bool compareChange = false) => 
-            _provider.Compare(hexeditor?._provider, compareChange);
+            _provider?.Compare(hexeditor?._provider, compareChange);
 
         #endregion
 
