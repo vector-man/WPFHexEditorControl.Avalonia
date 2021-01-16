@@ -9,6 +9,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -131,24 +132,27 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
 
             var cbb = new CustomBackgroundBlock();
             int j = 0;
+            long previousPosition = -1;
+            bool firstpass = true;
 
-            _differences = FirstFile.Compare(SecondFile)
-                                    .ToList()
-                                    .OrderBy(c => c.BytePositionInStream);
-            
-            long previousPosition = _differences.First().BytePositionInStream;
+            _differences = FirstFile.Compare(SecondFile);
 
             //Load list of difference
-
-            ///////////// NOT COMPLETED... IS IN DEBUG....
-
-            foreach (ByteDifference byteDifference in _differences)
+            foreach (ByteDifference byteDifference in _differences.OrderBy(c => c.BytePositionInStream))
             {
+                if (firstpass)
+                {
+                    previousPosition = byteDifference.BytePositionInStream;
+                    firstpass = false;
+                }
+
+                //create or update custom background block
                 if (j == 0)
                     cbb = new CustomBackgroundBlock(byteDifference.BytePositionInStream, ++j, RandomBrushes.PickBrush());
                 else
                     cbb.Length = ++j;
 
+                ///////////// NOT COMPLETED... THIS LINE IS IN DEBUG....
                 if (byteDifference.BytePositionInStream != previousPosition + 1)
                 {
                     j = 0;
@@ -156,7 +160,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                     new BlockListItem(cbb).With(c =>
                     {
                         c.PatchButtonClick += BlockItem_PatchButtonClick;
-                     
+
                         FileDiffBlockList.Items.Add(c);
                     });
 
@@ -184,7 +188,6 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
 
             var diffList = _differences.Where(c => c.BytePositionInStream >= itm.CustomBlock.StartOffset &&
                                                    c.BytePositionInStream <= itm.CustomBlock.StopOffset);
-
 
             foreach (ByteDifference byteDiff in diffList)
                 SecondFile.AddByteModified(byteDiff.Destination, byteDiff.BytePositionInStream);

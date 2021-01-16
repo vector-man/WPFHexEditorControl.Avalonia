@@ -1583,12 +1583,12 @@ namespace WpfHexaEditor.Core.Bytes
             for (int i = 0; i < maxLenght; i++)
             {
                 //NEED TO BE OPTIMISED 
-                var oribineByte = GetByte(i, compareChange).singleByte;
+                var origineByte = GetByte(i, compareChange).singleByte;
                 var compareByte = providerToCompare.GetByte(i, compareChange).singleByte;
 
                 //Not equal
-                if (oribineByte != compareByte)
-                    yield return new ByteDifference(oribineByte.Value, compareByte.Value, i);                
+                if (origineByte != compareByte)
+                    yield return new ByteDifference(origineByte.Value, compareByte.Value, i);                
             }
         }
 
