@@ -28,7 +28,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         /// Used to catch internal change for cath potential infinite loop
         /// </summary>
         private bool _internalChange = false;
-        IEnumerable<ByteDifference> _differences = null;
+        List<ByteDifference> _differences = null;
 
         public MainWindow() => InitializeComponent();
 
@@ -132,20 +132,12 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
 
             var cbb = new CustomBackgroundBlock();
             int j = 0;
-            long previousPosition = -1;
-            bool firstpass = true;
 
-            _differences = FirstFile.Compare(SecondFile);
+            _differences = FirstFile.Compare(SecondFile).ToList();
 
             //Load list of difference
             foreach (ByteDifference byteDifference in _differences.OrderBy(c => c.BytePositionInStream))
             {
-                if (firstpass)
-                {
-                    previousPosition = byteDifference.BytePositionInStream;
-                    firstpass = false;
-                }
-
                 //create or update custom background block
                 if (j == 0)
                     cbb = new CustomBackgroundBlock(byteDifference.BytePositionInStream, ++j, RandomBrushes.PickBrush());
@@ -153,7 +145,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                     cbb.Length = ++j;
 
                 ///////////// NOT COMPLETED... THIS LINE IS IN DEBUG....
-                if (byteDifference.BytePositionInStream != previousPosition + 1)
+                if (_differences.Any(c => c.BytePositionInStream == byteDifference.BytePositionInStream + 1))
                 {
                     j = 0;
 
@@ -168,8 +160,6 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                     FirstFile.CustomBackgroundBlockItems.Add(cbb);
                     SecondFile.CustomBackgroundBlockItems.Add(cbb);
                 }
-
-                previousPosition = byteDifference.BytePositionInStream;
             }
 
             //refresh editor
@@ -179,8 +169,6 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
 
         private void BlockItem_PatchButtonClick(object sender, EventArgs e)
         {
-            //NOT COMPLETED, ACTUALLY HAVE SOMES BUG
-
             if (sender is not BlockListItem itm) return;
             if (_differences is null) return;
 
