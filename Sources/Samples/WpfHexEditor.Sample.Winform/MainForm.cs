@@ -12,6 +12,7 @@ namespace WpfHexEditor.Winform.Sample
         {
             InitializeComponent();
 
+            hexEditor.PreloadByteInEditorMode = PreloadByteInEditor.MaxScreenVisibleLineAtDataLoad;
             hexEditor.ForegroundSecondColor = Brushes.Blue;
         }
 

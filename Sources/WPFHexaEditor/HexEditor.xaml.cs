@@ -3004,8 +3004,7 @@ namespace WpfHexaEditor
                             nextPos++;
 
                     if (index < readSize)
-                    {
-                        ctrl.Byte = new Byte_8bit(_viewBuffer[index]);
+                    {                        
                         ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
 
                         #region Load ByteNext for TBL MTE matching
@@ -3015,6 +3014,9 @@ namespace WpfHexaEditor
                             ctrl.ByteNext = succes ? singleByte : null;
                         }
                         #endregion
+
+                        //update byte
+                        ctrl.Byte = new Byte_8bit(_viewBuffer[index]);
 
                         //Bar chart value
                         ctrl.PercentValue = _viewBuffer[index] * 100 / 256;
@@ -5554,7 +5556,6 @@ namespace WpfHexaEditor
             _provider?.Compare(hexeditor?._provider, compareChange);
 
         #endregion
-
 
         #region Commands implementation (In early stage of developpement)
 
