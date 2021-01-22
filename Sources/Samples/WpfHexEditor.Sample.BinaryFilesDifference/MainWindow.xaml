@@ -120,6 +120,7 @@
                 Grid.Column="2"
                 Margin="5,26,5,5"
                 SelectionChanged="FileDiffBytesList_SelectionChanged" />
+            <Button Content="test" HorizontalAlignment="Left" Margin="41,144,0,0" VerticalAlignment="Top" Click="Button_Click"/>
         </Grid>
 
         <Button

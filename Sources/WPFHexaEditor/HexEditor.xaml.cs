@@ -2988,6 +2988,7 @@ namespace WpfHexaEditor
 
                 #region StringByte / Barchart panel refresh
 
+                var skipNextIsMTE = false;
                 TraverseStringBytes(ctrl =>
                 {
                     ctrl.Action = ByteAction.Nothing;
@@ -3004,25 +3005,34 @@ namespace WpfHexaEditor
                             nextPos++;
 
                     if (index < readSize)
-                    {                        
-                        ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
-
-                        #region Load ByteNext for TBL MTE matching
-                        if (_tblCharacterTable is not null)
+                    {
+                        if (!skipNextIsMTE)
                         {
-                            var (singleByte, succes) = _provider.GetByte(ctrl.BytePositionInStream + 1);
-                            ctrl.ByteNext = succes ? singleByte : null;
-                        }
-                        #endregion
+                            ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
 
-                        //update byte
-                        ctrl.Byte = new Byte_8bit(_viewBuffer[index]);
+                            #region Load ByteNext for TBL MTE matching
+                            if (_tblCharacterTable is not null)
+                            {
+                                var (singleByte, succes) = _provider.GetByte(ctrl.BytePositionInStream + 1);
+                                ctrl.ByteNext = succes ? singleByte : null;
+                            }
+                            #endregion
 
-                        //Bar chart value
-                        ctrl.PercentValue = _viewBuffer[index] * 100 / 256;
+                            //update byte
+                            ctrl.Byte = new Byte_8bit(_viewBuffer[index]);
 
-                        if (AllowVisualByteAddress && nextPos > VisualByteAdressStop)
+                            //Bar chart value
+                            ctrl.PercentValue = _viewBuffer[index] * 100 / 256;
+
+                            skipNextIsMTE = ctrl.IsMTE;
+
+                            if (AllowVisualByteAddress && nextPos > VisualByteAdressStop)
+                                ctrl.Clear();
+                        }else
+                        {
+                            skipNextIsMTE = false;
                             ctrl.Clear();
+                        }
                     }
                     else
                         ctrl.Clear();

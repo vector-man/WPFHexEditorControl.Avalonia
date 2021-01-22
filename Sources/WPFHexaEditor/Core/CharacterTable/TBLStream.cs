@@ -61,17 +61,17 @@ namespace WpfHexaEditor.Core.CharacterTable
         /// </summary>
         /// <param name="hex">Hex value to find match</param>
         /// <param name="showSpecialValue">Fin the Endblock and EndLine</param>
-        public string FindMatch(string hex, bool showSpecialValue)
+        public (string text, DteType dteType) FindMatch(string hex, bool showSpecialValue)
         {
             if (showSpecialValue)
             {
-                if (_dteList.ContainsKey($"/{hex}")) return Properties.Resources.EndTagString; //"<end>";
-                if (_dteList.ContainsKey($"*{hex}")) return Properties.Resources.LineTagString; //"<ln>";
+                if (_dteList.ContainsKey($"/{hex}")) return (Properties.Resources.EndTagString, DteType.EndBlock); //"<end>";
+                if (_dteList.ContainsKey($"*{hex}")) return (Properties.Resources.LineTagString, DteType.EndLine); //"<ln>";
             }
 
             return _dteList.ContainsKey(hex)
-                ? _dteList[hex].Value
-                : "#";
+                ? (_dteList[hex].Value, _dteList[hex].Type)
+                : ("#", DteType.Invalid);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace WpfHexaEditor.Core.CharacterTable
                 {
                     var mte = FindMatch(ByteConverters.ByteToHex(data[i]) + ByteConverters.ByteToHex(data[i + 1]), true);
 
-                    if (mte != "#")
+                    if (mte.text != "#")
                     {
                         sb.Append(mte);
                         continue;

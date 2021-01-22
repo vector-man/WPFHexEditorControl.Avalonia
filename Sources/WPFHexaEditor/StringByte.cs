@@ -23,7 +23,7 @@ namespace WpfHexaEditor
         private bool _tblShowMte = true;
         private readonly bool _barchart = false;
         private readonly double _width = 12d;
-
+        
         #endregion Global variable
 
         #region Contructor
@@ -70,6 +70,11 @@ namespace WpfHexaEditor
         /// </summary>
         public TblStream TblCharacterTable { get; set; }
 
+        /// <summary>
+        /// This byte is an MTE
+        /// </summary>
+        public bool IsMTE { get; internal set; } = false;
+
         #endregion Characters tables
 
         #region Methods
@@ -81,6 +86,8 @@ namespace WpfHexaEditor
         {
             if (Byte != null )
             {
+                var dteType = DteType.Invalid;
+
                 switch (TypeOfCharacterTable)
                 {
                     case CharacterTableType.Ascii:
@@ -93,12 +100,13 @@ namespace WpfHexaEditor
 
                             var content = "#";
 
+
                             if (TblShowMte && ByteNext.HasValue)
-                                content = TblCharacterTable.FindMatch(ByteConverters.ByteToHex(Byte.Byte[0]) +
+                                (content, dteType) = TblCharacterTable.FindMatch(ByteConverters.ByteToHex(Byte.Byte[0]) +
                                                                       ByteConverters.ByteToHex(ByteNext.Value), true);
 
                             if (content == "#")
-                                content = TblCharacterTable.FindMatch(ByteConverters.ByteToHex(Byte.Byte[0]), true);
+                                content = TblCharacterTable.FindMatch(ByteConverters.ByteToHex(Byte.Byte[0]), true).text;
 
                             Text = content;
                         }
@@ -106,6 +114,8 @@ namespace WpfHexaEditor
                             goto case CharacterTableType.Ascii;
                         break;
                 }
+
+                IsMTE = dteType == DteType.MultipleTitleEncoding;
             }
             else
                 Text = string.Empty;
@@ -208,8 +218,8 @@ namespace WpfHexaEditor
                 base.OnRender(dc);
 
                 #region Update width of control 
-                //It's 8-10 time more fastest to update width on render for TBL string
 
+                //It's 8-10 time more fastest to update width on render for TBL string
                 Width = TypeOfCharacterTable switch
                 {
                     CharacterTableType.Ascii => _width,

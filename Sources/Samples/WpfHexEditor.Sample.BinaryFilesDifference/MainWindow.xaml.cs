@@ -124,6 +124,9 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             _differences = null;
         }
 
+        /// <summary>
+        /// NOT COMPLETED... bugged and need optimisation ;)
+        /// </summary>
         private void FindDifference()
         {
             ClearUI();
@@ -144,7 +147,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                 else
                     cbb.Length = ++j;
 
-                ///////////// NOT COMPLETED... THIS LINE IS IN DEBUG....
+                
                 if (_differences.Any(c => c.BytePositionInStream == byteDifference.BytePositionInStream + 1))
                 {
                     j = 0;
@@ -207,5 +210,14 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         }
         #endregion
 
+
+        /// <summary>
+        /// TO BE DELETED SOON
+        /// </summary>
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (ByteDifference bd in _differences)
+                Debug.Print($"pos: {bd.BytePositionInStream}");
+        }
     }
 }
