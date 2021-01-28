@@ -14,7 +14,6 @@ namespace WpfHexaEditor.Core
     /// </summary>
     public class CustomBackgroundBlock : ICloneable
     {
-        private long _length;
 
         #region Constructors
         public CustomBackgroundBlock() { }
@@ -75,11 +74,7 @@ namespace WpfHexaEditor.Core
         /// <summary>
         /// Get or set the lenght of background block
         /// </summary>
-        public long Length
-        {
-            get => _length;
-            set => _length = value > 0 ? value : 1;
-        }
+        public long Length { get; set; }
 
         /// <summary>
         /// Description of background block

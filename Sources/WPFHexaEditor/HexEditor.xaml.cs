@@ -5540,7 +5540,7 @@ namespace WpfHexaEditor
                 .OrderBy(c => c.StartOffset)
                 .FirstOrDefault(cbb =>
                     position >= cbb.StartOffset &&
-                    position <= cbb.StopOffset);
+                    position <= cbb.StopOffset - 1);
 
         /// <summary>
         /// Clear the list of custom background block

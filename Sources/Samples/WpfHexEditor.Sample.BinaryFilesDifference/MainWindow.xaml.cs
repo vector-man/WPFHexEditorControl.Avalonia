@@ -121,6 +121,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             FileDiffBlockList.Items.Clear();
             FirstFile.CustomBackgroundBlockItems.Clear();
             SecondFile.CustomBackgroundBlockItems.Clear();
+            SecondFile.ClearAllChange();
             _differences = null;
         }
 
@@ -139,16 +140,15 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             _differences = FirstFile.Compare(SecondFile).ToList();
 
             //Load list of difference
-            foreach (ByteDifference byteDifference in _differences.OrderBy(c => c.BytePositionInStream))
+            foreach (ByteDifference byteDifference in _differences)
             {
                 //create or update custom background block
                 if (j == 0)
                     cbb = new CustomBackgroundBlock(byteDifference.BytePositionInStream, ++j, RandomBrushes.PickBrush());
                 else
                     cbb.Length = ++j;
-
-                
-                if (_differences.Any(c => c.BytePositionInStream == byteDifference.BytePositionInStream + 1))
+                                
+                if (!_differences.Any(c => c.BytePositionInStream == byteDifference.BytePositionInStream + 1))
                 {
                     j = 0;
 
@@ -170,6 +170,9 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             SecondFile.RefreshView();
         }
 
+        /// <summary>
+        /// Patch the selected block in the second file
+        /// </summary>
         private void BlockItem_PatchButtonClick(object sender, EventArgs e)
         {
             if (sender is not BlockListItem itm) return;
@@ -182,7 +185,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
 
             foreach (ByteDifference byteDiff in diffList)
                 SecondFile.AddByteModified(byteDiff.Destination, byteDiff.BytePositionInStream);
-                        
+
             SecondFile.ReadOnlyMode = true;
             SecondFile.RefreshView();
 
@@ -209,7 +212,6 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             _internalChange = false;
         }
         #endregion
-
 
         /// <summary>
         /// TO BE DELETED SOON
