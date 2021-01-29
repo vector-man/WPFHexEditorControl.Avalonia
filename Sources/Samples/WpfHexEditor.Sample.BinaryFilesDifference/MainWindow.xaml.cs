@@ -122,11 +122,12 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             FirstFile.CustomBackgroundBlockItems.Clear();
             SecondFile.CustomBackgroundBlockItems.Clear();
             SecondFile.ClearAllChange();
+            PatchButton.IsEnabled = false;
             _differences = null;
         }
 
         /// <summary>
-        /// NOT COMPLETED... bugged and need optimisation ;)
+        /// Find the difference of the two loaded file and add to lists the results
         /// </summary>
         private void FindDifference()
         {
@@ -137,6 +138,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             var cbb = new CustomBackgroundBlock();
             int j = 0;
 
+            //load the difference
             _differences = FirstFile.Compare(SecondFile).ToList();
 
             //Load list of difference
@@ -155,7 +157,6 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                     new BlockListItem(cbb).With(c =>
                     {
                         c.PatchButtonClick += BlockItem_PatchButtonClick;
-
                         FileDiffBlockList.Items.Add(c);
                     });
 
@@ -168,6 +169,9 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             //refresh editor
             FirstFile.RefreshView();
             SecondFile.RefreshView();
+
+            //Enable patch button
+            PatchButton.IsEnabled = true;
         }
 
         /// <summary>
@@ -213,13 +217,25 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         }
         #endregion
 
-        /// <summary>
-        /// TO BE DELETED SOON
-        /// </summary>
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (ByteDifference bd in _differences)
-                Debug.Print($"pos: {bd.BytePositionInStream}");
+        private void PatchButton_Click(object sender, RoutedEventArgs e)
+        {            
+            if (_differences is null) return;
+
+            SecondFile.ReadOnlyMode = false;
+
+            foreach (BlockListItem itm in FileDiffBlockList.Items)
+            {
+                var diffList = _differences.Where(c => c.BytePositionInStream >= itm.CustomBlock.StartOffset &&
+                                                       c.BytePositionInStream <= itm.CustomBlock.StopOffset);
+
+                foreach (ByteDifference byteDiff in diffList)
+                    SecondFile.AddByteModified(byteDiff.Destination, byteDiff.BytePositionInStream);
+
+                itm.PatchBlockButton.IsEnabled = false;
+            }
+
+            SecondFile.ReadOnlyMode = true;
+            SecondFile.RefreshView();            
         }
     }
 }

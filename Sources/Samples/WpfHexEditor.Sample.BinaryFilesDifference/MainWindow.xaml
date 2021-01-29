@@ -102,11 +102,12 @@
                 IsEnabled="False" />
 
             <Button
+                x:Name="PatchButton"
                 Height="26"
                 Margin="5,87,5,0"
                 VerticalAlignment="Top"
                 Content="Patch second file"
-                IsEnabled="False" />
+                IsEnabled="False" Click="PatchButton_Click" />
             <Label
                 Grid.Column="2"
                 Height="26"
@@ -120,7 +121,6 @@
                 Grid.Column="2"
                 Margin="5,26,5,5"
                 SelectionChanged="FileDiffBytesList_SelectionChanged" />
-            <Button Content="test" HorizontalAlignment="Left" Margin="41,144,0,0" VerticalAlignment="Top" Click="Button_Click"/>
         </Grid>
 
         <Button
