@@ -220,10 +220,15 @@ namespace WpfHexaEditor
                 #region Update width of control 
 
                 //It's 8-10 time more fastest to update width on render for TBL string
+                
                 Width = TypeOfCharacterTable switch
                 {
                     CharacterTableType.Ascii => _width,
-                    CharacterTableType.TblFile => TextFormatted?.Width > _width ? TextFormatted.Width : _width,
+                    CharacterTableType.TblFile => Byte is null 
+                        ? 0 
+                        : TextFormatted?.Width > _width 
+                            ? TextFormatted.Width 
+                            : _width,
                     _ => throw new NotImplementedException()
                 };
                 #endregion
