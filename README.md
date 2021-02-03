@@ -40,6 +40,9 @@ Sample use of find and find/replace dialog...
 
 ![example](Images/Sample11-AvalonDock.png?raw=true)
 
+⭐ Sample use of CustomBackgroundBlock in the "Find difference bytes sample" ...
+![example](Images/Sample15-CustomBackgroundBlock.png?raw=true)
+
 ## 🧾 What is TBL (custom character table)
 The TBL are small plaintext .tbl files that link every hexadecimal value with a character, which proves most useful when reading and changing text data. Wpf HexEditor support .tbl and you can define your custom character table as you want.
 
