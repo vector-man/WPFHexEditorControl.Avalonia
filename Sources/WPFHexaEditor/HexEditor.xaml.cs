@@ -5545,7 +5545,11 @@ namespace WpfHexaEditor
         /// <summary>
         /// Clear the list of custom background block
         /// </summary>
-        public void ClearCustomBackgroundBlock() => CustomBackgroundBlockItems.Clear();
+        public void ClearCustomBackgroundBlock()
+        {
+            CustomBackgroundBlockItems.Clear();
+            RefreshView(true);
+        }
 
         #endregion
 

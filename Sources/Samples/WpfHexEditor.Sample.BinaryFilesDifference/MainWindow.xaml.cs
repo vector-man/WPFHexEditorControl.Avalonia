@@ -50,6 +50,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             Application.Current.MainWindow.Cursor = null;
         }
 
+
         private void FileDiffBlockList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (_internalChange) return;
@@ -74,6 +75,43 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             _internalChange = false;
         }
 
+        private void PatchButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_differences is null) return;
+
+            SecondFile.ReadOnlyMode = false;
+
+            foreach (BlockListItem itm in FileDiffBlockList.Items)
+            {
+                var diffList = _differences.Where(c => c.BytePositionInStream >= itm.CustomBlock.StartOffset &&
+                                                       c.BytePositionInStream <= itm.CustomBlock.StopOffset);
+
+                foreach (ByteDifference byteDiff in diffList)
+                    SecondFile.AddByteModified(byteDiff.Destination, byteDiff.BytePositionInStream);
+
+                itm.PatchBlockButton.IsEnabled = false;
+            }
+
+            SecondFile.ReadOnlyMode = true;
+            SecondFile.RefreshView();
+        }
+
+        private void SaveChangeButton_Click(object sender, RoutedEventArgs e)
+        {
+            SecondFile.With(c =>
+            {
+                c.ReadOnlyMode = false;
+                c.SubmitChanges();
+                c.ReadOnlyMode = true;
+            });
+
+            ClearUI();
+        }
+
+        #endregion
+
+        #region Various methods
+
         private void LoadByteDifferenceList()
         {
             //Clear UI
@@ -92,9 +130,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                 FileDiffBytesList.Items.Add(new ByteDifferenceListItem(byteDifference));
             }
         }
-        #endregion
 
-        #region Various methods
         private void OpenFile(HexEditor hexEditor)
         {
             ClearUI();
@@ -119,8 +155,8 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         {
             FileDiffBytesList.Items.Clear();
             FileDiffBlockList.Items.Clear();
-            FirstFile.CustomBackgroundBlockItems.Clear();
-            SecondFile.CustomBackgroundBlockItems.Clear();
+            FirstFile.ClearCustomBackgroundBlock();
+            SecondFile.ClearCustomBackgroundBlock();
             SecondFile.ClearAllChange();
             PatchButton.IsEnabled = false;
             _differences = null;
@@ -188,7 +224,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                                                    c.BytePositionInStream <= itm.CustomBlock.StopOffset);
 
             foreach (ByteDifference byteDiff in diffList)
-                SecondFile.AddByteModified(byteDiff.Destination, byteDiff.BytePositionInStream);
+                SecondFile.AddByteModified(byteDiff.Origine, byteDiff.BytePositionInStream);
 
             SecondFile.ReadOnlyMode = true;
             SecondFile.RefreshView();
@@ -216,26 +252,6 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             _internalChange = false;
         }
         #endregion
-
-        private void PatchButton_Click(object sender, RoutedEventArgs e)
-        {            
-            if (_differences is null) return;
-
-            SecondFile.ReadOnlyMode = false;
-
-            foreach (BlockListItem itm in FileDiffBlockList.Items)
-            {
-                var diffList = _differences.Where(c => c.BytePositionInStream >= itm.CustomBlock.StartOffset &&
-                                                       c.BytePositionInStream <= itm.CustomBlock.StopOffset);
-
-                foreach (ByteDifference byteDiff in diffList)
-                    SecondFile.AddByteModified(byteDiff.Destination, byteDiff.BytePositionInStream);
-
-                itm.PatchBlockButton.IsEnabled = false;
-            }
-
-            SecondFile.ReadOnlyMode = true;
-            SecondFile.RefreshView();            
-        }
+                
     }
 }
