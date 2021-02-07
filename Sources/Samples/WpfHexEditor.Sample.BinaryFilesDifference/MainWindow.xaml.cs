@@ -9,7 +9,6 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -79,21 +78,23 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         {
             if (_differences is null) return;
 
-            SecondFile.ReadOnlyMode = false;
-
-            foreach (BlockListItem itm in FileDiffBlockList.Items)
+            SecondFile.With(c =>
             {
-                var diffList = _differences.Where(c => c.BytePositionInStream >= itm.CustomBlock.StartOffset &&
-                                                       c.BytePositionInStream <= itm.CustomBlock.StopOffset);
+                c.ReadOnlyMode = false;
 
-                foreach (ByteDifference byteDiff in diffList)
-                    SecondFile.AddByteModified(byteDiff.Destination, byteDiff.BytePositionInStream);
+                foreach (BlockListItem itm in FileDiffBlockList.Items)
+                {
+                    var diffList = _differences.Where(d => d.BytePositionInStream >= itm.CustomBlock.StartOffset &&
+                                                           d.BytePositionInStream <= itm.CustomBlock.StopOffset);
 
-                itm.PatchBlockButton.IsEnabled = false;
-            }
+                    foreach (ByteDifference byteDiff in diffList)
+                        c.AddByteModified(byteDiff.Destination, byteDiff.BytePositionInStream);
 
-            SecondFile.ReadOnlyMode = true;
-            SecondFile.RefreshView();
+                    itm.PatchBlockButton.IsEnabled = false;
+                }
+
+                c.ReadOnlyMode = true;
+            });
         }
 
         private void SaveChangeButton_Click(object sender, RoutedEventArgs e)
@@ -120,7 +121,6 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             //Validation
             if (_differences is null) return;
             if (FileDiffBlockList.SelectedItem is not BlockListItem blockitm) return;
-
 
             foreach (ByteDifference byteDifference in _differences
                 .Where(c => c.BytePositionInStream >= blockitm.CustomBlock.StartOffset &&
@@ -218,16 +218,18 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             if (sender is not BlockListItem itm) return;
             if (_differences is null) return;
 
-            SecondFile.ReadOnlyMode = false;
+            SecondFile.With(c =>
+            {
+                c.ReadOnlyMode = false;
 
-            var diffList = _differences.Where(c => c.BytePositionInStream >= itm.CustomBlock.StartOffset &&
-                                                   c.BytePositionInStream <= itm.CustomBlock.StopOffset);
+                var diffList = _differences.Where(d => d.BytePositionInStream >= itm.CustomBlock.StartOffset &&
+                                                       d.BytePositionInStream <= itm.CustomBlock.StopOffset);
 
-            foreach (ByteDifference byteDiff in diffList)
-                SecondFile.AddByteModified(byteDiff.Origine, byteDiff.BytePositionInStream);
+                foreach (ByteDifference byteDiff in diffList)
+                    c.AddByteModified(byteDiff.Origine, byteDiff.BytePositionInStream);
 
-            SecondFile.ReadOnlyMode = true;
-            SecondFile.RefreshView();
+                c.ReadOnlyMode = true;
+            });
 
             itm.PatchBlockButton.IsEnabled = false;
         }

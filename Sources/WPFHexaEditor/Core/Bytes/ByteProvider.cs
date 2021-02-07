@@ -31,6 +31,7 @@ namespace WpfHexaEditor.Core.Bytes
         private string _fileName = string.Empty;
         private Stream _stream;
         private bool _readOnlyMode;
+        private bool _canInsertEverywhere;
         private double _longProcessProgress;
         private string _newfilename = string.Empty;
         #endregion Globals variable
@@ -54,6 +55,7 @@ namespace WpfHexaEditor.Core.Bytes
         public event EventHandler FillWithByteCompleted;
         public event EventHandler ReplaceByteCompleted;
         public event EventHandler BytesAppendCompleted;
+        public event EventHandler CanInsertEverywhereChanged;
 
         #endregion Events
 
@@ -189,7 +191,7 @@ namespace WpfHexaEditor.Core.Bytes
         }
 
         /// <summary>
-        /// Put the control on readonly mode.
+        /// Put the byte provided on readonly mode.
         /// </summary>
         public bool ReadOnlyMode
         {
@@ -204,9 +206,26 @@ namespace WpfHexaEditor.Core.Bytes
         }
 
         /// <summary>
-        /// Close stream
-        /// ReadOnlyMode is reset to false
+        /// Give the possibility to inserts byte everywhere in the providers.
         /// </summary>
+        public bool CanInsertEverywhere
+        {
+            get => _canInsertEverywhere;
+            set
+            {
+                _canInsertEverywhere = value;
+
+                //Launch event
+                CanInsertEverywhereChanged?.Invoke(this, new EventArgs());
+            }
+        }
+
+        /// <summary>
+        /// Close stream
+        /// </summary>
+        /// <remarks>
+        /// ReadOnlyMode is reset to false
+        /// </remarks>
         public void Close()
         {
             if (!IsOpen) return;
@@ -583,7 +602,39 @@ namespace WpfHexaEditor.Core.Bytes
         }
 
         /// <summary>
-        /// Add/Modifiy a ByteModifed in the list of byte have deleted
+        /// Add new byte a ByteModifed in the list of byte have changed
+        /// </summary>
+        public void AddByteAdded(byte? @byte, long BytePositionInStream, long undoLength = 1)
+        {
+            if (ReadOnlyMode) return;
+            if (!CanInsertEverywhere) return;
+
+            var (success, _) = CheckIfIsByteModified(BytePositionInStream, ByteAction.Added);
+
+            if (success)
+                _byteModifiedDictionary.Remove(BytePositionInStream);
+
+            var byteModified = new ByteModified
+            {
+                Byte = @byte,
+                Length = undoLength,
+                BytePositionInStream = BytePositionInStream,
+                Action = ByteAction.Added
+            };
+
+            try
+            {
+                _byteModifiedDictionary.Add(BytePositionInStream, byteModified);
+                UndoStack.Push(byteModified);
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        /// <summary>
+        /// Add/Modify a ByteModifed in the list of byte have deleted
         /// </summary>
         /// <returns>
         /// Return the last position

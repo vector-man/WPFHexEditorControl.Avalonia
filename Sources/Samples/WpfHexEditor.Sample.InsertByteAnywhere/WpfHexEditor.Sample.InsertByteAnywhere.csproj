@@ -4,10 +4,10 @@
     
     INSERT BYTE ANYWHERE SAMPLE USING WPF HEXEDITOR
     
-    (WILL BE THE NEXT MAJOR EVOLUTION OF THE HEXEDITOR)
+    (EARLY STAGE OF DEVELOPMENT: WILL BE THE NEXT MAJOR EVOLUTION OF THE HEXEDITOR)
 -->
   
-  <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
