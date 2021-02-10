@@ -22,6 +22,8 @@
         <WpfHexaEditor:HexEditor
             x:Name="HexEditor"
             Margin="10,50,10,10"
+            AllowAutoHighLightSelectionByte="False"
+            AllowAutoSelectSameByteAtDoubleClick="False"
             PreloadByteInEditorMode="MaxScreenVisibleLineAtDataLoad" />
 
         <Button
@@ -37,6 +39,7 @@
             Width="218"
             Height="26"
             Margin="89,10,0,0"
+            Click="AddByteButton_Click"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Content="Insert 1 byte at SelectionStart position"

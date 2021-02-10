@@ -88,7 +88,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                                                            d.BytePositionInStream <= itm.CustomBlock.StopOffset);
 
                     foreach (ByteDifference byteDiff in diffList)
-                        c.AddByteModified(byteDiff.Destination, byteDiff.BytePositionInStream);
+                        c.ModifyByte(byteDiff.Destination, byteDiff.BytePositionInStream);
 
                     itm.PatchBlockButton.IsEnabled = false;
                 }
@@ -226,7 +226,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                                                        d.BytePositionInStream <= itm.CustomBlock.StopOffset);
 
                 foreach (ByteDifference byteDiff in diffList)
-                    c.AddByteModified(byteDiff.Origine, byteDiff.BytePositionInStream);
+                    c.ModifyByte(byteDiff.Origine, byteDiff.BytePositionInStream);
 
                 c.ReadOnlyMode = true;
             });

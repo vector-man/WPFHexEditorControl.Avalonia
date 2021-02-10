@@ -1039,7 +1039,7 @@ namespace WpfHexaEditor
             if (_provider.ReadOnlyMode) return;
 
             if (sender is IByteControl ctrl)
-                AddByteModified(ctrl.Byte.Byte[e.Index], ctrl.BytePositionInStream + e.Index);
+                ModifyByte(ctrl.Byte.Byte[e.Index], ctrl.BytePositionInStream + e.Index);
 
             BytesModified?.Invoke(this, e);
         }
@@ -1050,7 +1050,7 @@ namespace WpfHexaEditor
         /// Add a bytemodified to this instance 
         /// it's not call the ByteModified event
         /// </summary>
-        public void AddByteModified(byte? @byte, long bytePositionInStream, long undoLength = 1)
+        public void ModifyByte(byte? @byte, long bytePositionInStream, long undoLength = 1)
         {
             if (!CheckIsOpen(_provider)) return;
             if (_provider.ReadOnlyMode) return;
@@ -5414,6 +5414,25 @@ namespace WpfHexaEditor
         {
             if (d is HexEditor ctrl && e.NewValue != e.OldValue)
                 ctrl.RefreshView(true);
+        }
+
+        /// <summary>
+        /// Select bytes setted by bytePositionInStream with the lenght
+        /// </summary>
+        /// <param name="bytePositionInStream">First byte to delete</param>
+        /// <param name="lenght">Number of byte to delete</param>
+        public void DeleteBytesAtPosition(long bytePositionInStream, long lenght = 1)
+        {
+            var previousSelectionStart = SelectionStart;
+            var previousSelectionStop = SelectionStop;
+
+            SelectionStart = bytePositionInStream;
+            SelectionStop = bytePositionInStream + lenght;
+
+            DeleteSelection();
+
+            SelectionStart = previousSelectionStart;
+            SelectionStop = previousSelectionStop;
         }
 
         /// <summary>
