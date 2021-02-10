@@ -1,8 +1,13 @@
-﻿<Application
+﻿<!--
+    Apache 2.0 - 2021
+    Author : Derek Tremblay (derektremblay666@gmail.com)
+    
+    INSERT BYTE ANYWHERE SAMPLE / DEVELOPMENT TEST
+-->
+
+<Application
     x:Class="WpfHexEditor.Sample.InsertByteAnywhere.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:WpfHexEditor.Sample.InsertByteAnywhere"
-    StartupUri="MainWindow.xaml">
-    <Application.Resources />
-</Application>
+    StartupUri="MainWindow.xaml" />

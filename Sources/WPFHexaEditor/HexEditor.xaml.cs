@@ -2085,6 +2085,19 @@ namespace WpfHexaEditor
 
         #region Open, Close, Save, byte provider ...
 
+        /// <summary>
+        /// Return true if a file/stream is load in the control
+        /// </summary>
+        public bool IsFileOrStreamLoaded
+        {
+            get => (bool)GetValue(IsFileOrStreamLoadedProperty);
+            set => SetValue(IsFileOrStreamLoadedProperty, value);
+        }
+
+        public static readonly DependencyProperty IsFileOrStreamLoadedProperty =
+            DependencyProperty.Register(nameof(IsFileOrStreamLoaded), typeof(bool), 
+                typeof(HexEditor), new PropertyMetadata(false));
+
         private void Provider_ChangesSubmited(object sender, EventArgs e)
         {
             if (sender is not ByteProvider bp) return;
@@ -2132,6 +2145,7 @@ namespace WpfHexaEditor
             if (d is not HexEditor ctrl) return;
 
             ctrl.OpenFile((string)e.NewValue);
+            ctrl.IsFileOrStreamLoaded = true;
         }
 
         /// <summary>
@@ -2154,7 +2168,10 @@ namespace WpfHexaEditor
             ctrl.CloseProvider();
 
             if (e.NewValue != null)
+            {
                 ctrl.OpenStream((Stream)e.NewValue);
+                ctrl.IsFileOrStreamLoaded = true;
+            }
         }
 
         /// <summary>
@@ -2183,6 +2200,8 @@ namespace WpfHexaEditor
             RefreshView();
             UpdateHeader(true);
             UpdateScrollBar();
+
+            IsFileOrStreamLoaded = false;
 
             //Debug
             Debug.Print("PROVIDER CLOSED");

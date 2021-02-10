@@ -1,28 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//////////////////////////////////////////////
+// Apache 2.0  - 2021
+// Author : Derek Tremblay (derektremblay666@gmail.com)
+//
+// INSERT BYTE ANYWHERE SAMPLE / DEVELOPMENT TEST
+//////////////////////////////////////////////
+
+using Microsoft.Win32;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using WpfHexaEditor.Core.MethodExtention;
 
 namespace WpfHexEditor.Sample.InsertByteAnywhere
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+        public MainWindow() => InitializeComponent();
+
+        private void OpenButton_Click(object sender, RoutedEventArgs e) =>
+           new OpenFileDialog().With(o =>
+           {
+               o.CheckFileExists = true;
+               o.CheckPathExists = true;
+               o.Multiselect = false;
+
+               if (o.ShowDialog() ?? false)
+                   HexEditor.FileName = o.FileName;
+           });
     }
 }

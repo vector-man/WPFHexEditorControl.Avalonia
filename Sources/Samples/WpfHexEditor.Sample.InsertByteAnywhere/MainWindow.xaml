@@ -1,4 +1,11 @@
-﻿<Window
+﻿<!--
+    Apache 2.0 - 2021
+    Author : Derek Tremblay (derektremblay666@gmail.com)
+    
+    INSERT BYTE ANYWHERE SAMPLE / DEVELOPMENT TEST
+-->
+
+<Window
     x:Class="WpfHexEditor.Sample.InsertByteAnywhere.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,9 +17,30 @@
     Width="800"
     Height="450"
     mc:Ignorable="d">
-    <Grid>
 
-        <WpfHexaEditor:HexEditor Margin="10,30,10,10" PreloadByteInEditorMode="MaxVisibleLineExtended" />
+    <Grid>
+        <WpfHexaEditor:HexEditor
+            x:Name="HexEditor"
+            Margin="10,50,10,10"
+            PreloadByteInEditorMode="MaxScreenVisibleLineAtDataLoad" />
+
+        <Button
+            Width="74"
+            Height="26"
+            Margin="10,10,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Click="OpenButton_Click"
+            Content="Open file" />
+
+        <Button
+            Width="218"
+            Height="26"
+            Margin="89,10,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Content="Insert 1 byte at SelectionStart position"
+            IsEnabled="{Binding ElementName=HexEditor, Path=IsFileOrStreamLoaded, UpdateSourceTrigger=PropertyChanged}" />
 
     </Grid>
 </Window>

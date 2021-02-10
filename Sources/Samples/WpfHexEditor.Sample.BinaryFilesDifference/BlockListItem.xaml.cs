@@ -9,7 +9,6 @@
 using System;
 using System.Windows.Controls;
 using WpfHexaEditor.Core;
-using WpfHexaEditor.Core.EventArguments;
 
 namespace WpfHexEditor.Sample.BinaryFilesDifference
 {
