@@ -25,10 +25,10 @@ namespace WpfHexEditor.Sample.InsertByteAnywhere
                if (o.ShowDialog() ?? false)
                    HexEditor.FileName = o.FileName;
            });
-          
-
+        
         private void AddByteButton_Click(object sender, RoutedEventArgs e)
         {
+            HexEditor.InsertByte(224, 15);
         }
     }
 }

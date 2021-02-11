@@ -31,13 +31,15 @@ namespace WpfHexaEditor.Core.Bytes
         private string _fileName = string.Empty;
         private Stream _stream;
         private bool _readOnlyMode;
-        private bool _canInsertEverywhere;
+        private bool _canInsertEverywhere = false;
         private double _longProcessProgress;
         private string _newfilename = string.Empty;
         #endregion Globals variable
 
         #region Events
-
+        
+        //Somes other events can be added in futures
+        
         public event EventHandler DataCopiedToClipboard;
         public event EventHandler ReadOnlyChanged;
         public event EventHandler Closed;
@@ -74,8 +76,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Construct new ByteProvider with filename and try to open file
         /// </summary>
-        public ByteProvider(string fileName, bool readOnlyMode)
+        public ByteProvider(string fileName, bool readOnlyMode, bool canInsertEverywhere)
         {
+            CanInsertEverywhere = canInsertEverywhere;
             ReadOnlyMode = readOnlyMode;
             FileName = fileName;
         }
@@ -83,7 +86,11 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Constuct new ByteProvider with stream
         /// </summary>
-        public ByteProvider(Stream stream) => Stream = stream;
+        public ByteProvider(Stream stream, bool canInsertEverywhere)
+        {
+            CanInsertEverywhere = canInsertEverywhere;
+            Stream = stream;
+        }
 
         #endregion Constructors
 
@@ -573,26 +580,26 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Add/Modifiy a ByteModifed in the list of byte have changed
         /// </summary>
-        public void AddByteModified(byte? @byte, long BytePositionInStream, long undoLength = 1)
+        public void AddByteModified(byte? @byte, long bytePositionInStream, long undoLength = 1)
         {
             if (ReadOnlyMode) return;
 
-            var (success, _) = CheckIfIsByteModified(BytePositionInStream);
+            var (success, _) = CheckIfIsByteModified(bytePositionInStream);
 
             if (success)
-                _byteModifiedDictionary.Remove(BytePositionInStream);
+                _byteModifiedDictionary.Remove(bytePositionInStream);
 
             var byteModified = new ByteModified
             {
                 Byte = @byte,
                 Length = undoLength,
-                BytePositionInStream = BytePositionInStream,
+                BytePositionInStream = bytePositionInStream,
                 Action = ByteAction.Modified
             };
 
             try
             {
-                _byteModifiedDictionary.Add(BytePositionInStream, byteModified);
+                _byteModifiedDictionary.Add(bytePositionInStream, byteModified);
                 UndoStack.Push(byteModified);
             }
             catch
@@ -604,27 +611,27 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Add new byte a ByteModifed in the list of byte have changed
         /// </summary>
-        public void AddByteAdded(byte? @byte, long BytePositionInStream, long undoLength = 1)
+        public void AddByteAdded(byte? @byte, long bytePositionInStream, long undoLength = 1)
         {
             if (ReadOnlyMode) return;
             if (!CanInsertEverywhere) return;
 
-            var (success, _) = CheckIfIsByteModified(BytePositionInStream, ByteAction.Added);
+            var (success, _) = CheckIfIsByteModified(bytePositionInStream, ByteAction.Added);
 
             if (success)
-                _byteModifiedDictionary.Remove(BytePositionInStream);
+                _byteModifiedDictionary.Remove(bytePositionInStream);
 
             var byteModified = new ByteModified
             {
                 Byte = @byte,
                 Length = undoLength,
-                BytePositionInStream = BytePositionInStream,
+                BytePositionInStream =bytePositionInStream,
                 Action = ByteAction.Added
             };
 
             try
             {
-                _byteModifiedDictionary.Add(BytePositionInStream, byteModified);
+                _byteModifiedDictionary.Add(bytePositionInStream, byteModified);
                 UndoStack.Push(byteModified);
             }
             catch
@@ -711,7 +718,6 @@ namespace WpfHexaEditor.Core.Bytes
                     Position = startPosition + i;
                     if (GetByte(Position).singleByte != b)
                         AddByteModified(b, Position - 1);
-
                 }
 
                 FillWithByteCompleted?.Invoke(this, new EventArgs());
@@ -919,7 +925,11 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Copy selection to clipboard in code block
         /// </summary>
-        private void CopyToClipboard_Language(long selectionStart, long selectionStop, bool copyChange, DataObject da, CodeLanguage language)
+        private void CopyToClipboard_Language(long selectionStart,
+                                              long selectionStop,
+                                              bool copyChange,
+                                              DataObject da,
+                                              CodeLanguage language)
         {
             if (!CanCopy(selectionStart, selectionStop)) return;
 

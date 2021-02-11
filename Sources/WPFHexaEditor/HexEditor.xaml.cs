@@ -2241,7 +2241,7 @@ namespace WpfHexaEditor
             if (PreloadByteInEditorMode == PreloadByteInEditor.MaxScreenVisibleLineAtDataLoad)
                 BuildDataLines(MaxScreenVisibleLine, false);
 
-            _provider = new ByteProvider(filename, ReadOnlyMode);
+            _provider = new ByteProvider(filename, ReadOnlyMode, CanInsertEverywhere);
 
             _provider.With(p =>
             {
@@ -2293,7 +2293,7 @@ namespace WpfHexaEditor
             if (PreloadByteInEditorMode == PreloadByteInEditor.MaxScreenVisibleLineAtDataLoad)
                 BuildDataLines(MaxScreenVisibleLine, false);
 
-            _provider = new ByteProvider(stream);
+            _provider = new ByteProvider(stream, CanInsertEverywhere);
 
             _provider.With(p =>
             {
@@ -5609,7 +5609,7 @@ namespace WpfHexaEditor
 
         #endregion
 
-        #region Commands implementation (In early stage of developpement)
+        #region Commands implementation (In early stage of development)
 
         public static DependencyProperty RefreshViewCommandProperty = 
             DependencyProperty.Register (
@@ -5637,6 +5637,45 @@ namespace WpfHexaEditor
             set => SetValue(SubmitChangesCommandProperty, value);
         }
 
+        #endregion
+
+        #region Insert byte everywhere support (In early stage of development)
+
+        /// <summary>
+        /// Give the possibility to inserts byte everywhere.
+        /// </summary>
+        public bool CanInsertEverywhere
+        {
+            get { return (bool)GetValue(CanInsertEverywhereProperty); }
+            set { SetValue(CanInsertEverywhereProperty, value); }
+        }
+
+        public static readonly DependencyProperty CanInsertEverywhereProperty =
+            DependencyProperty.Register(nameof(CanInsertEverywhere), typeof(bool), typeof(HexEditor), 
+                new FrameworkPropertyMetadata(false, Control_CanInsertEverywhereChanged));
+
+        private static void Control_CanInsertEverywhereChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
+
+            if (CheckIsOpen(ctrl._provider))
+                ctrl._provider.CanInsertEverywhere = (bool)e.NewValue;
+
+            ctrl.RefreshView();
+        }
+
+        /// <summary>
+        /// Insert byte at the specified position
+        /// </summary>
+        public void InsertByte(byte @byte, long bytePositionInStream)
+        {
+            if (!CheckIsOpen(_provider)) return;
+            if (!CanInsertEverywhere) return;
+
+            _provider.AddByteAdded(@byte, bytePositionInStream);
+
+            RefreshView();
+        }
         #endregion
     }
 }
