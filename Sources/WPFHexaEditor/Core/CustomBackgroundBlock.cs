@@ -72,7 +72,7 @@ namespace WpfHexaEditor.Core
         public long StopOffset => StartOffset + Length;
 
         /// <summary>
-        /// Get or set the lenght of background block
+        /// Get or set the length of background block
         /// </summary>
         public long Length { get; set; }
 

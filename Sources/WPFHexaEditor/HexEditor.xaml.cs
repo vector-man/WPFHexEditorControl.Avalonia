@@ -1023,6 +1023,8 @@ namespace WpfHexaEditor
             if (!CheckIsOpen(_provider)) return;
 
             ReadOnlyMode = _provider.IsLockedFile || _provider.ReadOnlyMode;
+
+            ReadOnlyChanged?.Invoke(sender, e);
         }
 
         #endregion ReadOnly property/event
@@ -2904,7 +2906,7 @@ namespace WpfHexaEditor
             {
                 var bufferlength = MaxVisibleLine * (BytePerLine + 1 + ByteShiftLeft) * ByteSizeRatio;
 
-                #region Build the buffer lenght if needed
+                #region Build the buffer length if needed
 
                 if (controlResize)
                 {
@@ -3835,7 +3837,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Update statusbar for somes property dont support dependency property
         /// </summary>
-        private void UpdateStatusBar(bool updateFileLenght = true)
+        private void UpdateStatusBar(bool updateFilelength = true)
         {
             if (StatusBarVisibility != Visibility.Visible) return;
 
@@ -3847,7 +3849,7 @@ namespace WpfHexaEditor
             }
 
             #region Show length
-            if (updateFileLenght)
+            if (updateFilelength)
             {
                 var isMegabByte = false;
 
@@ -5417,17 +5419,17 @@ namespace WpfHexaEditor
         }
 
         /// <summary>
-        /// Select bytes setted by bytePositionInStream with the lenght
+        /// Select bytes setted by bytePositionInStream with the length
         /// </summary>
         /// <param name="bytePositionInStream">First byte to delete</param>
-        /// <param name="lenght">Number of byte to delete</param>
-        public void DeleteBytesAtPosition(long bytePositionInStream, long lenght = 1)
+        /// <param name="length">Number of byte to delete</param>
+        public void DeleteBytesAtPosition(long bytePositionInStream, long length = 1)
         {
             var previousSelectionStart = SelectionStart;
             var previousSelectionStop = SelectionStop;
 
             SelectionStart = bytePositionInStream;
-            SelectionStop = bytePositionInStream + lenght;
+            SelectionStop = bytePositionInStream + length;
 
             DeleteSelection();
 
@@ -5667,15 +5669,37 @@ namespace WpfHexaEditor
         /// <summary>
         /// Insert byte at the specified position
         /// </summary>
-        public void InsertByte(byte @byte, long bytePositionInStream)
+        public void InsertByte(byte @byte, long bytePositionInStream) => 
+            InsertByte(@byte, bytePositionInStream, 1);
+
+        /// <summary>
+        /// Insert byte at the specified position for the length
+        /// </summary>
+        public void InsertByte(byte @byte, long bytePositionInStream, long length)
         {
             if (!CheckIsOpen(_provider)) return;
             if (!CanInsertEverywhere) return;
 
-            _provider.AddByteAdded(@byte, bytePositionInStream);
+            for (int i = 0; i <= length; i++)
+                _provider.AddByteAdded(@byte, bytePositionInStream + i);
 
             RefreshView();
         }
+
+        /// <summary>
+        /// Insert an array of byte at specified position
+        /// </summary>
+        public void InsertBytes(byte[] bytes, long bytePositionInStream)
+        {
+            if (!CheckIsOpen(_provider)) return;
+            if (!CanInsertEverywhere) return;
+
+            foreach (byte @byte in bytes)
+                _provider.AddByteAdded(@byte, bytePositionInStream++);
+
+            RefreshView();
+        }
+
         #endregion
     }
 }

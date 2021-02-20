@@ -1636,12 +1636,12 @@ namespace WpfHexaEditor.Core.Bytes
         {
             if (!CheckIsOpen(this) || !CheckIsOpen(providerToCompare)) yield return null;
 
-            //get the max lenght
-            var maxLenght = Length > providerToCompare.Length
+            //get the max length
+            var maxlength = Length > providerToCompare.Length
                 ? Length
                 : providerToCompare.Length;
 
-            for (int i = 0; i < maxLenght; i++)
+            for (int i = 0; i < maxlength; i++)
             {
                 //NEED TO BE OPTIMISED 
                 var origineByte = GetByte(i, compareChange).singleByte;
