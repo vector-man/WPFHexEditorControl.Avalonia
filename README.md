@@ -6,8 +6,6 @@
 [![NetFramework](https://img.shields.io/badge/Language-C%23%207.0+-orange.svg)](https://blogs.msdn.microsoft.com/dotnet/2016/08/24/whats-new-in-csharp-7-0/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/abbaye/WpfHexEditorControl/blob/master/LICENSE)
 
-## 🎯 ATTENTION : BUILD WITH VISUAL STUDIO 2019 v16.6.0+
-
 Wpf Hexeditor is a powerful and fully customisable user control for editing file or stream as hexadecimal, decimal and binary. 
 
 You can use it very easily in Wpf or WinForm application. Download the code and test the Wpf (C#, VB.NET) and WinForm (C#) samples.
