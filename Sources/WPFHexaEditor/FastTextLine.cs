@@ -72,7 +72,7 @@ namespace WpfHexaEditor
             set => SetValue(TextProperty, value);
         }
 
-        public static readonly DependencyProperty FontWeightProperty = 
+        public static readonly DependencyProperty FontWeightProperty =
             TextElement.FontWeightProperty.AddOwner(typeof(FastTextLine));
 
         /// <summary>

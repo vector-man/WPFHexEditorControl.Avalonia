@@ -36,7 +36,7 @@ namespace WpfHexaEditor.Core
         public Caret()
         {
             if (DesignerProperties.GetIsInDesignMode(this)) return;
-            
+
             _pen.Freeze();
             _brush.Opacity = .5;
             IsHitTestVisible = false;
@@ -47,7 +47,7 @@ namespace WpfHexaEditor.Core
         public Caret(Brush brush)
         {
             if (DesignerProperties.GetIsInDesignMode(this)) return;
-            
+
             _pen.Brush = brush;
             _pen.Freeze();
             _brush.Opacity = .5;

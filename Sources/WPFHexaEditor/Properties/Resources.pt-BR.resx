@@ -256,6 +256,9 @@
   <data name="OkString" xml:space="preserve">
     <value>Ok</value>
   </data>
+  <data name="OpenAsReadOnlyString" xml:space="preserve">
+    <value>Plik jest zablokowany. Czy chcesz go otworzyć w trybie tylko do odczytu?</value>
+  </data>
   <data name="PasteExtendByteConfirmationString" xml:space="preserve">
     <value>A operação de colar atingiu o final do arquivo. Deseja estender o arquivo para operação completa? Esta operação não pode ser cancelada se você continuar.</value>
   </data>

@@ -37,11 +37,11 @@ namespace WpfHexaEditor.Core.Bytes
             bool sign_positive = true;
             string prefix = "";
 
-            var byteValue = (order == ByteOrderType.HiLo) 
-                ? Byte.ToArray().Reverse().ToArray() 
+            var byteValue = (order == ByteOrderType.HiLo)
+                ? Byte.ToArray().Reverse().ToArray()
                 : Byte.ToArray();
-            var originValue = (order == ByteOrderType.HiLo) 
-                ? OriginByte.ToArray().Reverse().ToArray() 
+            var originValue = (order == ByteOrderType.HiLo)
+                ? OriginByte.ToArray().Reverse().ToArray()
                 : OriginByte.ToArray();
             var ByteInt = BitConverter.ToUInt32(byteValue, 0);
             var OriginInt = BitConverter.ToUInt32(originValue, 0);
@@ -105,7 +105,7 @@ namespace WpfHexaEditor.Core.Bytes
                             + Convert.ToString(value[3], 2).PadLeft(8, '0');
                         break;
                 }
-            
+
             return Text;
         }
 
@@ -145,11 +145,11 @@ namespace WpfHexaEditor.Core.Bytes
 
                     //Update byte
                     var byteValueCharArray = byteOrder == ByteOrderType.LoHi
-                        ?ByteConverters.ByteToHexCharArray(Byte[0]).Concat(
+                        ? ByteConverters.ByteToHexCharArray(Byte[0]).Concat(
                             ByteConverters.ByteToHexCharArray(Byte[1]).Concat(
                                 ByteConverters.ByteToHexCharArray(Byte[2]).Concat(
                                     ByteConverters.ByteToHexCharArray(Byte[3])))).ToArray()
-                        :ByteConverters.ByteToHexCharArray(Byte[3]).Concat(
+                        : ByteConverters.ByteToHexCharArray(Byte[3]).Concat(
                             ByteConverters.ByteToHexCharArray(Byte[2]).Concat(
                                 ByteConverters.ByteToHexCharArray(Byte[1]).Concat(
                                     ByteConverters.ByteToHexCharArray(Byte[0])))).ToArray();
@@ -223,7 +223,7 @@ namespace WpfHexaEditor.Core.Bytes
                     #region Edit decimal value 
 
                     if (!KeyValidator.IsNumericKey(_key)) break;
-                    
+
                     key = KeyValidator.IsNumericKey(_key)
                         ? KeyValidator.GetDigitFromKey(_key).ToString()
                         : 0.ToString();
@@ -231,7 +231,7 @@ namespace WpfHexaEditor.Core.Bytes
                     //Update byte
                     Char[] byteValueCharArray_dec =
                         (byteOrder == ByteOrderType.HiLo)
-                        ?BitConverter.ToUInt32(Byte.ToArray(), 0).ToString("d10").ToCharArray()
+                        ? BitConverter.ToUInt32(Byte.ToArray(), 0).ToString("d10").ToCharArray()
                         : BitConverter.ToUInt32(Enumerable.Reverse(Byte.ToArray()).ToArray(), 0).ToString("d10").ToCharArray();
 
                     List<byte> _newByte = new List<byte>();
@@ -333,7 +333,7 @@ namespace WpfHexaEditor.Core.Bytes
                     }
 
                     if (_newByte != null && _newByte.Count == 4)
-                    { 
+                    {
                         for (int i = 0; i < 4; i++)
                         {
                             if (byteOrder == ByteOrderType.LoHi)
@@ -354,21 +354,21 @@ namespace WpfHexaEditor.Core.Bytes
                     #region Edit Binary value 
 
                     if (!KeyValidator.IsNumericKey(_key) || KeyValidator.GetDigitFromKey(_key) > 1) break;
-                    
+
                     key = KeyValidator.IsNumericKey(_key)
                         ? KeyValidator.GetDigitFromKey(_key).ToString()
                         : 0.ToString();
 
                     //Update byte
                     Char[] byteValueCharArray_bin = (byteOrder == ByteOrderType.LoHi)
-                        ?(Convert.ToString(Byte[0], 2).PadLeft(8, '0')
+                        ? (Convert.ToString(Byte[0], 2).PadLeft(8, '0')
                         + Convert.ToString(Byte[1], 2).PadLeft(8, '0')
                         + Convert.ToString(Byte[2], 2).PadLeft(8, '0')
                         + Convert.ToString(Byte[3], 2).PadLeft(8, '0')).ToCharArray()
-                        :(Convert.ToString(Byte[3], 2).PadLeft(8, '0')
+                        : (Convert.ToString(Byte[3], 2).PadLeft(8, '0')
                         + Convert.ToString(Byte[2], 2).PadLeft(8, '0')
                         + Convert.ToString(Byte[1], 2).PadLeft(8, '0')
-                        + Convert.ToString(Byte[0], 2).PadLeft(8, '0')).ToCharArray();                  
+                        + Convert.ToString(Byte[0], 2).PadLeft(8, '0')).ToCharArray();
 
                     switch (_keyDownLabel)
                     {

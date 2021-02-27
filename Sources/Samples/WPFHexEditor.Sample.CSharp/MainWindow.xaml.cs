@@ -228,7 +228,7 @@ namespace WPFHexaEditorExample
             HexEdit.CloseProvider();
         }
 
-        private void SetReadOnlyMenu_Click(object sender, RoutedEventArgs e) => 
+        private void SetReadOnlyMenu_Click(object sender, RoutedEventArgs e) =>
             HexEdit.ReadOnlyMode = SetReadOnlyMenu.IsChecked;
     }
 }

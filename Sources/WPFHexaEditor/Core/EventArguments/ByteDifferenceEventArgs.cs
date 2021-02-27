@@ -16,7 +16,7 @@ namespace WpfHexaEditor.Core.EventArguments
         public ByteDifferenceEventArgs() { }
 
         public ByteDifferenceEventArgs(ByteDifference byteDifference) => ByteDiff = byteDifference;
-        
+
         /// <summary>
         /// ByteDifference to pass in arguments
         /// /// </summary>

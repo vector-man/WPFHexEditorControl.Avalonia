@@ -144,7 +144,7 @@ namespace WpfHexaEditor.Core.CharacterTable
                     {
                         case 2:
                             dte = info[1].Length == 2
-                                ? new Dte(info[0], info[1].Substring(0, info[1].Length - 1), DteType.Ascii)                                
+                                ? new Dte(info[0], info[1].Substring(0, info[1].Length - 1), DteType.Ascii)
                                 : new Dte(info[0], info[1].Substring(0, info[1].Length - 1),
                                     DteType.DualTitleEncoding);
                             break;
@@ -188,7 +188,7 @@ namespace WpfHexaEditor.Core.CharacterTable
                 try
                 {
                     if (line.Substring(0, 1) != "(") continue;
-                    
+
                     var fav = new BookMark();
                     var lineSplited = line.Split(')');
                     fav.Description = lineSplited[1].Substring(0, lineSplited[1].Length - 1);
@@ -423,7 +423,7 @@ namespace WpfHexaEditor.Core.CharacterTable
         void Dispose(bool disposing)
         {
             if (_disposedValue) return;
-            
+
             if (disposing) _dteList = null;
 
             _disposedValue = true;

@@ -22,7 +22,7 @@ namespace WpfHexaEditor.Core.MethodExtention
         {
             fontFamily ??= new TextBlock().FontFamily;
             fontSize = fontSize > 0 ? fontSize : new TextBlock().FontSize;
-            
+
             var ft = new FormattedText(text ?? string.Empty,
                                        CultureInfo.InvariantCulture,
                                        FlowDirection.LeftToRight,

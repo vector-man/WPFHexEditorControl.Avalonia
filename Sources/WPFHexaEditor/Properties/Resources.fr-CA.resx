@@ -312,4 +312,7 @@
   <data name="ZoomString" xml:space="preserve">
     <value>Zoom</value>
   </data>
+  <data name="OpenAsReadOnlyString" xml:space="preserve">
+    <value>Le fichier est verrouillé. Voulez-vous l'ouvrir en mode lecture seule?</value>
+  </data>
 </root>

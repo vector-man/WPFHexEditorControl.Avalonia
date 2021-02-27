@@ -12,6 +12,7 @@ using System.Text;
 using System.Windows;
 using WpfHexaEditor.Core.CharacterTable;
 using WpfHexaEditor.Core.MethodExtention;
+using WpfHexaEditor.Properties;
 using Application = System.Windows.Application;
 using Clipboard = System.Windows.Clipboard;
 using DataObject = System.Windows.DataObject;
@@ -37,9 +38,9 @@ namespace WpfHexaEditor.Core.Bytes
         #endregion Globals variable
 
         #region Events
-        
+
         //Somes other events can be added in futures
-        
+
         public event EventHandler DataCopiedToClipboard;
         public event EventHandler ReadOnlyChanged;
         public event EventHandler Closed;
@@ -179,12 +180,9 @@ namespace WpfHexaEditor.Core.Bytes
             }
             catch
             {
-                //TODO: Localize string...
-
                 if (ReadOnlyMode)
                     _stream = File.Open(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                else if (MessageBox.Show("The file is locked. Do you want to open it in read-only mode?", string.Empty,
-                        MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                else if (MessageBox.Show(Resources.OpenAsReadOnlyString, string.Empty, MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     _stream = File.Open(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                     IsLockedFile = true;
@@ -556,7 +554,7 @@ namespace WpfHexaEditor.Core.Bytes
                 IsOnLongProcess = false;
                 LongProcessCompleted?.Invoke(this, new EventArgs());
             }
-                
+
 
             //Launch event
             ChangesSubmited?.Invoke(this, new EventArgs());
@@ -625,7 +623,7 @@ namespace WpfHexaEditor.Core.Bytes
             {
                 Byte = @byte,
                 Length = undoLength,
-                BytePositionInStream =bytePositionInStream,
+                BytePositionInStream = bytePositionInStream,
                 Action = ByteAction.Added
             };
 
@@ -1104,7 +1102,7 @@ namespace WpfHexaEditor.Core.Bytes
             if (output.CanWrite)
                 output.Write(buffer, (int)output.Length, buffer.Length);
             else
-                throw new IOException(Properties.Resources.WritingErrorExeptionString);
+                throw new IOException(Resources.WritingErrorExeptionString);
 
             DataCopiedToStream?.Invoke(this, new EventArgs());
         }
@@ -1478,7 +1476,7 @@ namespace WpfHexaEditor.Core.Bytes
                 LongProcessChanged?.Invoke(value, new EventArgs());
             }
         }
-               
+
 
         #endregion Long process progress
 
@@ -1632,7 +1630,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// Compare this provider with another and get all bytes difference
         /// </summary>
         /// <returns>Return each byte not equal in the two provider</returns>
-        public IEnumerable<ByteDifference> Compare(ByteProvider providerToCompare, bool compareChange = false) 
+        public IEnumerable<ByteDifference> Compare(ByteProvider providerToCompare, bool compareChange = false)
         {
             if (!CheckIsOpen(this) || !CheckIsOpen(providerToCompare)) yield return null;
 
@@ -1649,7 +1647,7 @@ namespace WpfHexaEditor.Core.Bytes
 
                 //Not equal
                 if (origineByte != compareByte)
-                    yield return new ByteDifference(origineByte.Value, compareByte.Value, i);                
+                    yield return new ByteDifference(origineByte.Value, compareByte.Value, i);
             }
         }
 

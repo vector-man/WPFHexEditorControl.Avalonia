@@ -23,12 +23,13 @@ namespace WpfHexaEditor
         private bool _tblShowMte = true;
         private readonly bool _barchart = false;
         private readonly double _width = 12d;
-        
+
         #endregion Global variable
 
         #region Contructor
 
-        public StringByte(HexEditor parent, bool barChart, double desiredWidth) : base(parent) {
+        public StringByte(HexEditor parent, bool barChart, double desiredWidth) : base(parent)
+        {
             _barchart = barChart;
             _width = desiredWidth;
         }
@@ -84,7 +85,7 @@ namespace WpfHexaEditor
         /// </summary>
         public override void UpdateTextRenderFromByte()
         {
-            if (Byte != null )
+            if (Byte != null)
             {
                 var dteType = DteType.Invalid;
 
@@ -206,8 +207,8 @@ namespace WpfHexaEditor
                 //Draw chart
                 int fillHeight = PercentValue * (int)_parent.LineHeight / 100;
 
-                dc.DrawRectangle(_parent.BarChartColor, 
-                    null, 
+                dc.DrawRectangle(_parent.BarChartColor,
+                    null,
                     new Rect(0, _parent.LineHeight - fillHeight, Width, fillHeight));
                 #endregion
             }
@@ -220,14 +221,14 @@ namespace WpfHexaEditor
                 #region Update width of control 
 
                 //It's 8-10 time more fastest to update width on render for TBL string
-                
+
                 Width = TypeOfCharacterTable switch
                 {
                     CharacterTableType.Ascii => _width,
-                    CharacterTableType.TblFile => Byte is null 
-                        ? 0 
-                        : TextFormatted?.Width > _width 
-                            ? TextFormatted.Width 
+                    CharacterTableType.TblFile => Byte is null
+                        ? 0
+                        : TextFormatted?.Width > _width
+                            ? TextFormatted.Width
                             : _width,
                     _ => throw new NotImplementedException()
                 };

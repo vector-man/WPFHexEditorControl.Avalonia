@@ -322,4 +322,7 @@
   <data name="ConvertStringToLongErrorString" xml:space="preserve">
     <value>Can't convert this string to long</value>
   </data>
+  <data name="OpenAsReadOnlyString" xml:space="preserve">
+    <value>The file is locked. Do you want to open it in read-only mode?</value>
+  </data>
 </root>

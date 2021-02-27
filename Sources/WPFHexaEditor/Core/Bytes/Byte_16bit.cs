@@ -132,10 +132,10 @@ namespace WpfHexaEditor.Core.Bytes
                         : _key.ToString().ToLower();
 
                     //Update byte
-                    var byteValueCharArray = byteOrder == ByteOrderType.LoHi 
+                    var byteValueCharArray = byteOrder == ByteOrderType.LoHi
                         ? ByteConverters.ByteToHexCharArray(Byte[0]).Concat(ByteConverters.ByteToHexCharArray(Byte[1])).ToArray()
                             : ByteConverters.ByteToHexCharArray(Byte[1]).Concat(ByteConverters.ByteToHexCharArray(Byte[0])).ToArray();
-                    
+
                     switch (_keyDownLabel)
                     {
                         case KeyDownLabel.FirstChar:
@@ -190,9 +190,9 @@ namespace WpfHexaEditor.Core.Bytes
                         : 0.ToString();
 
                     //Update byte
-                    Char[] byteValueCharArray_dec = 
-                        (byteOrder == ByteOrderType.HiLo) 
-                            ? BitConverter.ToUInt16(Byte.ToArray(), 0).ToString("d5").ToCharArray() 
+                    Char[] byteValueCharArray_dec =
+                        (byteOrder == ByteOrderType.HiLo)
+                            ? BitConverter.ToUInt16(Byte.ToArray(), 0).ToString("d5").ToCharArray()
                         : BitConverter.ToUInt16(Enumerable.Reverse(Byte.ToArray()).ToArray(), 0).ToString("d5").ToCharArray();
 
                     List<byte> _newByte = new List<byte>();

@@ -17,7 +17,7 @@ namespace WpfHexaEditor.Core.Bytes
         private List<byte> _originByte;
 
         public List<byte> Byte { get; set; }
-        
+
         public List<byte> OriginByte
         {
             get => _originByte;
@@ -36,7 +36,7 @@ namespace WpfHexaEditor.Core.Bytes
             byte value;
             bool sign_positive = true;
             string prefix = "";
-            
+
             switch (state)
             {
                 case DataVisualState.Default:
@@ -199,7 +199,7 @@ namespace WpfHexaEditor.Core.Bytes
                     #region Edit Binary value 
 
                     if (!KeyValidator.IsNumericKey(_key) || KeyValidator.GetDigitFromKey(_key) > 1) break;
-                    
+
                     key = KeyValidator.IsNumericKey(_key)
                         ? KeyValidator.GetDigitFromKey(_key).ToString()
                         : 0.ToString();

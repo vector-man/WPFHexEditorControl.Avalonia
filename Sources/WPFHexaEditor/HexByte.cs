@@ -37,9 +37,9 @@ namespace WpfHexaEditor
         /// <summary>
         /// Update the render of text derived bytecontrol from byte property
         /// </summary>
-        public override void UpdateTextRenderFromByte() => 
-            Text = Byte != null 
-                ? Byte.GetText(_parent.DataStringVisual, _parent.DataStringState, _parent.ByteOrder) 
+        public override void UpdateTextRenderFromByte() =>
+            Text = Byte != null
+                ? Byte.GetText(_parent.DataStringVisual, _parent.DataStringState, _parent.ByteOrder)
                 : string.Empty;
 
         public override void Clear()
@@ -48,7 +48,7 @@ namespace WpfHexaEditor
             _keyDownLabel = KeyDownLabel.FirstChar;
         }
 
-        public void UpdateDataVisualWidth() => 
+        public void UpdateDataVisualWidth() =>
             Width = CalculateCellWidth(_parent.ByteSize, _parent.DataStringVisual, _parent.DataStringState);
 
         public static int CalculateCellWidth(ByteSizeType byteSize, DataVisualType type, DataVisualState state) =>
@@ -71,16 +71,16 @@ namespace WpfHexaEditor
                 ByteSizeType.Bit16 => type switch
                 {
                     DataVisualType.Decimal =>
-                        state == DataVisualState.Changes 
-                            ? 40 
+                        state == DataVisualState.Changes
+                            ? 40
                             : state == DataVisualState.ChangesPercent ? 35 : 40,
                     DataVisualType.Hexadecimal =>
-                        state == DataVisualState.Changes 
+                        state == DataVisualState.Changes
                             ? 40
                             : state == DataVisualState.ChangesPercent ? 35 : 40,
                     DataVisualType.Binary =>
-                        state == DataVisualState.Changes 
-                            ? 120 
+                        state == DataVisualState.Changes
+                            ? 120
                             : state == DataVisualState.ChangesPercent ? 65 : 120,
                     _ => throw new NotImplementedException()
                 },
@@ -88,16 +88,16 @@ namespace WpfHexaEditor
                 ByteSizeType.Bit32 => type switch
                 {
                     DataVisualType.Decimal =>
-                        state == DataVisualState.Changes 
-                            ? 80 
+                        state == DataVisualState.Changes
+                            ? 80
                             : state == DataVisualState.ChangesPercent ? 35 : 80,
                     DataVisualType.Hexadecimal =>
-                        state == DataVisualState.Changes 
+                        state == DataVisualState.Changes
                             ? 70
                             : state == DataVisualState.ChangesPercent ? 35 : 70,
                     DataVisualType.Binary =>
-                        state == DataVisualState.Changes 
-                            ? 220 
+                        state == DataVisualState.Changes
+                            ? 220
                             : state == DataVisualState.ChangesPercent ? 65 : 220,
                     _ => throw new NotImplementedException()
                 },
@@ -182,7 +182,7 @@ namespace WpfHexaEditor
                 //update site with scale factor
                 //size.Width *= _parent.ZoomScale;
                 //size.Height *= _parent.ZoomScale;
-                
+
                 _parent.SetCaretSize(size.Width + 2, ActualHeight - 2);
                 _parent.SetCaretMode(_parent.VisualCaretMode);
 

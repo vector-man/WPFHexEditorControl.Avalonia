@@ -163,7 +163,7 @@ namespace WpfHexaEditor
         {
             get => _byte;
             set
-            {                                
+            {
                 _byte = value;
 
                 UpdateTextRenderFromByte();
@@ -340,8 +340,8 @@ namespace WpfHexaEditor
             BytePositionInStream = -1;
             Action = ByteAction.Nothing;
             IsSelected = false;
-            Description = string.Empty;            
-            InternalChange = false; 
+            Description = string.Empty;
+            InternalChange = false;
         }
 
         #endregion

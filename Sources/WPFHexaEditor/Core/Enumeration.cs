@@ -277,8 +277,8 @@ namespace WpfHexaEditor.Core
         /// <summary>
         /// Add 10 lines to MaxVisible line
         /// </summary>
-        MaxVisibleLineExtended, 
-        
+        MaxVisibleLineExtended,
+
         /// <summary>
         /// Load the maximum of line to fit to the screen
         /// </summary>

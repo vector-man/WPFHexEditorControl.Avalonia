@@ -28,7 +28,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         public ByteDifferenceListItem() => InitializeComponent();
 
         public ByteDifferenceListItem(ByteDifference byteDiff)
-        {            
+        {
             InitializeComponent();
 
             ByteDiff = byteDiff;

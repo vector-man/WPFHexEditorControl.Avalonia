@@ -249,6 +249,9 @@
   <data name="OkString" xml:space="preserve">
     <value>确定</value>
   </data>
+  <data name="OpenAsReadOnlyString" xml:space="preserve">
+    <value>该文件被锁定。 您要以只读模式打开它吗？</value>
+  </data>
   <data name="PasteExtendByteConfirmationString" xml:space="preserve">
     <value>粘贴操作到达文件的末尾。 你想扩展文件的完整操作吗？ 继续将无法取消此操作。</value>
   </data>

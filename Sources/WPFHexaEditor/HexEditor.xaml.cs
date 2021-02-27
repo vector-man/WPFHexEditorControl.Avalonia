@@ -1013,7 +1013,7 @@ namespace WpfHexaEditor
             if (d is not HexEditor ctrl) return;
             if (!CheckIsOpen(ctrl._provider)) return;
             if (e.NewValue == e.OldValue) return;
-                        
+
             ctrl._provider.ReadOnlyMode = ctrl._provider.IsLockedFile || (bool)e.NewValue;
             ctrl.RefreshView(true);
         }
@@ -1487,14 +1487,14 @@ namespace WpfHexaEditor
         {
             //Prevent infinite loop
             _setFocusTest = false;
-                        
+
             //Get the new position from SelectionStart down one page
             var newPosition = GetValidPositionFrom(SelectionStart, 1);
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
             {
-                SelectionStart = newPosition <= _provider.Length 
-                    ? GetValidPositionFrom(SelectionStart, 1) 
+                SelectionStart = newPosition <= _provider.Length
+                    ? GetValidPositionFrom(SelectionStart, 1)
                     : _provider.Length;
             }
             else
@@ -1668,8 +1668,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Copy to clipboard
         /// </summary>
-        public void CopyToClipboard(CopyPasteMode copypastemode, long selectionStart, long selectionStop,
-            bool copyChange, TblStream tbl)
+        public void CopyToClipboard(CopyPasteMode copypastemode, long selectionStart, long selectionStop, bool copyChange, TblStream tbl)
         {
             if (!CanCopy) return;
             if (!CheckIsOpen(_provider)) return;
@@ -2097,7 +2096,7 @@ namespace WpfHexaEditor
         }
 
         public static readonly DependencyProperty IsFileOrStreamLoadedProperty =
-            DependencyProperty.Register(nameof(IsFileOrStreamLoaded), typeof(bool), 
+            DependencyProperty.Register(nameof(IsFileOrStreamLoaded), typeof(bool),
                 typeof(HexEditor), new PropertyMetadata(false));
 
         private void Provider_ChangesSubmited(object sender, EventArgs e)
@@ -2189,7 +2188,7 @@ namespace WpfHexaEditor
         {
             if (CheckIsOpen(_provider))
             {
-                if (clearFileName) 
+                if (clearFileName)
                     FileName = string.Empty;
 
                 _provider.Close();
@@ -2235,7 +2234,7 @@ namespace WpfHexaEditor
         private void OpenFile(string filename)
         {
             if (string.IsNullOrEmpty(filename)) return;
-            if (!File.Exists(filename)) return; 
+            if (!File.Exists(filename)) return;
 
             CloseProvider(false);
 
@@ -2671,7 +2670,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Update vertical scrollbar with file info
         /// </summary>
-        private void UpdateScrollBar() => 
+        private void UpdateScrollBar() =>
             VerticalScrollBar.With(c =>
                 {
                     c.Visibility = Visibility.Collapsed;
@@ -2692,9 +2691,9 @@ namespace WpfHexaEditor
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (!e.HeightChanged || !IsAutoRefreshOnResize) return;
-            
+
             if (!CheckIsOpen(_provider)) BuildDataLines(MaxVisibleLine);
-            
+
             RefreshView(true);
         }
 
@@ -2797,7 +2796,7 @@ namespace WpfHexaEditor
                     if (_tblCharacterTable == null && (ByteSpacerPositioning == ByteSpacerPosition.Both ||
                                                        ByteSpacerPositioning == ByteSpacerPosition.StringBytePanel))
                         AddByteSpacer(dataLineStack, i);
-                    
+
                     new StringByte(this, BarChartPanelVisibility == Visibility.Visible, StringByteWidth).With(c =>
                     {
                         c.Clear();
@@ -3049,7 +3048,8 @@ namespace WpfHexaEditor
 
                             if (AllowVisualByteAddress && nextPos > VisualByteAdressStop)
                                 ctrl.Clear();
-                        }else
+                        }
+                        else
                         {
                             skipNextIsMTE = false;
                             ctrl.Clear();
@@ -3921,7 +3921,6 @@ namespace WpfHexaEditor
         /// <summary>
         /// Set marker at position using bookmark object
         /// </summary>
-        /// <param name="mark"></param>
         private void SetScrollMarker(BookMark mark) =>
             SetScrollMarker(mark.BytePositionInStream, mark.Marker, mark.Description);
 
@@ -3989,7 +3988,6 @@ namespace WpfHexaEditor
 
             #endregion
 
-
             #region Set somes properties for different marker
 
             new Rectangle().With(r =>
@@ -4034,11 +4032,10 @@ namespace WpfHexaEditor
                 r.MouseDown += Rect_MouseDown;
                 r.Margin = new Thickness(0, topPosition, rightPosition, 0);
 
-                #endregion
-
                 //Add to grid
                 MarkerGrid.Children.Add(r);
             });
+            #endregion
         }
 
         private void Rect_MouseDown(object sender, MouseButtonEventArgs e)
@@ -5251,7 +5248,7 @@ namespace WpfHexaEditor
 
         // Using a DependencyProperty as the backing store for PreloadByteInEditorMode.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty PreloadByteInEditorModeProperty =
-            DependencyProperty.Register(nameof(PreloadByteInEditorMode), typeof(PreloadByteInEditor), 
+            DependencyProperty.Register(nameof(PreloadByteInEditorMode), typeof(PreloadByteInEditor),
                 typeof(HexEditor), new PropertyMetadata(PreloadByteInEditor.None));
 
         private void Control_Loaded(object sender, RoutedEventArgs e) =>
@@ -5352,7 +5349,7 @@ namespace WpfHexaEditor
             HexDataStackPanel.LayoutTransform = _scaler;
             StringDataStackPanel.LayoutTransform = _scaler;
             LinesInfoStackPanel.LayoutTransform = _scaler;
-            
+
             _caret.LayoutTransform = _scaler;
         }
 
@@ -5599,33 +5596,33 @@ namespace WpfHexaEditor
         /// Compare this stream with another and get all bytes difference
         /// </summary>
         /// <returns>Return each byte not equal in the two provider</returns>
-        public IEnumerable<ByteDifference> Compare(ByteProvider providerToCompare, bool compareChange = false) => 
+        public IEnumerable<ByteDifference> Compare(ByteProvider providerToCompare, bool compareChange = false) =>
             _provider.Compare(providerToCompare, compareChange);
 
         /// <summary>
         /// Compare this stream with another and get all bytes difference
         /// </summary>
         /// <returns>Return each byte not equal in the two provider</returns>
-        public IEnumerable<ByteDifference> Compare(HexEditor hexeditor, bool compareChange = false) => 
+        public IEnumerable<ByteDifference> Compare(HexEditor hexeditor, bool compareChange = false) =>
             _provider?.Compare(hexeditor?._provider, compareChange);
 
         #endregion
 
         #region Commands implementation (In early stage of development)
 
-        public static DependencyProperty RefreshViewCommandProperty = 
-            DependencyProperty.Register (
+        public static readonly DependencyProperty RefreshViewCommandProperty =
+            DependencyProperty.Register(
                 nameof(RefreshViewCommand),
                 typeof(ICommand),
                 typeof(HexEditor)
             );
 
-        public static DependencyProperty SubmitChangesCommandProperty
-            = DependencyProperty.Register(
+        public static readonly DependencyProperty SubmitChangesCommandProperty =
+            DependencyProperty.Register(
                 nameof(SubmitChangesCommand),
                 typeof(ICommand),
                 typeof(HexEditor)
-              );
+            );
 
         public ICommand RefreshViewCommand
         {
@@ -5653,7 +5650,7 @@ namespace WpfHexaEditor
         }
 
         public static readonly DependencyProperty CanInsertEverywhereProperty =
-            DependencyProperty.Register(nameof(CanInsertEverywhere), typeof(bool), typeof(HexEditor), 
+            DependencyProperty.Register(nameof(CanInsertEverywhere), typeof(bool), typeof(HexEditor),
                 new FrameworkPropertyMetadata(false, Control_CanInsertEverywhereChanged));
 
         private static void Control_CanInsertEverywhereChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -5669,7 +5666,7 @@ namespace WpfHexaEditor
         /// <summary>
         /// Insert byte at the specified position
         /// </summary>
-        public void InsertByte(byte @byte, long bytePositionInStream) => 
+        public void InsertByte(byte @byte, long bytePositionInStream) =>
             InsertByte(@byte, bytePositionInStream, 1);
 
         /// <summary>
@@ -5699,7 +5696,6 @@ namespace WpfHexaEditor
 
             RefreshView();
         }
-
         #endregion
     }
 }

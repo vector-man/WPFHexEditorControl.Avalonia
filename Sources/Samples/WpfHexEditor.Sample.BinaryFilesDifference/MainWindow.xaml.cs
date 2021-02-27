@@ -22,7 +22,7 @@ using WpfHexaEditor.Core.MethodExtention;
 namespace WpfHexEditor.Sample.BinaryFilesDifference
 {
     public partial class MainWindow : Window
-    {        
+    {
         /// <summary>
         /// Used to catch internal change for cath potential infinite loop
         /// </summary>
@@ -54,7 +54,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         {
             if (_internalChange) return;
             if (FileDiffBlockList.SelectedItem is not BlockListItem blockitm) return;
-            
+
             _internalChange = true;
             FirstFile.SetPosition(blockitm.CustomBlock.StartOffset, 1);
             SecondFile.SetPosition(blockitm.CustomBlock.StartOffset, 1);
@@ -185,7 +185,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                     cbb = new CustomBackgroundBlock(byteDifference.BytePositionInStream, ++j, RandomBrushes.PickBrush());
                 else
                     cbb.Length = ++j;
-                                
+
                 if (!_differences.Any(c => c.BytePositionInStream == byteDifference.BytePositionInStream + 1))
                 {
                     j = 0;
@@ -254,6 +254,6 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             _internalChange = false;
         }
         #endregion
-                
+
     }
 }

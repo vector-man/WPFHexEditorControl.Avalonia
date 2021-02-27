@@ -11,7 +11,7 @@ namespace WpfHexaEditor.Core.Bytes
     /// <summary>
     /// Used to track a byte difference in a stream vs another stream
     /// </summary>
-    public class ByteDifference: ICloneable
+    public class ByteDifference : ICloneable
     {
         public byte Origine { get; set; } = 0;
         public byte Destination { get; set; } = 0;

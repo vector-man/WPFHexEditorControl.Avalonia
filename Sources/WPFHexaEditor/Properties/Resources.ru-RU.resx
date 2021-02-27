@@ -249,6 +249,9 @@
   <data name="OkString" xml:space="preserve">
     <value>ОК</value>
   </data>
+  <data name="OpenAsReadOnlyString" xml:space="preserve">
+    <value>Файл заблокирован. Вы хотите открыть его в режиме только для чтения?</value>
+  </data>
   <data name="PasteExtendByteConfirmationString" xml:space="preserve">
     <value>Операция вставки достигла конца файла. Расширить файл для завершения операции? Эта операция не может быть отменена.</value>
   </data>

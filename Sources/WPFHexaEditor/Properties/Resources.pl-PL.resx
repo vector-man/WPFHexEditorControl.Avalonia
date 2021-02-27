@@ -256,6 +256,9 @@
   <data name="OkString" xml:space="preserve">
     <value>Ok</value>
   </data>
+  <data name="OpenAsReadOnlyString" xml:space="preserve">
+    <value>O arquivo está bloqueado. Você deseja abri-lo no modo somente leitura?</value>
+  </data>
   <data name="PasteExtendByteConfirmationString" xml:space="preserve">
     <value>Wklej dotarł do końca pliku. Czy chcesz przedłużyć plik do pełnej pracy? Ta operacja nie może zostać anulowana, jeśli kontynuujesz.</value>
   </data>

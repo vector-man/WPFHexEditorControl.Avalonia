@@ -61,8 +61,8 @@ namespace WpfHexaEditor.Core.CharacterTable
         /// </summary>
         public string Entry
         {
-            set => _entry = value != null 
-                ? value.ToUpperInvariant() 
+            set => _entry = value != null
+                ? value.ToUpperInvariant()
                 : string.Empty;
             get => _entry;
         }

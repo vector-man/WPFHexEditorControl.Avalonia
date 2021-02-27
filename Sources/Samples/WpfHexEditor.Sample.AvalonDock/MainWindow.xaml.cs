@@ -25,23 +25,23 @@ namespace WpfHexEditor.Sample.AvalonDock
             new LayoutDocument().With(d =>
             {
                 if (!File.Exists(filename)) return;
-                
+
                 d.Closed += Doc_Closed;
                 d.IsSelectedChanged += Doc_IsSelectedChanged;
-                                
+
                 d.Title = Path.GetFileName(filename);
                 d.ToolTip = filename;
                 d.IsSelected = true;
 
-                new WpfHexaEditor.HexEditor().With(h => 
+                new WpfHexaEditor.HexEditor().With(h =>
                 {
                     h.PreloadByteInEditorMode = PreloadByteInEditor.MaxVisibleLineExtended;
                     h.FileName = filename;
                     d.Content = h;
                 });
-                
+
                 firstDocumentPane.Children.Add(d);
-            });              
+            });
         }
 
         private void Doc_IsSelectedChanged(object sender, EventArgs e)

@@ -813,5 +813,16 @@ namespace WpfHexaEditor.Properties {
                 return ResourceManager.GetString("ZoomString", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The file is locked. Do you want to open it in read-only mode?.
+        /// </summary>
+        public static string OpenAsReadOnlyString
+        {
+            get
+            {
+                return ResourceManager.GetString("OpenAsReadOnlyString", resourceCulture);
+            }
+        }
     }
 }
