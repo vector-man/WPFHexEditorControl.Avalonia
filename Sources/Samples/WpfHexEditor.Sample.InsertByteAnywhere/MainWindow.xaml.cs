@@ -3,6 +3,10 @@
 // Author : Derek Tremblay (derektremblay666@gmail.com)
 //
 // INSERT BYTE ANYWHERE SAMPLE / DEVELOPMENT TEST
+//
+// THIS SAMPLE IS FOR DEVELOP THE POSSIBILITY TO INSERT BYTE ANYWHERE.
+// IT'S WILL BE THE NEXT MAJOR UPDATE OF "WPF HEX EDITOR CONTROL"
+//
 //////////////////////////////////////////////
 
 using Microsoft.Win32;
@@ -26,9 +30,20 @@ namespace WpfHexEditor.Sample.InsertByteAnywhere
                    HexEditor.FileName = o.FileName;
            });
 
-        private void AddByteButton_Click(object sender, RoutedEventArgs e)
-        {
-            HexEditor.InsertByte(224, 15);
-        }
+        /// <summary>
+        /// Test of adding somes byte
+        /// 
+        /// IN DEVELOPMENT, NOT WORKING PROPRELY :)
+        /// </summary>
+        private void AddByteButton_Click(object sender, RoutedEventArgs e) =>
+            HexEditor.With(c =>
+            {
+                c.InsertByte(224, 15);
+                c.InsertByte(245, 16);
+                c.InsertByte(226, 17);
+
+                //Actually the visual not show the result. I'm working on this :)
+                c.RefreshView();
+            });
     }
 }
