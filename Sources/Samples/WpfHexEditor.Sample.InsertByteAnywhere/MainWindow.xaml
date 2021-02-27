@@ -24,7 +24,7 @@
             Margin="10,50,10,10"
             AllowAutoHighLightSelectionByte="False"
             AllowAutoSelectSameByteAtDoubleClick="False"
-            CanInsertEverywhere="True"
+            CanInsertAnywhere="True"
             PreloadByteInEditorMode="MaxScreenVisibleLineAtDataLoad" />
 
         <Button

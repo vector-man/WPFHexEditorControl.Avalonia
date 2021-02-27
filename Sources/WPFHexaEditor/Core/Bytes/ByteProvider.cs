@@ -32,7 +32,7 @@ namespace WpfHexaEditor.Core.Bytes
         private string _fileName = string.Empty;
         private Stream _stream;
         private bool _readOnlyMode;
-        private bool _canInsertEverywhere = false;
+        private bool _canInsertAnywhere = false;
         private double _longProcessProgress;
         private string _newfilename = string.Empty;
         #endregion Globals variable
@@ -58,7 +58,7 @@ namespace WpfHexaEditor.Core.Bytes
         public event EventHandler FillWithByteCompleted;
         public event EventHandler ReplaceByteCompleted;
         public event EventHandler BytesAppendCompleted;
-        public event EventHandler CanInsertEverywhereChanged;
+        public event EventHandler CanInsertAnywhereChanged;
 
         #endregion Events
 
@@ -77,9 +77,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Construct new ByteProvider with filename and try to open file
         /// </summary>
-        public ByteProvider(string fileName, bool readOnlyMode, bool canInsertEverywhere)
+        public ByteProvider(string fileName, bool readOnlyMode, bool canInsertAnywhere)
         {
-            CanInsertEverywhere = canInsertEverywhere;
+            CanInsertAnywhere = canInsertAnywhere;
             ReadOnlyMode = readOnlyMode;
             FileName = fileName;
         }
@@ -87,9 +87,9 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Constuct new ByteProvider with stream
         /// </summary>
-        public ByteProvider(Stream stream, bool canInsertEverywhere)
+        public ByteProvider(Stream stream, bool canInsertAnywhere)
         {
-            CanInsertEverywhere = canInsertEverywhere;
+            CanInsertAnywhere = canInsertAnywhere;
             Stream = stream;
         }
 
@@ -211,17 +211,17 @@ namespace WpfHexaEditor.Core.Bytes
         }
 
         /// <summary>
-        /// Give the possibility to inserts byte everywhere in the providers.
+        /// Give the possibility to inserts byte Anywhere in the providers.
         /// </summary>
-        public bool CanInsertEverywhere
+        public bool CanInsertAnywhere
         {
-            get => _canInsertEverywhere;
+            get => _canInsertAnywhere;
             set
             {
-                _canInsertEverywhere = value;
+                _canInsertAnywhere = value;
 
                 //Launch event
-                CanInsertEverywhereChanged?.Invoke(this, new EventArgs());
+                CanInsertAnywhereChanged?.Invoke(this, new EventArgs());
             }
         }
 
@@ -612,7 +612,7 @@ namespace WpfHexaEditor.Core.Bytes
         public void AddByteAdded(byte? @byte, long bytePositionInStream, long undoLength = 1)
         {
             if (ReadOnlyMode) return;
-            if (!CanInsertEverywhere) return;
+            if (!CanInsertAnywhere) return;
 
             var (success, _) = CheckIfIsByteModified(bytePositionInStream, ByteAction.Added);
 

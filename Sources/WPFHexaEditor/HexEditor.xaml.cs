@@ -2242,7 +2242,7 @@ namespace WpfHexaEditor
             if (PreloadByteInEditorMode == PreloadByteInEditor.MaxScreenVisibleLineAtDataLoad)
                 BuildDataLines(MaxScreenVisibleLine, false);
 
-            _provider = new ByteProvider(filename, ReadOnlyMode, CanInsertEverywhere);
+            _provider = new ByteProvider(filename, ReadOnlyMode, CanInsertAnywhere);
 
             _provider.With(p =>
             {
@@ -2294,7 +2294,7 @@ namespace WpfHexaEditor
             if (PreloadByteInEditorMode == PreloadByteInEditor.MaxScreenVisibleLineAtDataLoad)
                 BuildDataLines(MaxScreenVisibleLine, false);
 
-            _provider = new ByteProvider(stream, CanInsertEverywhere);
+            _provider = new ByteProvider(stream, CanInsertAnywhere);
 
             _provider.With(p =>
             {
@@ -2935,7 +2935,7 @@ namespace WpfHexaEditor
                 if (AllowVisualByteAddress && startPosition < VisualByteAdressStart)
                     startPosition = VisualByteAdressStart;
 
-                #region read the data from the provider and warns if necessary to load the bytes that have been deleted
+                #region Read the data from the provider and warns if necessary to load the bytes that have been deleted
                 _provider.Position = startPosition;
                 var readSize = 0;
                 if (HideByteDeleted)
@@ -5638,27 +5638,27 @@ namespace WpfHexaEditor
 
         #endregion
 
-        #region Insert byte everywhere support (In early stage of development)
+        #region Insert byte Anywhere support (In early stage of development)
 
         /// <summary>
-        /// Give the possibility to inserts byte everywhere.
+        /// Give the possibility to inserts byte Anywhere.
         /// </summary>
-        public bool CanInsertEverywhere
+        public bool CanInsertAnywhere
         {
-            get { return (bool)GetValue(CanInsertEverywhereProperty); }
-            set { SetValue(CanInsertEverywhereProperty, value); }
+            get { return (bool)GetValue(CanInsertAnywhereProperty); }
+            set { SetValue(CanInsertAnywhereProperty, value); }
         }
 
-        public static readonly DependencyProperty CanInsertEverywhereProperty =
-            DependencyProperty.Register(nameof(CanInsertEverywhere), typeof(bool), typeof(HexEditor),
-                new FrameworkPropertyMetadata(false, Control_CanInsertEverywhereChanged));
+        public static readonly DependencyProperty CanInsertAnywhereProperty =
+            DependencyProperty.Register(nameof(CanInsertAnywhere), typeof(bool), typeof(HexEditor),
+                new FrameworkPropertyMetadata(false, Control_CanInsertAnywhereChanged));
 
-        private static void Control_CanInsertEverywhereChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void Control_CanInsertAnywhereChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
             if (CheckIsOpen(ctrl._provider))
-                ctrl._provider.CanInsertEverywhere = (bool)e.NewValue;
+                ctrl._provider.CanInsertAnywhere = (bool)e.NewValue;
 
             ctrl.RefreshView();
         }
@@ -5675,7 +5675,7 @@ namespace WpfHexaEditor
         public void InsertByte(byte @byte, long bytePositionInStream, long length)
         {
             if (!CheckIsOpen(_provider)) return;
-            if (!CanInsertEverywhere) return;
+            if (!CanInsertAnywhere) return;
 
             for (int i = 0; i <= length; i++)
                 _provider.AddByteAdded(@byte, bytePositionInStream + i);
@@ -5689,7 +5689,7 @@ namespace WpfHexaEditor
         public void InsertBytes(byte[] bytes, long bytePositionInStream)
         {
             if (!CheckIsOpen(_provider)) return;
-            if (!CanInsertEverywhere) return;
+            if (!CanInsertAnywhere) return;
 
             foreach (byte @byte in bytes)
                 _provider.AddByteAdded(@byte, bytePositionInStream++);
