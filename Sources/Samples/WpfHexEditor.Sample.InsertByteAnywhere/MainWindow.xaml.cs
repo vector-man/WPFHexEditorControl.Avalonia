@@ -38,9 +38,13 @@ namespace WpfHexEditor.Sample.InsertByteAnywhere
         private void AddByteButton_Click(object sender, RoutedEventArgs e) =>
             HexEditor.With(c =>
             {
-                c.InsertByte(224, 15);
-                c.InsertByte(245, 16);
-                c.InsertByte(226, 17);
+                c.InsertByte(255, 15);
+                c.InsertByte(255, 16);
+                c.InsertByte(255, 17);
+                c.InsertByte(255, 18);
+                c.InsertByte(255, 19);
+                c.InsertByte(255, 20);
+                c.InsertByte(255, 21);
 
                 //Actually the visual not show the result. I'm working on this :)
                 c.RefreshView();

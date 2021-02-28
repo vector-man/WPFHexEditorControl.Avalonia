@@ -2938,10 +2938,23 @@ namespace WpfHexaEditor
                 #region Read the data from the provider and warns if necessary to load the bytes that have been deleted
                 _provider.Position = startPosition;
                 var readSize = 0;
-                if (HideByteDeleted)
+                if (HideByteDeleted || CanInsertAnywhere)
                     for (int i = 0; i < _viewBuffer.Length; i++)
                     {
-                        if (!_provider.CheckIfIsByteModified(_provider.Position, ByteAction.Deleted).success)
+                        //BYTE INSERT ANYWHERE IS IN DEVELOPMENT!! ///////////
+                        //DOES NOT WORK CLEANLY! BE PATIENT
+                        if (_provider.CheckIfIsByteModified(_provider.Position, ByteAction.Added).success)
+                        {
+                            if (_provider.Eof) continue;
+
+                            var (success, val) = _provider.CheckIfIsByteModified(_provider.Position, ByteAction.Added);
+
+                            _viewBuffer[readSize] = val.Byte.Value;
+                            _viewBufferBytePosition[readSize] = val.BytePositionInStream;
+                            readSize++;
+                        }
+                        /////////////////////////////////////////////////////
+                        else if (!_provider.CheckIfIsByteModified(_provider.Position, ByteAction.Deleted).success)
                         {
                             if (_provider.Eof) continue;
 
@@ -2968,11 +2981,11 @@ namespace WpfHexaEditor
 
                 #region HexByte panel refresh
 
-                TraverseHexBytes(ctrl =>
+                TraverseHexBytes(c =>
                 {
-                    ctrl.Action = ByteAction.Nothing;
-                    ctrl.ReadOnlyMode = ReadOnlyMode;
-                    ctrl.InternalChange = true;
+                    c.Action = ByteAction.Nothing;
+                    c.ReadOnlyMode = ReadOnlyMode;
+                    c.InternalChange = true;
 
                     var nextPos = startPosition + index;
 
@@ -2981,24 +2994,30 @@ namespace WpfHexaEditor
                         while (_provider.CheckIfIsByteModified(nextPos, ByteAction.Deleted).success)
                             nextPos++;
 
+                    //Insert byte 
+                    //if (CanInsertAnywhere)
+                    //{
+                    //    var (success, val) = _provider.CheckIfIsByteModified(nextPos, ByteAction.Added);
+                    //}
+
                     if (index < readSize && _priLevel == curLevel)
                     {
-                        ctrl.Byte = ByteSize switch
+                        c.Byte = ByteSize switch
                         {
                             ByteSizeType.Bit8 => new Byte_8bit(_viewBuffer[index]),
                             ByteSizeType.Bit16 => new Byte_16bit(new byte[] { _viewBuffer[index], _viewBuffer[index + 1] }),
                             ByteSizeType.Bit32 => new Byte_32bit(new byte[] { _viewBuffer[index], _viewBuffer[index + 1], _viewBuffer[index + 2], _viewBuffer[index + 3] }),
                             _ => throw new NotImplementedException()
                         };
-                        ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
+                        c.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
 
                         if (AllowVisualByteAddress && nextPos > VisualByteAdressStop)
-                            ctrl.Clear();
+                            c.Clear();
                     }
                     else
-                        ctrl.Clear();
+                        c.Clear();
 
-                    ctrl.InternalChange = false;
+                    c.InternalChange = false;
                     index += ByteSizeRatio;
                 });
 
@@ -3009,13 +3028,13 @@ namespace WpfHexaEditor
                 #region StringByte / Barchart panel refresh
 
                 var skipNextIsMTE = false;
-                TraverseStringBytes(ctrl =>
+                TraverseStringBytes(c =>
                 {
-                    ctrl.Action = ByteAction.Nothing;
-                    ctrl.ReadOnlyMode = ReadOnlyMode;
-                    ctrl.InternalChange = true;
-                    ctrl.TblCharacterTable = _tblCharacterTable;
-                    ctrl.TypeOfCharacterTable = TypeOfCharacterTable;
+                    c.Action = ByteAction.Nothing;
+                    c.ReadOnlyMode = ReadOnlyMode;
+                    c.InternalChange = true;
+                    c.TblCharacterTable = _tblCharacterTable;
+                    c.TypeOfCharacterTable = TypeOfCharacterTable;
 
                     var nextPos = startPosition + index;
 
@@ -3028,37 +3047,37 @@ namespace WpfHexaEditor
                     {
                         if (!skipNextIsMTE)
                         {
-                            ctrl.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
+                            c.BytePositionInStream = !HideByteDeleted ? nextPos : _viewBufferBytePosition[index];
 
                             #region Load ByteNext for TBL MTE matching
                             if (_tblCharacterTable is not null)
                             {
-                                var (singleByte, succes) = _provider.GetByte(ctrl.BytePositionInStream + 1);
-                                ctrl.ByteNext = succes ? singleByte : null;
+                                var (singleByte, succes) = _provider.GetByte(c.BytePositionInStream + 1);
+                                c.ByteNext = succes ? singleByte : null;
                             }
                             #endregion
 
                             //update byte
-                            ctrl.Byte = new Byte_8bit(_viewBuffer[index]);
+                            c.Byte = new Byte_8bit(_viewBuffer[index]);
 
                             //Bar chart value
-                            ctrl.PercentValue = _viewBuffer[index] * 100 / 256;
+                            c.PercentValue = _viewBuffer[index] * 100 / 256;
 
-                            skipNextIsMTE = ctrl.IsMTE;
+                            skipNextIsMTE = c.IsMTE;
 
                             if (AllowVisualByteAddress && nextPos > VisualByteAdressStop)
-                                ctrl.Clear();
+                                c.Clear();
                         }
                         else
                         {
                             skipNextIsMTE = false;
-                            ctrl.Clear();
+                            c.Clear();
                         }
                     }
                     else
-                        ctrl.Clear();
+                        c.Clear();
 
-                    ctrl.InternalChange = false;
+                    c.InternalChange = false;
                     index++;
                 });
 
