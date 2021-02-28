@@ -2951,6 +2951,7 @@ namespace WpfHexaEditor
 
                             _viewBuffer[readSize] = val.Byte.Value;
                             _viewBufferBytePosition[readSize] = val.BytePositionInStream;
+                            _provider.Position++;
                             readSize++;
                         }
                         /////////////////////////////////////////////////////
