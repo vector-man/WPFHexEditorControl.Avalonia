@@ -168,7 +168,7 @@ namespace WpfHexaEditor
 
                 UpdateTextRenderFromByte();
 
-                if (value != null)
+                if (value is not null)
                     _byte.del_ByteOnChange += OnByteChange;
             }
         }
@@ -299,9 +299,9 @@ namespace WpfHexaEditor
             {
                 var cbb = _parent.GetCustomBackgroundBlock(BytePositionInStream);
 
-                Description = cbb != null ? cbb.Description : "";
+                Description = cbb is not null ? cbb.Description : "";
 
-                Background = cbb != null ? cbb.Color : Brushes.Transparent;
+                Background = cbb is not null ? cbb.Color : Brushes.Transparent;
 
                 Foreground = _parent.GetColumnNumber(BytePositionInStream) % 2 == 0
                     ? _parent.Foreground
@@ -320,8 +320,8 @@ namespace WpfHexaEditor
         /// </summary>
         protected void UpdateAutoHighLiteSelectionByteVisual()
         {
-            if (_parent.AllowAutoHighLightSelectionByte && _parent.SelectionByte != null &&
-                Byte != null && Byte.IsEqual(new byte[] { _parent.SelectionByte.Value }) && !IsSelected)
+            if (_parent.AllowAutoHighLightSelectionByte && _parent.SelectionByte is not null &&
+                Byte is not null && Byte.IsEqual(new byte[] { _parent.SelectionByte.Value }) && !IsSelected)
                 Background = _parent.AutoHighLiteSelectionByteBrush;
         }
 
@@ -354,7 +354,7 @@ namespace WpfHexaEditor
         protected override void OnRender(DrawingContext dc)
         {
             //Draw background
-            if (Background != null)
+            if (Background is not null)
                 dc.DrawRectangle(Background, null, new Rect(0, 0, RenderSize.Width, RenderSize.Height));
 
             //Draw text
@@ -371,7 +371,7 @@ namespace WpfHexaEditor
 
         protected override void OnMouseEnter(MouseEventArgs e)
         {
-            if (Byte != null && !IsSelected && !IsHighLight &&
+            if (Byte is not null && !IsSelected && !IsHighLight &&
                 Action != ByteAction.Modified &&
                 Action != ByteAction.Deleted &&
                 Action != ByteAction.Added)
@@ -391,13 +391,13 @@ namespace WpfHexaEditor
         {
             var cbb = _parent.GetCustomBackgroundBlock(BytePositionInStream);
 
-            if (Byte != null && !IsSelected && !IsHighLight &&
+            if (Byte is not null && !IsSelected && !IsHighLight &&
                 Action != ByteAction.Modified &&
                 Action != ByteAction.Deleted &&
                 Action != ByteAction.Added)
                 Background = Brushes.Transparent;
 
-            if (cbb != null && !IsSelected && !IsHighLight &&
+            if (cbb is not null && !IsSelected && !IsHighLight &&
                 Action != ByteAction.Modified &&
                 Action != ByteAction.Deleted &&
                 Action != ByteAction.Added)

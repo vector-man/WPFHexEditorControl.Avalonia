@@ -285,7 +285,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Get if file is open
         /// </summary>
-        public bool IsOpen => _stream != null;
+        public bool IsOpen => _stream is not null;
 
         /// <summary>
         /// Get if the provider is open
@@ -879,7 +879,7 @@ namespace WpfHexaEditor.Core.Bytes
             {
                 case CopyPasteMode.Byte:
                     throw new NotImplementedException();
-                case CopyPasteMode.TblString when tbl != null:
+                case CopyPasteMode.TblString when tbl is not null:
                     sBuffer = tbl.ToTblString(buffer);
                     da.SetText(sBuffer, TextDataFormat.Text);
                     break;
@@ -1363,17 +1363,17 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Update a value indicating whether the current stream is supporting writing.
         /// </summary>
-        public bool CanWrite => _stream != null && !ReadOnlyMode && _stream.CanWrite;
+        public bool CanWrite => _stream is not null && !ReadOnlyMode && _stream.CanWrite;
 
         /// <summary>
         /// Update a value indicating  whether the current stream is supporting reading.
         /// </summary>
-        public bool CanRead => _stream != null && _stream.CanRead;
+        public bool CanRead => _stream is not null && _stream.CanRead;
 
         /// <summary>
         /// Update a value indicating  whether the current stream is supporting seeking.
         /// </summary>
-        public bool CanSeek => _stream != null && _stream.CanSeek;
+        public bool CanSeek => _stream is not null && _stream.CanSeek;
 
         #endregion Can do property...
 

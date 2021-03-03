@@ -38,7 +38,7 @@ namespace WpfHexaEditor
         /// Update the render of text derived bytecontrol from byte property
         /// </summary>
         public override void UpdateTextRenderFromByte() =>
-            Text = Byte != null
+            Text = Byte is not null
                 ? Byte.GetText(_parent.DataStringVisual, _parent.DataStringState, _parent.ByteOrder)
                 : string.Empty;
 

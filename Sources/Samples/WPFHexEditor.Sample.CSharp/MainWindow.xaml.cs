@@ -151,7 +151,7 @@ namespace WPFHexaEditorExample
         {
             var fileDialog = new SaveFileDialog();
 
-            if (fileDialog.ShowDialog() != null)
+            if (fileDialog.ShowDialog() is not null)
                 HexEdit.SubmitChanges(fileDialog.FileName, true);
         }
 

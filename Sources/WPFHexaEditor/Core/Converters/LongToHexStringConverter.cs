@@ -15,7 +15,7 @@ namespace WpfHexaEditor.Core.Converters
     public sealed class LongToHexStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
-            value != null
+            value is not null
                 ? (long.TryParse(value.ToString(), out var longValue)
                     ? (longValue > -1
                         ? "0x" + longValue

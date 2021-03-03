@@ -332,7 +332,7 @@ namespace WpfHexaEditor.Core.Bytes
                             break;
                     }
 
-                    if (_newByte != null && _newByte.Count == 4)
+                    if (_newByte is not null && _newByte.Count == 4)
                     {
                         for (int i = 0; i < 4; i++)
                         {

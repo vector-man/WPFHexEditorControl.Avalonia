@@ -66,7 +66,7 @@ namespace WpfHexaEditor.Core
         /// <summary>
         /// Get is caret is running
         /// </summary>
-        public bool IsEnable => _timer != null;
+        public bool IsEnable => _timer is not null;
 
         /// <summary>
         /// Propertie used when caret is blinking

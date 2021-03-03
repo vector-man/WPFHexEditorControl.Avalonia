@@ -17,7 +17,7 @@ namespace WpfHexaEditor.Core.Converters
         public bool Show0xTag { get; set; } = true;
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
-            value != null
+            value is not null
                 ? (byte.TryParse(value.ToString(), out var byteValue)
                     ? (byteValue >= 0
                         ? (Show0xTag ? "0x" : "") + byteValue

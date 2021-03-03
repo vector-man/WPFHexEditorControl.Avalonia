@@ -85,7 +85,7 @@ namespace WpfHexaEditor
         /// </summary>
         public override void UpdateTextRenderFromByte()
         {
-            if (Byte != null)
+            if (Byte is not null)
             {
                 var dteType = DteType.Invalid;
 
@@ -95,7 +95,7 @@ namespace WpfHexaEditor
                         Text = ByteConverters.ByteToChar(Byte.Byte[0]).ToString();
                         break;
                     case CharacterTableType.TblFile:
-                        if (TblCharacterTable != null)
+                        if (TblCharacterTable is not null)
                         {
                             ReadOnlyMode = !TblCharacterTable.AllowEdit;
 
@@ -162,9 +162,9 @@ namespace WpfHexaEditor
                 #region TBL COLORING
                 var cbb = _parent.GetCustomBackgroundBlock(BytePositionInStream);
 
-                Description = cbb != null ? cbb.Description : "";
+                Description = cbb is not null ? cbb.Description : "";
 
-                Background = cbb != null ? cbb.Color : Brushes.Transparent;
+                Background = cbb is not null ? cbb.Color : Brushes.Transparent;
                 FontWeight = _parent.FontWeight;
                 Foreground = _parent.Foreground;
 
@@ -198,7 +198,7 @@ namespace WpfHexaEditor
 
                 #region Draw control
                 //Draw background
-                if (Background != null)
+                if (Background is not null)
                     dc.DrawRectangle(Background, null, new Rect(0, 0, RenderSize.Width, RenderSize.Height));
 
                 //Prevent drawing wrong graph

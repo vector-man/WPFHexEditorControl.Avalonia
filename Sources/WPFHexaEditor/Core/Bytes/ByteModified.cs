@@ -58,7 +58,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Check if the object is valid and data can be used for action
         /// </summary>
-        public bool IsValid => BytePositionInStream > -1 && Action != ByteAction.Nothing && Byte != null;
+        public bool IsValid => BytePositionInStream > -1 && Action != ByteAction.Nothing && Byte is not null;
 
         /// <summary>
         /// String representation of byte
@@ -91,7 +91,7 @@ namespace WpfHexaEditor.Core.Bytes
         /// <summary>
         /// Get if bytemodified is valid
         /// </summary>
-        public static bool CheckIsValid(ByteModified byteModified) => byteModified != null && byteModified.IsValid;
+        public static bool CheckIsValid(ByteModified byteModified) => byteModified is not null && byteModified.IsValid;
 
         #endregion Methods
     }

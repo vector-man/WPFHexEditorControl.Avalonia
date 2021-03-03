@@ -114,7 +114,7 @@ namespace WpfHexaEditor
         protected override void OnRender(DrawingContext dc)
         {
             //Draw background
-            if (Background != null)
+            if (Background is not null)
                 dc.DrawRectangle(Background, null, new Rect(0, 0, RenderSize.Width, RenderSize.Height));
 
             //Draw text

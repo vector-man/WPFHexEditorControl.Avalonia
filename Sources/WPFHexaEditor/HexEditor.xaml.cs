@@ -2168,7 +2168,7 @@ namespace WpfHexaEditor
 
             ctrl.CloseProvider();
 
-            if (e.NewValue != null)
+            if (e.NewValue is not null)
             {
                 ctrl.OpenStream((Stream)e.NewValue);
                 ctrl.IsFileOrStreamLoaded = true;
@@ -2909,7 +2909,7 @@ namespace WpfHexaEditor
 
                 if (controlResize)
                 {
-                    if (_viewBuffer != null)
+                    if (_viewBuffer is not null)
                     {
                         BuildDataLines(MaxVisibleLine, MaxLinePreloaded < MaxVisibleLine);
 
@@ -3891,7 +3891,7 @@ namespace WpfHexaEditor
 
             #region Byte count of selectionStart
 
-            if (AllowByteCount && _bytecount != null && SelectionStart > -1)
+            if (AllowByteCount && _bytecount is not null && SelectionStart > -1)
             {
                 ByteCountPanel.Visibility = Visibility.Visible;
 
@@ -4181,7 +4181,7 @@ namespace WpfHexaEditor
 
                 }
 
-                if (_tblCharacterTable != null)
+                if (_tblCharacterTable is not null)
                     CopyTblcMenu.IsEnabled = true;
             }
 
@@ -4520,6 +4520,7 @@ namespace WpfHexaEditor
                 _provider?.Dispose();
                 _tblCharacterTable?.Dispose();
                 _viewBuffer = null;
+                _viewBufferBytePosition = null;
                 _markedPositionList = null;
             }
 
@@ -4771,7 +4772,7 @@ namespace WpfHexaEditor
             #region Text Dropping
 
             var textDrop = e.Data.GetData(DataFormats.Text);
-            if (textDrop != null && AllowTextDrop)
+            if (textDrop is not null && AllowTextDrop)
             {
                 var textDropped = textDrop as string;
 
@@ -4805,7 +4806,7 @@ namespace WpfHexaEditor
             #region File dropping (Only open first selected file catched in GetData)
 
             var fileDrop = e.Data.GetData(DataFormats.FileDrop);
-            if (fileDrop != null && AllowFileDrop)
+            if (fileDrop is not null && AllowFileDrop)
             {
                 var filename = fileDrop as string[];
 
@@ -4894,7 +4895,7 @@ namespace WpfHexaEditor
                 new XAttribute(nameof(ReadOnlyMode), ReadOnlyMode),
                     new XElement("ByteModifieds", new XAttribute("Count", _provider.GetByteModifieds(ByteAction.All).Count)),
                     new XElement("BookMarks", new XAttribute("Count", BookMarks.Count())),
-                    new XElement("TBL", new XAttribute("Loaded", _tblCharacterTable != null)),
+                    new XElement("TBL", new XAttribute("Loaded", _tblCharacterTable is not null)),
                     new XElement("HighLights", new XAttribute("Count", _markedPositionList.Count))));
 
             #region Create ByteModifieds tag
@@ -4931,7 +4932,7 @@ namespace WpfHexaEditor
 
             #region Create TBL tag
 
-            if (_tblCharacterTable != null)
+            if (_tblCharacterTable is not null)
                 doc.Element("WpfHexEditor")
                    .Element("TBL")
                    .Add(new XElement("TBLData",
@@ -5361,7 +5362,7 @@ namespace WpfHexaEditor
         /// </summary>
         private void InitialiseZoom()
         {
-            if (_scaler != null) return;
+            if (_scaler is not null) return;
 
             _scaler = new ScaleTransform(ZoomScale, ZoomScale);
 
