@@ -8,6 +8,7 @@
 
 using System;
 using System.Windows.Controls;
+using System.Windows.Media;
 using WpfHexaEditor.Core;
 
 namespace WpfHexEditor.Sample.BinaryFilesDifference
@@ -16,6 +17,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
     {
         private CustomBackgroundBlock _customBackGroundBlock;
         public event EventHandler PatchButtonClick;
+        public event EventHandler Click;
 
         public BlockListItem() => InitializeComponent();
 
@@ -39,5 +41,16 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
 
         private void PatchBlockButton_Click(object sender, System.Windows.RoutedEventArgs e) =>
             PatchButtonClick?.Invoke(this, new EventArgs());
+
+        private void UserControl_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e) =>
+            Background = Brushes.Orange;
+
+        private void UserControl_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e) =>
+            Background = Brushes.Transparent;
+
+        private void UserControl_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Click?.Invoke(this, new EventArgs());
+        }
     }
 }
