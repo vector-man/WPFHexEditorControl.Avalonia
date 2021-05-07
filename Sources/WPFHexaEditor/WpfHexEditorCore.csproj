@@ -17,7 +17,7 @@
     <PackageIconUrl />
     <Product>WpfHexaEditor</Product>
     <Copyright>Apache 2.0</Copyright>
-    <AssemblyVersion>2.1.6</AssemblyVersion>
+    <AssemblyVersion>2.1.6.0</AssemblyVersion>
     <FileVersion>2.1.6</FileVersion>
     <Version>2.1.6</Version>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
