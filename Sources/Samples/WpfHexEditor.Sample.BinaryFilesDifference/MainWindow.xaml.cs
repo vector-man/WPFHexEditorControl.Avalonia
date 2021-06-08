@@ -28,6 +28,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         /// </summary>
         private bool _internalChange = false;
         List<ByteDifference> _differences = null;
+        List<BlockListItem> _blockListItem = new List<BlockListItem>();
 
         public MainWindow() => InitializeComponent();
 
@@ -50,19 +51,6 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         }
 
 
-        private void FileDiffBlockList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            if (_internalChange) return;
-            if (FileDiffBlockList.SelectedItem is not BlockListItem blockitm) return;
-
-            _internalChange = true;
-            FirstFile.SetPosition(blockitm.CustomBlock.StartOffset, 1);
-            SecondFile.SetPosition(blockitm.CustomBlock.StartOffset, 1);
-            _internalChange = false;
-
-            LoadByteDifferenceList();
-        }
-
         private void FileDiffBytesList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (_internalChange) return;
@@ -82,7 +70,7 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             {
                 c.ReadOnlyMode = false;
 
-                foreach (BlockListItem itm in FileDiffBlockList.Items)
+                foreach (BlockListItem itm in FileDiffBlockList.Children)
                 {
                     var diffList = _differences.Where(d => d.BytePositionInStream >= itm.CustomBlock.StartOffset &&
                                                            d.BytePositionInStream <= itm.CustomBlock.StopOffset);
@@ -96,6 +84,9 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                 c.ReadOnlyMode = true;
             });
         }
+
+        private void BlockItemProgress_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) =>
+            UpdateListofBlockItem();
 
         private void SaveChangeButton_Click(object sender, RoutedEventArgs e)
         {
@@ -112,24 +103,6 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         #endregion
 
         #region Various methods
-
-        private void LoadByteDifferenceList()
-        {
-            //Clear UI
-            FileDiffBytesList.Items.Clear();
-
-            //Validation
-            if (_differences is null) return;
-            if (FileDiffBlockList.SelectedItem is not BlockListItem blockitm) return;
-
-            foreach (ByteDifference byteDifference in _differences
-                .Where(c => c.BytePositionInStream >= blockitm.CustomBlock.StartOffset &&
-                            c.BytePositionInStream <= blockitm.CustomBlock.StopOffset))
-            {
-                byteDifference.Color = blockitm.CustomBlock.Color;
-                FileDiffBytesList.Items.Add(new ByteDifferenceListItem(byteDifference));
-            }
-        }
 
         private void OpenFile(HexEditor hexEditor)
         {
@@ -154,12 +127,28 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
         private void ClearUI()
         {
             FileDiffBytesList.Items.Clear();
-            FileDiffBlockList.Items.Clear();
             FirstFile.ClearCustomBackgroundBlock();
             SecondFile.ClearCustomBackgroundBlock();
             SecondFile.ClearAllChange();
             PatchButton.IsEnabled = false;
+            _blockListItem.Clear();
             _differences = null;
+        }
+
+        /// <summary>
+        /// Update the list of block item
+        /// </summary>
+        private void UpdateListofBlockItem()
+        {
+            FileDiffBlockList.Children.Clear();
+
+            var nbViewItem = (int)BlockItemProgress.Value + (int)(FileDiffBlockList.ActualHeight / new BlockListItem().Height);
+
+            for (int i = (int)BlockItemProgress.Value; i < nbViewItem; i++)
+            {
+                if (i < _blockListItem.Count)
+                    FileDiffBlockList.Children.Add(_blockListItem[i]);
+            }
         }
 
         /// <summary>
@@ -171,13 +160,15 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
 
             if (FirstFile.FileName == string.Empty || SecondFile.FileName == string.Empty) return;
 
-            var cbb = new CustomBackgroundBlock();
-            int j = 0;
+            FileDiffBlockList.Children.Clear();
 
             //load the difference
             _differences = FirstFile.Compare(SecondFile).ToList();
 
             //Load list of difference
+            var cbb = new CustomBackgroundBlock();
+            int j = 0;
+
             foreach (ByteDifference byteDifference in _differences)
             {
                 //create or update custom background block
@@ -193,7 +184,8 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                     new BlockListItem(cbb).With(c =>
                     {
                         c.PatchButtonClick += BlockItem_PatchButtonClick;
-                        FileDiffBlockList.Items.Add(c);
+                        c.Click += BlockItem_Click;
+                        _blockListItem.Add(c);
                     });
 
                     //add to hexeditor
@@ -202,12 +194,43 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
                 }
             }
 
+            //Update progressbar
+            BlockItemProgress.Maximum = _blockListItem.Count();
+            UpdateListofBlockItem();
+
             //refresh editor
             FirstFile.RefreshView();
             SecondFile.RefreshView();
 
             //Enable patch button
             PatchButton.IsEnabled = true;
+        }
+
+        /// <summary>
+        /// Update view when item is clicked
+        /// </summary>
+        private void BlockItem_Click(object sender, EventArgs e)
+        {
+            if (_internalChange) return;
+            if (sender is not BlockListItem blockitm) return;
+            if (_differences is null) return;
+
+            //Clear UI
+            FileDiffBytesList.Items.Clear();
+
+            _internalChange = true;
+            FirstFile.SetPosition(blockitm.CustomBlock.StartOffset, 1);
+            SecondFile.SetPosition(blockitm.CustomBlock.StartOffset, 1);
+            _internalChange = false;
+
+            //Load list of byte difference
+            foreach (ByteDifference byteDifference in _differences
+                .Where(c => c.BytePositionInStream >= blockitm.CustomBlock.StartOffset &&
+                            c.BytePositionInStream <= blockitm.CustomBlock.StopOffset))
+            {
+                byteDifference.Color = blockitm.CustomBlock.Color;
+                FileDiffBytesList.Items.Add(new ByteDifferenceListItem(byteDifference));
+            }
         }
 
         /// <summary>
@@ -254,6 +277,6 @@ namespace WpfHexEditor.Sample.BinaryFilesDifference
             _internalChange = false;
         }
         #endregion
-
+      
     }
 }
