@@ -1,5 +1,5 @@
 ﻿<!--
-    Apache 2.0  - 2016-2018
+    Apache 2.0  - 2016-2021
     Author : Derek Tremblay (derektremblay666@gmail.com)
 -->
 
@@ -27,9 +27,9 @@
                     Width="50"
                     Content="{x:Static p:Resources.ByteString}"
                     FontWeight="Bold" />
-                <Label Width="70" Content="{Binding Byte, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Width="70" Content="{Binding Byte.LongText, UpdateSourceTrigger=PropertyChanged}" />
                 <Label Content="{x:Static p:Resources.HexString}" FontWeight="Bold" />
-                <Label Content="{Binding Byte, Converter={StaticResource LongHexConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Content="{Binding Byte.LongText, Converter={StaticResource LongHexConverter}, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label

@@ -1,6 +1,7 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2020
+// Apache 2.0  - 2020-2021
 // Base author  : ehsan69h
+// Modified by  : Abbaye
 //////////////////////////////////////////////
 
 using System;
@@ -30,9 +31,13 @@ namespace WpfHexaEditor.Core.Bytes
 
         public D_ByteListProp del_ByteOnChange { get; set; }
 
+        public string Text { get; internal set; }
+
+        public long LongText { get; internal set; }
+
         public string GetText(DataVisualType type, DataVisualState state, ByteOrderType order)
         {
-            string Text = "";
+            string text = "";
             byte value;
             bool sign_positive = true;
             string prefix = "";
@@ -71,26 +76,29 @@ namespace WpfHexaEditor.Core.Bytes
             }
 
             if (state == DataVisualState.ChangesPercent)
-                Text = (sign_positive ? "" : "-") + prefix + value.ToString("d2");
+                text = (sign_positive ? "" : "-") + prefix + value.ToString("d2");
             else
                 switch (type)
                 {
                     case DataVisualType.Hexadecimal:
                         var chArr = ByteConverters.ByteToHexCharArray(value);
-                        Text = (sign_positive ? "" : "-") + prefix +
+                        text = (sign_positive ? "" : "-") + prefix +
                             new string(chArr);
                         break;
                     case DataVisualType.Decimal:
-                        Text = (sign_positive ? "" : "-") + prefix +
+                        text = (sign_positive ? "" : "-") + prefix +
                             value.ToString("d3");
                         break;
                     case DataVisualType.Binary:
-                        Text = (sign_positive ? "" : "-") + prefix +
+                        text = (sign_positive ? "" : "-") + prefix +
                             Convert.ToString(value, 2).PadLeft(8, '0');
                         break;
                 }
 
-            return Text;
+            LongText = value;
+            Text = text;
+
+            return text;
         }
 
         public bool IsEqual(byte[] bytes)

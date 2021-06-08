@@ -1,6 +1,7 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2020
+// Apache 2.0  - 2020-2021
 // Base author  : ehsan69h
+// Modified by  : Abbaye
 //////////////////////////////////////////////
 
 using System;
@@ -30,9 +31,13 @@ namespace WpfHexaEditor.Core.Bytes
         }
         public D_ByteListProp del_ByteOnChange { get; set; }
 
+        public string Text { get; internal set; }
+
+        public long LongText { get; internal set; }
+
         public string GetText(DataVisualType type, DataVisualState state, ByteOrderType order)
         {
-            string Text = "";
+            string text = "";
             byte[] value = new byte[4];
             bool sign_positive = true;
             string prefix = "";
@@ -80,7 +85,7 @@ namespace WpfHexaEditor.Core.Bytes
             }
 
             if (state == DataVisualState.ChangesPercent)
-                Text = (sign_positive ? "" : "-") + prefix + BitConverter.ToUInt16(value, 0).ToString("d2");
+                text = (sign_positive ? "" : "-") + prefix + BitConverter.ToUInt16(value, 0).ToString("d2");
             else
                 switch (type)
                 {
@@ -90,15 +95,15 @@ namespace WpfHexaEditor.Core.Bytes
                             ByteConverters.ByteToHexCharArray(value[1]).Concat(
                                 ByteConverters.ByteToHexCharArray(value[2]).Concat(
                                     ByteConverters.ByteToHexCharArray(value[3])))).ToArray();
-                        Text = (sign_positive ? "" : "-") + prefix +
+                        text = (sign_positive ? "" : "-") + prefix +
                             new string(chArr);
                         break;
                     case DataVisualType.Decimal:
-                        Text = (sign_positive ? "" : "-") + prefix +
+                        text = (sign_positive ? "" : "-") + prefix +
                             BitConverter.ToUInt32(value.Reverse().ToArray(), 0).ToString("d10");
                         break;
                     case DataVisualType.Binary:
-                        Text = (sign_positive ? "" : "-") + prefix +
+                        text = (sign_positive ? "" : "-") + prefix +
                             Convert.ToString(value[0], 2).PadLeft(8, '0')
                             + Convert.ToString(value[1], 2).PadLeft(8, '0')
                             + Convert.ToString(value[2], 2).PadLeft(8, '0')
@@ -106,7 +111,10 @@ namespace WpfHexaEditor.Core.Bytes
                         break;
                 }
 
-            return Text;
+            LongText = ByteConverters.HexLiteralToLong(text).position;
+            Text = text;
+
+            return text;
         }
 
 

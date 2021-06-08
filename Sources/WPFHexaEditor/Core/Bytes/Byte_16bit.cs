@@ -1,6 +1,7 @@
 ﻿//////////////////////////////////////////////
-// Apache 2.0  - 2020
+// Apache 2.0  - 2020-2021
 // Base author  : ehsan69h
+// Modified by  : Abbaye
 //////////////////////////////////////////////
 
 using System;
@@ -29,9 +30,13 @@ namespace WpfHexaEditor.Core.Bytes
         }
         public D_ByteListProp del_ByteOnChange { get; set; }
 
+        public string Text { get; internal set; }
+
+        public long LongText { get; internal set; }
+
         public string GetText(DataVisualType type, DataVisualState state, ByteOrderType order)
         {
-            string Text = "";
+            string text = "";
             byte[] value = new byte[2];
             bool sign_positive = true;
             string prefix = "";
@@ -74,27 +79,31 @@ namespace WpfHexaEditor.Core.Bytes
             }
 
             if (state == DataVisualState.ChangesPercent)
-                Text = (sign_positive ? "" : "-") + prefix + BitConverter.ToUInt16(value, 0).ToString("d2");
+                text = (sign_positive ? "" : "-") + prefix + BitConverter.ToUInt16(value, 0).ToString("d2");
             else
             {
                 switch (type)
                 {
                     case DataVisualType.Hexadecimal:
                         var chArr = ByteConverters.ByteToHexCharArray(value[0]).Concat(ByteConverters.ByteToHexCharArray(value[1])).ToArray();
-                        Text = (sign_positive ? "" : "-") + prefix + new string(chArr);
+                        text = (sign_positive ? "" : "-") + prefix + new string(chArr);
                         break;
                     case DataVisualType.Decimal:
-                        Text = (sign_positive ? "" : "-") + prefix +
+                        text = (sign_positive ? "" : "-") + prefix +
                             BitConverter.ToUInt16(value: value.Reverse().ToArray(), startIndex: 0).ToString("d5");
                         break;
                     case DataVisualType.Binary:
-                        Text = (sign_positive ? "" : "-") + prefix +
+                        text = (sign_positive ? "" : "-") + prefix +
                             Convert.ToString(value[0], 2).PadLeft(8, '0') +
                             Convert.ToString(value[1], 2).PadLeft(8, '0');
                         break;
                 }
             }
-            return Text;
+
+            LongText = ByteConverters.HexLiteralToLong(text).position;
+            Text = text;
+
+            return text;
         }
 
 
