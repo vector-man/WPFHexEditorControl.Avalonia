@@ -32,6 +32,7 @@ namespace WpfHexaEditor
         private ByteAction _action = ByteAction.Nothing;
         private IByte _byte;
         private bool _isHighLight;
+        private bool _tooltipLoaded;
         #endregion global class variables
 
         #region Events
@@ -66,26 +67,7 @@ namespace WpfHexaEditor
             //Parent hexeditor
             _parent = parent ?? throw new ArgumentNullException(nameof(parent));
 
-            #region Binding tooltip
-
-            LoadDictionary("/WPFHexaEditor;component/Resources/Dictionary/ToolTipDictionary.xaml");
-            var txtBinding = new Binding
-            {
-                Source = FindResource("ByteToolTip"),
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-                Mode = BindingMode.OneWay
-            };
-
-            // Load ressources dictionnary
-            void LoadDictionary(string url)
-            {
-                var ttRes = new ResourceDictionary { Source = new Uri(url, UriKind.Relative) };
-                Resources.MergedDictionaries.Add(ttRes);
-            }
-
-            SetBinding(ToolTipProperty, txtBinding);
-
-            #endregion
+            ToolTip = ".";
 
             //Default properties
             DataContext = this;
@@ -346,6 +328,37 @@ namespace WpfHexaEditor
 
         #endregion
 
+        #region Binding tooltip
+
+        /// <summary>
+        /// Load tooltip if necessary
+        /// Hex editor is more faster when tootip is not loaded at creation
+        /// </summary>
+        internal void LoadToolTip()
+        {
+            if (_tooltipLoaded) return;
+
+            LoadDictionary("/WPFHexaEditor;component/Resources/Dictionary/ToolTipDictionary.xaml");
+
+            // Load ressources dictionnary (can be moved outside if needed...)
+            void LoadDictionary(string url)
+            {
+                var ttRes = new ResourceDictionary { Source = new Uri(url, UriKind.Relative) };
+                Resources.MergedDictionaries.Add(ttRes);
+            }
+
+            SetBinding(ToolTipProperty, new Binding
+            {
+                Source = FindResource("ByteToolTip"),
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                Mode = BindingMode.OneWay
+            });
+
+            _tooltipLoaded = true;
+        }
+
+        #endregion
+
         #region Events delegate
 
         /// <summary>
@@ -438,6 +451,8 @@ namespace WpfHexaEditor
         {
             if (Byte == null || !_parent.ShowByteToolTip)
                 e.Handled = true;
+            else
+                LoadToolTip();
 
             base.OnToolTipOpening(e);
         }
