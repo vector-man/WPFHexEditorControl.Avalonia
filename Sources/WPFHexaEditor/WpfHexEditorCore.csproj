@@ -17,9 +17,9 @@
     <PackageIconUrl />
     <Product>WpfHexaEditor</Product>
     <Copyright>Apache 2.0</Copyright>
-    <AssemblyVersion>2.1.6.0</AssemblyVersion>
-    <FileVersion>2.1.6</FileVersion>
-    <Version>2.1.6</Version>
+    <AssemblyVersion>2.1.7.0</AssemblyVersion>
+    <FileVersion>2.1.7</FileVersion>
+    <Version>2.1.7</Version>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PackageTags>character-table;hexadecimal;binary;editor;hexeditor;tbl;hexedit</PackageTags>
     <ApplicationIcon />
