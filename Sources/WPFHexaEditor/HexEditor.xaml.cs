@@ -614,13 +614,11 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty LineHeightProperty =
             DependencyProperty.Register(nameof(LineHeight), typeof(double), typeof(HexEditor),
-                new FrameworkPropertyMetadata(18D, LineHeight_PropertyChanged));
-
-        private static void LineHeight_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is HexEditor ctrl)
-                ctrl.RefreshView();
-        }
+                new FrameworkPropertyMetadata(18D, (DependencyObject d, DependencyPropertyChangedEventArgs e) => 
+                {
+                    if (d is HexEditor ctrl)
+                        ctrl.RefreshView();
+                }));
 
         /// <summary>
         /// Get or set the visual of line info panel
@@ -700,14 +698,12 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty OffSetStringVisualProperty =
             DependencyProperty.Register(nameof(OffSetStringVisual), typeof(DataVisualType), typeof(HexEditor),
-                new FrameworkPropertyMetadata(DataVisualType.Hexadecimal, DataVisualTypeProperty_PropertyChanged));
+                new FrameworkPropertyMetadata(DataVisualType.Hexadecimal, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+                {
+                    if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
-        private static void DataVisualTypeProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
-
-            ctrl.UpdateLinesInfo();
-        }
+                    ctrl.UpdateLinesInfo();
+                }));
 
         /// <summary>
         /// Visually change de state of the byte
@@ -720,20 +716,18 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty OffSetDataStringStateProperty =
            DependencyProperty.Register(nameof(DataStringState), typeof(DataVisualState), typeof(HexEditor),
-               new FrameworkPropertyMetadata(DataVisualState.Default, DataStringVisualStateProperty_PropertyChanged));
+               new FrameworkPropertyMetadata(DataVisualState.Default, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+               {
+                   if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
-        private static void DataStringVisualStateProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
+                   ctrl.UpdateHeader(true);
 
-            ctrl.UpdateHeader(true);
-
-            ctrl.TraverseHexBytes(hctrl =>
-            {
-                hctrl.UpdateDataVisualWidth();
-                hctrl.UpdateTextRenderFromByte();
-            });
-        }
+                   ctrl.TraverseHexBytes(hctrl =>
+                   {
+                       hctrl.UpdateDataVisualWidth();
+                       hctrl.UpdateTextRenderFromByte();
+                   });
+               }));
 
         public ByteOrderType ByteOrder
         {
@@ -743,20 +737,19 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty OffSetByteOrderProperty =
            DependencyProperty.Register(nameof(ByteOrder), typeof(ByteOrderType), typeof(HexEditor),
-               new FrameworkPropertyMetadata(ByteOrderType.LoHi, DataByteOrderProperty_PropertyChanged));
+               new FrameworkPropertyMetadata(ByteOrderType.LoHi, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+               {
+                   if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
-        private static void DataByteOrderProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
+                   ctrl.UpdateHeader(true);
 
-            ctrl.UpdateHeader(true);
+                   ctrl.TraverseHexBytes(hctrl =>
+                   {
+                       hctrl.UpdateDataVisualWidth();
+                       hctrl.UpdateTextRenderFromByte();
+                   });
+               }));
 
-            ctrl.TraverseHexBytes(hctrl =>
-            {
-                hctrl.UpdateDataVisualWidth();
-                hctrl.UpdateTextRenderFromByte();
-            });
-        }
 
         /// <summary>
         /// Obtains the ration from the ByteSize
@@ -780,24 +773,22 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty OffSetByteSizeProperty =
            DependencyProperty.Register(nameof(ByteSize), typeof(ByteSizeType), typeof(HexEditor),
-               new FrameworkPropertyMetadata(ByteSizeType.Bit8, DataByteSizeProperty_PropertyChanged));
+               new FrameworkPropertyMetadata(ByteSizeType.Bit8, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+               {
+                   if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
-        private static void DataByteSizeProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
+                   ctrl.UpdateViewers(true);
+                   ctrl.UpdateHeader(true);
 
-            ctrl.UpdateViewers(true);
-            ctrl.UpdateHeader(true);
+                   ctrl.TraverseHexBytes(hctrl =>
+                   {
+                       hctrl.UpdateDataVisualWidth();
+                       hctrl.UpdateTextRenderFromByte();
+                   });
 
-            ctrl.TraverseHexBytes(hctrl =>
-            {
-                hctrl.UpdateDataVisualWidth();
-                hctrl.UpdateTextRenderFromByte();
-            });
-
-            ctrl.UpdateByteModified();
-            ctrl.UpdateScrollBar();
-        }
+                   ctrl.UpdateByteModified();
+                   ctrl.UpdateScrollBar();
+               }));
 
         /// <summary>
         /// Get or set the visual data format of HexByte 
@@ -810,20 +801,18 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty DataStringVisualProperty =
             DependencyProperty.Register(nameof(DataStringVisual), typeof(DataVisualType), typeof(HexEditor),
-                new FrameworkPropertyMetadata(DataVisualType.Hexadecimal, DataStringVisualTypeProperty_PropertyChanged));
+                new FrameworkPropertyMetadata(DataVisualType.Hexadecimal, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+                {
+                    if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
-        private static void DataStringVisualTypeProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
+                    ctrl.UpdateHeader(true);
 
-            ctrl.UpdateHeader(true);
-
-            ctrl.TraverseHexBytes(hctrl =>
-            {
-                hctrl.UpdateDataVisualWidth();
-                hctrl.UpdateTextRenderFromByte();
-            });
-        }
+                    ctrl.TraverseHexBytes(hctrl =>
+                    {
+                        hctrl.UpdateDataVisualWidth();
+                        hctrl.UpdateTextRenderFromByte();
+                    });
+                }));
 
         #endregion Data visual type support
 
@@ -841,16 +830,13 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty TypeOfCharacterTableProperty =
             DependencyProperty.Register(nameof(TypeOfCharacterTable), typeof(CharacterTableType), typeof(HexEditor),
-                new FrameworkPropertyMetadata(CharacterTableType.Ascii, TypeOfCharacterTable_PropertyChanged));
+                new FrameworkPropertyMetadata(CharacterTableType.Ascii, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+                {
+                    if (d is not HexEditor ctrl) return;
 
-        private static void TypeOfCharacterTable_PropertyChanged(DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not HexEditor ctrl) return;
-
-            ctrl.RefreshView(true);
-            ctrl.TypeOfCharacterTableChanged?.Invoke(ctrl, new EventArgs());
-        }
+                    ctrl.RefreshView(true);
+                    ctrl.TypeOfCharacterTableChanged?.Invoke(ctrl, new EventArgs());
+                }));
 
         /// <summary>
         /// Show or not Multi Title Enconding (MTE) are loaded in TBL file
@@ -863,13 +849,11 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty TblShowMteProperty =
             DependencyProperty.Register(nameof(TblShowMte), typeof(bool), typeof(HexEditor),
-                new FrameworkPropertyMetadata(true, TBLShowMTE_PropetyChanged));
-
-        private static void TBLShowMTE_PropetyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is HexEditor ctrl)
-                ctrl.RefreshView();
-        }
+                new FrameworkPropertyMetadata(true, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+                {
+                    if (d is HexEditor ctrl)
+                        ctrl.RefreshView();
+                }));
 
         /// <summary>
         /// Load TBL Character table file in control. (Used for ROM reverse engineering)
@@ -1006,17 +990,15 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty ReadOnlyModeProperty =
             DependencyProperty.Register(nameof(ReadOnlyMode), typeof(bool), typeof(HexEditor),
-                new FrameworkPropertyMetadata(false, ReadOnlyMode_PropertyChanged));
+                new FrameworkPropertyMetadata(false, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+                {
+                    if (d is not HexEditor ctrl) return;
+                    if (!CheckIsOpen(ctrl._provider)) return;
+                    if (e.NewValue == e.OldValue) return;
 
-        private static void ReadOnlyMode_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not HexEditor ctrl) return;
-            if (!CheckIsOpen(ctrl._provider)) return;
-            if (e.NewValue == e.OldValue) return;
-
-            ctrl._provider.ReadOnlyMode = ctrl._provider.IsLockedFile || (bool)e.NewValue;
-            ctrl.RefreshView(true);
-        }
+                    ctrl._provider.ReadOnlyMode = ctrl._provider.IsLockedFile || (bool)e.NewValue;
+                    ctrl.RefreshView(true);
+                }));
 
         private void Provider_ReadOnlyChanged(object sender, EventArgs e)
         {
@@ -1133,8 +1115,7 @@ namespace WpfHexaEditor
         }
 
         public static readonly DependencyProperty SelectionLineProperty =
-            DependencyProperty.Register(nameof(SelectionLine), typeof(long), typeof(HexEditor),
-                new FrameworkPropertyMetadata(0L));
+            DependencyProperty.Register(nameof(SelectionLine), typeof(long), typeof(HexEditor), new FrameworkPropertyMetadata(0L));
 
         private void LinesInfoLabel_MouseMove(object sender, MouseEventArgs e)
         {
@@ -4448,7 +4429,7 @@ namespace WpfHexaEditor
             if (startPosition < 0) return;
 
             for (var i = startPosition; i < startPosition + length; i++)
-                if (!_markedPositionList.ContainsValue(i))
+                //if (!_markedPositionList.ContainsValue(i))
                     _markedPositionList.Add(i, i);
 
             if (updateVisual) UpdateHighLight();

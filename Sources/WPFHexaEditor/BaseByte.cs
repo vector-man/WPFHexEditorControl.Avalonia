@@ -180,16 +180,11 @@ namespace WpfHexaEditor
 
         protected FormattedText TextFormatted { get; private set; }
 
-        #endregion
-
-        #region Private base properties
-
         /// <summary>
         /// Definie the foreground
         /// </summary>
         private static readonly DependencyProperty ForegroundProperty =
-            TextElement.ForegroundProperty.AddOwner(
-                typeof(BaseByte));
+            TextElement.ForegroundProperty.AddOwner(typeof(BaseByte));
 
         protected Brush Foreground
         {
@@ -338,14 +333,11 @@ namespace WpfHexaEditor
         {
             if (_tooltipLoaded) return;
 
-            LoadDictionary("/WPFHexaEditor;component/Resources/Dictionary/ToolTipDictionary.xaml");
-
-            // Load ressources dictionnary (can be moved outside if needed...)
-            void LoadDictionary(string url)
+            // Load ressources dictionnary
+            Resources.MergedDictionaries.Add(new ResourceDictionary
             {
-                var ttRes = new ResourceDictionary { Source = new Uri(url, UriKind.Relative) };
-                Resources.MergedDictionaries.Add(ttRes);
-            }
+                Source = new Uri("/WPFHexaEditor;component/Resources/Dictionary/ToolTipDictionary.xaml", UriKind.Relative)
+            });
 
             SetBinding(ToolTipProperty, new Binding
             {
@@ -427,8 +419,7 @@ namespace WpfHexaEditor
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                if (!IsFocused)
-                    Focus();
+                if (!IsFocused)  Focus();
 
                 switch (e.ClickCount)
                 {
