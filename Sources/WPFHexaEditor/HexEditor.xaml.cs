@@ -780,10 +780,10 @@ namespace WpfHexaEditor
                    ctrl.UpdateViewers(true);
                    ctrl.UpdateHeader(true);
 
-                   ctrl.TraverseHexBytes(hctrl =>
+                   ctrl.TraverseHexBytes(c =>
                    {
-                       hctrl.UpdateDataVisualWidth();
-                       hctrl.UpdateTextRenderFromByte();
+                       c.UpdateDataVisualWidth();
+                       c.UpdateTextRenderFromByte();
                    });
 
                    ctrl.UpdateByteModified();
@@ -807,10 +807,10 @@ namespace WpfHexaEditor
 
                     ctrl.UpdateHeader(true);
 
-                    ctrl.TraverseHexBytes(hctrl =>
+                    ctrl.TraverseHexBytes(c =>
                     {
-                        hctrl.UpdateDataVisualWidth();
-                        hctrl.UpdateTextRenderFromByte();
+                        c.UpdateDataVisualWidth();
+                        c.UpdateTextRenderFromByte();
                     });
                 }));
 
@@ -1310,36 +1310,34 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty SelectionStartProperty =
             DependencyProperty.Register(nameof(SelectionStart), typeof(long), typeof(HexEditor),
-                new FrameworkPropertyMetadata(-1L, SelectionStart_ChangedCallBack, SelectionStart_CoerceValueCallBack));
+                new FrameworkPropertyMetadata(-1L, 
+                    (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+                    {
+                        if (d is not HexEditor ctrl) return;
+                        if (e.NewValue == e.OldValue) return;
+                        if (!CheckIsOpen(ctrl._provider)) return;
 
-        private static object SelectionStart_CoerceValueCallBack(DependencyObject d, object baseValue)
-        {
-            if (d is not HexEditor ctrl) return -1L;
-            if (!CheckIsOpen(ctrl._provider)) return -1L;
-            if ((long)baseValue < -1) return -1L;
+                        ctrl.SelectionByte = ctrl._provider.GetByte(ctrl.SelectionStart).singleByte;
 
-            return baseValue;
-        }
+                        ctrl.UpdateSelection();
+                        ctrl.UpdateSelectionLine();
+                        ctrl.UpdateVisual();
+                        ctrl.UpdateStatusBar(false);
+                        ctrl.UpdateLinesInfo();
+                        ctrl.UpdateHeader(true);
+                        ctrl.SetScrollMarker(0, ScrollMarker.SelectionStart);
 
-        private static void SelectionStart_ChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not HexEditor ctrl) return;
-            if (e.NewValue == e.OldValue) return;
-            if (!CheckIsOpen(ctrl._provider)) return;
+                        ctrl.SelectionStartChanged?.Invoke(ctrl, new EventArgs());
+                        ctrl.SelectionLengthChanged?.Invoke(ctrl, new EventArgs());
+                    }, (DependencyObject d, object baseValue) =>
+                    {
+                        if (d is not HexEditor ctrl) return -1L;
+                        if (!CheckIsOpen(ctrl._provider)) return -1L;
+                        if ((long)baseValue < -1) return -1L;
 
-            ctrl.SelectionByte = ctrl._provider.GetByte(ctrl.SelectionStart).singleByte;
+                        return baseValue;
+                    }));
 
-            ctrl.UpdateSelection();
-            ctrl.UpdateSelectionLine();
-            ctrl.UpdateVisual();
-            ctrl.UpdateStatusBar(false);
-            ctrl.UpdateLinesInfo();
-            ctrl.UpdateHeader(true);
-            ctrl.SetScrollMarker(0, ScrollMarker.SelectionStart);
-
-            ctrl.SelectionStartChanged?.Invoke(ctrl, new EventArgs());
-            ctrl.SelectionLengthChanged?.Invoke(ctrl, new EventArgs());
-        }
 
         /// <summary>
         /// Set the end byte position of selection
@@ -1352,31 +1350,28 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty SelectionStopProperty =
             DependencyProperty.Register(nameof(SelectionStop), typeof(long), typeof(HexEditor),
-                new FrameworkPropertyMetadata(-1L, SelectionStop_ChangedCallBack, SelectionStop_CoerceValueCallBack));
+                new FrameworkPropertyMetadata(-1L, 
+                    (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+                    {
+                        if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
-        private static object SelectionStop_CoerceValueCallBack(DependencyObject d, object baseValue)
-        {
-            if (d is not HexEditor ctrl) return baseValue;
+                        ctrl.UpdateSelection();
+                        ctrl.UpdateSelectionLine();
 
-            var value = (long)baseValue;
+                        ctrl.SelectionStopChanged?.Invoke(ctrl, new EventArgs());
+                        ctrl.SelectionLengthChanged?.Invoke(ctrl, new EventArgs());
+                    }, (DependencyObject d, object baseValue) =>
+                    {
+                        if (d is not HexEditor ctrl) return baseValue;
 
-            if (value < -1 || !CheckIsOpen(ctrl._provider)) return -1L;
+                        var value = (long)baseValue;
 
-            return value >= ctrl._provider.Length
-                ? ctrl._provider.Length
-                : baseValue;
-        }
+                        if (value < -1 || !CheckIsOpen(ctrl._provider)) return -1L;
 
-        private static void SelectionStop_ChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
-
-            ctrl.UpdateSelection();
-            ctrl.UpdateSelectionLine();
-
-            ctrl.SelectionStopChanged?.Invoke(ctrl, new EventArgs());
-            ctrl.SelectionLengthChanged?.Invoke(ctrl, new EventArgs());
-        }
+                        return value >= ctrl._provider.Length
+                            ? ctrl._provider.Length
+                            : baseValue;
+                    }));
 
         /// <summary>
         /// Fix the selection start and stop when needed
@@ -2551,34 +2546,29 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty BytePerLineProperty =
             DependencyProperty.Register(nameof(BytePerLine), typeof(int), typeof(HexEditor),
-                new FrameworkPropertyMetadata(16, BytePerLine_PropertyChanged, BytePerLine_CoerceValue));
+                new FrameworkPropertyMetadata(16, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+                {
+                    if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
-        private static object BytePerLine_CoerceValue(DependencyObject d, object baseValue) =>
-            (int)baseValue < 1 ? 1 : ((int)baseValue > 64 ? 64 : baseValue);
+                    ctrl.With(c =>
+                    {
+                        //Get previous state
+                        var firstPos = c.FirstVisibleBytePosition;
+                        var startPos = c.SelectionStart;
+                        var stopPos = c.SelectionStop;
 
-        private static void BytePerLine_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
+                        //refresh
+                        c.UpdateScrollBar();
+                        c.BuildDataLines(c.MaxVisibleLine, true);
+                        c.RefreshView(true);
+                        c.UpdateHeader(true);
 
-            ctrl.With(c =>
-            {
-                //Get previous state
-                var firstPos = c.FirstVisibleBytePosition;
-                var startPos = c.SelectionStart;
-                var stopPos = c.SelectionStop;
-
-                //refresh
-                c.UpdateScrollBar();
-                c.BuildDataLines(c.MaxVisibleLine, true);
-                c.RefreshView(true);
-                c.UpdateHeader(true);
-
-                //Set previous state
-                c.SetPosition(firstPos);
-                c.SelectionStart = startPos;
-                c.SelectionStop = stopPos;
-            });
-        }
+                        //Set previous state
+                        c.SetPosition(firstPos);
+                        c.SelectionStart = startPos;
+                        c.SelectionStop = stopPos;
+                    });
+                }, (DependencyObject d, object baseValue) => (int)baseValue < 1 ? 1 : ((int)baseValue > 64 ? 64 : baseValue)));
 
         #endregion
 
@@ -2595,34 +2585,29 @@ namespace WpfHexaEditor
 
         public static readonly DependencyProperty StringByteWidthProperty =
             DependencyProperty.Register(nameof(StringByteWidth), typeof(double), typeof(HexEditor),
-                new FrameworkPropertyMetadata(10d, StringByteWidth_PropertyChanged, StringByteWidth_CoerceValue));
+                new FrameworkPropertyMetadata(10d, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+                {
+                    if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
 
-        private static object StringByteWidth_CoerceValue(DependencyObject d, object baseValue) =>
-            (double)baseValue < 1 ? 1 : ((double)baseValue > 64 ? 64 : baseValue);
+                    ctrl.With(c =>
+                    {
+                        //Get previous state
+                        var firstPos = c.FirstVisibleBytePosition;
+                        var startPos = c.SelectionStart;
+                        var stopPos = c.SelectionStop;
 
-        private static void StringByteWidth_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not HexEditor ctrl || e.NewValue == e.OldValue) return;
+                        //refresh
+                        c.UpdateScrollBar();
+                        c.BuildDataLines(c.MaxVisibleLine, true);
+                        c.RefreshView(true);
+                        c.UpdateHeader(true);
 
-            ctrl.With(c =>
-            {
-                //Get previous state
-                var firstPos = c.FirstVisibleBytePosition;
-                var startPos = c.SelectionStart;
-                var stopPos = c.SelectionStop;
-
-                //refresh
-                c.UpdateScrollBar();
-                c.BuildDataLines(c.MaxVisibleLine, true);
-                c.RefreshView(true);
-                c.UpdateHeader(true);
-
-                //Set previous state
-                c.SetPosition(firstPos);
-                c.SelectionStart = startPos;
-                c.SelectionStop = stopPos;
-            });
-        }
+                        //Set previous state
+                        c.SetPosition(firstPos);
+                        c.SelectionStart = startPos;
+                        c.SelectionStop = stopPos;
+                    });
+                }, (DependencyObject d, object baseValue) => (double)baseValue < 1 ? 1 : ((double)baseValue > 64 ? 64 : baseValue)));
 
         #endregion
 

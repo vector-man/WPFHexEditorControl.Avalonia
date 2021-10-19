@@ -176,8 +176,8 @@ namespace WpfHexaEditor.Core.CharacterTable
                     dte = new Dte(info[0], "=", DteType.DualTitleEncoding);
                 }
 
-                _dteList.Add(dte.Entry, dte);
-
+                if (!_dteList.ContainsKey(dte.Entry)) //Fix issue #105
+                    _dteList.Add(dte.Entry, dte);
             }
             #endregion
 
