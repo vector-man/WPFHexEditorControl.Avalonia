@@ -3837,21 +3837,26 @@ namespace WpfHexaEditor
             #region Show length
             if (updateFilelength)
             {
-                var isMegabByte = false;
+                double length;
+                string unit;
 
-                //is mega bytes ?
-                double length = _provider.LengthAjusted / 1024;
-
-                if (length > 1024)
+                if (_provider.LengthAjusted < 1024)
                 {
-                    length /= 1024;
-                    isMegabByte = true;
+                    length = _provider.LengthAjusted;
+                    unit = Properties.Resources.BytesTagString;
+                }
+                else if (_provider.LengthAjusted < 1048576) // 1048576 bytes = 1 MiB
+                {
+                    length = _provider.LengthAjusted / 1024;
+                    unit = Properties.Resources.KBTagString;
+                }
+                else
+                {
+                    length = _provider.LengthAjusted / 1048576;
+                    unit = Properties.Resources.MBTagString;
                 }
 
-                FileLengthKbLabel.Content = Math.Round(length, 2) +
-                                            (isMegabByte
-                                                ? $" {Properties.Resources.MBTagString}"
-                                                : $" {Properties.Resources.KBTagString}");
+                FileLengthKbLabel.Content = Math.Round(length, 2) + " " + unit;
             }
             #endregion
 

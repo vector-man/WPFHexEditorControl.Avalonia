@@ -325,4 +325,7 @@
   <data name="OpenAsReadOnlyString" xml:space="preserve">
     <value>The file is locked. Do you want to open it in read-only mode?</value>
   </data>
+  <data name="BytesTagString" xml:space="preserve">
+    <value>Bytes</value>
+  </data>
 </root>
