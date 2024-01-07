@@ -1,0 +1,407 @@
+﻿<!--
+    Apache 2.0  - 2016-2021
+    Author : Derek Tremblay (derektremblay666@gmail.com)
+-->
+
+<controls:UserControl
+    x:Class="WpfHexaEditor.HexEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:WpfHexaEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:p="clr-namespace:WpfHexaEditor.Properties"
+    xmlns:controls="https://github.com/avaloniaui"
+    xmlns:properties="clr-namespace:WpfHexaEditor.Properties;assembly=WPFHexaEditor"
+    d:DesignHeight="350"
+    d:DesignWidth="804"
+    BorderBrush="#FF443E3E"
+    BorderThickness="1"
+    Drop="Control_Drop"
+    Focusable="True"
+    FontSize="11"
+    KeyDown="Control_KeyDown"
+    Loaded="Control_Loaded"
+    MouseWheel="Control_MouseWheel"
+    mc:Ignorable="d">
+
+    <!--#region Ressources-->
+    <controls:UserControl.Resources>
+        <controls:ResourceDictionary>
+            <controls:ResourceDictionary.MergedDictionaries>
+                <controls:ResourceDictionary Source="./Resources/Dictionary/BrushesDictionary.xaml" />
+                <controls:ResourceDictionary Source="./Resources/Dictionary/ToolTipDictionary.xaml" />
+            </controls:ResourceDictionary.MergedDictionaries>
+        </controls:ResourceDictionary>
+    </controls:UserControl.Resources>
+    <!--#endregion-->
+
+    <!--#region Build-in Context Menu-->
+    <controls:UserControl.ContextMenu>
+        <controls:ContextMenu x:Name="CMenu" Visibility="Collapsed">
+            <controls:MenuItem
+                x:Name="UndoCMenu"
+                Click="UndoCMenu_Click"
+                Header="{x:Static properties:Resources.UndoString}">
+                <controls:MenuItem.Icon>
+                    <controls:Image Source="/WPFHexaEditor;component/Resources/Icon/Undo-Icon.ico" />
+                </controls:MenuItem.Icon>
+            </controls:MenuItem>
+            <controls:Separator />
+            <controls:MenuItem Header="{x:Static properties:Resources.BookmarksString}">
+                <controls:MenuItem
+                    x:Name="BookMarkCMenu"
+                    Width="Auto"
+                    Click="BookMarkCMenu_Click"
+                    Header="{x:Static properties:Resources.SetBookMarkString}">
+                    <controls:MenuItem.Icon>
+                        <controls:Image Source="/WPFHexaEditor;component/Resources/Icon/Add-Bookmark-Icon.ico" />
+                    </controls:MenuItem.Icon>
+                </controls:MenuItem>
+                <controls:Separator />
+                <controls:MenuItem
+                    x:Name="ClearBookMarkCMenu"
+                    Width="Auto"
+                    Click="ClearBookMarkCMenu_Click"
+                    Header="{x:Static properties:Resources.ClearBookMarkString}">
+                    <controls:MenuItem.Icon>
+                        <controls:Image Source="/WPFHexaEditor;component/Resources/Icon/Clear-Bookmark-Icon.ico" />
+                    </controls:MenuItem.Icon>
+                </controls:MenuItem>
+            </controls:MenuItem>
+            <controls:Separator />
+            <controls:MenuItem
+                x:Name="CopyHexaCMenu"
+                Click="CopyToClipBoardCMenu_Click"
+                Header="{x:Static properties:Resources.CopyAsHexadecimalString}">
+                <controls:MenuItem.Icon>
+                    <controls:Image Source="/WPFHexaEditor;component/Resources/Icon/Copy-Icon.ico" />
+                </controls:MenuItem.Icon>
+            </controls:MenuItem>
+            <controls:MenuItem
+                x:Name="CopyAsciicMenu"
+                Click="CopyToClipBoardCMenu_Click"
+                Header="{x:Static properties:Resources.CopyAsASCIIString}">
+                <controls:MenuItem.Icon>
+                    <controls:Image Source="/WPFHexaEditor;component/Resources/Icon/Copy-Icon.ico" />
+                </controls:MenuItem.Icon>
+            </controls:MenuItem>
+            <controls:MenuItem x:Name="CopyAsCMenu" Header="{x:Static properties:Resources.CopySelectionAsString}">
+                <controls:MenuItem
+                    x:Name="CopyCcMenu"
+                    Click="CopyToClipBoardCMenu_Click"
+                    Header="C" />
+                <controls:MenuItem
+                    x:Name="CopyCSharpCMenu"
+                    Click="CopyToClipBoardCMenu_Click"
+                    Header="C#" />
+                <controls:MenuItem
+                    x:Name="CopyFSharpCMenu"
+                    Click="CopyToClipBoardCMenu_Click"
+                    Header="F#" />
+                <controls:MenuItem
+                    x:Name="CopyJavaCMenu"
+                    Click="CopyToClipBoardCMenu_Click"
+                    Header="Java" />
+                <controls:MenuItem
+                    x:Name="CopyVbNetCMenu"
+                    Click="CopyToClipBoardCMenu_Click"
+                    Header="Visual Basic.Net" />
+                <controls:MenuItem
+                    x:Name="CopyPascalCMenu"
+                    Click="CopyToClipBoardCMenu_Click"
+                    Header="Pascal" />
+                <controls:MenuItem
+                    x:Name="CopyTblcMenu"
+                    Click="CopyToClipBoardCMenu_Click"
+                    Header="{x:Static properties:Resources.CopyAsTBLString}" />
+            </controls:MenuItem>
+            <controls:Separator />
+            <controls:MenuItem
+                x:Name="PasteMenu"
+                Click="PasteMenu_Click"
+                Header="{x:Static properties:Resources.PasteNotInsertString}">
+                <controls:MenuItem.Icon>
+                    <controls:Image Source="/WPFHexaEditor;component/Resources/Icon/Paste-Icon.ico" />
+                </controls:MenuItem.Icon>
+            </controls:MenuItem>
+            <controls:Separator />
+            <controls:MenuItem
+                x:Name="FillByteCMenu"
+                Click="FillByteCMenu_Click"
+                Header="{x:Static properties:Resources.FillSelectionString}">
+                <controls:MenuItem.Icon>
+                    <controls:Image Source="/WPFHexaEditor;component/Resources/Icon/0x-Icon.ico" />
+                </controls:MenuItem.Icon>
+            </controls:MenuItem>
+            <controls:MenuItem
+                x:Name="ReplaceByteCMenu"
+                Click="ReplaceByteCMenu_Click"
+                Header="{x:Static properties:Resources.ReplaceSelectionString}">
+                <controls:MenuItem.Icon>
+                    <controls:Image Source="/WPFHexaEditor;component/Resources/Icon/0x-Icon.ico" />
+                </controls:MenuItem.Icon>
+            </controls:MenuItem>
+            <controls:Separator />
+            <controls:MenuItem
+                x:Name="DeleteCMenu"
+                Click="DeleteCMenu_Click"
+                Header="{x:Static properties:Resources.DeleteString}">
+                <controls:MenuItem.Icon>
+                    <controls:Image Source="/WPFHexaEditor;component/Resources/Icon/Delete-Icon.ico" />
+                </controls:MenuItem.Icon>
+            </controls:MenuItem>
+            <controls:Separator />
+            <controls:MenuItem
+                x:Name="FindAllCMenu"
+                Click="FindAllCMenu_Click"
+                Header="{x:Static properties:Resources.FindSelectionString}">
+                <controls:MenuItem.Icon>
+                    <controls:Image Source="/WPFHexaEditor;component/Resources/Icon/Find-Icon.ico" />
+                </controls:MenuItem.Icon>
+            </controls:MenuItem>
+            <controls:Separator />
+            <controls:MenuItem
+                x:Name="SelectAllCMenu"
+                Click="SelectAllCMenu_Click"
+                Header="{x:Static properties:Resources.SelectAllString}" />
+        </controls:ContextMenu>
+    </controls:UserControl.ContextMenu>
+    <!--#endregion-->
+
+    <controls:Grid
+        x:Name="BaseGrid"
+        Background="White"
+        SizeChanged="Grid_SizeChanged">
+
+        <!--#region Grid/Column Definitions-->
+        <controls:Grid.ColumnDefinitions>
+            <controls:ColumnDefinition Width="Auto" />
+            <controls:ColumnDefinition Width="Auto" />
+            <controls:ColumnDefinition Width="207*" />
+            <controls:ColumnDefinition Width="10*" />
+            <controls:ColumnDefinition Width="20" />
+        </controls:Grid.ColumnDefinitions>
+        <controls:Grid.RowDefinitions>
+            <controls:RowDefinition Height="30" />
+            <controls:RowDefinition Height="287*" />
+            <controls:RowDefinition Height="Auto" />
+            <controls:RowDefinition Height="Auto" />
+        </controls:Grid.RowDefinitions>
+        <!--#endregion-->
+
+        <!--#region Data/Infos StackPanel-->
+        <controls:StackPanel
+            x:Name="LinesInfoStackPanel"
+            controls:Grid.Row="1"
+            Margin="2,0,0,0"
+            HorizontalAlignment="Left" />
+
+        <controls:StackPanel
+            x:Name="HexDataStackPanel"
+            controls:Grid.Row="1"
+            controls:Grid.Column="1"
+            Margin="5,0" />
+
+        <controls:StackPanel
+            x:Name="HexHeaderStackPanel"
+            controls:Grid.Row="0"
+            controls:Grid.Column="1"
+            Margin="5,0"
+            Orientation="Horizontal" />
+
+        <controls:StackPanel
+            x:Name="StringDataStackPanel"
+            controls:Grid.Row="1"
+            controls:Grid.Column="2"
+            Margin="5,0,0,0" />
+        <!--#endregion-->
+
+        <!--#region Statusbar definition-->
+        <controls:Grid
+            x:Name="StatusBarGrid"
+            controls:Grid.Row="2"
+            controls:Grid.Column="0"
+            controls:Grid.ColumnSpan="5"
+            VerticalAlignment="Top"
+            Background="WhiteSmoke"
+            IsVisible="True">
+
+            <controls:Separator
+                Height="1"
+                Margin="0,0,0,27"
+                Background="{controls:Binding RelativeSource={controls:RelativeSource FindAncestor, AncestorType={x:Type local:HexEditor}}, Path=BorderBrush}" />
+
+            <controls:ItemsControl Height="27">
+                <controls:ItemsControl Padding="0">
+                    <controls:StackPanel Orientation="Horizontal">
+                        <controls:Label
+                            Width="40"
+                            Content="{controls:Binding Path=ZoomScale, RelativeSource={controls:RelativeSource AncestorType={x:Type local:HexEditor}}, UpdateSourceTrigger=PropertyChanged}"
+                            ContentStringFormat="P0"
+                            ToolTip="{x:Static properties:Resources.ZoomString}" />
+                        <controls:Button
+                            BorderThickness="0"
+                            Click="ZoomResetButton_Click"
+                            Content="X"
+                            FontWeight="Bold"
+                            ToolTip="{x:Static properties:Resources.ZoomResetString}" />
+                    </controls:StackPanel>
+                </controls:ItemsControl>
+                <controls:Separator />
+                <controls:ItemsControl Width="110" Padding="0">
+                    <controls:StackPanel Orientation="Horizontal">
+                        <controls:Label
+                            Padding="5,5,0,5"
+                            Content="{x:Static properties:Resources.LineStatusBarTagString}"
+                            FontWeight="Bold" />
+                        <controls:Label Content="{controls:Binding Path=SelectionLine, RelativeSource={controls:RelativeSource AncestorType={x:Type local:HexEditor}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}" />
+                    </controls:StackPanel>
+                </controls:ItemsControl>
+                <controls:Separator />
+                <controls:ItemsControl Width="125" Padding="0">
+                    <controls:StackPanel Orientation="Horizontal">
+                        <controls:Label
+                            Padding="5,5,0,5"
+                            Content="{x:Static properties:Resources.PositionString}"
+                            FontWeight="Bold" />
+                        <controls:Label Content="{controls:Binding Path=SelectionStart, RelativeSource={controls:RelativeSource AncestorType={x:Type local:HexEditor}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LongHexConverter}}" />
+                    </controls:StackPanel>
+                </controls:ItemsControl>
+                <controls:Separator />
+                <controls:ItemsControl Width="125" Padding="0">
+                    <controls:StackPanel Orientation="Horizontal">
+                        <controls:Label
+                            Padding="5,5,0,5"
+                            Content="{x:Static properties:Resources.LengthString}"
+                            FontWeight="Bold" />
+                        <controls:Label x:Name="FileLengthKbLabel" />
+                    </controls:StackPanel>
+                </controls:ItemsControl>
+                <controls:Separator />
+                <controls:ItemsControl
+                    x:Name="ByteCountPanel"
+                    Padding="0"
+                    IsVisible="True">
+                    <controls:StackPanel Orientation="Horizontal">
+                        <controls:Label
+                            Padding="5,5,0,5"
+                            Content="{x:Static properties:Resources.CountOfString}"
+                            FontWeight="Bold" />
+                        <controls:Label x:Name="CountOfByteLabel" />
+                        <controls:Label Padding="0,5" Content=":" />
+                        <controls:Label />
+                    </controls:StackPanel>
+                </controls:ItemsControl>
+            </controls:ItemsControl>
+        </controls:Grid>
+
+        <controls:Label
+            x:Name="ReadOnlyLabel"
+            controls:Grid.Row="2"
+            controls:Grid.Column="2"
+            Height="27"
+            Margin="670,1,0,0"
+            Padding="0,5,0,5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Center"
+            Content="ReadOnly"
+            FontWeight="Bold"
+            IsVisible="{controls:Binding Path=ReadOnlyMode, RelativeSource={controls:RelativeSource AncestorType={x:Type local:HexEditor}}, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisibilityConverter}}" />
+        <!--#endregion-->
+
+        <!--#region Scrollbar, marker, and move rectangle-->
+        <controls:ScrollBar
+            x:Name="VerticalScrollBar"
+            controls:Grid.Row="0"
+            controls:Grid.RowSpan="2"
+            controls:Grid.Column="4"
+            Width="20"
+            HorizontalAlignment="Right"
+            LargeChange="100"
+            SmallChange="1"
+            ValueChanged="VerticalScrollBar_ValueChanged" />
+
+        <controls:Grid
+            x:Name="MarkerGrid"
+            controls:Grid.Row="0"
+            controls:Grid.RowSpan="2"
+            controls:Grid.Column="4"
+            Margin="0,17" />
+
+        <controls:Rectangle
+            x:Name="BottomRectangle"
+            controls:Grid.Row="2"
+            controls:Grid.Column="0"
+            controls:Grid.ColumnSpan="4"
+            Height="10"
+            VerticalAlignment="Bottom"
+            Fill="#FFF4F4F5"
+            MouseDown="BottomRectangle_MouseDown"
+            MouseEnter="BottomRectangle_MouseEnter"
+            MouseLeave="BottomRectangle_MouseLeave"
+            Opacity="0" />
+
+        <controls:Rectangle
+            x:Name="TopRectangle"
+            controls:Grid.Row="0"
+            controls:Grid.Column="0"
+            controls:Grid.ColumnSpan="4"
+            Height="10"
+            VerticalAlignment="Top"
+            Fill="#FFF4F4F5"
+            MouseDown="TopRectangle_MouseDown"
+            MouseEnter="TopRectangle_MouseEnter"
+            MouseLeave="TopRectangle_MouseLeave"
+            Opacity="0" />
+        <!--#endregion-->
+
+        <!--#region Long process-->
+        <controls:ProgressBar
+            x:Name="LongProgressProgressBar"
+            controls:Grid.Row="3"
+            controls:Grid.Column="0"
+            controls:Grid.ColumnSpan="5"
+            Height="3"
+            BorderThickness="0"
+            Maximum="1"
+            Minimum="0" />
+
+        <!--  TODO: ADD TEXTBLOCK FOR DETAIL  -->
+        <controls:Border
+            x:Name="CancelLongProcessButton"
+            controls:Grid.Row="0"
+            controls:Grid.RowSpan="2"
+            controls:Grid.Column="0"
+            controls:Grid.ColumnSpan="4"
+            Width="120"
+            Height="50"
+            BorderBrush="Gray"
+            BorderThickness="2"
+            CornerRadius="4">
+            <controls:Button
+                VerticalContentAlignment="Center"
+                BorderThickness="0"
+                Click="CancelLongProcessButton_Click"
+                Content="{x:Static p:Resources.CancelLongProcessString}"
+                FontWeight="Bold"
+                Opacity="0.9"
+                controls:ToolTip.Tip="{x:Static p:Resources.CancelLongProcessToolTipString}" />
+        </controls:Border>
+
+        <controls:Label
+            x:Name="TblLabel"
+            controls:Grid.Row="2"
+            controls:Grid.RowSpan="2"
+            controls:Grid.Column="2"
+            controls:Grid.ColumnSpan="2"
+            Margin="0,1,05,1"
+            HorizontalAlignment="Right"
+            Content="{x:Static properties:Resources.TBLString}"
+            FontWeight="Bold"
+            IsVisible="True" />
+        <!--#endregion-->
+
+    </controls:Grid>
+</controls:UserControl>

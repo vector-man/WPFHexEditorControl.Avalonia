@@ -1,0 +1,90 @@
+﻿<!--
+    Apache 2.0  - 2016-2018
+    Author : Derek Tremblay (derektremblay666@gmail.com)
+-->
+
+<controls:UserControl
+    xmlns:controls1="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
+    x:Class="WpfHexaEditor.HexBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:p="clr-namespace:WpfHexaEditor.Properties"
+    xmlns:controls="https://github.com/avaloniaui"
+    xmlns:properties="clr-namespace:WpfHexaEditor.Properties;assembly=WPFHexaEditor"
+    xmlns:avalonia="clr-namespace:WpfHexEditorCore.Avalonia"
+    Width="100"
+    Height="24"
+    mc:Ignorable="d">
+    <controls:Grid>
+        <controls:Grid.ColumnDefinitions>
+            <controls:ColumnDefinition Width="13" />
+            <controls:ColumnDefinition Width="65*" />
+            <controls:ColumnDefinition Width="22" />
+        </controls:Grid.ColumnDefinitions>
+        <controls:Grid.RowDefinitions>
+            <controls:RowDefinition />
+            <controls:RowDefinition />
+        </controls:Grid.RowDefinitions>
+
+        <controls:RepeatButton
+            controls:Grid.Column="2"
+            Padding="0"
+            BorderBrush="#FFCDCBCB"
+            Click="UpButton_Click">
+            <controls:Grid>
+                <controls:TextBlock
+                    Margin="0,-1,0,0"
+                    FontSize="8"
+                    Text="&#x25b2;" />
+            </controls:Grid>
+        </controls:RepeatButton>
+
+        <controls:RepeatButton
+            controls:Grid.Row="1"
+            controls:Grid.Column="2"
+            Padding="0"
+            BorderBrush="#FFCDCBCB"
+            Click="DownButton_Click">
+            <controls:Grid>
+                <controls:TextBlock
+                    Margin="0,-1,0,0"
+                    FontSize="8"
+                    Text="&#x25bc;" />
+            </controls:Grid>
+        </controls:RepeatButton>
+
+        <controls:TextBox
+            x:Name="HexTextBox"
+            controls:Grid.Row="0"
+            controls:Grid.RowSpan="2"
+            controls:Grid.Column="1"
+            VerticalContentAlignment="Center"
+            BorderBrush="{x:Null}"
+            Focusable="True"
+            IsUndoEnabled="False"
+            KeyDown="HexTextBox_KeyDown"
+            MaxLength="15"
+            MaxLines="1"
+            TabIndex="1"
+            Text="0"
+            TextChanged="HexTextBox_TextChanged">
+            <controls:TextBox.ContextMenu>
+                <controls:ContextMenu>
+                    <controls:MenuItem Click="CopyHexaMenuItem_Click" Header="{x:Static properties:Resources.CopyAsHexadecimalString}" />
+                    <controls:MenuItem Click="CopyLongMenuItem_Click" Header="{x:Static properties:Resources.CopyAsDecimalString}" />
+                </controls:ContextMenu>
+            </controls:TextBox.ContextMenu>
+        </controls:TextBox>
+
+        <controls:Label
+            controls:Grid.Row="0"
+            controls:Grid.RowSpan="2"
+            controls:Grid.Column="0"
+            Padding="0"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Content="0x" />
+    </controls:Grid>
+</controls:UserControl>

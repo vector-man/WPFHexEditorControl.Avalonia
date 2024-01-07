@@ -1,0 +1,138 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <None Remove="Dialog\FindReplaceWindow.xaml" />
+    <None Remove="Dialog\FindWindow.xaml" />
+    <None Remove="Dialog\GiveByteWindow.xaml" />
+    <None Remove="Dialog\ReplaceByteWindow.xaml" />
+    <None Remove="HexBox.xaml" />
+    <None Remove="HexEditor.xaml" />
+    <None Remove="Resources\Dictionary\BrushesDictionary.xaml" />
+    <None Remove="Resources\Dictionary\MiscelanousDictionary.xaml" />
+    <None Remove="Resources\Dictionary\ToolTipDictionary.xaml" />
+    <None Remove="Resources\EBCDIC-NoSpecialChar.tbl" />
+    <None Remove="Resources\EBCDIC.tbl" />
+    <None Remove="Resources\Icon\0x-Icon.ico" />
+    <None Remove="Resources\Icon\Add-Bookmark-Icon.ico" />
+    <None Remove="Resources\Icon\Clear-Bookmark-Icon.ico" />
+    <None Remove="Resources\Icon\Copy-Icon.ico" />
+    <None Remove="Resources\Icon\Delete-Icon.ico" />
+    <None Remove="Resources\Icon\Find-Icon.ico" />
+    <None Remove="Resources\Icon\Logo-Icon.ico" />
+    <None Remove="Resources\Icon\Paste-Icon.ico" />
+    <None Remove="Resources\Icon\Remove-Bookmark-Icon.ico" />
+    <None Remove="Resources\Icon\Undo-Icon.ico" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <AvaloniaResource Include="Abstractions\IClipboard.cs" />
+    <AvaloniaResource Include="Abstractions\IMessageBox.cs" />
+    <AvaloniaResource Include="Abstractions\MessageBoxButton.cs" />
+    <AvaloniaResource Include="Abstractions\MessageBoxResult.cs" />
+    <AvaloniaResource Include="Abstractions\WindowsMessageBox.cs" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <Content Include="Resources\EBCDIC-NoSpecialChar.tbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\EBCDIC.tbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="Dialog\FindReplaceWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialog\FindWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialog\GiveByteWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialog\ReplaceByteWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HexBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HexEditor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Dictionary\BrushesDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Dictionary\MiscelanousDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Dictionary\ToolTipDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HexBoxView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Icon\0x-Icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icon\Add-Bookmark-Icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icon\Clear-Bookmark-Icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icon\Copy-Icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icon\Delete-Icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icon\Find-Icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icon\Logo-Icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icon\Paste-Icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icon\Remove-Bookmark-Icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icon\Undo-Icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="HexBox.axaml.cs">
+      <DependentUpon>HexBox.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>
